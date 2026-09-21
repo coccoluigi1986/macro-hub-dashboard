@@ -96,10 +96,14 @@ exports.handler = async function (event) {
     }
 
     const payload = { generatedAt: new Date().toISOString(), ai: anyAi, newsCount: items.length, assets };
+    const complete = Object.keys(assets).length === ASSETS.length;
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=10800' }, // 3h
+      // 3h solo se TUTTI i batch sono andati a buon fine; se anche solo un batch è mancante
+      // (rate limit, timeout), cache breve (2 min) così il prossimo giro può completare i mancanti
+      // invece di restare "congelato" incompleto in CDN per ore.
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 10800 : 120}` },
       body: JSON.stringify(payload),
     };
   } catch (err) {

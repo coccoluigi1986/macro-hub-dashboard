@@ -84,7 +84,9 @@ exports.handler = async function (event) {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=21600' }, // 6h, come il ciclo del riferimento
+      // 6h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
+      // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per ore.
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${dossier.ai ? 21600 : 120}` },
       body: JSON.stringify({ generatedAt: new Date().toISOString(), event: { title, date: dateIso, impact }, dossier }),
     };
   } catch (err) {
