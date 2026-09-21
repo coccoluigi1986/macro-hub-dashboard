@@ -3261,8 +3261,9 @@ async function initLiveData(){
   const cotUpdated = applyLiveCOTToReport(cot);
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
-  const marketIntel = await fetchMarketIntelligence(); // dopo market/fx: invia lo snapshot prezzi già aggiornato all'AI
-  const marketIntelUpdated = applyMarketIntelligence(marketIntel);
+  // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
+  // bloccare il resto del refresh (bias/sentiment/status line), aggiorna la UI da sola a fine fetch.
+  fetchMarketIntelligence().then(applyMarketIntelligence);
   const biasUpdated = applyBiasDaily(bias);
   const sentimentUpdated = applySentimentLive(sentiment);
   if(currentKeyEvent) loadEventDossier(currentKeyEvent); // dossier AI sull'evento chiave già selezionato
@@ -3282,7 +3283,6 @@ async function initLiveData(){
   if(cotUpdated) parts.push('COT completo — metalli/valute/indici/cripto/WTI (CFTC)');
   if(corrUpdated) parts.push('correlazione DXY reale a 30g (Twelve Data/FMP)');
   if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
-  if(marketIntelUpdated) parts.push('driver di mercato AI (news reali)');
   if(biasUpdated) parts.push('bias geo-macro AI');
   if(sentimentUpdated) parts.push('sentiment per categoria AI');
   if(parts.length){
