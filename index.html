@@ -27,7 +27,7 @@ a{color:inherit;}
 
 /* ===== TICKER TAPE ===== */
 .ticker-wrap{
-  position:sticky; top:0; z-index:100; background:#0D1319; border-bottom:1px solid var(--border);
+  position:sticky; top:28px; z-index:100; background:#0D1319; border-bottom:1px solid var(--border);
   overflow:hidden; white-space:nowrap; height:34px; display:flex; align-items:center;
 }
 .ticker{display:inline-flex; animation:scroll 38s linear infinite; padding-left:100%;}
@@ -36,6 +36,76 @@ a{color:inherit;}
 .tick{font-family:'IBM Plex Mono',monospace; font-size:12.5px; padding:0 22px; display:inline-flex; align-items:center; gap:6px; color:var(--dim);}
 .tick b{color:var(--text); font-weight:600;}
 .tick .up{color:var(--green);} .tick .down{color:var(--red);}
+
+/* ===== BIAS TICKER (barra sticky sopra il ticker prezzi) ===== */
+.bias-ticker{
+  position:sticky; top:0; z-index:101; background:#0B0F14; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:12px; padding:0 16px; height:28px; overflow:hidden; white-space:nowrap;
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+}
+.bias-ticker .bt-tag{display:inline-flex; align-items:center; gap:6px; color:var(--accent); text-transform:uppercase; letter-spacing:1px; font-size:9.5px; font-weight:700; flex-shrink:0;}
+.bias-ticker .bt-label{font-weight:700; flex-shrink:0;}
+.bias-ticker .bt-label.risk-on{color:var(--green);} .bias-ticker .bt-label.risk-off{color:var(--red);} .bias-ticker .bt-label.neutrale{color:var(--gold);}
+.bias-ticker .bt-score{color:var(--dim); flex-shrink:0;}
+.bias-ticker .bt-sep{width:1px; height:14px; background:var(--border); flex-shrink:0;}
+.bias-ticker .bt-headline{color:var(--dim); overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0;}
+.bias-ticker .bt-sub{display:flex; gap:14px; flex-shrink:0; margin-left:auto;}
+@media(max-width:900px){ .bias-ticker .bt-headline, .bias-ticker .bt-sub{display:none;} }
+
+/* ===== BIAS GIORNALIERO (pannello AI geopolitico-macro) ===== */
+.bias-panel{background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:38px;}
+.bias-panel.risk-on{border-color:rgba(52,211,153,.4);}
+.bias-panel.risk-off{border-color:rgba(240,104,94,.4);}
+.bias-panel-head{display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:6px;}
+.bias-panel-head .bp-eyebrow{font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent);}
+.bias-panel-head .bp-time{font-size:11px; color:var(--dim2); font-family:'IBM Plex Mono',monospace;}
+.bias-panel-body{padding:20px 22px; display:grid; grid-template-columns:1.15fr 1fr; gap:24px;}
+@media(max-width:900px){.bias-panel-body{grid-template-columns:1fr;}}
+.bp-label-row{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+.bp-label{font-family:'Space Grotesk',sans-serif; font-size:32px; font-weight:700;}
+.bp-label.risk-on{color:var(--green);} .bp-label.risk-off{color:var(--red);} .bp-label.neutrale{color:var(--gold);}
+.bp-score{font-size:13px; color:var(--dim); font-family:'IBM Plex Mono',monospace;}
+.bp-bar{height:8px; background:var(--panel2); border-radius:4px; overflow:hidden; margin:10px 0 4px;}
+.bp-bar-fill{height:100%; border-radius:4px; transition:width .5s;}
+.bp-bar-labels{display:flex; justify-content:space-between; font-size:9.5px; color:var(--dim2); text-transform:uppercase; letter-spacing:.5px;}
+.bp-headline{font-size:13.5px; color:var(--text); line-height:1.55; margin:14px 0;}
+.bp-subgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media(max-width:600px){.bp-subgrid{grid-template-columns:1fr;}}
+.bp-subcard{background:var(--panel2); border-radius:8px; padding:12px 14px;}
+.bp-subcard-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+.bp-subcard .bps-title{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2);}
+.bp-subcard .bps-bias{font-size:10.5px; font-weight:700; text-transform:uppercase;}
+.bp-subcard .bps-bar{height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:8px;}
+.bp-subcard .bps-bar-fill{height:100%; border-radius:2px;}
+.bp-subcard .bps-note{font-size:11.5px; color:var(--dim); line-height:1.5;}
+.bp-drivers{margin-bottom:16px;}
+.bp-drivers .bpd-title, .bp-assets .bpa-title{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2); margin-bottom:10px;}
+.bp-driver{padding-left:10px; border-left:2px solid var(--border); margin-bottom:10px;}
+.bp-driver.positive{border-color:var(--green);} .bp-driver.negative{border-color:var(--red);}
+.bp-driver .bpd-label{font-size:12.5px; font-weight:600; color:var(--text);}
+.bp-driver .bpd-detail{font-size:11.5px; color:var(--dim); line-height:1.5;}
+.bp-asset-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+@media(max-width:500px){.bp-asset-grid{grid-template-columns:1fr 1fr;}}
+.bp-asset{background:var(--panel2); border-radius:6px; padding:8px 10px;}
+.bp-asset-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
+.bp-asset .bpa-name{font-size:12px; font-weight:600;}
+.bp-asset .bpa-dir{font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:10px; text-transform:uppercase;}
+.bp-asset .bpa-dir.bull{background:var(--green-soft); color:var(--green);}
+.bp-asset .bpa-dir.bear{background:var(--red-soft); color:var(--red);}
+.bp-asset .bpa-dir.neutral{background:var(--panel); color:var(--dim);}
+.bp-asset .bpa-prob{font-size:10px; color:var(--dim2); font-family:'IBM Plex Mono',monospace;}
+
+/* ===== DOSSIER AI SU EVENTO CHIAVE (blocco aggiuntivo, non sostituisce gli scenari curati) ===== */
+.ec-ai-dossier{background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:4px; padding:12px 14px; margin-top:14px;}
+.ec-ai-dossier .ec-ai-label{font-size:10px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:8px;}
+.ec-ai-dossier .ec-ai-meta{color:var(--dim2); font-weight:500; text-transform:none; letter-spacing:0;}
+.ec-ai-dossier p{font-size:12.5px; color:var(--dim); line-height:1.55; margin-bottom:8px;}
+.ec-ai-dossier p:last-child{margin-bottom:0;}
+
+/* ===== SENTIMENT — pulsante rigenera + meta ===== */
+.sn-regen{background:none; border:1px solid var(--border); color:var(--dim); border-radius:4px; padding:3px 9px; font-size:10.5px; cursor:pointer; font-family:'IBM Plex Mono',monospace;}
+.sn-regen:hover{color:var(--accent); border-color:var(--accent);}
+.sn-regen:disabled{opacity:.5; cursor:default;}
 
 /* ===== VOLATILITY DEEP-DIVE (riusa dati di Mercati) ===== */
 .vol-header{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; gap:12px;}
@@ -68,6 +138,8 @@ a{color:inherit;}
 .vol-disclaimer{font-size:11px; color:var(--dim2); margin-top:4px;}
 
 /* ===== MARKET MONITOR (stile screenshot: card con sparkline, volatilità, corr DXY) ===== */
+.mkt-status-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px;}
+.mkt-status-text{font-size:11.5px; color:var(--dim2); flex:1; min-width:120px;}
 .mkt-cat-label{font-size:10.5px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--dim2); margin:22px 0 10px;}
 .mkt-cat-label:first-child{margin-top:0;}
 .mkt-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:6px;}
@@ -249,8 +321,8 @@ header h1 span{color:var(--accent);}
 /* ===== LAYOUT ===== */
 .layout{display:grid; grid-template-columns:210px 1fr; gap:0; align-items:start;}
 nav.rail{
-  position:sticky; top:34px; align-self:start; padding:18px 10px; border-right:1px solid var(--border);
-  height:calc(100vh - 34px); overflow-y:auto;
+  position:sticky; top:62px; align-self:start; padding:18px 10px; border-right:1px solid var(--border);
+  height:calc(100vh - 62px); overflow-y:auto;
 }
 nav.rail a{
   display:block; font-size:12px; color:var(--dim); padding:7px 10px; border-radius:4px; margin-bottom:2px;
@@ -407,6 +479,55 @@ tr:hover td{background:var(--panel2);}
 .gauge{position:relative; width:220px; height:120px;}
 .needle{position:absolute; bottom:0; left:50%; width:2px; height:95px; background:var(--gold); transform-origin:bottom center; border-radius:2px;}
 
+/* ===== SENTIMENT & RISK — gauge semicircolari + sentiment retail per strumento ===== */
+.rg-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;}
+@media(max-width:700px){.rg-row{grid-template-columns:1fr;}}
+.rg-card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center;}
+.rg-title{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2); margin-bottom:4px;}
+.rg-gauge svg{width:100%; max-width:190px; height:auto; display:block; margin:0 auto;}
+.rg-value{font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:700; margin-top:-14px;}
+.rg-scale{display:flex; justify-content:space-between; font-size:9.5px; color:var(--dim2); text-transform:uppercase; letter-spacing:.4px; padding:0 10px; max-width:190px; margin:2px auto 0;}
+.rg-sub{font-size:11px; color:var(--dim); margin-top:6px;}
+
+.rt-card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin-bottom:20px;}
+.rt-title{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2); margin-bottom:12px; display:flex; justify-content:space-between; align-items:baseline;}
+.rt-title .rt-note{font-size:10px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--dim2); font-style:italic;}
+.rt-row{display:grid; grid-template-columns:70px 1fr 90px; gap:12px; align-items:center; padding:7px 0;}
+.rt-row .rt-name{font-size:12px; font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace;}
+.rt-bar{height:8px; border-radius:4px; overflow:hidden; display:flex; background:var(--panel2);}
+.rt-bar .rt-bull{background:var(--green); height:100%;}
+.rt-bar .rt-bear{background:var(--red); height:100%;}
+.rt-pct{font-size:11px; font-family:'IBM Plex Mono',monospace; text-align:right; white-space:nowrap;}
+.rt-pct .up{color:var(--green); font-weight:600;} .rt-pct .down{color:var(--red); font-weight:600;}
+.sn-eyebrow{font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:22px 0 12px;}
+.sn-eyebrow:first-child{margin-top:0;}
+
+/* ===== COSA PREZZA IL MERCATO ===== */
+.pricing-card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-bottom:16px;}
+.pricing-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; gap:12px; flex-wrap:wrap;}
+.pricing-head .ph-title{display:flex; align-items:center; gap:8px; font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; color:var(--text);}
+.pricing-head .ph-sub{font-size:11.5px; color:var(--dim); margin-top:2px;}
+.pricing-badge{font-size:10px; font-weight:700; letter-spacing:.5px; padding:4px 10px; border-radius:20px; background:var(--accent-soft); color:var(--accent); white-space:nowrap;}
+.pricing-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:14px;}
+@media(max-width:1100px){.pricing-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:700px){.pricing-grid{grid-template-columns:1fr 1fr;}}
+.pm-card{background:var(--panel2); border-radius:8px; padding:11px 13px;}
+.pm-card .pm-lbl{font-size:9.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--dim2); margin-bottom:5px;}
+.pm-card .pm-val{font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:700; color:var(--text);}
+.pm-card .pm-detail{font-size:10px; color:var(--dim2); margin-top:3px; line-height:1.4;}
+.pricing-lists{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media(max-width:700px){.pricing-lists{grid-template-columns:1fr;}}
+.pl-box{border-radius:8px; padding:12px 14px;}
+.pl-box.priced{border:1px solid rgba(52,211,153,.35); background:rgba(52,211,153,.05);}
+.pl-box.risk{border:1px solid rgba(240,104,94,.35); background:rgba(240,104,94,.05);}
+.pl-box .pl-label{font-size:10.5px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-bottom:9px; display:flex; align-items:center; gap:6px;}
+.pl-box.priced .pl-label{color:var(--green);} .pl-box.risk .pl-label{color:var(--red);}
+.pl-box ul{list-style:none;}
+.pl-box li{font-size:12px; color:var(--text); line-height:1.5; margin-bottom:8px;}
+.pl-box li:last-child{margin-bottom:0;}
+.pl-box li b{display:block; font-size:12.5px; margin-bottom:1px;}
+.pl-box li span{color:var(--dim); font-size:11.5px;}
+
 /* SENTIMENT CARDS */
 .sent-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px;}
 .sent-card .lbl{font-size:10.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--dim2); margin-bottom:8px;}
@@ -417,37 +538,52 @@ tr:hover td{background:var(--panel2);}
 .sent-sub{font-size:11.5px; color:var(--dim); margin-top:8px; line-height:1.5;}
 .sent-badge{display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; margin-bottom:8px;}
 
-/* CALENDARIO — VISTA TABELLARE STILE INVESTING.COM (dark) */
-.ic-bar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
-.ic-tabs{display:flex; gap:8px; flex-wrap:wrap;}
-.ic-tab{padding:6px 16px; border:1px solid var(--border); border-radius:20px; font-size:12px; cursor:pointer; color:var(--dim); background:var(--panel);}
-.ic-tab.active{background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:600;}
+/* CALENDARIO ECONOMICO — vista compatta, una riga per evento, filtri a chip */
+.ic-bar{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px 16px; margin-bottom:14px;}
 .ic-range{font-size:11.5px; color:var(--dim2); font-family:'IBM Plex Mono',monospace;}
-.ic-datepick{display:flex; align-items:center;}
-.ic-datepick input[type="date"]{
-  background:var(--panel); border:1px solid var(--border); border-radius:20px; color:var(--text);
-  font-size:12px; padding:6px 14px; font-family:'Inter',sans-serif; cursor:pointer; color-scheme:dark;
-}
-.ic-datepick input[type="date"]:hover{border-color:var(--accent);}
-.ic-datepick input[type="date"]:focus{outline:none; border-color:var(--accent);}
+.ic-nav{display:flex; align-items:center; gap:6px;}
+.ic-navbtn{width:26px; height:26px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:6px; background:var(--panel); color:var(--dim); cursor:pointer; font-size:13px;}
+.ic-navbtn:hover{border-color:var(--accent); color:var(--accent);}
+.ic-today-btn{padding:5px 14px; border:1px solid var(--border); border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; cursor:pointer; color:var(--dim); background:var(--panel);}
+.ic-today-btn:hover{border-color:var(--accent); color:var(--accent);}
+.ic-filters{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+.ic-tabs{display:flex; gap:6px; flex-wrap:wrap;}
+.ic-tab{padding:5px 14px; border:1px solid var(--border); border-radius:20px; font-size:11.5px; cursor:pointer; color:var(--dim); background:var(--panel);}
+.ic-tab.active{background:var(--accent); color:var(--bg); border-color:var(--accent); font-weight:600;}
+.ic-chipgroup{display:flex; gap:5px; flex-wrap:wrap;}
+.ic-chip{padding:4px 11px; border:1px solid var(--border); border-radius:16px; font-size:10.5px; font-weight:600; letter-spacing:.3px; cursor:pointer; color:var(--dim2); background:var(--panel);}
+.ic-chip.active{border-color:var(--accent); color:var(--accent); background:var(--accent-soft);}
+.ic-chip.impact-alto.active{border-color:var(--red); color:var(--red); background:var(--red-soft);}
+.ic-chip.impact-medio.active{border-color:var(--gold); color:var(--gold); background:var(--gold-soft);}
+.ic-chip.impact-basso.active{border-color:var(--dim2); color:var(--text); background:var(--panel2);}
+.ic-toggle{display:flex; align-items:center; gap:7px; font-size:11px; color:var(--dim); cursor:pointer; user-select:none;}
+.ic-toggle .ic-switch{width:30px; height:17px; border-radius:10px; background:var(--panel2); border:1px solid var(--border); position:relative; transition:background .15s;}
+.ic-toggle .ic-switch::after{content:''; position:absolute; top:1px; left:1px; width:13px; height:13px; border-radius:50%; background:var(--dim); transition:transform .15s, background .15s;}
+.ic-toggle.active .ic-switch{background:var(--accent-soft); border-color:var(--accent);}
+.ic-toggle.active .ic-switch::after{transform:translateX(13px); background:var(--accent);}
+
 .ic-table-wrap{background:var(--panel); border:1px solid var(--border); border-radius:10px; overflow:hidden;}
-.ic-header-row{display:grid; grid-template-columns:70px 70px 1fr 90px 90px 90px; gap:8px; padding:10px 16px; background:var(--panel2); border-bottom:1px solid var(--border); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--dim2);}
-@media(max-width:800px){.ic-header-row{grid-template-columns:55px 55px 1fr 60px 60px 60px; font-size:9px;}}
-.ic-date-header{padding:9px 16px; background:var(--bg); font-size:11px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); border-top:1px solid var(--border);}
-.ic-row{display:grid; grid-template-columns:70px 70px 1fr 90px 90px 90px; gap:8px; padding:10px 16px; border-bottom:1px solid var(--border); align-items:center; cursor:pointer; font-size:12px;}
-@media(max-width:800px){.ic-row{grid-template-columns:55px 55px 1fr 60px 60px 60px; font-size:11px;}}
+.ic-date-header{display:flex; align-items:center; gap:7px; padding:9px 16px; background:var(--panel2); font-size:10.5px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border);}
+.ic-row{display:flex; align-items:center; gap:12px; padding:9px 16px; border-bottom:1px solid var(--border); cursor:pointer; font-size:12.5px;}
 .ic-row:hover{background:var(--panel2);}
 .ic-row:last-child{border-bottom:none;}
-.ic-time{font-family:'IBM Plex Mono',monospace; color:var(--dim); font-size:11.5px;}
-.ic-impact-stars{font-size:11px; letter-spacing:1px; white-space:nowrap;}
-.ic-impact-stars.alto{color:var(--red);} .ic-impact-stars.medio{color:var(--gold);} .ic-impact-stars.basso{color:var(--dim2);}
-.ic-evt-name{color:var(--accent); font-weight:500;}
-.ic-val{font-family:'IBM Plex Mono',monospace; font-size:11.5px; text-align:right; color:var(--text);}
-.ic-val.empty{color:var(--dim2);}
+.ic-time{font-family:'IBM Plex Mono',monospace; color:var(--dim); font-size:11px; width:42px; flex-shrink:0;}
+.ic-cur{font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700; color:var(--dim); background:var(--panel2); border:1px solid var(--border); border-radius:4px; padding:2px 6px; width:32px; text-align:center; flex-shrink:0;}
+.ic-evt-name{color:var(--text); font-weight:500; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.ic-stats{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--dim2); white-space:nowrap; flex-shrink:0;}
+.ic-stats b{color:var(--text); font-weight:600;}
+.ic-impact-badge{font-size:9px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; padding:2px 8px; border-radius:4px; flex-shrink:0; width:52px; text-align:center;}
+.ic-impact-badge.alto{background:var(--red-soft); color:var(--red);}
+.ic-impact-badge.medio{background:var(--gold-soft); color:var(--gold);}
+.ic-impact-badge.basso{background:var(--panel2); color:var(--dim2);}
 .ic-detail-row{padding:0 16px; max-height:0; overflow:hidden; transition:max-height .25s ease; background:var(--bg);}
 .ic-detail-row.open{max-height:200px; padding:12px 16px;}
 .ic-detail-row .ic-detail-inner{font-size:12px; color:var(--dim); line-height:1.55;}
 .ic-empty-day{padding:16px; text-align:center; color:var(--dim2); font-size:12px; font-style:italic;}
+@media(max-width:700px){
+  .ic-evt-name{white-space:normal;}
+  .ic-stats{display:none;}
+}
 
 /* CALENDAR */
 .cal-tabs{display:flex; gap:8px; margin-bottom:14px;}
@@ -551,6 +687,17 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </head>
 <body>
 
+<div class="bias-ticker" id="biasTicker">
+  <span class="bt-tag">⦿ Bias Geo-Macro</span>
+  <span class="bt-label neutrale" id="btLabel">—</span>
+  <span class="bt-score" id="btScore">—/100</span>
+  <span class="bt-sep"></span>
+  <span class="bt-headline" id="btHeadline"></span>
+  <span class="bt-sub">
+    <span id="btGeo">GEO —</span>
+    <span id="btMacro">MACRO —</span>
+  </span>
+</div>
 <div class="ticker-wrap"><div class="ticker" id="tickerTape"></div></div>
 
 <header>
@@ -596,6 +743,47 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 
 <main>
 
+<!-- ============ BIAS GIORNALIERO (AI) ============ -->
+<div class="bias-panel neutrale" id="biasPanel">
+  <div class="bias-panel-head">
+    <span class="bp-eyebrow">⦿ Bias giornaliero · geopolitico-macro</span>
+    <span class="bp-time" id="bpTime">—</span>
+  </div>
+  <div class="bias-panel-body">
+    <div>
+      <div class="bp-label-row">
+        <span class="bp-label neutrale" id="bpLabel">—</span>
+        <span class="bp-score">score <b id="bpScore">50</b>/100</span>
+      </div>
+      <div class="bp-bar"><div class="bp-bar-fill" id="bpBarFill" style="width:50%; background:var(--gold);"></div></div>
+      <div class="bp-bar-labels"><span>Risk-off</span><span>Neutro</span><span>Risk-on</span></div>
+      <div class="bp-headline" id="bpHeadline">Verifica bias AI in corso...</div>
+      <div class="bp-subgrid">
+        <div class="bp-subcard">
+          <div class="bp-subcard-top"><span class="bps-title">🌍 Geopolitica</span><span class="bps-bias" id="bpGeoBias">—</span></div>
+          <div class="bps-bar"><div class="bps-bar-fill" id="bpGeoBar" style="width:50%; background:var(--gold);"></div></div>
+          <div class="bps-note" id="bpGeoNote">Nessun aggiornamento AI disponibile.</div>
+        </div>
+        <div class="bp-subcard">
+          <div class="bp-subcard-top"><span class="bps-title">📟 Macro / Policy</span><span class="bps-bias" id="bpMacroBias">—</span></div>
+          <div class="bps-bar"><div class="bps-bar-fill" id="bpMacroBar" style="width:50%; background:var(--gold);"></div></div>
+          <div class="bps-note" id="bpMacroNote">Nessun aggiornamento AI disponibile.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="bp-drivers">
+        <div class="bpd-title">Driver del giorno</div>
+        <div id="bpDriverList"></div>
+      </div>
+      <div class="bp-assets">
+        <div class="bpa-title">Stance per asset</div>
+        <div class="bp-asset-grid" id="bpAssetGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ============ PRIORITY ============ -->
 <section id="priority">
   <div class="eyebrow">🏛 MACRO &amp; GEOPOLITICA</div>
@@ -627,6 +815,28 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
     </div>
   </div>
 
+  <div class="eyebrow" style="margin-top:28px;">📐 COSA PREZZA IL MERCATO</div>
+  <div class="pricing-card">
+    <div class="pricing-head">
+      <div>
+        <div class="ph-title">📐 Cosa prezza il mercato</div>
+        <div class="ph-sub">Aspettative implicite in curva dei tassi, breakeven inflazione e volatilità</div>
+      </div>
+      <span class="pricing-badge" id="pricingBadge">SNAPSHOT</span>
+    </div>
+    <div class="pricing-grid" id="pricingGrid"></div>
+    <div class="pricing-lists">
+      <div class="pl-box priced">
+        <div class="pl-label">✓ Già prezzato</div>
+        <ul id="pricingPricedList"></ul>
+      </div>
+      <div class="pl-box risk">
+        <div class="pl-label">⚠ Non prezzato · rischio</div>
+        <ul id="pricingRiskList"></ul>
+      </div>
+    </div>
+  </div>
+
   <div class="eyebrow" style="margin-top:28px;">📊 QUADRO MACRO — ULTIMO DATO PER INDICATORE</div>
   <div class="stat-grid" id="statGrid"></div>
 </section>
@@ -634,6 +844,11 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 <!-- ============ MARKET MONITOR ============ -->
 <section id="marketmon">
   <div class="sec-head"><span class="sec-num">01</span><h2>Mercati — Asset Monitor &amp; Volatilità</h2><span class="sec-desc">Prezzi, variazione giornaliera, volatilità realizzata a 7g e correlazione con il DXY</span></div>
+  <div class="mkt-status-bar">
+    <span class="pricing-badge" id="mktBadge">SNAPSHOT</span>
+    <span class="mkt-status-text" id="mktStatusText">Prezzi da riavviare live · driver ancora statici</span>
+    <button class="sn-regen" id="mktRegenBtn" onclick="regenerateMarketIntelligence()" title="Rigenera driver AI ora">↻ Rigenera driver AI</button>
+  </div>
   <div id="marketMonitorContainer"></div>
 </section>
 
@@ -697,44 +912,42 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 <section id="fed">
   <div class="sec-head"><span class="sec-num">06</span><h2>Banche Centrali — Fed &amp; CME FedWatch</h2><span class="sec-desc">Probabilità implicite dai Fed Funds futures</span></div>
   <div class="grid grid-3" style="margin-bottom:16px;">
-    <div class="card"><div class="lbl">Target Range Attuale</div><div class="val gold">3.50% – 3.75%</div><div class="sub">Confermato al FOMC del 29 lug 2026, voto 9-3 — dissensi hawkish di Beth Hammack, Neel Kashkari e Lorie Logan (tutti a favore di +25pb), la spaccatura più netta dal 2016</div></div>
-    <div class="card"><div class="lbl">Prossimo FOMC</div><div class="val">16 Set 2026</div><div class="sub">Meeting 15-16 settembre, dot plot + conferenza Warsh</div></div>
-    <div class="card"><div class="lbl">Ultimo CPI vs target Fed</div><div class="val">3.4% <span style="font-size:13px;color:var(--dim);">vs 2%</span></div><div class="sub">Core 2.5% YoY — ancora sopra l'obiettivo di lungo periodo</div></div>
+    <div class="card"><div class="lbl">Target Range Attuale</div><div class="val" style="color:var(--red);">3.75% – 4.00%</div><div class="sub">Rialzo di 25pb confermato al FOMC del 16 set 2026, voto 12-0 — primo rialzo dal 2023, dopo l'inflazione ancora sopra target di agosto</div></div>
+    <div class="card"><div class="lbl">Prossimo FOMC</div><div class="val">27-28 Ott 2026</div><div class="sub">Dot plot post-16set: 16 membri su 18 vedono un altro rialzo entro fine anno (4 ne vedono due)</div></div>
+    <div class="card"><div class="lbl">Ultimo CPI vs target Fed</div><div class="val">3.4% <span style="font-size:13px;color:var(--dim);">vs 2%</span></div><div class="sub">Core 2.4% YoY (ago) — benzina +3,9% m/m ha pesato per oltre 1/3 del rialzo headline</div></div>
   </div>
 
   <div class="card" style="margin-bottom:16px; border-color:var(--red);">
-    <div class="lbl" style="margin-bottom:14px;">Probabilità di mercato — FOMC 16 settembre 2026 (stile CME FedWatch) — <span style="color:var(--red);">aggiornato post Jackson Hole (28 ago)</span></div>
-    <div class="probrow"><div class="plabel">Rialzo +25 pb (3.75-4.00%)</div><div class="probbar"><div style="width:52%; background:var(--red);">52%</div></div><div class="probval">52%</div></div>
-    <div class="probrow"><div class="plabel">Invariato (3.50-3.75%)</div><div class="probbar"><div style="width:38%; background:var(--gold);">38%</div></div><div class="probval">38%</div></div>
-    <div class="probrow"><div class="plabel">Taglio -25 pb (3.25-3.50%)</div><div class="probbar"><div style="width:10%; background:var(--green);">10%</div></div><div class="probval">10%</div></div>
-    <div class="sub" style="margin-top:8px;"><b>Quadro conteso:</b> Jackson Hole (28 ago) ha spinto il rialzo sopra il 50%, ma <b>3 NFP deboli consecutivi</b> e inflazione in raffreddamento fanno dubitare diversi economisti (es. Citi) che si concretizzi — CPI/lavoro delle prossime settimane decideranno. <b>Verifica sempre il CME FedWatch in tempo reale</b>; quadro ricostruito da fonti multiple al 3 set 2026.</div>
+    <div class="lbl" style="margin-bottom:14px;">Esito FOMC 16 settembre 2026 — <span style="color:var(--red);">rialzo confermato, non più una probabilità</span></div>
+    <div class="probrow"><div class="plabel">Rialzo +25 pb (3.75-4.00%) — ESITO</div><div class="probbar"><div style="width:100%; background:var(--red);">100%</div></div><div class="probval">100%</div></div>
+    <div class="sub" style="margin-top:8px;"><b>Cosa è successo:</b> il FOMC ha alzato i tassi di 25pb a 3,75-4,00%, primo rialzo dal 2023, citando inflazione ancora elevata. Voto unanime 12-0. Warsh ha tenuto la conferenza stampa più breve nella storia dei chair Fed (~30 minuti), coerente con la sua filosofia di comunicazione minimale. Il dot plot aggiornato mostra 16 membri su 18 che vedono un altro rialzo entro fine 2026 (4 ne vedono due) — il prossimo meeting (27-28 ottobre) parte quindi con un bias hawkish esplicito, non da azzerare come al meeting precedente.</div>
   </div>
 
   <div class="grid grid-2">
     <div class="card">
-      <div class="lbl">Perché è sul tavolo un RIALZO (scenario +25pb)</div>
+      <div class="lbl">Perché il dot plot vede altri RIALZI entro fine anno</div>
       <div class="sub" style="font-size:12.5px;">
-        • PCE Q2 al 5.1% headline / core 3.4%, in accelerazione per il secondo trimestre<br>
-        • ISM Services prices index a 71.3, massimo da agosto 2022<br>
-        • ISM Manufacturing a 55.6, settore in forte espansione con pressioni sui prezzi<br>
-        • Diversi membri Fed hanno espresso dissenso hawkish e parlano apertamente di rialzo a settembre se l'inflazione non rallenta ulteriormente<br>
-        • Shock energetico da guerra Iran ancora in trasmissione ai prezzi finali
+        • CPI di agosto 3,4% YoY / core 2,4% — ancora sopra il target 2%, con benzina +3,9% m/m a pesare per oltre 1/3 del rialzo<br>
+        • Voto FOMC unanime 12-0 per il rialzo — nessun dissenso dovish, segnale di consenso ampio sul rischio inflazione<br>
+        • Warsh: "l'inflazione resta preoccupante nonostante un'economia impressionante" — utili S&amp;P 500 +20% annuo citati come margine per stringere ulteriormente<br>
+        • Shock energetico dalla guerra Iran/Hormuz ancora in trasmissione ai prezzi finali<br>
+        • 16 membri su 18 nel dot plot vedono almeno un altro rialzo entro dicembre
       </div>
     </div>
     <div class="card">
-      <div class="lbl">Perché resta aperta la porta a un TAGLIO / HOLD prolungato</div>
+      <div class="lbl">Perché il ciclo di rialzi potrebbe fermarsi qui</div>
       <div class="sub" style="font-size:12.5px;">
-        • NFP luglio negativo (-23K), primo dato negativo del ciclo<br>
-        • Licenziamenti temporanei a 921K, segnale anticipatore di deterioramento del lavoro<br>
-        • Crescita salariale YoY scesa al 3.2%, minimo da maggio 2021<br>
-        • PIL Q2 in forte rallentamento (1.5% vs 2.1% atteso)<br>
-        • CPI headline e core in raffreddamento per il secondo mese consecutivo
+        • Sentiment AAII crollato a un minimo da 16 mesi (bullish 28,8%, bearish 53,3%) — segnale di stress già visibile nel posizionamento retail<br>
+        • Fear &amp; Greed Index sceso a 29 ("Fear") — il mercato ha già iniziato a prezzare un contesto più restrittivo<br>
+        • Un ulteriore rialzo a ottobre rischia di essere pro-ciclico in un contesto di crescita già rallentata nel Q2<br>
+        • Il costo del capitale più alto pesa progressivamente su small cap e settori a leva più elevata<br>
+        • Una de-escalation improvvisa su Hormuz toglierebbe la componente energetica dello shock inflazionistico, riducendo l'urgenza di nuovi rialzi
       </div>
     </div>
   </div>
 
   <div class="section-note">
-    <b>Sintesi operativa — come adeguarsi:</b> siamo in un regime raro in cui il mercato prezza probabilità non trascurabili sia di rialzo che di taglio nello stesso meeting — la Fed è divisa tra il rischio inflazione (petrolio/Iran) e il rischio crescita/lavoro. Operativamente: 1) <b>ridurre la size</b> nelle 48h precedenti a CPI/PPI/NFP di settembre, dato lo spread ampio tra gli scenari; 2) il dollaro tende a reagire in modo asimmetrico — un sorpresa hawkish (rialzo o linguaggio duro) darebbe supporto forte a DXY e pressione su oro/equity, mentre conferma dovish (hold con linguaggio morbido) alimenterebbe risk-on ma con oro comunque sostenuto dal premio geopolitico; 3) i rendimenti reali restano la chiave: se il 10Y tiene sopra 4.6% con inflazione attesa in calo, il real yield sale e pesa su asset a duration lunga (growth stock, oro in assenza di shock); 4) monitorare i discorsi dei membri Fed (speech calendar) come catalizzatori intermedi tra un dato macro e l'altro.
+    <b>Sintesi operativa — come adeguarsi:</b> il FOMC ha sciolto il nodo in senso hawkish: rialzo confermato, voto unanime, dot plot che segnala altri rialzi entro fine anno. Non è più un regime di incertezza binaria come nelle settimane pre-meeting — il mercato ora deve prezzare la CONTINUAZIONE di un ciclo restrittivo, non più il suo avvio. Operativamente: 1) il dollaro ha già reagito con forza (DXY sui massimi da 7 settimane) — il rischio asimmetrico da qui è un ulteriore allungo su un dato CPI/PPI caldo di ottobre, non un'inversione immediata; 2) l'oro resta sostenuto dal doppio motore geopolitico (Hormuz) + hedge su un ciclo Fed più lungo del previsto, ma il posizionamento COT già molto affollato lo rende vulnerabile a prese di profitto su qualsiasi sorpresa dovish; 3) i rendimenti reali restano la chiave per l'equity growth: un 10Y sopra 4.6% con breakeven inflazione stabile mantiene il real yield elevato, un vento contrario per Nasdaq/duration lunga; 4) il sentiment retail (AAII) e il Fear&amp;Greed sono già scesi bruscamente — il rischio ora è tanto un ulteriore hawkish surprise quanto un eccesso di pessimismo che prepara un rimbalzo tecnico.
   </div>
 </section>
 
@@ -742,15 +955,15 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   <div class="sec-head"><span class="sec-num">07</span><h2>Barometro Hawkish / Dovish</h2><span class="sec-desc">Bilancio dei fattori in gioco</span></div>
   <div class="grid grid-2">
     <div class="card" style="border-color:var(--red);">
-      <div class="lbl" style="color:var(--red);">🦅 Spinte Hawkish (verso rialzo tassi)</div>
-      <div class="sub" style="font-size:12.5px;">Shock petrolifero da guerra Iran · PCE Q2 al 5.1% · Prezzi ISM Services ai massimi dal 2022 · Dissensi hawkish al FOMC di luglio (voto 9-3) · Retorica recente di alcuni membri Fed a favore di un rialzo a settembre</div>
+      <div class="lbl" style="color:var(--red);">🦅 Spinte Hawkish (rialzo confermato + dot plot verso altri rialzi)</div>
+      <div class="sub" style="font-size:12.5px;">Rialzo +25pb confermato il 16 set (voto 12-0) · Dot plot: 16/18 membri vedono un altro rialzo entro fine anno · CPI ago 3,4% YoY ancora sopra target · Shock petrolifero da guerra Iran/Hormuz · Warsh: inflazione "ancora preoccupante"</div>
     </div>
     <div class="card" style="border-color:var(--green);">
-      <div class="lbl" style="color:var(--green);">🕊️ Spinte Dovish (verso taglio/pausa)</div>
-      <div class="sub" style="font-size:12.5px;">NFP luglio negativo (-23K) · Licenziamenti temporanei in forte salita (921K) · Salari in rallentamento (3.2% YoY, minimo dal 2021) · PIL Q2 sotto attese (1.5%) · CPI headline/core in raffreddamento per 2 mesi consecutivi</div>
+      <div class="lbl" style="color:var(--green);">🕊️ Spinte Dovish (limiti al ciclo di rialzi)</div>
+      <div class="sub" style="font-size:12.5px;">Sentiment AAII ai minimi da 16 mesi (bearish 53,3%) · Fear&amp;Greed sceso a 29 ("Fear") · Crescita Q2 già rallentata · Costo del capitale in aumento pesa su small cap/duration lunga · Una de-escalation su Hormuz toglierebbe la componente energetica dello shock inflazionistico</div>
     </div>
   </div>
-  <div class="section-note">Il bilanciamento netto oggi è leggermente inclinato verso l'<b>hold prudente</b>, con la Fed che probabilmente attenderà i dati di agosto (NFP 5/9, CPI 11/9) prima di impegnarsi in una direzione. Attenzione ai singoli speech dei membri FOMC nelle prossime settimane: sono il canale più rapido per un repricing delle probabilità.</div>
+  <div class="section-note">Il FOMC ha risolto l'incertezza in senso <b>hawkish</b>: rialzo confermato, voto unanime, dot plot che segnala almeno un altro rialzo entro dicembre. Il mercato (AAII, Fear&amp;Greed) ha già reagito con un deterioramento marcato del sentiment. Attenzione ai dati di ottobre (CPI, PPI, NFP) come catalizzatori per il meeting del 27-28 ottobre.</div>
 
   <div class="eyebrow" style="margin-top:26px;">📋 Cosa dicono i dati usciti</div>
   <div class="page-title" style="font-size:20px;" id="hdRegimeTitle"></div>
@@ -767,24 +980,37 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </section>
 
 <section id="calendar">
-  <div class="sec-head"><span class="sec-num">08</span><h2>Calendario Economico</h2><span class="sec-desc">Vista tabellare · Ora, Attuale, Previsto, Precedente</span></div>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Calendario Economico</h2><span class="sec-desc" id="icRange"></span></div>
   <div class="ic-bar">
-    <div class="ic-tabs">
-      <div class="ic-tab active" onclick="setCalFilter('oggi', this)">Oggi</div>
-      <div class="ic-tab" onclick="setCalFilter('domani', this)">Domani</div>
-      <div class="ic-tab" onclick="setCalFilter('settimana', this)">Questa settimana</div>
-      <div class="ic-tab" onclick="setCalFilter('7gg', this)">Prossimi 7 giorni</div>
-      <div class="ic-tab" onclick="setCalFilter('mese', this)">Questo mese</div>
-      <div class="ic-datepick">
-        <input type="date" id="icDateInput" onchange="setCalFilterDate(this.value)" min="2026-08-01" max="2026-12-31">
-      </div>
+    <div class="ic-nav">
+      <div class="ic-navbtn" onclick="calStep(-1)">‹</div>
+      <div class="ic-today-btn" onclick="calGoToday()">Oggi</div>
+      <div class="ic-navbtn" onclick="calStep(1)">›</div>
     </div>
-    <div class="ic-range" id="icRange"></div>
+    <div class="ic-filters">
+      <div class="ic-tabs" id="icViewTabs">
+        <div class="ic-tab" data-mode="giorno" onclick="setCalViewMode('giorno')">Giorno</div>
+        <div class="ic-tab" data-mode="settimana" onclick="setCalViewMode('settimana')">Settimana</div>
+        <div class="ic-tab" data-mode="mese" onclick="setCalViewMode('mese')">Mese</div>
+        <div class="ic-tab" data-mode="tutti" onclick="setCalViewMode('tutti')">Tutti</div>
+      </div>
+      <div class="ic-chipgroup" id="icImpactChips">
+        <div class="ic-chip impact-alto" data-imp="alto" onclick="toggleImpactChip('alto')">High</div>
+        <div class="ic-chip impact-medio" data-imp="medio" onclick="toggleImpactChip('medio')">Medium</div>
+        <div class="ic-chip impact-basso" data-imp="basso" onclick="toggleImpactChip('basso')">Low</div>
+      </div>
+      <div class="ic-chipgroup" id="icCurrencyChips">
+        <div class="ic-chip" data-cur="USD" onclick="toggleCurrencyChip('USD')">USD</div>
+        <div class="ic-chip" data-cur="EUR" onclick="toggleCurrencyChip('EUR')">EUR</div>
+        <div class="ic-chip" data-cur="GBP" onclick="toggleCurrencyChip('GBP')">GBP</div>
+        <div class="ic-chip" data-cur="JPY" onclick="toggleCurrencyChip('JPY')">JPY</div>
+        <div class="ic-chip" data-cur="AUD" onclick="toggleCurrencyChip('AUD')">AUD</div>
+        <div class="ic-chip" data-cur="CNY" onclick="toggleCurrencyChip('CNY')">CNY</div>
+      </div>
+      <div class="ic-toggle" id="icFutureToggle" onclick="toggleSoloFuture()"><div class="ic-switch"></div>Solo future</div>
+    </div>
   </div>
   <div class="ic-table-wrap">
-    <div class="ic-header-row">
-      <div>Ora</div><div>Impatto</div><div>Evento</div><div>Attuale</div><div>Previsto</div><div>Prec.</div>
-    </div>
     <div id="icTableBody"></div>
   </div>
   <div class="section-note"><b>Impatto operativo:</b> nelle 24h precedenti agli eventi ad alto impatto (pallino rosso) ridurre leva e allargare gli stop, o restare flat sulle news di scenario binario (FOMC, NFP, CPI). Nei 15 minuti successivi alla release, evitare l'ingresso a mercato fino a conferma della direzione. Clicca su ogni riga per aprirne la descrizione completa.
@@ -822,29 +1048,59 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 
 <section id="riskonoff">
   <div class="sec-head"><span class="sec-num">10</span><h2>Risk-On / Risk-Off</h2><span class="sec-desc">Composito da VIX, yields, oro, petrolio, equity</span></div>
-  <div class="grid grid-4">
-    <div class="card"><div class="lbl">VIX</div><div class="val" id="vixVal">14.6</div><div class="sub">Volatilità storicamente bassa nonostante il conflitto attivo — segnale di <span style="color:var(--gold);">complacency</span>, non di assenza di rischio</div></div>
-    <div class="card"><div class="lbl">Equity (S&amp;P 500)</div><div class="val" style="color:var(--green);">7,799 <span class="pill green">+0.65%</span></div><div class="sub">Vicino ai massimi, resiliente allo shock energetico grazie a utili tech/AI robusti</div></div>
-    <div class="card"><div class="lbl">Oro</div><div class="val" style="color:var(--gold);">Bid strutturale</div><div class="sub">Managed money net long 130.766 contratti — domanda da hedge geopolitico + attesa Fed dovish</div></div>
-    <div class="card"><div class="lbl">Regime attuale</div><div class="val" style="color:var(--gold); font-size:17px;">RISK-ON fragile</div><div class="sub">Equity ai massimi ma con VIX basso + petrolio alto = combinazione instabile, vulnerabile a shock da headline Iran</div></div>
+  <div class="rg-row" style="grid-template-columns:220px 1fr; align-items:center;">
+    <div class="rg-card">
+      <div class="rg-title">Risk-On / Risk-Off</div>
+      <div class="rg-gauge" id="rgGaugeRisk"></div>
+      <div class="rg-value" id="rgValueRisk" style="color:var(--gold);">50</div>
+      <div class="rg-scale"><span>Risk-Off</span><span>Risk-On</span></div>
+      <div class="rg-sub" id="rgSubRisk">Barometro geo-macro AI · snapshot statico</div>
+    </div>
+    <div class="grid grid-4" style="margin-bottom:0;">
+      <div class="card"><div class="lbl">VIX</div><div class="val" id="vixVal">14.9</div><div class="sub">Ancora sotto 15 nonostante il conflitto attivo — segnale di <span style="color:var(--gold);">complacency</span> sui prezzi, mentre il sentiment (AAII, Fear&amp;Greed) è già girato</div></div>
+      <div class="card"><div class="lbl">Equity (S&amp;P 500)</div><div class="val" style="color:var(--green);">7.650 <span class="pill green">+0.17%</span></div><div class="sub">Sostanzialmente stabile dopo il rialzo Fed del 16 settembre — il prezzo non ha (ancora) seguito il crollo di sentiment</div></div>
+      <div class="card"><div class="lbl">Oro</div><div class="val" style="color:var(--gold);">Bid strutturale</div><div class="sub">Managed money net long, domanda da hedge geopolitico + copertura su un ciclo Fed più lungo del previsto</div></div>
+      <div class="card"><div class="lbl">Regime attuale</div><div class="val" style="color:var(--red); font-size:17px;">RISK-OFF emergente</div><div class="sub">Prezzo ancora vicino ai massimi ma sentiment (AAII, Fear&amp;Greed) già in caduta dopo il rialzo Fed — divergenza da monitorare</div></div>
+    </div>
   </div>
-  <div class="section-note">Il mix attuale — indici azionari vicino ai massimi, VIX sotto 15, ma petrolio in forte rialzo su rischio geopolitico attivo — è tipico di una fase di <b>risk-on con "coda grassa" nascosta</b>: il mercato sta ignorando parzialmente il rischio Hormuz. Una singola notizia di escalation può causare un repricing rapido del VIX e rotazione verso beni rifugio (oro, JPY, CHF, Treasury).</div>
+  <div class="section-note">Il mix attuale — indici azionari ancora vicino ai massimi e VIX sotto 15, ma un doppio crollo di sentiment retail (AAII bearish al 53,3%, Fear&amp;Greed a 29) subito dopo il rialzo Fed del 16 settembre — è tipico di una fase di transizione <b>da risk-on a risk-off "con ritardo sul prezzo"</b>: il posizionamento si è già mosso, l'indice no. Una singola notizia di escalation su Hormuz o un dato macro caldo di ottobre può far convergere rapidamente il prezzo verso il sentiment, con rotazione verso beni rifugio (oro, JPY, CHF, Treasury).</div>
 </section>
 
 <section id="rates">
   <div class="sec-head"><span class="sec-num">11</span><h2>Rendimenti, VIX, DXY</h2><span class="sec-desc">Live dove disponibile · snapshot per il resto</span></div>
   <div class="grid grid-4" id="ratesGrid"></div>
   <div class="section-note">
-    <b>Lettura:</b> il 10Y al 4.65-4.68% è ai massimi dalla crisi finanziaria globale per aste, riflesso di inflazione sopra target + deficit fiscale in espansione. DXY intorno a 99.6-99.9 mostra un dollaro relativamente contenuto nonostante yield elevati — segnale che il mercato sta già prezzando parzialmente un rallentamento Fed futuro. Il VIX a 14.6 è basso in assoluto: attenzione a strategie di vendita di volatilità in questo contesto, il rischio di coda (Iran, dati macro a sorpresa) è sottoprezzato.
+    <b>Lettura:</b> il 10Y al 4.65-4.68% resta ai massimi dalla crisi finanziaria globale per aste, riflesso di inflazione sopra target + deficit fiscale in espansione — ora anche del rialzo Fed del 16 settembre. Il DXY sui massimi da 7 settimane (100,2) conferma che il mercato ha prezzato con decisione il dot plot hawkish, non più un dollaro "contenuto" come nelle settimane pre-FOMC. Il VIX a 14,9 resta basso in assoluto nonostante il doppio crollo di sentiment retail (AAII, Fear&amp;Greed): attenzione a strategie di vendita di volatilità in questo contesto, il rischio di coda (Iran, un secondo rialzo a ottobre) è probabilmente sottoprezzato dal solo VIX.
   </div>
 </section>
 
 <section id="sentiment">
   <div class="sec-head"><span class="sec-num">12</span><h2>Sentiment di Mercato — News per Categoria</h2><span class="sec-desc">Fed/Tassi · Geopolitica · Macro · DXY · Fear &amp; Greed · AAII · NAAIM · Put/Call</span></div>
 
+  <div class="sn-eyebrow" style="margin-top:0;">📟 Fear &amp; Greed · Sentiment Retail</div>
+  <div class="rg-row" style="grid-template-columns:220px 1fr; align-items:center;">
+    <div class="rg-card">
+      <div class="rg-title">Fear &amp; Greed</div>
+      <div class="rg-gauge" id="rgGaugeFG"></div>
+      <div class="rg-value" id="rgValueFG" style="color:var(--red);">29</div>
+      <div class="rg-scale"><span>Paura estrema</span><span>Euforia estrema</span></div>
+      <div class="rg-sub" id="rgSubFG">CNN Fear &amp; Greed Index · rilevazione 18 set 2026</div>
+    </div>
+    <div class="rg-sub" style="text-align:left; line-height:1.5;">Il barometro Risk-On/Risk-Off geo-macro (score AI aggregato) è nella sezione <a href="javascript:void(0)" onclick="goToSection('riskonoff')" style="color:var(--accent);">10 · Risk-On / Risk-Off</a> qui sopra — non duplicato qui per evitare di mostrare due volte lo stesso numero.</div>
+  </div>
+
+  <div class="rt-card">
+    <div class="rt-title"><span>📶 Sentiment Retail per Strumento</span><span class="rt-note">Stima qualitativa curata manualmente — non un feed broker live</span></div>
+    <div id="rtGrid"></div>
+  </div>
+
+  <div class="sn-eyebrow">🎯 Sentiment news per categoria (AI)</div>
   <div class="sn-header">
     <div class="sn-title">🎯 Sentiment news per categoria</div>
-    <div class="sn-meta" id="snMeta">verifica in corso...</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="sn-meta" id="snMeta">verifica in corso...</div>
+      <button class="sn-regen" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
+    </div>
   </div>
   <div class="sn-grid" id="snGrid"></div>
   <div class="sn-risks">
@@ -852,7 +1108,7 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
     <ul id="snRisks"></ul>
   </div>
 
-  <div class="rb-label" style="margin-top:20px; margin-bottom:2px;">🔬 Validazione incrociata — News vs Dati Reali</div>
+  <div class="sn-eyebrow">🔬 Validazione incrociata — News vs Dati Reali</div>
   <div class="page-subtitle" style="margin-bottom:0;">Confronto tra la narrativa dominante nelle news e ciò che mostrano davvero posizionamento COT, open interest e quadro macro.</div>
   <div class="xv-grid" id="xvGrid"></div>
   <div class="xv-bias">
@@ -860,10 +1116,11 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
     <div class="xvb-text" id="xvBiasText"></div>
   </div>
 
-  <div class="grid grid-4" id="sentimentGrid" style="margin-top:24px;"></div>
+  <div class="sn-eyebrow">📊 Indicatori di posizionamento — Fear &amp; Greed · AAII · NAAIM · Put/Call</div>
+  <div class="grid grid-4" id="sentimentGrid"></div>
   <div class="section-note">
-    <b>Lettura d'insieme — un mercato diviso su sé stesso:</b> l'indice Fear &amp; Greed di CNN (65, "Greed") riflette il price action — indici vicino ai massimi, momentum positivo, ampiezza di mercato solida. Ma sotto la superficie i dati di posizionamento raccontano una storia diversa: il sondaggio AAII mostra investitori retail più bearish che bullish (spread negativo, -3,2 punti, sotto la media storica), gli active manager professionali del NAAIM hanno ridotto l'esposizione azionaria (79,7 dall'84,0 della settimana precedente, ben sotto la media storica di 92,6), e il Put/Call Ratio CBOE a 1,11 indica una copertura tramite opzioni put superiore alla norma. Questa <b>divergenza tra prezzo e posizionamento</b> è coerente con il quadro emerso dal COT: leveraged fund in accumulo di short su Nasdaq e Russell 2000 mentre gli indici restano vicino ai massimi. Operativamente: il mercato sta salendo con meno partecipazione convinta di quanto il solo prezzo suggerisca — un contesto in cui gli storni, se arrivano, possono essere più rapidi e ampi del normale per mancanza di "mani forti" a sostegno.
-    <div class="source-tag">Fonti: CNN Business, AAII (rilevazione 13 ago 2026), NAAIM (rilevazione 29 lug 2026), CBOE (rilevazione 4 ago 2026)</div>
+    <b>Lettura d'insieme — il sentiment ha girato bruscamente col rialzo Fed:</b> l'indice Fear &amp; Greed di CNN è crollato a 29 ("Fear") dopo il rialzo del 16 settembre, e il sondaggio AAII conferma lo stesso quadro con un ribaltamento netto — bullish sceso al 28,8% (-9,2pt) e bearish salito al 53,3% (+14,0pt), spread a -24,5 punti, il livello più basso da 16 mesi. A differenza di qualche settimana fa, qui <b>non c'è più divergenza tra i due indicatori</b>: prezzo e posizionamento retail si sono allineati verso la cautela nello stesso momento, subito dopo la sorpresa hawkish del FOMC. NAAIM e Put/Call restano invece ai valori pre-rialzo (rispettivamente 29 luglio e 1° settembre, prima che l'indice NAAIM passasse in abbonamento) — vanno letti come dati non ancora aggiornati, non come conferma o smentita del nuovo quadro. Operativamente: un doppio crollo di sentiment (Fear&amp;Greed + AAII) subito dopo un rialzo hawkish è coerente con un mercato che sta ricalibrando le attese su quanto restrittiva sarà la Fed da qui a fine anno — un contesto in cui la volatilità implicita (VIX) tende a rimanere elevata anche se il prezzo non crolla, e in cui un eccesso di pessimismo può anche preparare un rimbalzo tecnico se il prossimo dato macro sorprende al ribasso sull'inflazione.
+    <div class="source-tag">Fonti: CNN Business (18 set 2026), AAII (rilevazione settimana al 16 set 2026), NAAIM (ultimo dato pubblico 29 lug 2026), CBOE (rilevazione 1 set 2026, pre-FOMC)</div>
   </div>
 </section>
 
@@ -1035,6 +1292,63 @@ const keyEvents = [
    note:'L\'evento macro più importante del trimestre. Il dot plot con le proiezioni tassi 2026/2027 è spesso più market-moving della decisione stessa.',
    hist:'La conferenza stampa di Warsh (30 min dopo la decisione) è il momento in cui il linguaggio viene analizzato parola per parola — attesa volatilità elevata su DXY, oro, equity e Treasury nelle 2 ore successive.',
    assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq · VIX', expect:'Decisione sui tassi, dot plot, linguaggio dello statement, conferenza stampa di Warsh.'},
+
+  // ---- Agenda aggiornata dopo l'ESITO REALE del FOMC del 16 settembre: rialzo +25pb a 3,75-4,00% (voto
+  // unanime 12-0), dot plot hawkish — 16 membri su 18 vedono un altro rialzo entro fine anno, 4 ne vedono due.
+  // Il tema da qui non è più "rialzo o taglio", ma "la Fed si ferma qui o rialza ancora a ottobre".
+  {utc: Date.UTC(2026,8,23,13,45), stars:2, title:'PMI Flash S&amp;P Global — Manifatturiero e Servizi (set)', attese:'~53 / ~55 (consolidamento atteso)', precedente:'53,3 / 54,6 (PMI Flash ago)',
+   bad:'DXY SU, US 10Y SU, Gold GIÙ — espansione sopra attese rafforza le probabilità di un altro rialzo a ottobre, coerente col dot plot', good:'DXY GIÙ, US 10Y GIÙ, Gold SU — raffreddamento del settore mette in discussione un secondo rialzo già a ottobre',
+   note:'Prima lettura di settembre dopo il rialzo e il dot plot hawkish del FOMC — il mercato verifica se l\'attività reale giustifica un altro rialzo già al meeting del 27-28 ottobre.',
+   hist:'Il PMI flash S&amp;P Global anticipa di una settimana l\'ISM ufficiale; una divergenza marcata tra i due è già successa quest\'estate ed è motivo di attenzione extra.',
+   assets:'DXY · US 10Y · Gold · Nasdaq · S&amp;P 500', expect:'PMI headline, nuovi ordini, occupazione, prezzi pagati e scostamento da 50.'},
+
+  {utc: Date.UTC(2026,8,25,12,30), stars:3, title:'PCE Price Index — indice preferito dalla Fed (ago)', attese:'~2,9% YoY headline / ~2,8% core', precedente:'2,9% YoY / 2,8% core (lug)',
+   bad:'Dollaro SU, oro GIÙ, US 10Y SU — PCE core sopra attese rafforza il caso per un secondo rialzo a ottobre, in linea col dot plot', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ — un PCE più freddo del previsto complicherebbe il piano di altri rialzi segnalato dal dot plot',
+   note:'Il PCE core, non il CPI, è la metrica ufficiale del mandato Fed sul 2% — pubblicato 9 giorni dopo il rialzo del 16 settembre, è il primo vero test se il dot plot troverà conferma nei dati.',
+   hist:'Storicamente il PCE si muove in modo più contenuto del CPI, ma essendo l\'indicatore che la Fed guarda esplicitamente, la reazione di mercato su DXY e Treasury può essere sproporzionata rispetto all\'entità della sorpresa.',
+   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Headline e core MoM/YoY, spesa per consumi personali, reddito disponibile.'},
+
+  {utc: Date.UTC(2026,9,1,14,0), stars:2, title:'ISM Manufacturing PMI (set)', attese:'~54-55 (consolidamento post-rialzo)', precedente:'54,8 (ago)',
+   bad:'DXY SU, US 10Y SU, Gold GIÙ, materie prime SU — manifatturiero resiliente rafforza il caso per il secondo rialzo segnalato dal dot plot', good:'DXY GIÙ, Gold SU, US 10Y GIÙ — raffreddamento del settore mette in dubbio un altro rialzo già a ottobre',
+   note:'Primo dato ISM del trimestre dopo il rialzo Fed — la componente prezzi pagati resta la più osservata per intercettare la trasmissione dello shock energetico da Iran/Hormuz.',
+   hist:'L\'indice prezzi pagati era salito ai massimi da inizio ciclo in estate — una nuova accelerazione qui rafforzerebbe la narrativa "altro rialzo a ottobre" del dot plot.',
+   assets:'DXY · US 10Y · Gold · Nasdaq · materie prime', expect:'Indice headline, nuovi ordini, prezzi pagati, occupazione e scostamento da 50.'},
+
+  {utc: Date.UTC(2026,9,2,12,30), stars:3, title:'Non-Farm Payrolls (set) + tasso di disoccupazione', attese:'consensus non ancora consolidato', precedente:'da confermare (ago)',
+   bad:'Oro GIÙ, dollaro SU, US 10Y SU, S&amp;P/Nasdaq deboli — un mercato del lavoro solido darebbe alla Fed via libera per il secondo rialzo del dot plot', good:'Oro SU, dollaro GIÙ, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti — un dato debole complicherebbe il piano di altri rialzi, nonostante il tono hawkish del 16 settembre',
+   note:'Il mercato del lavoro è il principale limite al piano di ulteriori rialzi: dopo il crollo del sentiment AAII ai minimi da 16 mesi, un dato debole qui rimetterebbe in discussione il dot plot.',
+   hist:'Storico Non-Farm Payrolls: giornata ad alta volatilità su DXY, oro e Treasury nelle prime due ore dalla pubblicazione, in particolare sulle revisioni dei mesi precedenti.',
+   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq', expect:'Variazione payroll, tasso disoccupazione, salari orari, revisioni mesi precedenti e licenziamenti temporanei.'},
+
+  {utc: Date.UTC(2026,9,6,14,0), stars:2, title:'ISM Services PMI (set)', attese:'~54 (in linea)', precedente:'54,1 (ago)',
+   bad:'DXY SU, Gold GIÙ, S&amp;P 500 debole — settore servizi (~90% dell\'economia USA) resiliente rafforza il caso per un secondo rialzo, in particolare se i prezzi pagati restano elevati', good:'DXY GIÙ, Gold SU, US 10Y GIÙ, S&amp;P 500 sostenuto — raffreddamento dei servizi metterebbe in dubbio il secondo rialzo del dot plot',
+   note:'Focus sulla componente prezzi — un\'ulteriore accelerazione qui è il segnale più diretto di trasmissione dello shock energetico ai servizi, a supporto del dot plot hawkish.',
+   hist:'Pubblicato a ridosso del CPI di metà mese — insieme ai due dati compongono il quadro inflazione più completo prima della riunione Fed del 27-28 ottobre.',
+   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Indice headline, prezzi pagati (componente chiave), nuovi ordini e occupazione.'},
+
+  {utc: Date.UTC(2026,9,9,12,30), stars:3, title:'CPI — Consumer Price Index (set)', attese:'atteso un ulteriore mese sopra il 3% YoY', precedente:'3,4% YoY / 2,4% core YoY (ago) — benzina +3,9% m/m ha pesato per oltre 1/3 del rialzo headline',
+   bad:'Oro GIÙ, dollaro SU, US 10Y SU, S&amp;P/Nasdaq deboli — CPI sopra attese conferma il dot plot e rende quasi certo il secondo rialzo a ottobre', good:'Oro SU, dollaro GIÙ, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti — CPI sotto attese rimetterebbe in discussione il piano di altri rialzi',
+   note:'Il dato macro singolarmente più importante del mese — ultima stampa CPI piena prima del FOMC del 27-28 ottobre, decisiva per confermare o smentire il dot plot hawkish del 16 settembre.',
+   hist:'Dopo il rialzo e il dot plot hawkish di settembre, il mercato ha alzato la soglia di sorpresa richiesta per escludere un secondo rialzo — un CPI "solo in linea" difficilmente basterà a rimuoverlo dai prezzi.',
+   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq', expect:'Headline MoM/YoY, core MoM/YoY, componente energia e shelter.'},
+
+  {utc: Date.UTC(2026,9,15,12,30), stars:2, title:'PPI — Producer Price Index (set)', attese:'lieve accelerazione possibile su energia', precedente:'0,1% MoM / 4,6% YoY (ago)',
+   bad:'Dollaro SU, oro GIÙ, US 10Y SU — pressioni a monte più forti del previsto, coerenti con il premio energetico da Hormuz che si trasmette lungo la filiera e rafforza il caso per ottobre', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ — dato più freddo del previsto allenterebbe la pressione verso un secondo rialzo',
+   note:'Spesso anticipatore del CPI del mese successivo — un dato sopra attese qui aumenterebbe il timore di trasmissione dei costi energetici ai prezzi finali, a supporto del dot plot.',
+   hist:'Pubblicato lo stesso giorno delle richieste sussidio settimanali — giornata a doppio catalizzatore, tipicamente ad alta volatilità intraday su DXY e Treasury.',
+   assets:'DXY · US 10Y · Gold', expect:'Variazione MoM/YoY headline, componente servizi vs beni, PPI core.'},
+
+  {utc: Date.UTC(2026,9,16,12,30), stars:2, title:'Retail Sales (set)', attese:'—', precedente:'0,2% MoM (ago)',
+   bad:'Dollaro SU, US 10Y SU, Gold GIÙ, S&amp;P 500 debole — consumi resilienti danno alla Fed più margine per il secondo rialzo del dot plot', good:'Dollaro GIÙ, US 10Y GIÙ, Gold SU, S&amp;P 500 sostenuto — debolezza dei consumi, in linea col crollo del sentiment AAII, rimetterebbe in discussione altri rialzi',
+   note:'Ultimo grande dato sui consumi prima della riunione Fed di fine mese — il mercato lo userà per calibrare le attese sul linguaggio del prossimo statement, alla luce del crollo di sentiment già visto su AAII e Fear&amp;Greed.',
+   hist:'Le vendite al dettaglio sono state relativamente stabili nel trimestre estivo nonostante lo shock sui prezzi energetici — un\'inversione qui sarebbe un segnale nuovo.',
+   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Variazione MoM headline, dato ex-auto, revisioni del mese precedente.'},
+
+  {utc: Date.UTC(2026,9,28,18,0), stars:3, title:'FOMC — Decisione tassi + Dot Plot + conferenza stampa Warsh', attese:'secondo rialzo +25pb ampiamente prezzato dal dot plot di settembre (16/18 membri lo vedono)', precedente:'3,75%-4,00% (rialzo confermato 16 set, voto 12-0)',
+   bad:'Dollaro SU, oro GIÙ, US 10Y SU, S&amp;P/Nasdaq deboli, VIX SU — conferma del secondo rialzo o linguaggio ancora più restrittivo del dot plot di settembre', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti, VIX GIÙ — pausa a sorpresa nonostante il dot plot, complice il deterioramento del sentiment (AAII, Fear&amp;Greed)',
+   note:'Secondo meeting dopo il dot plot hawkish di settembre — il mercato verifica se la Fed procede col secondo rialzo segnalato o se il brusco calo di sentiment (AAII ai minimi da 16 mesi) la induce a una pausa.',
+   hist:'La conferenza stampa di Warsh (record di brevità al meeting di settembre, ~30 minuti) resta il momento in cui il linguaggio viene analizzato parola per parola — attesa volatilità elevata su DXY, oro, equity e Treasury nelle 2 ore successive.',
+   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq · VIX', expect:'Decisione sui tassi, eventuale aggiornamento del dot plot, linguaggio dello statement, conferenza stampa di Warsh.'},
 ];
 
 let currentKeyEvent = null;
@@ -1087,7 +1401,9 @@ function renderKeyEvent(ev){
       <div class="ec-infobox"><div class="ec-infobox-lbl">Asset da monitorare</div><div class="ec-infobox-text">${ev.assets}</div></div>
       <div class="ec-infobox"><div class="ec-infobox-lbl">Cosa aspettarsi all'uscita</div><div class="ec-infobox-text">${ev.expect}</div></div>
     </div>` : ''}
+    <div id="ecAiDossier"></div>
   </div>`;
+  loadEventDossier(ev);
 }
 
 function refreshKeyEvent(force){
@@ -1148,7 +1464,7 @@ renderWeekCalendar();
 // Queste sezioni contengono testo scritto/analizzato manualmente, non dati da API — non possono
 // "aggiornarsi da sole". Invece di lasciare una data fissa che invecchia in silenzio, calcoliamo
 // e mostriamo sempre onestamente quanti giorni sono passati dall'ultima verifica reale.
-const CONTENT_SNAPSHOT_DATE = new Date(Date.UTC(2026,8,3)); // 3 settembre 2026 — data dell'ultima ricerca/analisi
+const CONTENT_SNAPSHOT_DATE = new Date(Date.UTC(2026,8,19)); // 19 settembre 2026 — data dell'ultima ricerca/analisi (rialzo Fed, sentiment, prezzi verificati via web search)
 function daysSinceSnapshot(){
   const now = new Date();
   const diff = Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()) - CONTENT_SNAPSHOT_DATE.getTime())/86400000);
@@ -1169,16 +1485,16 @@ setInterval(renderWeekCalendar, 60000); // ricalcola ogni minuto, così la fines
 
 // ---------- TICKER TAPE (static snapshot values, refreshed live for FX where possible) ----------
 const tickerData = [
-  {n:'DXY', v:'99.62', d:'-0.23%', up:false},
-  {n:'US10Y', v:'4.65%', d:'-0.02', up:false},
-  {n:'VIX', v:'14.63', d:'+0.55%', up:true},
+  {n:'DXY', v:'100.21', d:'max 7 sett.', up:true},
+  {n:'US10Y', v:'4.65%', d:'+0.01', up:true},
+  {n:'VIX', v:'14.88', d:'-3.63%', up:false},
   {n:'WTI', v:'$81.27', d:'+0.02%', up:true},
   {n:'BRENT', v:'$88.38', d:'+1.51%', up:true},
   {n:'GOLD COT NET', v:'+130.8K', d:'managed money', up:true},
-  {n:'S&P500', v:'7,799', d:'+0.65%', up:true},
-  {n:'NASDAQ', v:'26,803', d:'+0.81%', up:true},
-  {n:'FED FUNDS', v:'3.50-3.75%', d:'hold', up:null},
-  {n:'CPI YoY', v:'3.4%', d:'core 2.5%', up:false},
+  {n:'S&P500', v:'7,650', d:'+0.17%', up:true},
+  {n:'NASDAQ 100', v:'29,530', d:'+0.39%', up:true},
+  {n:'FED FUNDS', v:'3.75-4.00%', d:'rialzo 16 set', up:true},
+  {n:'CPI YoY', v:'3.4%', d:'core 2.4%', up:false},
 ];
 function renderTicker(){
   const el = document.getElementById('tickerTape');
@@ -1188,13 +1504,13 @@ function renderTicker(){
 renderTicker();
 
 // ---------- PRIORITY / NEWS CARD (stile screenshot) ----------
-document.getElementById('newsHeadline').textContent = 'Bias costruttivo ma diviso: petrolio ed equity salgono insieme, ma la conferma finale è nelle mani della Fed e dello Stretto di Hormuz.';
+document.getElementById('newsHeadline').textContent = 'Rialzo Fed confermato il 16 settembre: sentiment retail crollato (AAII, Fear&Greed), ma prezzo ed equity non hanno ancora seguito — divergenza da monitorare verso il CPI del 9 ottobre.';
 
 const miniCards = [
-  {title:'Geopolitica', dot:'red', desc:'Stallo nei negoziati Iran-Oman sullo Stretto di Hormuz. Blocco navale USA su porti iraniani, nuove misure economiche annunciate da Bessent. Driver n.1 su oil/oro/DXY oggi.', tag:'ALTO RISCHIO', tagColor:'var(--red)'},
-  {title:'Fed e tassi', dot:'red', desc:'FedWatch ribaltato dopo Jackson Hole: ~52% rialzo +25pb (da 35% pre-discorso), 38% hold, 10% taglio per il 16 set. Warsh ha detto che i trend di fondo sull\'inflazione non sono migliorati in modo significativo.', tag:'HAWKISH · RISCHIO RIALZO', tagColor:'var(--red)'},
-  {title:'Macro', dot:'gold', desc:'PPI di luglio confermato invariato (YoY 4.7%). Prossimo dato ad alto impatto: CPI agosto l\'11 settembre.', tag:'ATTESE VS DATO EFFETTIVO', tagColor:'var(--dim2)'},
-  {title:'Volatilità', dot:'green', desc:'VIX a 14,6 — storicamente basso nonostante il conflitto attivo. Possibile sottovalutazione del rischio di coda.', tag:'COMPLACENCY WATCH', tagColor:'var(--green)'},
+  {title:'Geopolitica', dot:'red', desc:'Guerra dei tanker in corso: la tregua USA-Iran è collassata l\'8 luglio, Stretto di Hormuz ancora chiuso con traffico minimo. Blocco navale USA sui porti iraniani in continuazione. Driver n.1 su oil/oro/DXY.', tag:'ALTO RISCHIO', tagColor:'var(--red)'},
+  {title:'Fed e tassi', dot:'red', desc:'FOMC 16 set: rialzo +25pb confermato (voto 12-0) a 3,75-4,00%, primo rialzo dal 2023. Dot plot: 16 membri su 18 vedono un altro rialzo entro fine anno. Warsh: "l\'inflazione resta preoccupante".', tag:'HAWKISH · CONFERMATO', tagColor:'var(--red)'},
+  {title:'Macro', dot:'gold', desc:'CPI di agosto confermato al 3,4% YoY (core 2,4%), benzina +3,9% m/m. Prossimo dato ad alto impatto: CPI di settembre il 9 ottobre.', tag:'ATTESE VS DATO EFFETTIVO', tagColor:'var(--dim2)'},
+  {title:'Sentiment', dot:'red', desc:'AAII bearish al 53,3% (minimo da 16 mesi) e Fear&amp;Greed a 29 ("Fear") dopo il rialzo Fed — il prezzo (VIX 14,9) non ha ancora seguito il deterioramento.', tag:'DIVERGENZA PREZZO/SENTIMENT', tagColor:'var(--gold)'},
 ];
 document.getElementById('miniGrid').innerHTML = miniCards.map(m=>`
   <div class="mini-card">
@@ -1256,12 +1572,16 @@ function genSeries(up){
   return up===null? base : trend;
 }
 
+// NOTA: i campi "corr"/"corrLbl" qui sotto sono lo snapshot statico di fallback (come val/chg/vol) —
+// se la funzione dxy-correlation.js è deployata, applyLiveCorrToMonitor() li sovrascrive con la
+// correlazione di Pearson REALE a 30 giorni calcolata su serie storiche (Twelve Data/FMP), invece
+// di questa stima scritta a mano.
 const marketData = [
-  {cat:'DXY', name:'DXY', ticker:'US Dollar Index', val:'99,54', chg:-0.32, vol:'4,9%', volLvl:'Bassa', corr:'—', corrLbl:'Riferimento',
-   driver:'Il DXY ha ricevuto un impulso netto dal discorso hawkish di Warsh a Jackson Hole (28 ago): il FedWatch è passato da 35% a <b>~52% di probabilità di rialzo</b> a settembre, spingendo il 2Y Treasury da 4,22% a 4,30%. Anche la <b>BCE è ora attesa in rialzo di 25pb a settembre</b>, il che limita parzialmente il vantaggio relativo del dollaro sull\'euro. Il flusso di beni rifugio legato allo Stretto di Hormuz offre un supporto parziale ma non decisivo.',
+  {cat:'DXY', name:'DXY', ticker:'US Dollar Index', val:'100,21', chg:0.15, vol:'4,9%', volLvl:'Bassa', corr:'—', corrLbl:'Riferimento',
+   driver:'Il DXY tratta sui massimi da 7 settimane dopo il rialzo Fed del 16 settembre (+25pb a 3,75-4,00%, voto unanime 12-0) e il dot plot che segnala <b>altri rialzi entro fine anno</b> (16 membri su 18). Il dollaro si è rafforzato dell\'1,4% nell\'ultimo mese e del 2,6% su base annua. Il crollo del sentiment retail (AAII, Fear&amp;Greed) rafforza ulteriormente la domanda di dollaro come bene rifugio, insieme al flusso legato allo Stretto di Hormuz.',
    bars:[
-     {lbl:'Probabilità rialzo Fed (FedWatch)', pct:35, color:'var(--gold)', note:'35% di probabilità di +25pb a settembre — rischio hawkish che sostiene il dollaro.'},
-     {lbl:'Rischio hawkish BCE simmetrico', pct:70, color:'var(--red)', note:'Anche la BCE attesa in rialzo di 25pb a settembre — limita il vantaggio relativo del dollaro sull\'euro.'},
+     {lbl:'Dot plot Fed post-16set', pct:89, color:'var(--red)', note:'16 membri su 18 vedono un altro rialzo entro dicembre (4 ne vedono due) — bias hawkish esplicito, non più una probabilità di mercato.'},
+     {lbl:'Domanda di rifugio (sentiment in caduta)', pct:75, color:'var(--red)', note:'AAII ai minimi da 16 mesi e Fear&amp;Greed a 29 ("Fear") — il deterioramento del sentiment alimenta ulteriore domanda di dollaro.'},
    ]},
 
   {cat:'FOREX', name:'EUR/USD', ticker:'Cambio spot', val:'1,1575', chg:0.15, vol:'6,3%', volLvl:'Bassa', corr:'-0,91', corrLbl:'Molto forte',
@@ -1276,12 +1596,6 @@ const marketData = [
      {lbl:'Posizionamento Non-Commercial (COT)', pct:35, color:'var(--red)', note:'Net short -57.814 contratti — tra le posizioni ribassiste nette più marcate del gruppo valute.'},
      {lbl:'Sorpresa dati lavoro UK (18 ago)', pct:50, color:'var(--gold)', note:'Claimant count, disoccupazione e salari pubblicati in blocco — alto potenziale di sorpresa su cable.'},
    ]},
-  {cat:'FOREX', name:'AUD/USD', ticker:'Cambio spot', val:'0,7075', chg:0.23, vol:'8,9%', volLvl:'Bassa', corr:'-0,80', corrLbl:'Forte',
-   driver:'Valuta-proxy per il sentiment di risk-on/risk-off globale e per la domanda di materie prime industriali. Beneficia oggi del clima costruttivo su equity e petrolio, ma resta vulnerabile a qualsiasi headline di escalation sullo Stretto di Hormuz, che innescherebbe rapidamente un flight-to-safety a scapito delle valute cicliche.',
-   bars:[
-     {lbl:'Risk sentiment globale (VIX 14,25)', pct:72, color:'var(--green)', note:'VIX basso e risk-on sostengono le valute cicliche come l\'AUD nel breve termine.'},
-     {lbl:'Vulnerabilità a shock Hormuz', pct:65, color:'var(--red)', note:'Una escalation improvvisa innescherebbe rapidamente un flight-to-safety a scapito dell\'AUD.'},
-   ]},
 
   {cat:'ENERGIA', name:'WTI Crude Oil', ticker:'NYMEX CL', val:'81,27', chg:0.02, vol:'22%', volLvl:'Alta', corr:'-0,15', corrLbl:'Debole',
    driver:'Prezzo sostenuto dal rischio concreto sullo Stretto di Hormuz e dal blocco navale USA-Iran, ma la domanda globale è in indebolimento secondo IEA e OPEC (4ª revisione al ribasso consecutiva). Il posizionamento Managed Money (COT) è in calo per la terza settimana consecutiva, segno di convinzione speculativa limitata nel sostenere il rally ai prezzi attuali.',
@@ -1290,7 +1604,7 @@ const marketData = [
      {lbl:'Rischio geopolitico (Stretto di Hormuz)', pct:75, color:'var(--red)', note:'Blocco navale USA-Iran e colloqui Iran-Oman ancora aperti — principale motore del prezzo, non i fondamentali di domanda/offerta.'},
    ]},
 
-  {cat:'METALLI', name:'Gold Futures', ticker:'COMEX GC', val:'4.432,00', chg:0.60, vol:'11,3%', volLvl:'Alta', corr:'-0,81', corrLbl:'Forte',
+  {cat:'METALLI', name:'Gold Futures', ticker:'COMEX GC', val:'4.415,70', chg:0.36, vol:'11,3%', volLvl:'Alta', corr:'-0,81', corrLbl:'Forte',
    driver:'Oro sostenuto da tre motori simultanei: acquisti dei istituzionali di banche centrali (Cina +20 tonnellate a luglio, 21° mese consecutivo; 289 tonnellate globali nel Q2), domanda di hedge geopolitico da Iran/Hormuz, e attesa di un ciclo Fed meno restrittivo. Il posizionamento COT Managed Money è però al <b>100° percentile sui 6 mesi</b> — molto affollato, rischio di storni tecnici su una de-escalation improvvisa.',
    bars:[
      {lbl:'Rendimenti reali 10Y', pct:58, color:'var(--red)', note:'10Y nominale vicino a 4,65-4,7% — un real yield elevato è storicamente un vento contrario per l\'oro.'},
@@ -1303,19 +1617,19 @@ const marketData = [
      {lbl:'Domanda industriale (solare/elettronica)', pct:66, color:'var(--green)', note:'Componente strutturale di domanda che amplifica la volatilità rispetto al solo oro da investimento.'},
    ]},
 
-  {cat:'INDICI', name:'Nasdaq 100', ticker:'Futures NQ', val:'38.846,34', chg:-0.61, vol:'12,7%', volLvl:'Alta', corr:'-0,38', corrLbl:'Debole',
+  {cat:'INDICI', name:'Nasdaq 100', ticker:'Futures NQ', val:'29.530,00', chg:0.39, vol:'12,7%', volLvl:'Alta', corr:'-0,38', corrLbl:'Debole',
    driver:'Il segnale più ribassista nel posizionamento COT tra tutti gli asset monitorati: i leveraged fund sono ai minimi storici di percentile (4° su 6 mesi, 2° su 1 anno) con flusso settimanale, trend mensile ed espansione dell\'open interest tutti nella stessa direzione ribassista. Resta comunque il comparto con gli utili tech/AI più solidi — la tensione tra fondamentali forti e posizionamento debole è il tema chiave da monitorare.',
    bars:[
      {lbl:'Posizionamento Leveraged Fund (COT)', pct:4, color:'var(--red)', note:'4° percentile sui 6 mesi — il posizionamento più ribassista tra tutti gli asset monitorati.'},
      {lbl:'Forza utili tech/AI', pct:80, color:'var(--green)', note:'Fondamentali ancora solidi — la tensione con il posizionamento debole è il tema chiave da monitorare.'},
    ]},
-  {cat:'INDICI', name:'S&P 500', ticker:'Futures ES', val:'7.785,76', chg:-0.17, vol:'13,3%', volLvl:'Moderata', corr:'-0,41', corrLbl:'Debole',
-   driver:'Indice più ampio, meno esposto alla componente growth pura del Nasdaq. Nel Legacy COT i Non-Commercial sono passati a net short nella settimana; i Commercial hanno preso l\'altro lato del trade aumentando l\'esposizione. Sentiment retail (AAII) e gestori attivi (NAAIM) più cauti del price action suggerirebbe — divergenza da monitorare in vista del CPI dell\'11 settembre.',
+  {cat:'INDICI', name:'S&P 500', ticker:'Futures ES', val:'7.650,50', chg:0.17, vol:'13,3%', volLvl:'Moderata', corr:'-0,41', corrLbl:'Debole',
+   driver:'Indice più ampio, meno esposto alla componente growth pura del Nasdaq. Nel Legacy COT i Non-Commercial sono passati a net short nella settimana; i Commercial hanno preso l\'altro lato del trade aumentando l\'esposizione. Il sentiment retail (AAII) è crollato al 53,3% bearish dopo il rialzo Fed del 16 settembre, molto più cauto del price action — divergenza da monitorare verso il CPI del 9 ottobre.',
    bars:[
      {lbl:'Posizionamento Non-Commercial (COT)', pct:27, color:'var(--gold)', note:'Passati a net short nella settimana (-10.062 ctr) — deterioramento non ancora estremo storicamente.'},
-     {lbl:'Divergenza sentiment (AAII/NAAIM)', pct:60, color:'var(--red)', note:'Retail e gestori attivi più cauti del price action — divergenza da monitorare verso il CPI dell\'11 set.'},
+     {lbl:'Divergenza sentiment (AAII 53,3% bearish)', pct:75, color:'var(--red)', note:'Il retail è molto più cauto del price action dopo il rialzo Fed — divergenza da monitorare verso il CPI del 9 ott.'},
    ]},
-  {cat:'INDICI', name:'Dow Jones', ticker:'Futures YM', val:'53.732,41', chg:-0.20, vol:'10,1%', volLvl:'Moderata', corr:'-0,41', corrLbl:'Debole',
+  {cat:'INDICI', name:'Dow Jones', ticker:'Futures YM', val:'51.682,64', chg:-0.18, vol:'10,1%', volLvl:'Moderata', corr:'-0,41', corrLbl:'Debole',
    driver:'Meno esposto alla componente tech, beneficia parzialmente del rialzo dei prezzi energetici sulle componenti oil&gas dell\'indice. Il posizionamento COT è il più equilibrato tra gli indici monitorati — asset manager storicamente elevati (92° percentile) ma senza il deterioramento marcato visto su Nasdaq e Russell 2000.',
    bars:[
      {lbl:'Posizionamento Asset Manager (TFF)', pct:92, color:'var(--gold)', note:'92° percentile sui 6 mesi — storicamente elevato, senza il deterioramento visto su Nasdaq e Russell.'},
@@ -1323,14 +1637,14 @@ const marketData = [
    ]},
 
   {cat:'RATES', name:'US 10Y Yield', ticker:'Treasury', val:'4,696', chg:0.14, vol:'11,3%', volLvl:'Moderata', corr:'+0,44', corrLbl:'Moderata',
-   driver:'Vicino ai massimi dai livelli post-crisi finanziaria globale in asta. Guidato dall\'inflazione ancora sopra target (CPI 3,4%), dal deficit fiscale in espansione e dalla domanda alle aste del Tesoro (asta settimanale 3M/6M ogni lunedì). Prossimo catalizzatore diretto: le minute FOMC del 19 agosto.',
+   driver:'Vicino ai massimi dai livelli post-crisi finanziaria globale in asta, ora anche col rialzo Fed del 16 settembre a 3,75-4,00%. Guidato dall\'inflazione ancora sopra target (CPI 3,4%), dal deficit fiscale in espansione e dalla domanda alle aste del Tesoro (asta settimanale 3M/6M ogni lunedì). Prossimo catalizzatore diretto: il PCE del 25 settembre e il CPI del 9 ottobre.',
    bars:[
      {lbl:'Inflazione attesa (CPI 3,4% YoY)', pct:68, color:'var(--red)', note:'CPI ancora sopra target Fed del 2% — mantiene la pressione al rialzo sui rendimenti.'},
      {lbl:'Domanda alle aste del Tesoro', pct:45, color:'var(--gold)', note:'Asta settimanale 3M/6M ogni lunedì — deficit fiscale in espansione osservato con attenzione.'},
    ]},
 
-  {cat:'VOLATILITY', name:'VIX', ticker:'CBOE', val:'14,25', chg:-1.65, vol:'100,8%', volLvl:'Elevata', corr:'+0,27', corrLbl:'Debole',
-   driver:'Il dato più anomalo della giornata: VIX storicamente basso nonostante un conflitto geopolitico attivo. Ma il COT rivela un segnale nascosto — i leveraged fund sono passati da forte net short a <b>net long al 100° percentile</b> in una sola settimana (+16.062 contratti, il cambiamento più marcato dell\'intero report), segno che i grandi fund iniziano a comprare protezione mentre il mercato retail resta compiacente.',
+  {cat:'VOLATILITY', name:'VIX', ticker:'CBOE', val:'14,88', chg:-3.63, vol:'100,8%', volLvl:'Elevata', corr:'+0,27', corrLbl:'Debole',
+   driver:'Il dato più anomalo della giornata: VIX ancora sotto 15 nonostante il rialzo Fed hawkish del 16 settembre e il crollo di sentiment retail (AAII, Fear&amp;Greed). Ma il COT rivela un segnale nascosto — i leveraged fund sono passati da forte net short a <b>net long al 100° percentile</b> in una sola settimana (+16.062 contratti, il cambiamento più marcato dell\'intero report), segno che i grandi fund iniziano a comprare protezione mentre il prezzo non ha ancora seguito il deterioramento del sentiment.',
    bars:[
      {lbl:'Posizionamento Leveraged Fund (COT)', pct:100, color:'var(--gold)', note:'Passati da net short a net long al 100° percentile in una settimana — il cambiamento più marcato del report.'},
      {lbl:'Complacency gap (VIX vs rischio Iran)', pct:78, color:'var(--red)', note:'VIX storicamente basso nonostante un conflitto geopolitico attivo — possibile sottovalutazione del rischio di coda.'},
@@ -1365,7 +1679,10 @@ function renderMarketMonitor(){
         </div>
         <div class="mkt-expand">Apri dettagli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
         <div class="mkt-detail"><div class="mkt-detail-inner">
-          <div class="mdi-label">Da cosa si muove e il perché</div>
+          <div class="mdi-label" style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span>Da cosa si muove e il perché</span>
+            <span style="font-size:10px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--dim2);">${m.aiUpdatedAt ? `🤖 aggiornato alle ${m.aiUpdatedAt}` : 'snapshot statico'}</span>
+          </div>
           ${m.driver}
           ${(m.bars||[]).map(b=>`
           <div class="ec-bar-row" style="margin-top:14px;">
@@ -1540,13 +1857,14 @@ const hdConflicts = [
 ];
 document.getElementById('hdConflicts').innerHTML = hdConflicts.map(c=>`<div class="hd-conflict">⚠ ${c}</div>`).join('');
 
-document.getElementById('hdFomcHeadline').innerHTML = 'Prossimo FOMC (16 settembre): <b>~52% rialzo +25pb</b>, 38% tassi fermi, 10% taglio — ribaltamento netto dopo il discorso hawkish di Warsh a Jackson Hole (28 ago), quando le probabilità di rialzo sono passate da 35% a oltre il 50%.';
+document.getElementById('hdFomcHeadline').innerHTML = 'FOMC del 16 settembre: <b>rialzo di 25pb confermato</b> a 3,75-4,00%, voto unanime 12-0 — non è più una previsione. Il dot plot aggiornato segnala che 16 membri su 18 vedono almeno un altro rialzo entro fine 2026.';
 document.getElementById('hdFomcRows').innerHTML = `
-  <div class="hd-fomc-row"><span>FOMC del 16 settembre (pre Jackson Hole, 14 ago)</span><b>50% hold / 35% rialzo / 15% taglio</b></div>
-  <div class="hd-fomc-row"><span>FOMC del 16 settembre (post Jackson Hole, 28 ago)</span><b style="color:var(--red);">~52% rialzo / 38% hold / 10% taglio</b></div>
+  <div class="hd-fomc-row"><span>FOMC del 16 settembre — ESITO</span><b style="color:var(--red);">Rialzo +25pb confermato (voto 12-0) → 3,75-4,00%</b></div>
+  <div class="hd-fomc-row"><span>Dot plot post-16set (prossimi meeting entro dicembre)</span><b style="color:var(--red);">16/18 membri vedono un altro rialzo, 4 ne vedono due</b></div>
+  <div class="hd-fomc-row"><span>Prossimo FOMC — 27-28 ottobre 2026</span><b>Bias esplicitamente hawkish da dot plot, probabilità puntuali non ancora liquide</b></div>
 `;
-document.getElementById('hdFomcNote').textContent = 'Le probabilità per i meeting successivi (28 ottobre, 9 dicembre) non sono ancora sufficientemente liquide/pubblicate a questa distanza temporale — questa sezione verrà aggiornata quando i dati diventeranno disponibili, invece di stimarli senza fonte verificata.';
-document.getElementById('hdSynthesis').innerHTML = 'I dati recenti spingono nel complesso verso un taglio, ma la Fed resta divisa (dissensi hawkish di luglio) e il mercato non esclude affatto un rialzo. Se il raffreddamento di inflazione e lavoro prosegue, il potenziale di repricing a favore dell\'oro è ampio; se prevale la lettura hawkish (ISM, Europa, dissensi Fed), i prossimi dati chiave — <b>CPI dell\'11 settembre</b> e <b>minute FOMC del 19 agosto</b> — usciranno probabilmente più caldi di questi.';
+document.getElementById('hdFomcNote').textContent = 'Le probabilità puntuali per il meeting del 27-28 ottobre non sono ancora sufficientemente liquide/pubblicate a questa distanza temporale — questa sezione verrà aggiornata quando i dati diventeranno disponibili, invece di stimarli senza fonte verificata. Il dot plot resta però un indicatore direzionale esplicito e verificato.';
+document.getElementById('hdSynthesis').innerHTML = 'Il FOMC ha risolto l\'incertezza in senso hawkish: rialzo confermato, voto unanime, dot plot che segnala altri rialzi entro fine anno. Il mercato ha già reagito con un deterioramento marcato del sentiment (AAII ai minimi da 16 mesi, Fear&amp;Greed sceso a "Fear") mentre il dollaro tratta sui massimi da 7 settimane. Il rischio da qui non è più "hike o hold", ma quanto lontano si spinga il ciclo — i prossimi dati chiave (<b>CPI e PPI di ottobre</b>, <b>NFP di inizio ottobre</b>) diranno se il dot plot troverà conferma o se il deterioramento del sentiment anticipa già un rallentamento reale che fermerebbe la Fed prima.';
 
 // ---------- NOTIZIE MACRO-GEOPOLITICHE + BIAS DI CONFLITTO ----------
 const geoNewsData = [
@@ -1584,11 +1902,65 @@ document.getElementById('jobsGrid').innerHTML = jobsData.map(m=>`
 
 // ---------- RATES GRID ----------
 document.getElementById('ratesGrid').innerHTML = `
-  <div class="card"><div class="lbl">US 10Y Treasury</div><div class="val">4.65%</div><div class="sub">Max dai livelli post-crisi 2008 in asta (4.683%)</div></div>
-  <div class="card"><div class="lbl">DXY</div><div class="val">99.62</div><div class="sub">-0.23% — dollaro contenuto nonostante yield alti</div></div>
-  <div class="card"><div class="lbl">VIX</div><div class="val" style="color:var(--gold);">14.63</div><div class="sub">Volatilità bassa, possibile complacency</div></div>
-  <div class="card"><div class="lbl">Spread 10Y-2Y</div><div class="val">—</div><div class="sub">Monitorare per segnali recessivi / curva</div></div>
+  <div class="card"><div class="lbl">US 10Y Treasury</div><div class="val">4.65%</div><div class="sub">Vicino ai massimi post-crisi 2008 in asta, ora anche col rialzo Fed del 16 set</div></div>
+  <div class="card"><div class="lbl">DXY</div><div class="val">100.21</div><div class="sub">Massimi da 7 settimane — dollaro sostenuto dal dot plot hawkish</div></div>
+  <div class="card"><div class="lbl">VIX</div><div class="val" style="color:var(--gold);">14.88</div><div class="sub">Volatilità ancora bassa nonostante il crollo di sentiment retail</div></div>
+  <div class="card"><div class="lbl">Spread 10Y-2Y</div><div class="val" id="rateSpreadVal">—</div><div class="sub">Monitorare per segnali recessivi / curva</div></div>
 `;
+
+// ---------- COSA PREZZA IL MERCATO ----------
+// Valori di fallback statici coerenti con le altre card (Rendimenti/VIX/DXY qui sopra, Mercati) —
+// sovrascritti da applyLiveMarketPricing() quando fred-data.js risponde con le serie FRED reali
+// (sentiero Fed implicito, breakeven inflazione, rendimento reale, curva).
+const pricingData = [
+  {key:'fed_path_3m',  lbl:'Sentiero Fed a 3 mesi',      unit:'pb', val:6,    detail:'T-Bill 3M vs Fed funds effettivo'},
+  {key:'fed_path_12m', lbl:'Sentiero Fed a 12 mesi',     unit:'pb', val:-15,  detail:'Treasury 1Y vs Fed funds effettivo'},
+  {key:'breakeven5y',  lbl:'Breakeven inflazione 5Y',    unit:'%',  val:2.28, detail:'Inflazione media attesa a 5 anni'},
+  {key:'breakeven10y', lbl:'Breakeven inflazione 10Y',   unit:'%',  val:2.25, detail:'Inflazione media attesa a 10 anni'},
+  {key:'real10y',      lbl:'Rendimento reale 10Y (TIPS)',unit:'%',  val:2.40, detail:'Costo del denaro al netto dell\'inflazione'},
+  {key:'nominal10y',   lbl:'Treasury 10Y nominale',      unit:'%',  val:4.65, detail:'Riferimento globale per duration e equity'},
+  {key:'curve10y2y',   lbl:'Curva 10Y-2Y',               unit:'pb', val:18,   detail:'Positiva = normalizzazione, negativa = inversione'},
+];
+
+function fmtPricingVal(v, unit){
+  if(v===null || v===undefined) return '—';
+  const s = unit==='%' ? v.toFixed(2) : Math.round(v);
+  return `${v>=0?'+':''}${String(s).replace('.', ',')}${unit==='%'?'%':' pb'}`;
+}
+
+function renderMarketPricing(){
+  const grid = document.getElementById('pricingGrid');
+  if(!grid) return;
+  const vix = marketData.find(m=>m.name==='VIX');
+  const gold = marketData.find(m=>m.name==='Gold Futures');
+  const dxy = marketData.find(m=>m.name==='DXY');
+  const extra = [
+    {lbl:'VIX', display: vix ? vix.val : '—', detail:'Volatilità implicita attesa sull\'S&amp;P 500'},
+    {lbl:'Oro', display: gold ? `$${gold.val}` : '—', detail:'Premio geopolitico + hedge inflazione'},
+    {lbl:'DXY', display: dxy ? dxy.val : '—', detail:'Differenziale tassi e domanda di dollari'},
+  ];
+  grid.innerHTML = pricingData.map(m=>`
+    <div class="pm-card"><div class="pm-lbl">${m.lbl}</div><div class="pm-val">${fmtPricingVal(m.val, m.unit)}</div><div class="pm-detail">${m.detail}</div></div>
+  `).join('') + extra.map(m=>`
+    <div class="pm-card"><div class="pm-lbl">${m.lbl}</div><div class="pm-val">${m.display}</div><div class="pm-detail">${m.detail}</div></div>
+  `).join('');
+}
+
+// Liste curate manualmente — coerenti con il quadro Fed/Iran-Hormuz già descritto nelle altre sezioni.
+const pricingPriced = [
+  {label:'Hold Fed a fine ottobre', detail:'Dopo il dot plot hawkish di settembre, il mercato prezza un nuovo hold come base case per il FOMC del 28-29 ottobre.'},
+  {label:'Premio geopolitico su oro/petrolio', detail:'Il rischio Iran/Hormuz è già ampiamente incorporato nei prezzi — servirebbe un\'escalation ulteriore per spingerli ancora più in alto.'},
+  {label:'Inflazione sopra target ancora per trimestri', detail:'Il breakeven a 10 anni resta sopra il 2%: il mercato non si aspetta un rientro rapido al target Fed.'},
+  {label:'Curva 10Y-2Y positiva', detail:'La normalizzazione rispetto all\'inversione degli anni scorsi è già scontata, non genera più un segnale recessivo forte di per sé.'},
+];
+const pricingRisks = [
+  {label:'De-escalation improvvisa su Hormuz', detail:'Un accordo Iran-Oman ridurrebbe di colpo il premio geopolitico su oro e petrolio — rischio ribassista non prezzato.'},
+  {label:'Un altro NFP molto debole', detail:'Riaprirebbe le probabilità di un taglio già a dicembre, in contrasto con il tono hawkish attuale — il mercato è posizionato per l\'hold, non per questo scenario.'},
+  {label:'Sorpresa inflazionistica da shock energetico', detail:'Se CPI/PPI di ottobre riflettessero pienamente il rincaro energetico, andrebbe riprezzato un rialzo residuo — oggi sottopesato.'},
+];
+document.getElementById('pricingPricedList').innerHTML = pricingPriced.map(p=>`<li><b>${p.label}</b><span>${p.detail}</span></li>`).join('');
+document.getElementById('pricingRiskList').innerHTML = pricingRisks.map(p=>`<li><b>${p.label}</b><span>${p.detail}</span></li>`).join('');
+renderMarketPricing();
 
 // ---------- CALENDAR DATA (month: 0=gen ... 7=ago, 8=set — anno 2026) ----------
 const calEvents = [
@@ -1648,24 +2020,24 @@ const calEvents = [
   {month:7, day:28, time:'10:00', imp:'alto', title:'Discorso di Warsh a Jackson Hole — ESITO: tono hawkish', prev:'—', fore:'—', actual:'Hawkish, no forward guidance esplicita',
    desc:'Il discorso più atteso dell\'estate. Il simposio di Jackson Hole (Wyoming) riunisce i principali banchieri centrali mondiali; il keynote del Presidente Fed è storicamente la sede in cui vengono anticipati cambi di direzione nella policy monetaria prima del FOMC di settembre. Alta sensibilità del mercato a ogni singola frase sui rischi inflazione/lavoro — movimenti violenti su DXY, oro e Treasury sono la norma in questa occasione.'},
 
-  {month:8, day:1, time:'10:00', imp:'alto', title:'ISM Manufacturing PMI (agosto)', prev:'55.6', fore:'~54-56 (consolidamento atteso)', actual:'in uscita',
+  {month:8, day:1, time:'10:00', imp:'alto', title:'ISM Manufacturing PMI (agosto)', prev:'55.6', fore:'~54-56 (consolidamento atteso)', actual:'—',
    desc:'Dopo il balzo di luglio al massimo da maggio 2022 (55.6), il mercato verifica se l\'espansione manifatturiera regge o se lo shock dei costi energetici comincia a raffreddare la produzione. L\'indice prezzi pagati è la componente più osservata per intercettare pressioni inflazionistiche in arrivo.'},
-  {month:8, day:3, time:'10:00', imp:'medio', title:'ISM Services PMI (agosto)', prev:'54.1', fore:'~54', actual:'in uscita',
+  {month:8, day:3, time:'10:00', imp:'medio', title:'ISM Services PMI (agosto)', prev:'54.1', fore:'~54', actual:'—',
    desc:'Il settore servizi rappresenta circa il 90% dell\'economia USA. Focus particolare sull\'indice prezzi, salito a 71.3 a luglio (massimo da agosto 2022) per l\'impatto dei costi energetici — un\'ulteriore accelerazione qui rafforzerebbe lo scenario hawkish per il FOMC di metà mese.'},
-  {month:8, day:4, time:'08:30', imp:'alto', title:'Non-Farm Payrolls (agosto) + tasso di disoccupazione', prev:'-23K / 4.1%', fore:'ripresa moderata attesa dopo il dato negativo', actual:'in uscita',
+  {month:8, day:4, time:'08:30', imp:'alto', title:'Non-Farm Payrolls (agosto) + tasso di disoccupazione', prev:'-23K / 4.1%', fore:'ripresa moderata attesa dopo il dato negativo', actual:'—',
    desc:'Il dato macro più atteso prima del FOMC. Dopo la sorpresa negativa di luglio (-23K, primo dato negativo del ciclo) trainata da tagli nel pubblico impiego, il mercato cerca conferma se si tratti di un evento isolato o dell\'inizio di un deterioramento strutturale. Osservare in particolare la serie dei licenziamenti temporanei (921K a luglio) e la crescita salariale, entrambi indicatori anticipatori chiave.'},
-  {month:8, day:10, time:'08:30', imp:'alto', title:'PPI — Producer Price Index (agosto)', prev:'0.0% MoM / 4.7% YoY', fore:'lieve accelerazione possibile', actual:'in uscita',
+  {month:8, day:10, time:'08:30', imp:'alto', title:'PPI — Producer Price Index (agosto)', prev:'0.0% MoM / 4.7% YoY', fore:'lieve accelerazione possibile', actual:'—',
    desc:'Misura i prezzi dal lato dei produttori, spesso anticipatore del CPI del giorno successivo. A luglio il dato era rimasto invariato ma con servizi in aumento e beni in calo. Un dato sopra attese aumenterebbe il timore di trasmissione dei costi energetici ai prezzi finali, rafforzando lo scenario di rialzo Fed.'},
-  {month:8, day:10, time:'14:15', imp:'alto', title:'[EU] BCE — Decisione tassi + conferenza stampa Lagarde', prev:'2,25% (rialzo confermato a giu, hold a lug)', fore:'70-78% probabilità di rialzo +25pb a 2,50%', actual:'in uscita',
+  {month:8, day:10, time:'14:15', imp:'alto', title:'[EU] BCE — Decisione tassi + conferenza stampa Lagarde', prev:'2,25% (rialzo confermato a giu, hold a lug)', fore:'70-78% probabilità di rialzo +25pb a 2,50%', actual:'—',
    desc:'Riunione della Banca Centrale Europea, decisione alle 14:15 CET e conferenza stampa di Lagarde alle 14:45 CET. Il mercato prezza un\'elevata probabilità di un secondo rialzo consecutivo dopo quello di giugno (primo dal 2023), sullo stesso shock energetico da guerra Iran che sta guidando anche la Fed. Pubblicato lo stesso giorno del PPI USA — giornata a doppio catalizzatore su EUR/USD e sui differenziali di tasso USA-Eurozona.'},
-  {month:8, day:11, time:'08:30', imp:'alto', title:'CPI — Consumer Price Index (agosto)', prev:'3.4% YoY / 2.5% core YoY', fore:'atteso un terzo mese di lieve raffreddamento', actual:'in uscita',
-   desc:'Il dato macro singolarmente più importante del mese, pubblicato appena 5 giorni prima della decisione Fed. Determina in larga parte se il FOMC del 16 settembre propenderà per hold, rialzo o taglio. Un CPI sopra attese sposterebbe rapidamente le probabilità FedWatch verso il rialzo (oggi al 35%); un dato sotto attese rafforzerebbe lo scenario taglio/hold dovish.'},
+  {month:8, day:11, time:'08:30', imp:'alto', title:'CPI — Consumer Price Index (agosto)', prev:'3.2% YoY / 2.3% core YoY (luglio)', fore:'atteso un terzo mese di lieve raffreddamento', actual:'3.4% YoY / 2.4% core YoY',
+   desc:'CPI uscito leggermente sopra le attese: 3,4% YoY headline (0,4% MoM), core 2,4% YoY (0,3% MoM). La benzina (+3,9% m/m, +27,4% a/a) ha pesato per oltre un terzo del rialzo headline. Il dato ha spinto le probabilità FedWatch di un rialzo Fed all\'89% alla vigilia del FOMC del 16 settembre, che poi ha effettivamente alzato i tassi.'},
   {month:8, day:15, time:'tutto il giorno', imp:'alto', title:'FOMC Day 1 — inizio riunione', prev:'—', fore:'—', actual:'—',
    desc:'Primo giorno della riunione a due giorni del Federal Open Market Committee. Nessuna decisione viene comunicata, ma inizia il "blackout period" durante il quale i membri Fed non rilasciano dichiarazioni pubbliche — tipicamente un periodo di minore rumore mediatico ma non di minore volatilità di mercato.'},
-  {month:8, day:16, time:'14:00 / 14:30 ET', imp:'alto', title:'FOMC — Decisione tassi + Dot Plot + conferenza stampa Warsh', prev:'3.50%-3.75% (hold)', fore:'~52% rialzo +25pb / 38% hold / 10% taglio (post Jackson Hole)', actual:'in uscita',
-   desc:'L\'evento macro più importante del trimestre. Oltre alla decisione sui tassi, il FOMC pubblica il "dot plot" con le proiezioni individuali dei tassi per fine 2026/2027 — spesso più market-moving della decisione stessa. La conferenza stampa di Warsh (30 min dopo) è il momento in cui il linguaggio (hawkish vs dovish) viene analizzato parola per parola dal mercato. Aspettarsi volatilità elevata su DXY, oro, equity index e Treasury nelle 2 ore successive.'},
-  {month:8, day:16, time:'8:30', imp:'medio', title:'Retail Sales (agosto)', prev:'-0.6% MoM (luglio)', fore:'—', actual:'in uscita',
-   desc:'Le vendite al dettaglio di luglio avevano deluso (-0.6% contro +0.1% atteso). Pubblicate lo stesso giorno della decisione Fed: se il dato di agosto conferma debolezza dei consumi, rafforza la lettura dovish del FOMC; se sorprende al rialzo, complica il quadro comunicativo di Warsh nella conferenza stampa dello stesso pomeriggio.'},
+  {month:8, day:16, time:'14:00 / 14:30 ET', imp:'alto', title:'FOMC — Decisione tassi + Dot Plot + conferenza stampa Warsh — ESITO: rialzo +25pb', prev:'3.50%-3.75% (hold)', fore:'~52% rialzo +25pb / 38% hold / 10% taglio (post Jackson Hole)', actual:'Rialzo +25pb a 3.75%-4.00%, voto 12-0',
+   desc:'Esito reale: il FOMC ha alzato i tassi di 25pb a 3,75-4,00%, primo rialzo dal 2023, voto unanime 12-0, citando inflazione ancora elevata. Il dot plot aggiornato mostra 16 membri su 18 che vedono un altro rialzo entro fine 2026 (4 ne vedono due). Warsh ha tenuto la conferenza stampa più breve nella storia dei chair Fed (~30 minuti). Il dollaro ha reagito con forza, portando il DXY sui massimi da 7 settimane; il sentiment retail (AAII, Fear&amp;Greed) è crollato nei giorni successivi.'},
+  {month:8, day:16, time:'8:30', imp:'medio', title:'Retail Sales (agosto)', prev:'-0.6% MoM (luglio)', fore:'—', actual:'—',
+   desc:'Le vendite al dettaglio di luglio avevano deluso (-0.6% contro +0.1% atteso). Pubblicate lo stesso giorno della decisione Fed. Dato non ancora verificato in questa dashboard — il FOMC ha comunque proceduto con il rialzo lo stesso pomeriggio.'},
 
   // ===== OTTOBRE 2026 (date ufficiali BLS/FOMC) =====
   {month:9, day:1, time:'10:00', imp:'alto', title:'ISM Manufacturing PMI (set)', prev:'—', fore:'—', actual:'in uscita',
@@ -1750,44 +2122,61 @@ function getAllEventsForDate(month, day){
   return [...specific, ...recurring];
 }
 
-// ---------- CALENDARIO — VISTA TABELLARE (Oggi/Domani/Settimana/7gg/Mese/Data personalizzata) ----------
-let calFilter = 'oggi';
-let calCustomDate = null; // {y,m,d} quando l'utente sceglie una data specifica
+// ---------- CALENDARIO ECONOMICO — vista compatta (Giorno/Settimana/Mese/Tutti + filtri impatto/valuta/solo future) ----------
+let calViewMode = 'settimana';   // giorno | settimana | mese | tutti
+let calNavOffset = 0;            // step di navigazione rispetto a oggi, nell'unità del view mode attivo
+let calImpactFilter = new Set(['alto','medio','basso']); // impatti visibili
+let calCurrencyFilter = new Set();  // vuoto = tutte le valute
+let calSoloFuture = false;
 
-function getDateRangeForFilter(filter){
+// Deduce la valuta dal prefisso "[EU]"/"[CA]"/... nel titolo (unica fonte già presente nei dati);
+// se non c'è prefisso è un dato USA, la maggioranza di questo calendario.
+function guessCurrency(title){
+  const m = title.match(/^\[(\w{2,3})\]/);
+  if(!m) return 'USD';
+  const map = {EU:'EUR', UK:'GBP', GB:'GBP', JP:'JPY', CA:'CAD', AU:'AUD', CN:'CNY', CH:'CHF', US:'USD'};
+  return map[m[1].toUpperCase()] || 'USD';
+}
+
+function getCalDateRange(){
   const now = new Date();
   const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
   const oneDay = 86400000;
-  if(filter === 'oggi') return [todayUTC, todayUTC];
-  if(filter === 'domani') return [todayUTC+oneDay, todayUTC+oneDay];
-  if(filter === '7gg') return [todayUTC, todayUTC + 7*oneDay];
-  if(filter === 'settimana'){
-    const dow = now.getDay()===0?7:now.getDay(); // lunedì=1..domenica=7
-    const monday = todayUTC - (dow-1)*oneDay;
-    const sunday = monday + 6*oneDay;
-    return [monday, sunday];
-  }
-  if(filter === 'mese'){
-    const y = calCustomDate ? calCustomDate.y : now.getFullYear();
-    const m = calCustomDate ? calCustomDate.m : now.getMonth();
-    const start = Date.UTC(y, m, 1);
-    const end = Date.UTC(y, m+1, 0);
-    return [start, end];
-  }
-  if(filter === 'data' && calCustomDate){
-    const d = Date.UTC(calCustomDate.y, calCustomDate.m, calCustomDate.d);
+  if(calViewMode === 'giorno'){
+    const d = todayUTC + calNavOffset*oneDay;
     return [d, d];
   }
-  return [todayUTC, todayUTC];
+  if(calViewMode === 'mese'){
+    const base = new Date(now.getFullYear(), now.getMonth() + calNavOffset, 1);
+    const start = Date.UTC(base.getFullYear(), base.getMonth(), 1);
+    const end = Date.UTC(base.getFullYear(), base.getMonth()+1, 0);
+    return [start, end];
+  }
+  if(calViewMode === 'tutti'){
+    return [todayUTC, todayUTC + 30*oneDay];
+  }
+  // settimana (default)
+  const dow = now.getDay()===0?7:now.getDay(); // lunedì=1..domenica=7
+  const monday = todayUTC - (dow-1)*oneDay + calNavOffset*7*oneDay;
+  return [monday, monday + 6*oneDay];
 }
 
 function fmtRange(startMs, endMs){
-  const f = ms => new Date(ms).toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'numeric', timeZone:'UTC'});
-  return startMs===endMs ? f(startMs) : `${f(startMs)} – ${f(endMs)}`;
+  const f = ms => new Date(ms).toLocaleDateString('it-IT', {day:'2-digit', month:'short', timeZone:'UTC'});
+  return startMs===endMs ? f(startMs)+' 2026' : `${f(startMs)} — ${f(endMs)} 2026`;
+}
+
+// Un evento con orario "HH:MM" è già passato se oggi + quell'ora sono nel passato; eventi "tutto il
+// giorno" o con orari non standard (es. "19:00 / 19:30 UTC") sono considerati sempre correnti/futuri.
+function eventIsPast(month, day, time){
+  const m = time.match(/^(\d{1,2}):(\d{2})$/);
+  if(!m) return false;
+  const dt = new Date(Date.UTC(2026, month, day, parseInt(m[1]), parseInt(m[2])));
+  return dt.getTime() < Date.now();
 }
 
 function renderCalTable(){
-  const [startMs, endMs] = getDateRangeForFilter(calFilter);
+  const [startMs, endMs] = getCalDateRange();
   document.getElementById('icRange').textContent = fmtRange(startMs, endMs);
 
   const days = [];
@@ -1795,28 +2184,29 @@ function renderCalTable(){
 
   let html = '';
   let rowIdx = 0;
-  let totalEvents = 0;
   days.forEach(d => {
     const month = d.getUTCMonth();
     const day = d.getUTCDate();
-    const evts = getAllEventsForDate(month, day).filter(e => e.imp === 'alto' || e.imp === 'medio');
-    const dateLabel = d.toLocaleDateString('it-IT', {weekday:'long', day:'2-digit', month:'long', timeZone:'UTC'});
-    html += `<div class="ic-date-header">${dateLabel}</div>`;
+    let evts = getAllEventsForDate(month, day).filter(e => calImpactFilter.has(e.imp));
+    if(calCurrencyFilter.size) evts = evts.filter(e => calCurrencyFilter.has(guessCurrency(e.title)));
+    if(calSoloFuture) evts = evts.filter(e => !eventIsPast(month, day, e.time));
+    const dateLabel = d.toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', month:'short', timeZone:'UTC'}).replace('.', '').toUpperCase();
+    html += `<div class="ic-date-header">📅 ${dateLabel}</div>`;
     if(evts.length === 0){
-      html += `<div class="ic-empty-day">Nessun evento ad alto/medio impatto in calendario per questo giorno.</div>`;
+      html += `<div class="ic-empty-day">Nessun evento per i filtri selezionati in questo giorno.</div>`;
       return;
     }
     evts.forEach(e => {
-      totalEvents++;
       const myIdx = rowIdx++;
+      const cur = guessCurrency(e.title);
+      const cleanTitle = e.title.replace(/^\[\w{2,3}\]\s*/, '');
       html += `
       <div class="ic-row" onclick="toggleIcRow(${myIdx})">
-        <div class="ic-time">${e.time}</div>
-        <div><span class="ic-impact-stars ${e.imp}">${e.imp==='alto'?'★★★':e.imp==='medio'?'★★☆':'★☆☆'}</span></div>
-        <div class="ic-evt-name">${e.title}</div>
-        <div class="ic-val ${e.actual==='in uscita'||e.actual==='—'?'empty':''}">${e.actual==='in uscita'?'—':e.actual}</div>
-        <div class="ic-val">${e.fore}</div>
-        <div class="ic-val">${e.prev}</div>
+        <div class="ic-time">${/^\d{1,2}:\d{2}$/.test(e.time) ? e.time : '—'}</div>
+        <div class="ic-cur">${cur}</div>
+        <div class="ic-evt-name">${cleanTitle}</div>
+        <div class="ic-stats">Prec: <b>${e.prev}</b> &nbsp;Prev: <b>${e.fore}</b> &nbsp;Att: <b>${e.actual==='in uscita'?'—':e.actual}</b></div>
+        <div class="ic-impact-badge ${e.imp}">${e.imp}</div>
       </div>
       <div class="ic-detail-row" id="ic-detail-${myIdx}"><div class="ic-detail-inner">${e.desc}</div></div>`;
     });
@@ -1826,21 +2216,37 @@ function renderCalTable(){
 function toggleIcRow(idx){
   document.getElementById('ic-detail-'+idx).classList.toggle('open');
 }
-function setCalFilter(filter, el){
-  calFilter = filter;
-  document.querySelectorAll('.ic-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('icDateInput').value = '';
+function setCalViewMode(mode){
+  calViewMode = mode;
+  calNavOffset = 0;
+  document.querySelectorAll('#icViewTabs .ic-tab').forEach(t=>t.classList.toggle('active', t.dataset.mode===mode));
   renderCalTable();
 }
-function setCalFilterDate(dateStr){
-  if(!dateStr) return;
-  const [y,m,d] = dateStr.split('-').map(Number);
-  calCustomDate = {y, m: m-1, d};
-  calFilter = 'data';
-  document.querySelectorAll('.ic-tab').forEach(t=>t.classList.remove('active'));
+function calStep(dir){
+  calNavOffset += dir;
   renderCalTable();
 }
+function calGoToday(){
+  calNavOffset = 0;
+  renderCalTable();
+}
+function toggleImpactChip(imp){
+  if(calImpactFilter.has(imp)) calImpactFilter.delete(imp); else calImpactFilter.add(imp);
+  document.querySelector(`#icImpactChips [data-imp="${imp}"]`).classList.toggle('active', calImpactFilter.has(imp));
+  renderCalTable();
+}
+function toggleCurrencyChip(cur){
+  if(calCurrencyFilter.has(cur)) calCurrencyFilter.delete(cur); else calCurrencyFilter.add(cur);
+  document.querySelector(`#icCurrencyChips [data-cur="${cur}"]`).classList.toggle('active', calCurrencyFilter.has(cur));
+  renderCalTable();
+}
+function toggleSoloFuture(){
+  calSoloFuture = !calSoloFuture;
+  document.getElementById('icFutureToggle').classList.toggle('active', calSoloFuture);
+  renderCalTable();
+}
+document.querySelector('#icViewTabs [data-mode="settimana"]').classList.add('active');
+document.querySelectorAll('#icImpactChips .ic-chip').forEach(c=>c.classList.add('active'));
 renderCalTable();
 
 // ---------- COT DATA (dettagliato, multi-asset — tutti riferiti al 4 ago 2026, rilascio 7-8 ago) ----------
@@ -2165,14 +2571,20 @@ const snData = [
   {cat:'Macro', trend:'neutral', desc:'CPI in raffreddamento (3,3% YoY) ma PIL Q2 debole (1,5%) e lavoro in frenata (3 NFP deboli). Quadro da stagflazione lieve, non chiaramente hawkish né dovish.', sources:['FRED','BEA','BLS']},
   {cat:'DXY / Dollaro', trend:'neutral', desc:'DXY in range, tirato tra rischio Fed hawkish e domanda di beni rifugio da conflitto Iran — nessuna direzione netta finché non arriva un catalizzatore (NFP, CPI, o headline Hormuz).', sources:['Twelve Data']},
 ];
-document.getElementById('snGrid').innerHTML = snData.map(s=>{
-  const trendLbl = s.trend==='bear'?'↘ Bearish':s.trend==='bull'?'↗ Bullish':'→ Neutral';
-  return `<div class="sn-card trend-${s.trend}">
-    <div class="sn-card-top"><div class="sn-cat">${s.cat}</div><div class="sn-trend ${s.trend}">${trendLbl}</div></div>
-    <div class="sn-desc">${s.desc}</div>
-    <div class="sn-sources">Fonti: ${s.sources.map(x=>`<span>[${x}]</span>`).join(' ')}</div>
-  </div>`;
-}).join('');
+function renderSentimentGrid(categories){
+  document.getElementById('snGrid').innerHTML = categories.map(s=>{
+    const trendLbl = s.trend==='bear'?'↘ Bearish':s.trend==='bull'?'↗ Bullish':'→ Neutral';
+    return `<div class="sn-card trend-${s.trend}">
+      <div class="sn-card-top"><div class="sn-cat">${s.cat}</div><div class="sn-trend ${s.trend}">${trendLbl}</div></div>
+      <div class="sn-desc">${s.desc}</div>
+      <div class="sn-sources">Fonti: ${(s.sources||[]).map(x=>`<span>[${x}]</span>`).join(' ')}</div>
+    </div>`;
+  }).join('');
+}
+function renderSentimentRisks(risks){
+  document.getElementById('snRisks').innerHTML = risks.map(r=>`<li>${r}</li>`).join('');
+}
+renderSentimentGrid(snData);
 
 const snRisks = [
   'FOMC 16 settembre: esito realmente in bilico tra hold e rialzo — volatilità elevata attesa su tutti gli asset',
@@ -2180,7 +2592,34 @@ const snRisks = [
   'Escalation Iran del 3-4 settembre ancora in evoluzione — nuovi sviluppi possono muovere oil/oro in poche ore',
   'De-escalation improvvisa sullo Stretto di Hormuz rimuoverebbe di colpo il premio geopolitico da oro/petrolio',
 ];
-document.getElementById('snRisks').innerHTML = snRisks.map(r=>`<li>${r}</li>`).join('');
+renderSentimentRisks(snRisks);
+
+// Sovrascrive la griglia sentiment con l'analisi AI reale (sentiment-categories.js), se disponibile.
+// snData/snRisks restano lo snapshot statico di fallback finché la funzione live non risponde.
+function applySentimentLive(data){
+  if(!data || !data.categories || !data.categories.length) return false;
+  const BIAS_TO_TREND = {BULLISH:'bull', BEARISH:'bear', NEUTRAL:'neutral'};
+  renderSentimentGrid(data.categories.map(c=>({
+    cat: c.label, trend: BIAS_TO_TREND[c.bias] || 'neutral', desc: c.narrative, sources: c.sources,
+  })));
+  if(data.keyRisks && data.keyRisks.length) renderSentimentRisks(data.keyRisks);
+  const metaEl = document.getElementById('snMeta');
+  if(metaEl){
+    const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
+    metaEl.innerHTML = `generata alle <b>${time}</b> · ${data.newsCount||0} news${data.ai===false?' · fallback':''} · si rigenera da sola oltre le 6h di età`;
+  }
+  return true;
+}
+async function regenerateSentiment(){
+  const btn = document.getElementById('snRegenBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '↻ Rigenero...'; }
+  try{
+    const data = await fetchSentimentLive(true);
+    applySentimentLive(data);
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = '↻ Rigenera'; }
+  }
+}
 
 // ---------- VALIDAZIONE INCROCIATA: NEWS VS COT / OPEN INTEREST / MACRO (focus Oro) ----------
 const xvData = [
@@ -2202,24 +2641,24 @@ document.getElementById('xvBiasText').innerHTML = 'Su 3 controlli incrociati, <b
 // ---------- SENTIMENT (gauge Fear&Greed/AAII/NAAIM/PutCall) ----------
 const sentimentData = [
   {
-    lbl:'CNN Fear &amp; Greed Index', val:'65', badge:'GREED', badgeColor:'var(--green)',
-    pct:65, min:'Paura estrema', max:'Euforia estrema',
-    sub:'Indice composito su 7 fattori (momentum, ampiezza, volatilità, put/call, safe haven, junk bond spread, nuovi massimi/minimi). Rilevazione 14 ago 2026.'
+    lbl:'CNN Fear &amp; Greed Index', val:'29', badge:'FEAR', badgeColor:'var(--red)',
+    pct:29, min:'Paura estrema', max:'Euforia estrema',
+    sub:'Indice composito su 7 fattori (momentum, ampiezza, volatilità, put/call, safe haven, junk bond spread, nuovi massimi/minimi). Crollato da "Greed" dopo il rialzo Fed del 16 settembre. Rilevazione 18 set 2026.'
   },
   {
-    lbl:'AAII Investor Sentiment (retail)', val:'34,7% / 37,9%', badge:'BEARISH', badgeColor:'var(--red)',
-    pct:32, min:'Bearish', max:'Bullish',
-    sub:'Bullish 34,7% (-2,3pt) · Bearish 37,9% (-0,1pt) · Neutrale 27,4% (+2,4pt). Spread bull-bear: <b>-3,2%</b>, sotto la media storica (+6,5%). Rilevazione 13 ago 2026.'
+    lbl:'AAII Investor Sentiment (retail)', val:'28,8% / 53,3%', badge:'BEARISH ESTREMO', badgeColor:'var(--red)',
+    pct:14, min:'Bearish', max:'Bullish',
+    sub:'Bullish 28,8% (-9,2pt) · Bearish 53,3% (+14,0pt) · Neutrale 17,9% (-4,8pt). Spread bull-bear: <b>-24,5%</b>, minimo da 16 mesi — sentiment crollato dopo il rialzo Fed del 16 settembre. Rilevazione settimana al 16 set 2026.'
   },
   {
-    lbl:'NAAIM Exposure Index (gestori attivi)', val:'79,7', badge:'SOTTO MEDIA', badgeColor:'var(--gold)',
+    lbl:'NAAIM Exposure Index (gestori attivi)', val:'79,7', badge:'ULTIMO DATO PUBBLICO', badgeColor:'var(--gold)',
     pct:40, min:'Difensivo/short', max:'Leva lunga',
-    sub:'In calo da 84,0 la settimana precedente, ben sotto la media storica di 92,6. Indica gestori professionali con esposizione azionaria ridotta rispetto alla norma. Rilevazione 29 lug 2026.'
+    sub:'Ultima rilevazione pubblica disponibile (29 lug) — dal 1° agosto 2026 NAAIM ha reso l\'indice ad accesso solo in abbonamento, quindi qui non riflette ancora l\'impatto del rialzo Fed del 16 settembre.'
   },
   {
-    lbl:'CBOE Equity Put/Call Ratio', val:'1,11', badge:'COPERTURA ELEVATA', badgeColor:'var(--red)',
-    pct:74, min:'Compiacenza (call)', max:'Paura (put)',
-    sub:'Sopra la soglia di 1,0 — più volume in put che in call, segnale di copertura difensiva superiore alla norma storica (range tipico 0,65-1,20). Rilevazione 4 ago 2026.'
+    lbl:'CBOE Equity Put/Call Ratio', val:'0,67', badge:'COMPIACENZA (PRE-FOMC)', badgeColor:'var(--gold)',
+    pct:20, min:'Compiacenza (call)', max:'Paura (put)',
+    sub:'Rilevazione dell\'1 set 2026 (totale CBOE 0,95, 38° percentile) — precedente al rialzo Fed del 16 settembre. Dato l\'aumento di AAII bearish e del Fear&amp;Greed, è probabile che il ratio sia salito da allora; verifica consigliata prima di operare.'
   },
 ];
 document.getElementById('sentimentGrid').innerHTML = sentimentData.map(s=>`
@@ -2230,6 +2669,53 @@ document.getElementById('sentimentGrid').innerHTML = sentimentData.map(s=>`
     <div class="sent-scale"><div class="marker" style="left:${s.pct}%;"></div></div>
     <div class="sent-scale-labels"><span>${s.min}</span><span>${s.max}</span></div>
     <div class="sent-sub">${s.sub}</div>
+  </div>`).join('');
+
+// ---------- GAUGE SEMICIRCOLARI (Risk-On/Risk-Off · Fear & Greed) ----------
+// value 0..100. Ago: -90° (estremo sinistro, rosso) .. 0° (verticale, oro) .. +90° (estremo destro, verde).
+let gaugeIdSeq = 0;
+function gaugeSVG(value){
+  const v = Math.max(0, Math.min(100, value));
+  const angle = -90 + (v/100)*180;
+  const gid = 'gaugeGrad' + (gaugeIdSeq++);
+  return `<svg viewBox="0 0 200 112" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F0685E"/><stop offset="50%" stop-color="#E0A94D"/><stop offset="100%" stop-color="#34D399"/>
+    </linearGradient></defs>
+    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#${gid})" stroke-width="14" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="100" y2="32" stroke="#EDF0F7" stroke-width="3" stroke-linecap="round" transform="rotate(${angle} 100 100)"/>
+    <circle cx="100" cy="100" r="5" fill="#EDF0F7"/>
+  </svg>`;
+}
+function renderGauge(elId, value){
+  const el = document.getElementById(elId);
+  if(el) el.innerHTML = gaugeSVG(value);
+}
+function gaugeColor(value){
+  return value < 34 ? 'var(--red)' : value < 67 ? 'var(--gold)' : 'var(--green)';
+}
+// Fear & Greed: nessuna funzione live dedicata — riusa lo stesso valore curato della card sentimentData
+// qui sopra, così i due punti restano sempre coerenti tra loro senza doverli aggiornare in due posti.
+renderGauge('rgGaugeFG', sentimentData[0].pct);
+document.getElementById('rgValueFG').textContent = sentimentData[0].val;
+document.getElementById('rgValueFG').style.color = gaugeColor(sentimentData[0].pct);
+// Risk-On/Risk-Off: valore di default in attesa del bias AI live (applyBiasDaily lo aggiorna a fetch completato).
+renderGauge('rgGaugeRisk', 50);
+
+// ---------- SENTIMENT RETAIL PER STRUMENTO ----------
+// Stima qualitativa curata manualmente (non un feed broker live tipo IG/OANDA Client Sentiment) —
+// utile come lettura contrarian di massima, va verificata/aggiornata a mano come le altre card sentiment.
+const retailSentimentData = [
+  {name:'EUR/USD', bull:53, bear:47},
+  {name:'GBP/USD', bull:57, bear:43},
+  {name:'XAU/USD', bull:51, bear:49},
+  {name:'NAS100',  bull:49, bear:51},
+];
+document.getElementById('rtGrid').innerHTML = retailSentimentData.map(r=>`
+  <div class="rt-row">
+    <div class="rt-name">${r.name}</div>
+    <div class="rt-bar"><div class="rt-bull" style="width:${r.bull}%;"></div><div class="rt-bear" style="width:${r.bear}%;"></div></div>
+    <div class="rt-pct"><span class="up">${r.bull}%</span> / <span class="down">${r.bear}%</span></div>
   </div>`).join('');
 
 // ---------- ASSET DASHBOARD ----------
@@ -2300,6 +2786,145 @@ async function fetchLiveCOT(dateParam){
   }catch(e){ return null; }
 }
 
+async function fetchLiveDXYCorr(){
+  try{
+    const res = await fetch('/.netlify/functions/dxy-correlation');
+    if(!res.ok) return null;
+    const json = await res.json();
+    if(json.parseWarning) console.warn('DXY correlation warning:', json.parseWarning);
+    return json.data;
+  }catch(e){ return null; }
+}
+
+function biasToneClass(label){
+  const l = (label||'').toUpperCase();
+  if(l.includes('RISK-ON') || l==='DOVISH') return 'risk-on';
+  if(l.includes('RISK-OFF') || l==='HAWKISH') return 'risk-off';
+  return 'neutrale';
+}
+function biasToneColor(cls){
+  return cls==='risk-on' ? 'var(--green)' : cls==='risk-off' ? 'var(--red)' : 'var(--gold)';
+}
+function assetDirClass(dir){
+  const d = (dir||'').toLowerCase();
+  if(d.includes('bull')) return 'bull';
+  if(d.includes('bear')) return 'bear';
+  return 'neutral';
+}
+
+async function fetchBiasDaily(){
+  try{
+    const res = await fetch('/.netlify/functions/bias-daily');
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ return null; }
+}
+
+async function fetchSentimentLive(force){
+  try{
+    const url = force ? '/.netlify/functions/sentiment-categories?force=1' : '/.netlify/functions/sentiment-categories';
+    const res = await fetch(url, force ? {cache:'no-store'} : undefined);
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ return null; }
+}
+
+async function fetchEventDossier(ev){
+  try{
+    const params = new URLSearchParams({
+      title: String(ev.title||'').replace(/<[^>]+>/g,''),
+      date: new Date(ev.utc).toISOString(),
+      impact: ev.stars>=3?'alto':ev.stars===2?'medio':'basso',
+      forecast: ev.attese || '',
+      previous: ev.precedente || '',
+    });
+    const res = await fetch(`/.netlify/functions/event-dossier?${params.toString()}`);
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ return null; }
+}
+
+// Applica il bias giornaliero AI sia alla barra ticker sticky sia al pannello esteso.
+function applyBiasDaily(data){
+  if(!data) return false;
+  const cls = biasToneClass(data.label);
+  const color = biasToneColor(cls);
+  const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
+
+  const btLabel = document.getElementById('btLabel');
+  if(btLabel){ btLabel.textContent = data.label || '—'; btLabel.className = `bt-label ${cls}`; }
+  const btScore = document.getElementById('btScore'); if(btScore) btScore.textContent = `${data.score ?? '—'}/100`;
+  const btHeadline = document.getElementById('btHeadline'); if(btHeadline) btHeadline.textContent = data.headline || '';
+  const btGeo = document.getElementById('btGeo'); if(btGeo) btGeo.textContent = `GEO ${data.geo?.bias || '—'}`;
+  const btMacro = document.getElementById('btMacro'); if(btMacro) btMacro.textContent = `MACRO ${data.macro?.bias || '—'}`;
+
+  // Gauge "Risk-On/Risk-Off" nel Barometro Sentiment & Risk — stesso score del bias AI.
+  if(typeof data.score === 'number'){
+    renderGauge('rgGaugeRisk', data.score);
+    const rgValueRisk = document.getElementById('rgValueRisk');
+    if(rgValueRisk){ rgValueRisk.textContent = data.score; rgValueRisk.style.color = color; }
+    const rgSubRisk = document.getElementById('rgSubRisk');
+    if(rgSubRisk) rgSubRisk.textContent = `Barometro geo-macro AI · aggiornato alle ${time}${data.ai===false?' (fallback)':''}`;
+  }
+
+  const panel = document.getElementById('biasPanel');
+  if(panel) panel.className = `bias-panel ${cls}`;
+  const bpTime = document.getElementById('bpTime'); if(bpTime) bpTime.textContent = `${time}${data.ai===false?' · fallback':''}`;
+  const bpLabel = document.getElementById('bpLabel'); if(bpLabel){ bpLabel.textContent = data.label || '—'; bpLabel.className = `bp-label ${cls}`; }
+  const bpScore = document.getElementById('bpScore'); if(bpScore) bpScore.textContent = data.score ?? 50;
+  const bpBarFill = document.getElementById('bpBarFill'); if(bpBarFill){ bpBarFill.style.width = `${data.score ?? 50}%`; bpBarFill.style.background = color; }
+  const bpHeadline = document.getElementById('bpHeadline'); if(bpHeadline) bpHeadline.textContent = data.headline || '—';
+
+  const geoCls = biasToneClass(data.geo?.bias);
+  const bpGeoBias = document.getElementById('bpGeoBias'); if(bpGeoBias){ bpGeoBias.textContent = data.geo?.bias || '—'; bpGeoBias.style.color = biasToneColor(geoCls); }
+  const bpGeoBar = document.getElementById('bpGeoBar'); if(bpGeoBar){ bpGeoBar.style.width = `${data.geo?.score ?? 50}%`; bpGeoBar.style.background = biasToneColor(geoCls); }
+  const bpGeoNote = document.getElementById('bpGeoNote'); if(bpGeoNote) bpGeoNote.textContent = data.geo?.note || '—';
+
+  const macroCls = biasToneClass(data.macro?.bias);
+  const bpMacroBias = document.getElementById('bpMacroBias'); if(bpMacroBias){ bpMacroBias.textContent = data.macro?.bias || '—'; bpMacroBias.style.color = biasToneColor(macroCls); }
+  const bpMacroBar = document.getElementById('bpMacroBar'); if(bpMacroBar){ bpMacroBar.style.width = `${data.macro?.score ?? 50}%`; bpMacroBar.style.background = biasToneColor(macroCls); }
+  const bpMacroNote = document.getElementById('bpMacroNote'); if(bpMacroNote) bpMacroNote.textContent = data.macro?.note || '—';
+
+  const driverList = document.getElementById('bpDriverList');
+  if(driverList){
+    driverList.innerHTML = (data.drivers||[]).map(d=>`
+      <div class="bp-driver ${d.tone||''}">
+        <div class="bpd-label">${d.label||''}</div>
+        <div class="bpd-detail">${d.detail||''}</div>
+      </div>`).join('') || '<div class="bpd-detail">Nessun driver disponibile.</div>';
+  }
+  const assetGrid = document.getElementById('bpAssetGrid');
+  if(assetGrid){
+    assetGrid.innerHTML = (data.assets||[]).map(a=>{
+      const dc = assetDirClass(a.direction);
+      return `<div class="bp-asset">
+        <div class="bp-asset-top"><span class="bpa-name">${a.asset}</span><span class="bpa-dir ${dc}">${a.direction}</span></div>
+        <span class="bpa-prob">${a.probability}%</span>
+      </div>`;
+    }).join('');
+  }
+  return true;
+}
+
+// Aggiunge un blocco "Dossier AI" al card dell'evento chiave corrente, senza toccare gli
+// scenari sopra/sotto le attese già scritti a mano (event-dossier.js li lascia intatti).
+async function loadEventDossier(ev){
+  if(!ev) return;
+  const data = await fetchEventDossier(ev);
+  const container = document.getElementById('ecAiDossier'); // ri-verifica: l'evento potrebbe essere cambiato nel frattempo
+  if(!container || !data || !data.dossier) return;
+  const dos = data.dossier;
+  const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '';
+  container.innerHTML = `
+    <div class="ec-ai-dossier">
+      <div class="ec-ai-label"><span>🤖 Dossier AI</span><span class="ec-ai-meta">${time}${dos.ai===false?' · fallback':''}</span></div>
+      ${dos.context ? `<p>${dos.context}</p>` : ''}
+      ${dos.timingNote ? `<p>${dos.timingNote}</p>` : ''}
+      ${dos.whatToExpect ? `<p><b>Cosa aspettarsi:</b> ${dos.whatToExpect}</p>` : ''}
+      ${dos.assetsToWatch && dos.assetsToWatch.length ? `<p><b>Asset da monitorare:</b> ${dos.assetsToWatch.join(' · ')}</p>` : ''}
+    </div>`;
+}
+
 function fmtItDate(iso){
   if(!iso) return null;
   const [y,m,d] = iso.split('-');
@@ -2325,6 +2950,95 @@ function applyLiveMarketToMonitor(live){
   });
   if(any) renderMarketMonitor();
   return any;
+}
+
+// Etichetta qualitativa della forza della correlazione — soglie standard in analisi finanziaria,
+// applicate al valore assoluto del coefficiente di Pearson calcolato da dxy-correlation.js.
+function corrLabel(v){
+  const a = Math.abs(v);
+  if(a >= 0.9) return 'Molto forte';
+  if(a >= 0.7) return 'Forte';
+  if(a >= 0.4) return 'Moderata';
+  if(a >= 0.2) return 'Debole';
+  return 'Trascurabile';
+}
+function fmtCorr(v){
+  return (v>=0?'+':'') + v.toFixed(2).replace('.', ',');
+}
+// Sovrascrive corr/corrLbl in marketData con la correlazione DXY reale a 30g calcolata
+// server-side su serie storiche (Twelve Data/FMP), al posto delle stime scritte a mano.
+function applyLiveCorrToMonitor(live){
+  if(!live) return false;
+  let any = false;
+  const map = { sp500:'S&P 500', nasdaq:'Nasdaq 100', dow:'Dow Jones', gold:'Gold Futures', silver:'Silver Futures',
+    wti:'WTI Crude Oil', vix:'VIX', eurusd:'EUR/USD', gbpusd:'GBP/USD', us10y:'US 10Y Yield' };
+  Object.entries(map).forEach(([key, name])=>{
+    const c = live[key];
+    if(!c || c.error){ if(c && c.error) console.warn(`Correlazione DXY — ${name}: ${c.error}`); return; }
+    if(c.corr === null || c.corr === undefined) return;
+    const asset = marketData.find(m=>m.name===name);
+    if(asset){
+      asset.corr = fmtCorr(c.corr);
+      asset.corrLbl = corrLabel(c.corr);
+      any = true;
+    }
+  });
+  if(any) renderMarketMonitor();
+  return any;
+}
+
+const TONE_COLOR = {red:'var(--red)', gold:'var(--gold)', green:'var(--green)'};
+
+async function fetchMarketIntelligence(){
+  try{
+    const snapshot = {};
+    marketData.forEach(m=>{ snapshot[m.name] = {val:m.val, chg:m.chg}; });
+    const url = `/.netlify/functions/market-intelligence?snapshot=${encodeURIComponent(JSON.stringify(snapshot))}`;
+    const res = await fetch(url);
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ return null; }
+}
+
+// Sovrascrive driver/bars di marketData (finora scritti a mano e statici per sempre) con
+// l'analisi AI rigenerata su notizie reali + prezzi attuali. Se un asset non arriva nella
+// risposta (o l'AI non è disponibile), quell'asset tiene semplicemente il driver statico.
+function applyMarketIntelligence(data){
+  if(!data || !data.assets) return false;
+  let any = false;
+  const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : null;
+  Object.entries(data.assets).forEach(([name, a])=>{
+    if(!a || !a.driver) return;
+    const asset = marketData.find(m=>m.name===name);
+    if(!asset) return;
+    asset.driver = a.driver;
+    if(a.bars && a.bars.length) asset.bars = a.bars.map(b=>({lbl:b.lbl, pct:b.pct, color:TONE_COLOR[b.tone]||'var(--gold)', note:b.note}));
+    asset.aiUpdatedAt = time;
+    any = true;
+  });
+  if(any) renderMarketMonitor();
+
+  const badge = document.getElementById('mktBadge');
+  const statusText = document.getElementById('mktStatusText');
+  if(badge && statusText){
+    if(any){
+      badge.textContent = 'AI + LIVE'; badge.style.background='var(--green-soft)'; badge.style.color='var(--green)';
+      statusText.textContent = `Prezzi live dove disponibili · driver rigenerati via AI alle ${time} (${data.newsCount||0} news)`;
+    } else {
+      statusText.textContent = data.ai===false ? 'Driver AI non disponibili in questo ciclo — card con l\'analisi scritta a mano' : statusText.textContent;
+    }
+  }
+  return any;
+}
+async function regenerateMarketIntelligence(){
+  const btn = document.getElementById('mktRegenBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '↻ Rigenero...'; }
+  try{
+    const data = await fetchMarketIntelligence();
+    applyMarketIntelligence(data);
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = '↻ Rigenera driver AI'; }
+  }
 }
 
 function applyLiveCOTToReport(payload){
@@ -2477,6 +3191,33 @@ function applyLiveMacroToCards(live){
   return updated;
 }
 
+// Sovrascrive "Cosa prezza il mercato" (sentiero Fed, breakeven, rendimento reale, curva) con le
+// serie FRED reali restituite da fred-data.js, invece delle stime statiche di fallback in pricingData.
+function applyLiveMarketPricing(live){
+  if(!live) return false;
+  let any = false;
+  const map = {
+    fed_path_3m: live.fedPathBps3m, fed_path_12m: live.fedPathBps12m,
+    breakeven5y: live.breakeven5y, breakeven10y: live.breakeven10y,
+    real10y: live.real10y, nominal10y: live.nominal10y, curve10y2y: live.curve10y2yBps,
+  };
+  Object.entries(map).forEach(([key, val])=>{
+    if(val===null || val===undefined) return;
+    const m = pricingData.find(p=>p.key===key);
+    if(m){ m.val = val; any = true; }
+  });
+  renderMarketPricing(); // ricalcola sempre, così VIX/Oro/DXY restano in sync col resto della dashboard
+  if(any){
+    const badge = document.getElementById('pricingBadge');
+    if(badge){ badge.textContent = 'FRED + LIVE'; badge.style.background='var(--green-soft)'; badge.style.color='var(--green)'; }
+  }
+  if(live.curve10y2yBps !== null && live.curve10y2yBps !== undefined){
+    const spreadEl = document.getElementById('rateSpreadVal');
+    if(spreadEl) spreadEl.textContent = `${live.curve10y2yBps>=0?'+':''}${Math.round(live.curve10y2yBps)} pb`;
+  }
+  return any;
+}
+
 function applyLiveFXToTicker(live){
   if(!live) return false;
   // Rimuove eventuali voci LIVE inserite da un refresh precedente, per evitare duplicati infiniti
@@ -2496,7 +3237,7 @@ function applyLiveFXToTicker(live){
   // una variazione giornaliera vera richiederebbe anche il prezzo di chiusura del giorno prima,
   // che questa API gratuita non fornisce — solo il prezzo attuale è realmente live.
   let marketAny = false;
-  const fxMap = { 'DXY': live.DXYProxy, 'EUR/USD': live.EURUSD, 'GBP/USD': live.GBPUSD, 'AUD/USD': live.AUDUSD };
+  const fxMap = { 'DXY': live.DXYProxy, 'EUR/USD': live.EURUSD, 'GBP/USD': live.GBPUSD };
   Object.entries(fxMap).forEach(([name, value])=>{
     if(!value) return;
     const asset = marketData.find(m=>m.name===name);
@@ -2508,13 +3249,23 @@ function applyLiveFXToTicker(live){
 }
 
 async function initLiveData(){
-  const [macro, fx, market, cot] = await Promise.all([fetchLiveMacro(), fetchLiveFX(), fetchLiveMarket(), fetchLiveCOT()]);
+  const [macro, fx, market, cot, dxyCorr, bias, sentiment] = await Promise.all([
+    fetchLiveMacro(), fetchLiveFX(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
+    fetchBiasDaily(), fetchSentimentLive(false),
+  ]);
   const macroUpdated = applyLiveMacroToCards(macro);
   renderTodaysReleases(macro);
   const hawkDoveUpdated = applyLiveMacroToHawkDove(macro);
   const fxUpdated = applyLiveFXToTicker(fx);
   const marketUpdated = applyLiveMarketToMonitor(market);
   const cotUpdated = applyLiveCOTToReport(cot);
+  const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
+  const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
+  const marketIntel = await fetchMarketIntelligence(); // dopo market/fx: invia lo snapshot prezzi già aggiornato all'AI
+  const marketIntelUpdated = applyMarketIntelligence(marketIntel);
+  const biasUpdated = applyBiasDaily(bias);
+  const sentimentUpdated = applySentimentLive(sentiment);
+  if(currentKeyEvent) loadEventDossier(currentKeyEvent); // dossier AI sull'evento chiave già selezionato
   renderContentTimestamps(); // ricalcola sempre i "giorni fa" onesti per le sezioni curate
   const dpSel = document.getElementById('dpAssetSelect');
   if(dpSel && dpSel.value) renderDecisionPanel(dpSel.value);
@@ -2529,6 +3280,11 @@ async function initLiveData(){
   if(fxUpdated) parts.push('cambi FX + DXY proxy');
   if(marketUpdated) parts.push('prezzi mercato (Twelve Data)');
   if(cotUpdated) parts.push('COT completo — metalli/valute/indici/cripto/WTI (CFTC)');
+  if(corrUpdated) parts.push('correlazione DXY reale a 30g (Twelve Data/FMP)');
+  if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
+  if(marketIntelUpdated) parts.push('driver di mercato AI (news reali)');
+  if(biasUpdated) parts.push('bias geo-macro AI');
+  if(sentimentUpdated) parts.push('sentiment per categoria AI');
   if(parts.length){
     note.innerHTML = `✓ Aggiornati: ${parts.join(', ')}. <span style="color:var(--dim2);">Geopolitica e scenari narrativi restano curati manualmente (analisi di ${snapLbl}).</span>`;
     note.style.color = 'var(--green)';

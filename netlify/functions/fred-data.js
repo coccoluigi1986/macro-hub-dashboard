@@ -16,6 +16,14 @@ const SERIES = {
   fed_funds:      'DFF',        // Tasso Fed Funds effettivo giornaliero
   gdp:            'GDPC1',      // PIL REALE trimestrale (chained dollars) — NON usare 'GDP' (nominale, include inflazione)
   ppi_yoy:        'PPIFIS',     // Producer Price Index — Final Demand (la serie "PPI" standard citata dai media/trader)
+  // ---- serie per "Cosa prezza il mercato" (sentiero Fed implicito, breakeven, curva) ----
+  tbill_3m:       'DTB3',       // T-Bill 3 mesi — vs Fed funds effettivo = sentiero Fed atteso a 3 mesi
+  treasury_1y:    'DGS1',       // Treasury 1 anno — vs Fed funds effettivo = sentiero Fed atteso a 12 mesi
+  breakeven_5y:   'T5YIE',      // Inflazione media attesa dal mercato a 5 anni
+  breakeven_10y:  'T10YIE',     // Inflazione media attesa dal mercato a 10 anni
+  real_10y:       'DFII10',     // Rendimento reale TIPS a 10 anni
+  nominal_10y:    'DGS10',      // Treasury 10 anni nominale
+  curve_10y2y:    'T10Y2Y',     // Spread 10Y-2Y (già in punti percentuali, va convertito in pb)
 };
 
 async function fetchSeries(seriesId, apiKey) {
@@ -57,6 +65,14 @@ function monthlyDelta(observations) {
   return Math.round(latest - prev); // in migliaia per PAYEMS
 }
 
+// Ultimo valore numerico disponibile in una serie (FRED a volte pubblica "." per i giorni senza rilevazione)
+function latestValue(observations) {
+  const obs = observations.find(o => o.value !== '.' && o.value !== undefined);
+  if (!obs) return null;
+  const v = parseFloat(obs.value);
+  return isNaN(v) ? null : v;
+}
+
 exports.handler = async function (event, context) {
   const apiKey = process.env.FRED_API_KEY;
   if (!apiKey) {
@@ -67,7 +83,8 @@ exports.handler = async function (event, context) {
   }
 
   try {
-    const [cpi, coreCpi, unemployment, nfp, fedFunds, gdp, ppi] = await Promise.all([
+    const [cpi, coreCpi, unemployment, nfp, fedFunds, gdp, ppi,
+      tbill3m, treasury1y, breakeven5y, breakeven10y, real10y, nominal10y, curve10y2y] = await Promise.all([
       fetchSeries(SERIES.cpi_yoy, apiKey),
       fetchSeries(SERIES.core_cpi_yoy, apiKey),
       fetchSeries(SERIES.unemployment, apiKey),
@@ -75,7 +92,19 @@ exports.handler = async function (event, context) {
       fetchSeries(SERIES.fed_funds, apiKey),
       fetchSeries(SERIES.gdp, apiKey),
       fetchSeries(SERIES.ppi_yoy, apiKey),
+      fetchSeries(SERIES.tbill_3m, apiKey),
+      fetchSeries(SERIES.treasury_1y, apiKey),
+      fetchSeries(SERIES.breakeven_5y, apiKey),
+      fetchSeries(SERIES.breakeven_10y, apiKey),
+      fetchSeries(SERIES.real_10y, apiKey),
+      fetchSeries(SERIES.nominal_10y, apiKey),
+      fetchSeries(SERIES.curve_10y2y, apiKey),
     ]);
+
+    const effFunds = latestValue(fedFunds);
+    const tbill3mVal = latestValue(tbill3m);
+    const treasury1yVal = latestValue(treasury1y);
+    const curveVal = latestValue(curve10y2y);
 
     const result = {
       updatedAt: new Date().toISOString(),
@@ -92,6 +121,14 @@ exports.handler = async function (event, context) {
         gdpAnnualizedQoQ: gdpAnnualizedQoQ(gdp),
         gdpDate: gdp[0]?.date || null,
         ppiYoY: yoyChange(ppi),
+        // ---- "Cosa prezza il mercato" ----
+        fedPathBps3m: (tbill3mVal !== null && effFunds !== null) ? Math.round((tbill3mVal - effFunds) * 100 * 10) / 10 : null,
+        fedPathBps12m: (treasury1yVal !== null && effFunds !== null) ? Math.round((treasury1yVal - effFunds) * 100 * 10) / 10 : null,
+        breakeven5y: latestValue(breakeven5y),
+        breakeven10y: latestValue(breakeven10y),
+        real10y: latestValue(real10y),
+        nominal10y: latestValue(nominal10y),
+        curve10y2yBps: curveVal !== null ? Math.round(curveVal * 100 * 10) / 10 : null,
       },
     };
 
