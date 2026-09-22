@@ -1478,8 +1478,10 @@ function renderContentTimestamps(){
   const style = warn ? 'color:var(--gold);' : 'color:var(--dim2);';
   const newsEl = document.getElementById('newsTimestamp');
   if(newsEl) newsEl.innerHTML = `<span style="${style}">Analisi verificata ${label}</span>${warn?' — chiedi in chat di rigenerarla':''}`;
-  const snEl = document.getElementById('snMeta');
-  if(snEl) snEl.innerHTML = `Analisi verificata <b style="${style}">${label}</b> · contenuto scritto/curato, non un feed automatico${warn?' — <b style="color:var(--gold);">consigliato un aggiornamento</b>':''}`;
+  // Nota: "snMeta" (sentiment per categoria) NON viene toccato qui di proposito — lo aggiorna
+  // applySentimentLive() quando i dati AI arrivano, e initLiveData() imposta un fallback dedicato
+  // solo se quella chiamata fallisce. Farlo anche qui sovrascriverebbe sempre lo stato live appena
+  // applicato con questo testo statico generico, un minuto dopo ogni refresh.
 }
 renderContentTimestamps();
 setInterval(renderWeekCalendar, 60000); // ricalcola ogni minuto, così la finestra mobile resta sempre aggiornata
@@ -3268,6 +3270,12 @@ async function initLiveData(){
   fetchMarketIntelligence().then(applyMarketIntelligence);
   const biasUpdated = applyBiasDaily(bias);
   const sentimentUpdated = applySentimentLive(sentiment);
+  if(!sentimentUpdated){
+    // Funzione non raggiungibile (non solo fallback server-side, che applySentimentLive gestisce già) —
+    // messaggio onesto invece di lasciare "verifica in corso..." per sempre.
+    const snEl = document.getElementById('snMeta');
+    if(snEl) snEl.textContent = 'Funzione live non raggiungibile — card con l\'ultima analisi disponibile.';
+  }
   if(currentKeyEvent) loadEventDossier(currentKeyEvent); // dossier AI sull'evento chiave già selezionato
   renderContentTimestamps(); // ricalcola sempre i "giorni fa" onesti per le sezioni curate
   const dpSel = document.getElementById('dpAssetSelect');
