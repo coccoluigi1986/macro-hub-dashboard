@@ -5,9 +5,12 @@
 // logica di dedup.
 //
 // Query param opzionali: ?limit=40 (default) · ?topic=geo (filtra per parole chiave geopolitiche)
+// ?debug=1 → non aggrega, testa OGNI feed RSS singolarmente e riporta status/conteggio/errore per
+// ciascuno — utile per capire perché una fonte non restituisce nulla (es. blocco anti-bot su IP
+// datacenter, 403/429, timeout) invece di vederla sparire in silenzio dal risultato aggregato.
 // Raggiungibile su: https://tuosito.vercel.app/api/news-aggregated
 
-const { aggregateNews } = require('../lib/news');
+const { aggregateNews, fetchRssWithDiag, RSS_FEEDS } = require('../lib/news');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const GEO_KEYWORDS = [
@@ -19,6 +22,17 @@ const GEO_KEYWORDS = [
 async function handleEvent(event) {
   try {
     const params = event.queryStringParameters || {};
+
+    if (params.debug) {
+      const feeds = await Promise.all(RSS_FEEDS.map(fetchRssWithDiag));
+      const okCount = feeds.filter(f => f.ok && f.itemCount > 0).length;
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+        body: JSON.stringify({ checkedAt: new Date().toISOString(), workingFeeds: okCount, totalFeeds: feeds.length, feeds }),
+      };
+    }
+
     const limit = parseInt(params.limit, 10) || 40;
     const topic = params.topic || 'all';
 
