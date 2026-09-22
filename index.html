@@ -2751,7 +2751,7 @@ document.getElementById('indicesCards').innerHTML = indices.map(i=>`
 
 async function fetchLiveMacro(){
   try{
-    const res = await fetch('/.netlify/functions/fred-data');
+    const res = await fetch('/api/fred-data');
     if(!res.ok) return null;
     const json = await res.json();
     return json.data;
@@ -2760,7 +2760,7 @@ async function fetchLiveMacro(){
 
 async function fetchLiveFX(){
   try{
-    const res = await fetch('/.netlify/functions/fx-data');
+    const res = await fetch('/api/fx-data');
     if(!res.ok) return null;
     const json = await res.json();
     return json.data;
@@ -2769,7 +2769,7 @@ async function fetchLiveFX(){
 
 async function fetchLiveMarket(){
   try{
-    const res = await fetch('/.netlify/functions/market-data');
+    const res = await fetch('/api/market-data');
     if(!res.ok) return null;
     const json = await res.json();
     return json.data;
@@ -2778,7 +2778,7 @@ async function fetchLiveMarket(){
 
 async function fetchLiveCOT(dateParam){
   try{
-    const url = dateParam ? `/.netlify/functions/cot-data?date=${dateParam}` : '/.netlify/functions/cot-data';
+    const url = dateParam ? `/api/cot-data?date=${dateParam}` : '/api/cot-data';
     const res = await fetch(url);
     if(!res.ok) return null;
     const json = await res.json();
@@ -2789,7 +2789,7 @@ async function fetchLiveCOT(dateParam){
 
 async function fetchLiveDXYCorr(){
   try{
-    const res = await fetch('/.netlify/functions/dxy-correlation');
+    const res = await fetch('/api/dxy-correlation');
     if(!res.ok) return null;
     const json = await res.json();
     if(json.parseWarning) console.warn('DXY correlation warning:', json.parseWarning);
@@ -2815,7 +2815,7 @@ function assetDirClass(dir){
 
 async function fetchBiasDaily(){
   try{
-    const res = await fetch('/.netlify/functions/bias-daily');
+    const res = await fetch('/api/bias-daily');
     if(!res.ok) return null;
     return await res.json();
   }catch(e){ return null; }
@@ -2823,7 +2823,7 @@ async function fetchBiasDaily(){
 
 async function fetchSentimentLive(force){
   try{
-    const url = force ? '/.netlify/functions/sentiment-categories?force=1' : '/.netlify/functions/sentiment-categories';
+    const url = force ? '/api/sentiment-categories?force=1' : '/api/sentiment-categories';
     const res = await fetch(url, force ? {cache:'no-store'} : undefined);
     if(!res.ok) return null;
     return await res.json();
@@ -2839,7 +2839,7 @@ async function fetchEventDossier(ev){
       forecast: ev.attese || '',
       previous: ev.precedente || '',
     });
-    const res = await fetch(`/.netlify/functions/event-dossier?${params.toString()}`);
+    const res = await fetch(`/api/event-dossier?${params.toString()}`);
     if(!res.ok) return null;
     return await res.json();
   }catch(e){ return null; }
@@ -2994,7 +2994,7 @@ async function fetchMarketIntelligence(){
   try{
     const snapshot = {};
     marketData.forEach(m=>{ snapshot[m.name] = {val:m.val, chg:m.chg}; });
-    const url = `/.netlify/functions/market-intelligence?snapshot=${encodeURIComponent(JSON.stringify(snapshot))}`;
+    const url = `/api/market-intelligence?snapshot=${encodeURIComponent(JSON.stringify(snapshot))}`;
     const res = await fetch(url);
     if(!res.ok) return null;
     return await res.json();
