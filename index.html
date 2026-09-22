@@ -722,6 +722,8 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   <a href="javascript:void(0)" onclick="goToSection('macro')">Inflazione &amp; PMI</a>
   <a href="javascript:void(0)" onclick="goToSection('macroeu')">🇪🇺 Europa</a>
   <a href="javascript:void(0)" onclick="goToSection('jobs')">Lavoro &amp; disoccupazione</a>
+  <div class="navlabel">Sentiment</div>
+  <a href="javascript:void(0)" onclick="goToSection('sentiment')">🎯 Sentiment di mercato</a>
   <div class="navlabel">Geopolitica</div>
   <a href="javascript:void(0)" onclick="goToSection('geo')">🌍 Geopolitica</a>
   <div class="navlabel">Banche centrali</div>
@@ -733,7 +735,6 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   <div class="navlabel">Stato del mercato</div>
   <a href="javascript:void(0)" onclick="goToSection('riskonoff')">Risk-On / Risk-Off</a>
   <a href="javascript:void(0)" onclick="goToSection('rates')">Rendimenti · VIX · DXY</a>
-  <a href="javascript:void(0)" onclick="goToSection('sentiment')">Sentiment di mercato</a>
   <a href="javascript:void(0)" onclick="goToSection('vol')">Volatilità per asset</a>
   <div class="navlabel">Sintesi operativa</div>
   <a href="javascript:void(0)" onclick="goToSection('news')">Notizie a confronto</a>
@@ -879,8 +880,58 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   </div>
 </section>
 
+<section id="sentiment">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Sentiment di Mercato — News per Categoria</h2><span class="sec-desc">Fed/Tassi · Geopolitica · Macro · DXY · Fear &amp; Greed · AAII · NAAIM · Put/Call</span></div>
+
+  <div class="sn-eyebrow" style="margin-top:0;">📟 Fear &amp; Greed · Sentiment Retail</div>
+  <div class="rg-row" style="grid-template-columns:220px 1fr; align-items:center;">
+    <div class="rg-card">
+      <div class="rg-title">Fear &amp; Greed</div>
+      <div class="rg-gauge" id="rgGaugeFG"></div>
+      <div class="rg-value" id="rgValueFG" style="color:var(--red);">29</div>
+      <div class="rg-scale"><span>Paura estrema</span><span>Euforia estrema</span></div>
+      <div class="rg-sub" id="rgSubFG">CNN Fear &amp; Greed Index · rilevazione 18 set 2026</div>
+    </div>
+    <div class="rg-sub" style="text-align:left; line-height:1.5;">Il barometro Risk-On/Risk-Off geo-macro (score AI aggregato) è nella sezione <a href="javascript:void(0)" onclick="goToSection('riskonoff')" style="color:var(--accent);">11 · Risk-On / Risk-Off</a> qui sotto — non duplicato qui per evitare di mostrare due volte lo stesso numero.</div>
+  </div>
+
+  <div class="rt-card">
+    <div class="rt-title"><span>📶 Sentiment Retail per Strumento</span><span class="rt-note">Stima qualitativa curata manualmente — non un feed broker live</span></div>
+    <div id="rtGrid"></div>
+  </div>
+
+  <div class="sn-eyebrow">🎯 Sentiment news per categoria (AI)</div>
+  <div class="sn-header">
+    <div class="sn-title">🎯 Sentiment news per categoria</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="sn-meta" id="snMeta">verifica in corso...</div>
+      <button class="sn-regen" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
+    </div>
+  </div>
+  <div class="sn-grid" id="snGrid"></div>
+  <div class="sn-risks">
+    <div class="sr-label">⚠ Rischi chiave</div>
+    <ul id="snRisks"></ul>
+  </div>
+
+  <div class="sn-eyebrow">🔬 Validazione incrociata — News vs Dati Reali</div>
+  <div class="page-subtitle" style="margin-bottom:0;">Confronto tra la narrativa dominante nelle news e ciò che mostrano davvero posizionamento COT, open interest e quadro macro.</div>
+  <div class="xv-grid" id="xvGrid"></div>
+  <div class="xv-bias">
+    <div class="xvb-label">🎯 Bias risultante</div>
+    <div class="xvb-text" id="xvBiasText"></div>
+  </div>
+
+  <div class="sn-eyebrow">📊 Indicatori di posizionamento — Fear &amp; Greed · AAII · NAAIM · Put/Call</div>
+  <div class="grid grid-4" id="sentimentGrid"></div>
+  <div class="section-note">
+    <b>Lettura d'insieme — il sentiment ha girato bruscamente col rialzo Fed:</b> l'indice Fear &amp; Greed di CNN è crollato a 29 ("Fear") dopo il rialzo del 16 settembre, e il sondaggio AAII conferma lo stesso quadro con un ribaltamento netto — bullish sceso al 28,8% (-9,2pt) e bearish salito al 53,3% (+14,0pt), spread a -24,5 punti, il livello più basso da 16 mesi. A differenza di qualche settimana fa, qui <b>non c'è più divergenza tra i due indicatori</b>: prezzo e posizionamento retail si sono allineati verso la cautela nello stesso momento, subito dopo la sorpresa hawkish del FOMC. NAAIM e Put/Call restano invece ai valori pre-rialzo (rispettivamente 29 luglio e 1° settembre, prima che l'indice NAAIM passasse in abbonamento) — vanno letti come dati non ancora aggiornati, non come conferma o smentita del nuovo quadro. Operativamente: un doppio crollo di sentiment (Fear&amp;Greed + AAII) subito dopo un rialzo hawkish è coerente con un mercato che sta ricalibrando le attese su quanto restrittiva sarà la Fed da qui a fine anno — un contesto in cui la volatilità implicita (VIX) tende a rimanere elevata anche se il prezzo non crolla, e in cui un eccesso di pessimismo può anche preparare un rimbalzo tecnico se il prossimo dato macro sorprende al ribasso sull'inflazione.
+    <div class="source-tag">Fonti: CNN Business (18 set 2026), AAII (rilevazione settimana al 16 set 2026), NAAIM (ultimo dato pubblico 29 lug 2026), CBOE (rilevazione 1 set 2026, pre-FOMC)</div>
+  </div>
+</section>
+
 <section id="geo">
-  <div class="sec-head"><span class="sec-num">05</span><h2>Geopolitica</h2><span class="sec-desc">Driver del rischio globale attivo</span></div>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Geopolitica</h2><span class="sec-desc">Driver del rischio globale attivo</span></div>
   <div class="grid grid-2">
     <div class="card">
       <div class="lbl">Conflitto USA/Israele – Iran</div>
@@ -910,7 +961,7 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </section>
 
 <section id="fed">
-  <div class="sec-head"><span class="sec-num">06</span><h2>Banche Centrali — Fed &amp; CME FedWatch</h2><span class="sec-desc">Probabilità implicite dai Fed Funds futures</span></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Banche Centrali — Fed &amp; CME FedWatch</h2><span class="sec-desc">Probabilità implicite dai Fed Funds futures</span></div>
   <div class="grid grid-3" style="margin-bottom:16px;">
     <div class="card"><div class="lbl">Target Range Attuale</div><div class="val" style="color:var(--red);">3.75% – 4.00%</div><div class="sub">Rialzo di 25pb confermato al FOMC del 16 set 2026, voto 12-0 — primo rialzo dal 2023, dopo l'inflazione ancora sopra target di agosto</div></div>
     <div class="card"><div class="lbl">Prossimo FOMC</div><div class="val">27-28 Ott 2026</div><div class="sub">Dot plot post-16set: 16 membri su 18 vedono un altro rialzo entro fine anno (4 ne vedono due)</div></div>
@@ -952,7 +1003,7 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </section>
 
 <section id="hawkdove">
-  <div class="sec-head"><span class="sec-num">07</span><h2>Barometro Hawkish / Dovish</h2><span class="sec-desc">Bilancio dei fattori in gioco</span></div>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Barometro Hawkish / Dovish</h2><span class="sec-desc">Bilancio dei fattori in gioco</span></div>
   <div class="grid grid-2">
     <div class="card" style="border-color:var(--red);">
       <div class="lbl" style="color:var(--red);">🦅 Spinte Hawkish (rialzo confermato + dot plot verso altri rialzi)</div>
@@ -980,7 +1031,7 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </section>
 
 <section id="calendar">
-  <div class="sec-head"><span class="sec-num">08</span><h2>Calendario Economico</h2><span class="sec-desc" id="icRange"></span></div>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Calendario Economico</h2><span class="sec-desc" id="icRange"></span></div>
   <div class="ic-bar">
     <div class="ic-nav">
       <div class="ic-navbtn" onclick="calStep(-1)">‹</div>
@@ -1019,7 +1070,7 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </section>
 
 <section id="cot">
-  <div class="sec-head"><span class="sec-num">09</span><h2>COT Report — CFTC Commitment of Traders</h2><span class="sec-desc" id="cotSecDesc">Snapshot statico — verifica connessione live in corso...</span></div>
+  <div class="sec-head"><span class="sec-num">10</span><h2>COT Report — CFTC Commitment of Traders</h2><span class="sec-desc" id="cotSecDesc">Snapshot statico — verifica connessione live in corso...</span></div>
 
   <!-- ===== QUADRO DECISIONALE PER ASSET ===== -->
   <div class="eyebrow">🎯 COT · MOMENTUM · MACRO</div>
@@ -1047,7 +1098,7 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </section>
 
 <section id="riskonoff">
-  <div class="sec-head"><span class="sec-num">10</span><h2>Risk-On / Risk-Off</h2><span class="sec-desc">Composito da VIX, yields, oro, petrolio, equity</span></div>
+  <div class="sec-head"><span class="sec-num">11</span><h2>Risk-On / Risk-Off</h2><span class="sec-desc">Composito da VIX, yields, oro, petrolio, equity</span></div>
   <div class="rg-row" style="grid-template-columns:220px 1fr; align-items:center;">
     <div class="rg-card">
       <div class="rg-title">Risk-On / Risk-Off</div>
@@ -1067,60 +1118,10 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
 </section>
 
 <section id="rates">
-  <div class="sec-head"><span class="sec-num">11</span><h2>Rendimenti, VIX, DXY</h2><span class="sec-desc">Live dove disponibile · snapshot per il resto</span></div>
+  <div class="sec-head"><span class="sec-num">12</span><h2>Rendimenti, VIX, DXY</h2><span class="sec-desc">Live dove disponibile · snapshot per il resto</span></div>
   <div class="grid grid-4" id="ratesGrid"></div>
   <div class="section-note">
     <b>Lettura:</b> il 10Y al 4.65-4.68% resta ai massimi dalla crisi finanziaria globale per aste, riflesso di inflazione sopra target + deficit fiscale in espansione — ora anche del rialzo Fed del 16 settembre. Il DXY sui massimi da 7 settimane (100,2) conferma che il mercato ha prezzato con decisione il dot plot hawkish, non più un dollaro "contenuto" come nelle settimane pre-FOMC. Il VIX a 14,9 resta basso in assoluto nonostante il doppio crollo di sentiment retail (AAII, Fear&amp;Greed): attenzione a strategie di vendita di volatilità in questo contesto, il rischio di coda (Iran, un secondo rialzo a ottobre) è probabilmente sottoprezzato dal solo VIX.
-  </div>
-</section>
-
-<section id="sentiment">
-  <div class="sec-head"><span class="sec-num">12</span><h2>Sentiment di Mercato — News per Categoria</h2><span class="sec-desc">Fed/Tassi · Geopolitica · Macro · DXY · Fear &amp; Greed · AAII · NAAIM · Put/Call</span></div>
-
-  <div class="sn-eyebrow" style="margin-top:0;">📟 Fear &amp; Greed · Sentiment Retail</div>
-  <div class="rg-row" style="grid-template-columns:220px 1fr; align-items:center;">
-    <div class="rg-card">
-      <div class="rg-title">Fear &amp; Greed</div>
-      <div class="rg-gauge" id="rgGaugeFG"></div>
-      <div class="rg-value" id="rgValueFG" style="color:var(--red);">29</div>
-      <div class="rg-scale"><span>Paura estrema</span><span>Euforia estrema</span></div>
-      <div class="rg-sub" id="rgSubFG">CNN Fear &amp; Greed Index · rilevazione 18 set 2026</div>
-    </div>
-    <div class="rg-sub" style="text-align:left; line-height:1.5;">Il barometro Risk-On/Risk-Off geo-macro (score AI aggregato) è nella sezione <a href="javascript:void(0)" onclick="goToSection('riskonoff')" style="color:var(--accent);">10 · Risk-On / Risk-Off</a> qui sopra — non duplicato qui per evitare di mostrare due volte lo stesso numero.</div>
-  </div>
-
-  <div class="rt-card">
-    <div class="rt-title"><span>📶 Sentiment Retail per Strumento</span><span class="rt-note">Stima qualitativa curata manualmente — non un feed broker live</span></div>
-    <div id="rtGrid"></div>
-  </div>
-
-  <div class="sn-eyebrow">🎯 Sentiment news per categoria (AI)</div>
-  <div class="sn-header">
-    <div class="sn-title">🎯 Sentiment news per categoria</div>
-    <div style="display:flex; align-items:center; gap:10px;">
-      <div class="sn-meta" id="snMeta">verifica in corso...</div>
-      <button class="sn-regen" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
-    </div>
-  </div>
-  <div class="sn-grid" id="snGrid"></div>
-  <div class="sn-risks">
-    <div class="sr-label">⚠ Rischi chiave</div>
-    <ul id="snRisks"></ul>
-  </div>
-
-  <div class="sn-eyebrow">🔬 Validazione incrociata — News vs Dati Reali</div>
-  <div class="page-subtitle" style="margin-bottom:0;">Confronto tra la narrativa dominante nelle news e ciò che mostrano davvero posizionamento COT, open interest e quadro macro.</div>
-  <div class="xv-grid" id="xvGrid"></div>
-  <div class="xv-bias">
-    <div class="xvb-label">🎯 Bias risultante</div>
-    <div class="xvb-text" id="xvBiasText"></div>
-  </div>
-
-  <div class="sn-eyebrow">📊 Indicatori di posizionamento — Fear &amp; Greed · AAII · NAAIM · Put/Call</div>
-  <div class="grid grid-4" id="sentimentGrid"></div>
-  <div class="section-note">
-    <b>Lettura d'insieme — il sentiment ha girato bruscamente col rialzo Fed:</b> l'indice Fear &amp; Greed di CNN è crollato a 29 ("Fear") dopo il rialzo del 16 settembre, e il sondaggio AAII conferma lo stesso quadro con un ribaltamento netto — bullish sceso al 28,8% (-9,2pt) e bearish salito al 53,3% (+14,0pt), spread a -24,5 punti, il livello più basso da 16 mesi. A differenza di qualche settimana fa, qui <b>non c'è più divergenza tra i due indicatori</b>: prezzo e posizionamento retail si sono allineati verso la cautela nello stesso momento, subito dopo la sorpresa hawkish del FOMC. NAAIM e Put/Call restano invece ai valori pre-rialzo (rispettivamente 29 luglio e 1° settembre, prima che l'indice NAAIM passasse in abbonamento) — vanno letti come dati non ancora aggiornati, non come conferma o smentita del nuovo quadro. Operativamente: un doppio crollo di sentiment (Fear&amp;Greed + AAII) subito dopo un rialzo hawkish è coerente con un mercato che sta ricalibrando le attese su quanto restrittiva sarà la Fed da qui a fine anno — un contesto in cui la volatilità implicita (VIX) tende a rimanere elevata anche se il prezzo non crolla, e in cui un eccesso di pessimismo può anche preparare un rimbalzo tecnico se il prossimo dato macro sorprende al ribasso sull'inflazione.
-    <div class="source-tag">Fonti: CNN Business (18 set 2026), AAII (rilevazione settimana al 16 set 2026), NAAIM (ultimo dato pubblico 29 lug 2026), CBOE (rilevazione 1 set 2026, pre-FOMC)</div>
   </div>
 </section>
 
