@@ -1471,13 +1471,19 @@ function daysSinceSnapshot(){
   const diff = Math.floor((Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()) - CONTENT_SNAPSHOT_DATE.getTime())/86400000);
   return diff;
 }
-function renderContentTimestamps(){
+function renderContentTimestamps(opts){
+  const priorityLive = opts && opts.priorityLive;
   const days = daysSinceSnapshot();
   const label = days<=0 ? 'oggi' : days===1 ? '1 giorno fa' : `${days} giorni fa`;
   const warn = days>7;
   const style = warn ? 'color:var(--gold);' : 'color:var(--dim2);';
-  const newsEl = document.getElementById('newsTimestamp');
-  if(newsEl) newsEl.innerHTML = `<span style="${style}">Analisi verificata ${label}</span>${warn?' — chiedi in chat di rigenerarla':''}`;
+  // "newsTimestamp" viene toccato qui SOLO se la card headline/mini-card non è (ancora) live —
+  // se applyPriorityNewsLive() l'ha già aggiornata con l'orario reale, non sovrascriverlo, altrimenti
+  // torneremmo al bug già risolto per snMeta (testo statico che clobbera lo stato live un minuto dopo).
+  if(!priorityLive){
+    const newsEl = document.getElementById('newsTimestamp');
+    if(newsEl) newsEl.innerHTML = `<span style="${style}">Analisi verificata ${label}</span>${warn?' — chiedi in chat di rigenerarla':''}`;
+  }
   // Nota: "snMeta" (sentiment per categoria) NON viene toccato qui di proposito — lo aggiorna
   // applySentimentLive() quando i dati AI arrivano, e initLiveData() imposta un fallback dedicato
   // solo se quella chiamata fallisce. Farlo anche qui sovrascriverebbe sempre lo stato live appena
@@ -2624,6 +2630,72 @@ async function regenerateSentiment(){
   }
 }
 
+// Rende live la card "Dati pubblicati e notizie rilevanti" (headline + 4 mini-card + "Cosa può
+// ribaltare il quadro") riusando bias-daily (headline) e sentiment-categories (narrative per
+// categoria + rischi chiave) — entrambi già scaricati da initLiveData() per altre sezioni, quindi
+// nessuna chiamata AI aggiuntiva. Se uno dei due non risponde, resta il testo statico di fallback
+// già presente nell'HTML per quella parte.
+const PRIORITY_CATS = [
+  { key: 'geopolitics', title: 'Geopolitica' },
+  { key: 'fed_rates', title: 'Fed e tassi' },
+  { key: 'macro', title: 'Macro' },
+  { key: 'dxy', title: 'Dollaro / DXY' },
+];
+const PRIORITY_BIAS_DOT = { BULLISH: 'green', BEARISH: 'red', NEUTRAL: 'gold' };
+const PRIORITY_BIAS_COLOR = { BULLISH: 'var(--green)', BEARISH: 'var(--red)', NEUTRAL: 'var(--gold)' };
+function applyPriorityNewsLive(biasData, sentimentData){
+  let updated = false;
+
+  if(biasData && biasData.headline){
+    const el = document.getElementById('newsHeadline');
+    if(el){ el.textContent = biasData.headline; updated = true; }
+  }
+
+  if(sentimentData && sentimentData.categories && sentimentData.categories.length){
+    const byKey = {};
+    sentimentData.categories.forEach(c=>{ if(c && c.key) byKey[c.key] = c; });
+    const cards = PRIORITY_CATS.map(pc=>{
+      const c = byKey[pc.key];
+      if(!c || !c.narrative) return null;
+      return {
+        title: pc.title,
+        dot: PRIORITY_BIAS_DOT[c.bias] || 'gold',
+        desc: c.narrative,
+        tag: c.bias || 'NEUTRAL',
+        tagColor: PRIORITY_BIAS_COLOR[c.bias] || 'var(--gold)',
+      };
+    }).filter(Boolean);
+    if(cards.length){
+      const grid = document.getElementById('miniGrid');
+      if(grid){
+        grid.innerHTML = cards.map(m=>`
+          <div class="mini-card">
+            <div class="mc-top"><div class="mc-title">${m.title}</div><div class="mc-dot" style="background:var(--${m.dot});"></div></div>
+            <div class="mc-desc">${m.desc}</div>
+            <div class="mc-tag" style="color:${m.tagColor};">${m.tag}</div>
+          </div>`).join('');
+        updated = true;
+      }
+    }
+    if(sentimentData.keyRisks && sentimentData.keyRisks.length){
+      const list = document.getElementById('revealList');
+      if(list){ list.innerHTML = sentimentData.keyRisks.map(r=>`<li>${r}</li>`).join(''); updated = true; }
+    }
+  }
+
+  if(updated){
+    const timeEl = document.getElementById('newsTimestamp');
+    if(timeEl){
+      const src = (sentimentData && sentimentData.generatedAt) || (biasData && biasData.generatedAt);
+      const time = src ? new Date(src).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—';
+      const anyAi = (biasData ? biasData.ai !== false : true) && (sentimentData ? sentimentData.ai !== false : true);
+      timeEl.innerHTML = `generata alle <b>${time}</b>${anyAi ? '' : ' · fallback'}`;
+    }
+  }
+
+  return updated;
+}
+
 // ---------- VALIDAZIONE INCROCIATA: NEWS VS COT / OPEN INTEREST / MACRO (focus Oro) ----------
 const xvData = [
   {title:'News vs COT', status:'conflict',
@@ -3276,8 +3348,11 @@ async function initLiveData(){
     const snEl = document.getElementById('snMeta');
     if(snEl) snEl.textContent = 'Funzione live non raggiungibile — card con l\'ultima analisi disponibile.';
   }
+  // Riusa bias/sentiment già scaricati sopra per rendere live anche la card headline "Dati pubblicati
+  // e notizie rilevanti" (prima era testo statico scritto a mano, vedi commit precedenti).
+  const priorityUpdated = applyPriorityNewsLive(bias, sentiment);
   if(currentKeyEvent) loadEventDossier(currentKeyEvent); // dossier AI sull'evento chiave già selezionato
-  renderContentTimestamps(); // ricalcola sempre i "giorni fa" onesti per le sezioni curate
+  renderContentTimestamps({ priorityLive: priorityUpdated }); // ricalcola i "giorni fa" onesti per ciò che resta curato a mano
   const dpSel = document.getElementById('dpAssetSelect');
   if(dpSel && dpSel.value) renderDecisionPanel(dpSel.value);
   const note = document.getElementById('refreshNote');
@@ -3295,10 +3370,14 @@ async function initLiveData(){
   if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
   if(biasUpdated) parts.push('bias geo-macro AI');
   if(sentimentUpdated) parts.push('sentiment per categoria AI');
+  if(priorityUpdated) parts.push('headline e rischi chiave (AI)');
+  const staticNote = priorityUpdated
+    ? 'Solo gli scenari "sopra/sotto le attese" del calendario restano curati manualmente.'
+    : `Geopolitica e scenari narrativi restano curati manualmente (analisi di ${snapLbl}).`;
   if(parts.length){
-    note.innerHTML = `✓ Aggiornati: ${parts.join(', ')}. <span style="color:var(--dim2);">Geopolitica e scenari narrativi restano curati manualmente (analisi di ${snapLbl}).</span>`;
+    note.innerHTML = `✓ Aggiornati: ${parts.join(', ')}. <span style="color:var(--dim2);">${staticNote}</span>`;
     note.style.color = 'var(--green)';
-    statusLine.innerHTML = `<span style="color:var(--green);">● Live</span> — ${parts.join(', ')} aggiornati al ${now}. Analisi narrativa (geopolitica/sentiment) curata manualmente, verificata ${snapLbl}.`;
+    statusLine.innerHTML = `<span style="color:var(--green);">● Live</span> — ${parts.join(', ')} aggiornati al ${now}. ${staticNote}`;
   } else {
     note.textContent = 'Funzioni live non rilevate — mostro lo snapshot statico (verifica il deploy delle Netlify Functions)';
     note.style.color = 'var(--gold)';
