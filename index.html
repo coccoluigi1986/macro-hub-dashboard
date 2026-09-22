@@ -1986,6 +1986,7 @@ let calImpactFilter = new Set(['alto','medio','basso']); // impatti visibili
 let calCurrencyFilter = new Set();  // vuoto = tutte le valute
 let calSoloFuture = false;
 let calRawEvents = [];  // eventi live per il range attualmente caricato
+let calLastRenderedEvents = [];  // eventi (già filtrati) dell'ultimo render — per risalire al testo da tradurre dato l'idx della riga
 let calLoading = true;
 let calLoadError = false;
 let calFetchToken = 0;  // evita che una risposta lenta sovrascriva un fetch più recente
@@ -2025,6 +2026,14 @@ function fmtCalVal(v, unit, scale){
   const numStr = Number(v).toLocaleString('it-IT', {maximumFractionDigits:2});
   if(unit && ['€','$','£','¥'].includes(unit)) return `${unit}${numStr}${scale||''}`;
   return `${numStr}${scale||''}${unit||''}`;
+}
+
+// TradingView restituisce "period" in inglese (es. "Aug", "Jun") — nessuna chiamata AI necessaria,
+// è solo una mappa mese abbreviato inglese → italiano; i trimestri ("Q2 2026") restano invariati.
+const PERIOD_MONTH_IT = {Jan:'gen', Feb:'feb', Mar:'mar', Apr:'apr', May:'mag', Jun:'giu', Jul:'lug', Aug:'ago', Sep:'set', Oct:'ott', Nov:'nov', Dec:'dic'};
+function translatePeriod(period){
+  if(!period) return period;
+  return period.replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/g, m => PERIOD_MONTH_IT[m] || m);
 }
 
 // Lettura sintetica per trading: se il dato è già uscito lo confronta con le attese (sorpresa
@@ -2084,6 +2093,7 @@ function renderCalTable(){
   let evts = calRawEvents.filter(e => calImpactFilter.has(e.importance));
   if(calCurrencyFilter.size) evts = evts.filter(e => calCurrencyFilter.has(e.currency));
   if(calSoloFuture) evts = evts.filter(e => new Date(e.date).getTime() > Date.now());
+  calLastRenderedEvents = evts; // permette a toggleIcRow(idx) di risalire al testo originale da tradurre
 
   const head = `<div class="ic-row ic-head ic-grid-cols">
     <div>Data / ora (Londra)</div><div>Valuta</div><div>Impatto</div><div>Evento</div>
@@ -2103,9 +2113,12 @@ function renderCalTable(){
     const foreStr = fmtCalVal(e.forecast, e.unit, e.scale);
     const actStr = fmtCalVal(e.actual, e.unit, e.scale);
     const reading = calTradingReading(e);
-    const detail = e.comment
-      ? e.comment
-      : 'Nessuna descrizione dettagliata disponibile per questo evento dalla fonte del calendario.';
+    // TradingView fornisce "comment" solo in inglese — mostriamo subito un placeholder e lo
+    // sostituiamo con la traduzione italiana (via /api/translate-text) alla prima apertura della
+    // riga, così non traduciamo centinaia di righe che l'utente non apre mai.
+    const detailText = e.comment
+      ? `<span class="ic-detail-text" data-translated="0">${e.comment}</span>`
+      : '<span class="ic-detail-text" data-translated="1">Nessuna descrizione dettagliata disponibile per questo evento dalla fonte del calendario.</span>';
     return `
     <div class="ic-row ic-grid-cols" onclick="toggleIcRow(${idx})">
       <div class="ic-datetime"><span class="ic-day">${dateLbl}</span> <span class="ic-time">${timeLbl}</span></div>
@@ -2117,13 +2130,44 @@ function renderCalTable(){
       <div class="ic-num ${actStr!=='—'?'ic-num-actual':''}">${actStr}</div>
       <div class="ic-reading">${reading}</div>
     </div>
-    <div class="ic-detail-row" id="ic-detail-${idx}"><div class="ic-detail-inner">${detail}${e.source?`<span class="ic-source">Fonte: ${e.source}${e.period?` · Periodo: ${e.period}`:''}</span>`:''}</div></div>`;
+    <div class="ic-detail-row" id="ic-detail-${idx}"><div class="ic-detail-inner">${detailText}${e.source?`<span class="ic-source">Fonte: ${e.source}${e.period?` · Periodo: ${translatePeriod(e.period)}`:''}</span>`:''}</div></div>`;
   }).join('');
 
   wrap.innerHTML = head + rows;
 }
-function toggleIcRow(idx){
-  document.getElementById('ic-detail-'+idx).classList.toggle('open');
+
+// Cache client-side testo inglese → traduzione italiana, valida per l'intera sessione di
+// navigazione (le descrizioni di TradingView si ripetono moltissimo tra un evento e l'altro).
+const calTranslationCache = new Map();
+async function toggleIcRow(idx){
+  const detailRow = document.getElementById('ic-detail-'+idx);
+  detailRow.classList.toggle('open');
+  if(!detailRow.classList.contains('open')) return;
+
+  const span = detailRow.querySelector('.ic-detail-text');
+  if(!span || span.dataset.translated === '1') return;
+  const original = span.textContent;
+
+  if(calTranslationCache.has(original)){
+    span.textContent = calTranslationCache.get(original);
+    span.dataset.translated = '1';
+    return;
+  }
+  span.dataset.translated = 'loading';
+  const prevText = span.textContent;
+  span.textContent = 'Traduzione in corso…';
+  try{
+    const res = await fetch(`/api/translate-text?text=${encodeURIComponent(original)}`);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    const it = data.translated || prevText;
+    calTranslationCache.set(original, it);
+    span.textContent = it;
+    span.dataset.translated = '1';
+  }catch(e){
+    span.textContent = prevText; // silenzioso: resta il testo originale inglese come fallback
+    span.dataset.translated = '0';
+  }
 }
 function setCalViewMode(mode){
   calViewMode = mode;
