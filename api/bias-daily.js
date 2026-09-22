@@ -48,6 +48,7 @@ async function handleEvent(event) {
     const items = await aggregateNews(30);
 
     let payload = null;
+    let lastError = process.env.ANTHROPIC_API_KEY ? null : 'ANTHROPIC_API_KEY non impostata';
     if (process.env.ANTHROPIC_API_KEY && items.length) {
       try {
         const prompt = 'NOTIZIE REALI DELLE ULTIME ORE:\n'
@@ -79,10 +80,11 @@ async function handleEvent(event) {
         };
       } catch (e) {
         console.warn('daily bias AI failed:', e.message);
+        lastError = e.message; // diagnostica temporanea
       }
     }
 
-    if (!payload) payload = fallback();
+    if (!payload) payload = { ...fallback(), debugError: lastError };
 
     return {
       statusCode: 200,
