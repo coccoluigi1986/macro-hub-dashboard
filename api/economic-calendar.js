@@ -45,6 +45,11 @@ async function handleEvent(event) {
 
     const events = raw
       .filter((e) => e && e.title && e.date)
+      // TradingView mischia dati economici veri con festività ("indicator":"Holidays") e voci
+      // generiche da calendario diplomatico/politico ("indicator":"Calendar", es. "UN General
+      // Assembly") che non hanno mai numeri né rilevanza di trading — le scarto, tranne quando
+      // sono comunque segnate ad alto impatto dalla fonte (es. un summit geopolitico rilevante).
+      .filter((e) => e.indicator !== 'Holidays' && (e.indicator !== 'Calendar' || Number(e.importance) >= 1))
       .map((e) => ({
         id: e.id,
         title: e.title,
