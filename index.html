@@ -562,27 +562,32 @@ tr:hover td{background:var(--panel2);}
 .ic-toggle.active .ic-switch{background:var(--accent-soft); border-color:var(--accent);}
 .ic-toggle.active .ic-switch::after{transform:translateX(13px); background:var(--accent);}
 
-.ic-table-wrap{background:var(--panel); border:1px solid var(--border); border-radius:10px; overflow:hidden;}
-.ic-date-header{display:flex; align-items:center; gap:7px; padding:9px 16px; background:var(--panel2); font-size:10.5px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border);}
-.ic-row{display:flex; align-items:center; gap:12px; padding:9px 16px; border-bottom:1px solid var(--border); cursor:pointer; font-size:12.5px;}
+.ic-table-wrap{background:var(--panel); border:1px solid var(--border); border-radius:10px; overflow-x:auto;}
+.ic-grid-cols{display:grid; grid-template-columns:128px 56px 62px minmax(190px,2fr) 72px 72px 72px minmax(200px,1.6fr); gap:10px;}
+.ic-row{align-items:center; padding:8px 16px; border-bottom:1px solid var(--border); cursor:pointer; font-size:12px;}
 .ic-row:hover{background:var(--panel2);}
 .ic-row:last-child{border-bottom:none;}
-.ic-time{font-family:'IBM Plex Mono',monospace; color:var(--dim); font-size:11px; width:42px; flex-shrink:0;}
-.ic-cur{font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700; color:var(--dim); background:var(--panel2); border:1px solid var(--border); border-radius:4px; padding:2px 6px; width:32px; text-align:center; flex-shrink:0;}
-.ic-evt-name{color:var(--text); font-weight:500; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.ic-stats{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--dim2); white-space:nowrap; flex-shrink:0;}
-.ic-stats b{color:var(--text); font-weight:600;}
-.ic-impact-badge{font-size:9px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; padding:2px 8px; border-radius:4px; flex-shrink:0; width:52px; text-align:center;}
+.ic-row.ic-head{cursor:default; background:var(--panel2); font-size:9.5px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); position:sticky; top:0; z-index:1;}
+.ic-row.ic-head:hover{background:var(--panel2);}
+.ic-datetime{font-family:'IBM Plex Mono',monospace; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.ic-datetime .ic-day{color:var(--accent); font-weight:600;}
+.ic-datetime .ic-time{color:var(--dim);}
+.ic-cur{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; color:var(--accent);}
+.ic-evt-name{color:var(--text); font-weight:500; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.ic-num{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--dim2); text-align:right; white-space:nowrap;}
+.ic-num.ic-num-actual{color:var(--text); font-weight:600;}
+.ic-reading{font-size:11px; color:var(--dim2); line-height:1.35;}
+.ic-impact-badge{font-size:9px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; padding:2px 8px; border-radius:4px; text-align:center; justify-self:start;}
 .ic-impact-badge.alto{background:var(--red-soft); color:var(--red);}
 .ic-impact-badge.medio{background:var(--gold-soft); color:var(--gold);}
 .ic-impact-badge.basso{background:var(--panel2); color:var(--dim2);}
 .ic-detail-row{padding:0 16px; max-height:0; overflow:hidden; transition:max-height .25s ease; background:var(--bg);}
-.ic-detail-row.open{max-height:200px; padding:12px 16px;}
+.ic-detail-row.open{max-height:260px; overflow-y:auto; padding:12px 16px;}
 .ic-detail-row .ic-detail-inner{font-size:12px; color:var(--dim); line-height:1.55;}
+.ic-detail-row .ic-source{display:block; margin-top:6px; font-size:10.5px; color:var(--dim2); font-style:italic;}
 .ic-empty-day{padding:16px; text-align:center; color:var(--dim2); font-size:12px; font-style:italic;}
-@media(max-width:700px){
-  .ic-evt-name{white-space:normal;}
-  .ic-stats{display:none;}
+@media(max-width:900px){
+  .ic-grid-cols{grid-template-columns:104px 46px 54px minmax(150px,1.6fr) 60px 60px 60px minmax(160px,1.4fr);}
 }
 
 /* CALENDAR */
@@ -1064,8 +1069,8 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   <div class="ic-table-wrap">
     <div id="icTableBody"></div>
   </div>
-  <div class="section-note"><b>Impatto operativo:</b> nelle 24h precedenti agli eventi ad alto impatto (pallino rosso) ridurre leva e allargare gli stop, o restare flat sulle news di scenario binario (FOMC, NFP, CPI). Nei 15 minuti successivi alla release, evitare l'ingresso a mercato fino a conferma della direzione. Clicca su ogni riga per aprirne la descrizione completa.
-    <div class="source-tag">Dati verificati tramite ricerca web su fonti ufficiali (BLS, Fed, Eurostat, ECB, ISM). Non è un feed live di terze parti — per un aggiornamento chiedi in chat.</div>
+  <div class="section-note"><b>Impatto operativo:</b> nelle 24h precedenti agli eventi ad alto impatto (badge rosso) ridurre leva e allargare gli stop, o restare flat sulle news di scenario binario (FOMC, NFP, CPI). Nei 15 minuti successivi alla release, evitare l'ingresso a mercato fino a conferma della direzione. Clicca su ogni riga per aprirne la descrizione completa.
+    <div class="source-tag">Calendario live — TradingView Economic Calendar (stesso feed usato dal widget calendario embeddabile di tradingview.com), aggiornato ad ogni caricamento della pagina.</div>
   </div>
 </section>
 
@@ -1971,181 +1976,19 @@ document.getElementById('pricingPricedList').innerHTML = pricingPriced.map(p=>`<
 document.getElementById('pricingRiskList').innerHTML = pricingRisks.map(p=>`<li><b>${p.label}</b><span>${p.detail}</span></li>`).join('');
 renderMarketPricing();
 
-// ---------- CALENDAR DATA (month: 0=gen ... 7=ago, 8=set — anno 2026) ----------
-const calEvents = [
-  {month:7, day:14, time:'16:00', imp:'basso', title:'Consumer Sentiment Michigan (preliminare, ago)', prev:'—', fore:'—', actual:'in uscita oggi',
-   desc:'Sondaggio mensile sulla fiducia dei consumatori USA. Non muove i mercati quanto CPI/NFP, ma anticipa le attese di inflazione a 1 e 5 anni dei consumatori, seguite dalla Fed come indicatore delle aspettative inflazionistiche di lungo periodo.'},
-
-  // ===== LUNEDÌ 17 AGOSTO 2026 =====
-  {month:7, day:17, time:'14:30', imp:'medio', title:'[US] Indice manifatturiero NY Empire State (ago)', prev:'15,60', fore:'—', actual:'in uscita',
-   desc:'Primo indicatore manifatturiero regionale del mese, pubblicato dalla Fed di New York — spesso il primo segnale di tendenza per il ciclo industriale USA prima di ISM e Philly Fed. Un valore sopra zero indica espansione.'},
-  {month:7, day:17, time:'14:30', imp:'medio', title:'[CA] Indice prezzi al consumo core (mensile, lug)', prev:'0,1%', fore:'—', actual:'in uscita',
-   desc:'Componente core dell\'inflazione canadese, esclude le voci più volatili. Rilevante per il cross USD/CAD e per le attese sulla Bank of Canada.'},
-  {month:7, day:17, time:'14:30', imp:'medio', title:'[CA] Indice generale prezzi al consumo (annuale, lug)', prev:'2,1%', fore:'—', actual:'in uscita',
-   desc:'CPI canadese headline su base annua. Insieme al dato mensile, è il principale market mover per USD/CAD nella giornata — un dato sopra attese rafforza il CAD (meno probabile un taglio BoC), uno sotto attese lo indebolisce.'},
-  {month:7, day:17, time:'14:30', imp:'basso', title:'[CA] Acquisti di titoli stranieri (giu)', prev:'7,90B', fore:'—', actual:'in uscita',
-   desc:'Misura i flussi di capitale estero verso titoli canadesi. Indicatore di flusso più che di policy, impatto contenuto salvo sorprese enormi.'},
-  {month:7, day:17, time:'14:30', imp:'medio', title:'[CA] IPC mensile (lug)', prev:'-0,4%', fore:'—', actual:'in uscita',
-   desc:'Variazione mensile dell\'indice dei prezzi al consumo canadese, pubblicato in contemporanea al dato annuale — stessa rilevanza per USD/CAD.'},
-  {month:7, day:17, time:'22:00', imp:'basso', title:'[US] Transazioni TIC nette di lungo termine (giu)', prev:'232,7B', fore:'—', actual:'in uscita',
-   desc:'Treasury International Capital: flussi netti di capitale estero verso asset USA a lungo termine (inclusi Treasury). Indicatore di domanda estera per il debito USA, osservato come termometro di fiducia internazionale nel dollaro, specialmente in un contesto di deficit fiscale in espansione.'},
-
-  // ===== MARTEDÌ 18 AGOSTO 2026 =====
-  {month:7, day:18, time:'08:00', imp:'medio', title:'[UK] Variazione richieste sussidio disoccupazione (lug)', prev:'6,7K', fore:'—', actual:'in uscita',
-   desc:'Variazione mensile dei sussidi di disoccupazione nel Regno Unito. Rilevante per GBP/USD e per le attese sulla Bank of England.'},
-  {month:7, day:18, time:'08:00', imp:'medio', title:'[UK] Variazione occupazione trimestrale (giu)', prev:'147K', fore:'—', actual:'in uscita',
-   desc:'Variazione dell\'occupazione nel trimestre mobile terminato a giugno. Insieme al tasso di disoccupazione, compone il pacchetto dati sul lavoro UK pubblicato in blocco.'},
-  {month:7, day:18, time:'08:00', imp:'medio', title:'[UK] Tasso di disoccupazione (giu)', prev:'4,9%', fore:'—', actual:'in uscita',
-   desc:'Tasso di disoccupazione UK. Un aumento inatteso pesa sulla sterlina e riduce le probabilità di un atteggiamento hawkish della Bank of England.'},
-  {month:7, day:18, time:'08:00', imp:'medio', title:'[UK] Salari medi inclusi bonus (giu)', prev:'4,3%', fore:'—', actual:'in uscita',
-   desc:'Crescita salariale UK, indicatore chiave per la BoE nella valutazione delle pressioni inflazionistiche interne da lato costi del lavoro.'},
-  {month:7, day:18, time:'10:30', imp:'basso', title:'[UK] Produttività della manodopera (1° trim.)', prev:'-0,5%', fore:'-0,5%', actual:'in uscita',
-   desc:'Variazione della produttività oraria nel Regno Unito. Impatto di mercato contenuto, seguito più per il quadro macro strutturale che come market mover diretto.'},
-  {month:7, day:18, time:'11:00', imp:'medio', title:'[DE] Indice ZEW condizioni economiche attuali (ago)', prev:'-77,6', fore:'—', actual:'in uscita',
-   desc:'Valutazione degli analisti tedeschi sulle condizioni economiche correnti. Livelli fortemente negativi riflettono la debolezza ciclica tedesca — rilevante per l\'euro e per il sentiment sull\'intera Eurozona.'},
-  {month:7, day:18, time:'11:00', imp:'medio', title:'[DE] Indice ZEW sentiment economico (ago)', prev:'26,3', fore:'—', actual:'in uscita',
-   desc:'Indice di fiducia degli analisti finanziari sulle prospettive economiche tedesche a 6 mesi. Tra i dati più seguiti per l\'euro nella prima metà del mese, spesso anticipa i PMI flash della settimana successiva.'},
-  {month:7, day:18, time:'14:15', imp:'basso', title:'[CA] Nuovi cantieri edili residenziali (lug)', prev:'239,0K', fore:'—', actual:'in uscita',
-   desc:'Avvio di nuovi cantieri residenziali in Canada, annualizzato. Indicatore del ciclo immobiliare canadese, sensibile ai tassi BoC.'},
-  {month:7, day:18, time:'14:30', imp:'basso', title:'[US] Indice prezzi all\'esportazione (mensile, lug)', prev:'-0,6%', fore:'—', actual:'in uscita',
-   desc:'Variazione dei prezzi dei beni esportati dagli USA. Indicatore secondario di competitività commerciale, raramente market-moving da solo.'},
-  {month:7, day:18, time:'14:30', imp:'medio', title:'[US] Nuovi cantieri edili — Housing Starts (lug)', prev:'1,427M', fore:'1,340M', actual:'in uscita',
-   desc:'Numero di nuovi cantieri residenziali avviati negli USA, annualizzato. Insieme ai permessi di costruzione, è il termometro più diretto della salute del settore immobiliare — sensibile ai tassi sui mutui a 30 anni e quindi indirettamente alla politica Fed.'},
-  {month:7, day:18, time:'14:30', imp:'basso', title:'[US] Indice prezzi all\'importazione (mensile, lug)', prev:'0,3%', fore:'—', actual:'in uscita',
-   desc:'Variazione dei prezzi dei beni importati negli USA. In un contesto di shock energetico da guerra Iran, questo dato aiuta a capire quanto dei costi petroliferi più alti si stia trasmettendo ai prezzi import.'},
-  {month:7, day:18, time:'14:30', imp:'medio', title:'[US] Permessi di costruzione — Building Permits (lug)', prev:'1,374M', fore:'—', actual:'in uscita',
-   desc:'Permessi di costruzione rilasciati, anticipatore dei futuri Housing Starts. Pubblicato in contemporanea al dato sui cantieri — la coppia di dati è tra le più osservate per il ciclo immobiliare USA.'},
-
-  {month:7, day:20, time:'10:00', imp:'basso', title:'Philadelphia Fed Manufacturing Index (ago)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Indice regionale sulla manifattura dell\'area di Filadelfia, seguito come indicatore anticipatore per l\'ISM Manufacturing nazionale del mese successivo. Impatto di mercato contenuto ma utile per triangolare il quadro industriale regionale.'},
-  {month:7, day:19, time:'14:00', imp:'alto', title:'Minute FOMC — riunione di luglio', prev:'—', fore:'toni relativamente hawkish attesi', actual:'in uscita',
-   desc:'Le minute della riunione del 29 luglio (quella con la spaccatura 9-3, la più netta dal 2016) sono attese con forte attenzione dal mercato: possono chiarire quanto vicini fossero gli altri membri del board alla posizione dei tre dissenzienti hawkish (Hammack, Kashkari, Logan). Un tono delle minute più hawkish del previsto rafforzerebbe il dollaro e peserebbe su oro/equity; un tono più conciliante avrebbe l\'effetto opposto. Il mercato stima attualmente una probabilità superiore al 50% di un rialzo tassi entro fine anno.'},
-  {month:7, day:21, time:'09:45', imp:'medio', title:'PMI Flash S&P Global — Manifatturiero e Servizi (ago)', prev:'55.6 / 54.1 (ISM lug)', fore:'—', actual:'in uscita',
-   desc:'Prima lettura (flash) dell\'attività economica di agosto, anticipa di una settimana i dati ISM ufficiali. Un valore sopra 50 indica espansione. Dato utile per intercettare in anticipo un cambio di trend nel ciclo manifatturiero/servizi dopo la forte accelerazione di luglio.'},
-  {month:7, day:25, time:'10:00', imp:'basso', title:'Conference Board Consumer Confidence (ago)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Indice di fiducia dei consumatori alternativo a quello del Michigan, con maggiore enfasi sulle condizioni del mercato del lavoro percepite. Componente "labor differential" seguita dalla Fed come proxy indipendente sul mercato del lavoro.'},
-  {month:7, day:26, time:'08:30', imp:'alto', title:'PIL USA Q2 2026 — Seconda stima + utili societari', prev:'1.5% (stima advance)', fore:'revisione attesa verso l\'alto o conferma', actual:'in uscita',
-   desc:'Revisione della stima "advance" che aveva sorpreso al ribasso (1.5% vs 2.1% atteso). Il BEA integra dati più completi su commercio estero, scorte e servizi. Una revisione al ribasso rafforzerebbe la tesi di un rallentamento più marcato e aumenterebbe le probabilità implicite di taglio Fed; una revisione al rialzo darebbe più margine a un approccio hawkish.'},
-  {month:7, day:28, time:'10:00', imp:'alto', title:'Discorso di Warsh a Jackson Hole — ESITO: tono hawkish', prev:'—', fore:'—', actual:'Hawkish, no forward guidance esplicita',
-   desc:'Il discorso più atteso dell\'estate. Il simposio di Jackson Hole (Wyoming) riunisce i principali banchieri centrali mondiali; il keynote del Presidente Fed è storicamente la sede in cui vengono anticipati cambi di direzione nella policy monetaria prima del FOMC di settembre. Alta sensibilità del mercato a ogni singola frase sui rischi inflazione/lavoro — movimenti violenti su DXY, oro e Treasury sono la norma in questa occasione.'},
-
-  {month:8, day:1, time:'10:00', imp:'alto', title:'ISM Manufacturing PMI (agosto)', prev:'55.6', fore:'~54-56 (consolidamento atteso)', actual:'—',
-   desc:'Dopo il balzo di luglio al massimo da maggio 2022 (55.6), il mercato verifica se l\'espansione manifatturiera regge o se lo shock dei costi energetici comincia a raffreddare la produzione. L\'indice prezzi pagati è la componente più osservata per intercettare pressioni inflazionistiche in arrivo.'},
-  {month:8, day:3, time:'10:00', imp:'medio', title:'ISM Services PMI (agosto)', prev:'54.1', fore:'~54', actual:'—',
-   desc:'Il settore servizi rappresenta circa il 90% dell\'economia USA. Focus particolare sull\'indice prezzi, salito a 71.3 a luglio (massimo da agosto 2022) per l\'impatto dei costi energetici — un\'ulteriore accelerazione qui rafforzerebbe lo scenario hawkish per il FOMC di metà mese.'},
-  {month:8, day:4, time:'08:30', imp:'alto', title:'Non-Farm Payrolls (agosto) + tasso di disoccupazione', prev:'-23K / 4.1%', fore:'ripresa moderata attesa dopo il dato negativo', actual:'—',
-   desc:'Il dato macro più atteso prima del FOMC. Dopo la sorpresa negativa di luglio (-23K, primo dato negativo del ciclo) trainata da tagli nel pubblico impiego, il mercato cerca conferma se si tratti di un evento isolato o dell\'inizio di un deterioramento strutturale. Osservare in particolare la serie dei licenziamenti temporanei (921K a luglio) e la crescita salariale, entrambi indicatori anticipatori chiave.'},
-  {month:8, day:10, time:'08:30', imp:'alto', title:'PPI — Producer Price Index (agosto)', prev:'0.0% MoM / 4.7% YoY', fore:'lieve accelerazione possibile', actual:'—',
-   desc:'Misura i prezzi dal lato dei produttori, spesso anticipatore del CPI del giorno successivo. A luglio il dato era rimasto invariato ma con servizi in aumento e beni in calo. Un dato sopra attese aumenterebbe il timore di trasmissione dei costi energetici ai prezzi finali, rafforzando lo scenario di rialzo Fed.'},
-  {month:8, day:10, time:'14:15', imp:'alto', title:'[EU] BCE — Decisione tassi + conferenza stampa Lagarde', prev:'2,25% (rialzo confermato a giu, hold a lug)', fore:'70-78% probabilità di rialzo +25pb a 2,50%', actual:'—',
-   desc:'Riunione della Banca Centrale Europea, decisione alle 14:15 CET e conferenza stampa di Lagarde alle 14:45 CET. Il mercato prezza un\'elevata probabilità di un secondo rialzo consecutivo dopo quello di giugno (primo dal 2023), sullo stesso shock energetico da guerra Iran che sta guidando anche la Fed. Pubblicato lo stesso giorno del PPI USA — giornata a doppio catalizzatore su EUR/USD e sui differenziali di tasso USA-Eurozona.'},
-  {month:8, day:11, time:'08:30', imp:'alto', title:'CPI — Consumer Price Index (agosto)', prev:'3.2% YoY / 2.3% core YoY (luglio)', fore:'atteso un terzo mese di lieve raffreddamento', actual:'3.4% YoY / 2.4% core YoY',
-   desc:'CPI uscito leggermente sopra le attese: 3,4% YoY headline (0,4% MoM), core 2,4% YoY (0,3% MoM). La benzina (+3,9% m/m, +27,4% a/a) ha pesato per oltre un terzo del rialzo headline. Il dato ha spinto le probabilità FedWatch di un rialzo Fed all\'89% alla vigilia del FOMC del 16 settembre, che poi ha effettivamente alzato i tassi.'},
-  {month:8, day:15, time:'tutto il giorno', imp:'alto', title:'FOMC Day 1 — inizio riunione', prev:'—', fore:'—', actual:'—',
-   desc:'Primo giorno della riunione a due giorni del Federal Open Market Committee. Nessuna decisione viene comunicata, ma inizia il "blackout period" durante il quale i membri Fed non rilasciano dichiarazioni pubbliche — tipicamente un periodo di minore rumore mediatico ma non di minore volatilità di mercato.'},
-  {month:8, day:16, time:'14:00 / 14:30 ET', imp:'alto', title:'FOMC — Decisione tassi + Dot Plot + conferenza stampa Warsh — ESITO: rialzo +25pb', prev:'3.50%-3.75% (hold)', fore:'~52% rialzo +25pb / 38% hold / 10% taglio (post Jackson Hole)', actual:'Rialzo +25pb a 3.75%-4.00%, voto 12-0',
-   desc:'Esito reale: il FOMC ha alzato i tassi di 25pb a 3,75-4,00%, primo rialzo dal 2023, voto unanime 12-0, citando inflazione ancora elevata. Il dot plot aggiornato mostra 16 membri su 18 che vedono un altro rialzo entro fine 2026 (4 ne vedono due). Warsh ha tenuto la conferenza stampa più breve nella storia dei chair Fed (~30 minuti). Il dollaro ha reagito con forza, portando il DXY sui massimi da 7 settimane; il sentiment retail (AAII, Fear&amp;Greed) è crollato nei giorni successivi.'},
-  {month:8, day:16, time:'8:30', imp:'medio', title:'Retail Sales (agosto)', prev:'-0.6% MoM (luglio)', fore:'—', actual:'—',
-   desc:'Le vendite al dettaglio di luglio avevano deluso (-0.6% contro +0.1% atteso). Pubblicate lo stesso giorno della decisione Fed. Dato non ancora verificato in questa dashboard — il FOMC ha comunque proceduto con il rialzo lo stesso pomeriggio.'},
-
-  // ===== OTTOBRE 2026 (date ufficiali BLS/FOMC) =====
-  {month:9, day:1, time:'10:00', imp:'alto', title:'ISM Manufacturing PMI (set)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Primo dato macro del mese, primo giorno lavorativo di ottobre. Verifica se l\'espansione manifatturiera vista da luglio in poi prosegue nel terzo trimestre.'},
-  {month:9, day:2, time:'08:30', imp:'alto', title:'Non-Farm Payrolls (set) + tasso disoccupazione', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS (Employment Situation). Terzo NFP consecutivo da monitorare per confermare se il trend di indebolimento del lavoro visto in estate 2026 prosegue o si stabilizza.'},
-  {month:9, day:5, time:'10:00', imp:'medio', title:'ISM Services PMI (set)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Terzo giorno lavorativo del mese. Focus abituale sulla componente prezzi pagati per intercettare pressioni inflazionistiche residue.'},
-  {month:9, day:14, time:'08:30', imp:'alto', title:'CPI — Consumer Price Index (set)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS. Ultimo CPI prima della riunione FOMC del 27-28 ottobre — determinante per l\'esito della decisione.'},
-  {month:9, day:15, time:'08:30', imp:'alto', title:'PPI — Producer Price Index (set)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS. Anticipatore del CPI del giorno precedente in questo ciclo (uscito prima) — letto in combinato con il CPI per il quadro inflattivo completo pre-FOMC.'},
-  {month:9, day:27, time:'tutto il giorno', imp:'alto', title:'FOMC Day 1 — inizio riunione di ottobre', prev:'—', fore:'—', actual:'—',
-   desc:'Primo giorno della riunione FOMC del 27-28 ottobre 2026 (data ufficiale Federal Reserve). Inizia il blackout period per i membri Fed.'},
-  {month:9, day:28, time:'18:00 / 18:30 UTC', imp:'alto', title:'FOMC — Decisione tassi + conferenza stampa Warsh', prev:'da definire in base all\'esito di settembre', fore:'—', actual:'in uscita',
-   desc:'Riunione FOMC ufficiale del 27-28 ottobre 2026. Non prevede l\'aggiornamento del dot plot (riservato a marzo/giugno/settembre/dicembre) — l\'attenzione sarà quindi tutta sul linguaggio dello statement e sulla conferenza stampa di Warsh.'},
-  {month:9, day:29, time:'14:15 CET', imp:'alto', title:'[EU] BCE — Decisione tassi + conferenza stampa Lagarde', prev:'da definire in base all\'esito di settembre', fore:'—', actual:'in uscita',
-   desc:'Riunione ufficiale BCE del 29 ottobre 2026 (data confermata Governing Council). Decisione alle 14:15 CET, conferenza stampa di Lagarde alle 14:45 CET.'},
-
-  // ===== NOVEMBRE 2026 (date ufficiali BLS) =====
-  {month:10, day:2, time:'10:00', imp:'alto', title:'ISM Manufacturing PMI (ott)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Primo dato macro di novembre, primo giorno lavorativo del mese.'},
-  {month:10, day:4, time:'10:00', imp:'medio', title:'ISM Services PMI (ott)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Terzo giorno lavorativo del mese, focus abituale sulla componente prezzi pagati.'},
-  {month:10, day:6, time:'08:30', imp:'alto', title:'Non-Farm Payrolls (ott) + tasso disoccupazione', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS (Employment Situation). Primo NFP dopo la decisione FOMC di fine ottobre.'},
-  {month:10, day:10, time:'08:30', imp:'alto', title:'CPI — Consumer Price Index (ott)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS. Ultimo CPI prima della riunione FOMC dell\'8-9 dicembre, quella con il dot plot aggiornato.'},
-  {month:10, day:13, time:'08:30', imp:'alto', title:'PPI — Producer Price Index (ott)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS.'},
-
-  // ===== DICEMBRE 2026 (date ufficiali BLS/FOMC/BCE) =====
-  {month:11, day:1, time:'10:00', imp:'alto', title:'ISM Manufacturing PMI (nov)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Primo dato macro di dicembre, primo giorno lavorativo del mese.'},
-  {month:11, day:3, time:'10:00', imp:'medio', title:'ISM Services PMI (nov)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Terzo giorno lavorativo del mese.'},
-  {month:11, day:4, time:'08:30', imp:'alto', title:'Non-Farm Payrolls (nov) + tasso disoccupazione', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS (Employment Situation). Ultimo NFP prima della riunione FOMC dell\'8-9 dicembre.'},
-  {month:11, day:8, time:'tutto il giorno', imp:'alto', title:'FOMC Day 1 — inizio riunione di dicembre', prev:'—', fore:'—', actual:'—',
-   desc:'Primo giorno della riunione FOMC dell\'8-9 dicembre 2026 (data ufficiale Federal Reserve). Ultima riunione dell\'anno.'},
-  {month:11, day:9, time:'19:00 / 19:30 UTC', imp:'alto', title:'FOMC — Decisione tassi + Dot Plot + conferenza stampa Warsh', prev:'da definire in base all\'esito di ottobre', fore:'—', actual:'in uscita',
-   desc:'Ultima riunione FOMC dell\'anno (8-9 dicembre 2026), con aggiornamento del Summary of Economic Projections e del dot plot per il 2027 — tra le riunioni storicamente più market-moving dell\'anno insieme a marzo, giugno e settembre.'},
-  {month:11, day:10, time:'08:30', imp:'alto', title:'CPI — Consumer Price Index (nov)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS. Pubblicato il giorno dopo la decisione Fed di dicembre.'},
-  {month:11, day:15, time:'08:30', imp:'alto', title:'PPI — Producer Price Index (nov)', prev:'—', fore:'—', actual:'in uscita',
-   desc:'Data ufficiale BLS.'},
-  {month:11, day:17, time:'14:15 CET', imp:'alto', title:'[EU] BCE — Decisione tassi + conferenza stampa Lagarde', prev:'da definire in base all\'esito di ottobre', fore:'—', actual:'in uscita',
-   desc:'Ultima riunione ufficiale BCE dell\'anno (17 dicembre 2026, data confermata Governing Council). Decisione alle 14:15 CET, conferenza stampa di Lagarde alle 14:45 CET.'},
-];
-
-let calMonth = 7; // 7 = agosto 2026
-let selectedDay = null;
-
-function daysInMonth(m,y){ return new Date(y, m+1, 0).getDate(); }
-function firstWeekdayMon(m,y){ let d = new Date(y,m,1).getDay(); return d===0?6:d-1; } // lunedì=0
-
-// ---------- EVENTI RICORRENTI SETTIMANALI (reali, stessa cadenza ogni settimana) ----------
-// Coprono ogni giorno feriale con dati strutturali del calendario USA, in aggiunta ai grandi eventi in calEvents
-const recurringTemplates = {
-  1: [{time:'11:30', imp:'basso', title:'Asta buoni del Tesoro USA (3M/6M)', desc:'Asta settimanale di titoli di stato a breve termine. Misura la domanda di liquidità a breve e il costo di finanziamento del debito pubblico USA. Raramente market-moving, salvo in condizioni di stress di liquidità o dubbi sul tetto del debito.'}],
-  2: [{time:'08:55', imp:'basso', title:'Redbook Retail Sales Index (settimanale)', desc:'Indice settimanale ad alta frequenza sulle vendite al dettaglio USA (same-store sales). Bassa affidabilità statistica singola, ma utile per intuire il trend dei consumi tra un Retail Sales mensile e l\'altro.'}],
-  3: [
-    {time:'13:00', imp:'basso', title:'MBA Mortgage Applications (settimanale)', desc:'Variazione settimanale delle richieste di mutuo USA. Indicatore anticipatore del settore immobiliare, sensibile ai movimenti dei tassi sui mutui a 30 anni collegati al rendimento del 10Y Treasury.'},
-    {time:'16:30', imp:'medio', title:'EIA Crude Oil Inventories (scorte settimanali petrolio)', desc:'Variazione settimanale delle scorte USA di greggio pubblicata dalla Energy Information Administration. Uno dei dati a più alta frequenza con impatto diretto e immediato su WTI/Brent — un calo scorte superiore alle attese è tipicamente rialzista per il petrolio, un aumento è ribassista. In questa fase di forte attenzione sul premio geopolitico Iran/Hormuz, il dato è osservato con particolare cura per intercettare segnali di stress reale sull\'offerta.'}
-  ],
-  4: [
-    {time:'14:30', imp:'medio', title:'Richieste sussidio disoccupazione settimanali', desc:'Dato settimanale ad alta frequenza sul mercato del lavoro USA. Dopo il balzo dei licenziamenti temporanei visto nell\'NFP di luglio (921K), ogni lettura viene scrutinata per capire se il trend di indebolimento del lavoro sta accelerando o si sta stabilizzando.'},
-    {time:'16:30', imp:'basso', title:'EIA Natural Gas Storage (scorte settimanali gas naturale)', desc:'Variazione settimanale delle scorte USA di gas naturale. Meno centrale del dato sul petrolio per questa dashboard, ma seguito dagli operatori su Henry Hub e correlazioni energy-wide.'}
-  ],
-  5: [{time:'18:00', imp:'basso', title:'Baker Hughes US Rig Count (settimanale)', desc:'Numero di impianti di perforazione attivi negli USA. Indicatore strutturale sull\'offerta futura di petrolio e gas — un trend di crescita segnala espansione della produzione USA nei mesi successivi, un trend di calo il contrario.'}],
-};
-function getRecurringForDate(month, day){
-  const dow = new Date(2026, month, day).getDay(); // 0=Dom,1=Lun...6=Sab
-  const tmpl = recurringTemplates[dow];
-  if(!tmpl) return [];
-  return tmpl.map(t=>({month, day, time:t.time, imp:t.imp, title:t.title, prev:'—', fore:'—', actual:'in uscita', desc:t.desc}));
-}
-function getAllEventsForDate(month, day){
-  const specific = calEvents.filter(e=>e.month===month && e.day===day);
-  const recurring = getRecurringForDate(month, day);
-  // ordina per orario quando possibile
-  return [...specific, ...recurring];
-}
-
-// ---------- CALENDARIO ECONOMICO — vista compatta (Giorno/Settimana/Mese/Tutti + filtri impatto/valuta/solo future) ----------
+// ---------- CALENDARIO ECONOMICO — dati REALI live (TradingView Economic Calendar via api/economic-calendar.js) ----------
+// Sostituisce il vecchio elenco di eventi scritti a mano: ogni riga (titolo, valuta, impatto,
+// precedente/previsto/attuale, descrizione) arriva ora dal calendario economico reale via
+// serverless function, per il range di date attualmente selezionato (Giorno/Settimana/Mese/Tutti).
 let calViewMode = 'settimana';   // giorno | settimana | mese | tutti
 let calNavOffset = 0;            // step di navigazione rispetto a oggi, nell'unità del view mode attivo
 let calImpactFilter = new Set(['alto','medio','basso']); // impatti visibili
 let calCurrencyFilter = new Set();  // vuoto = tutte le valute
 let calSoloFuture = false;
-
-// Deduce la valuta dal prefisso "[EU]"/"[CA]"/... nel titolo (unica fonte già presente nei dati);
-// se non c'è prefisso è un dato USA, la maggioranza di questo calendario.
-function guessCurrency(title){
-  const m = title.match(/^\[(\w{2,3})\]/);
-  if(!m) return 'USD';
-  const map = {EU:'EUR', UK:'GBP', GB:'GBP', JP:'JPY', CA:'CAD', AU:'AUD', CN:'CNY', CH:'CHF', US:'USD'};
-  return map[m[1].toUpperCase()] || 'USD';
-}
+let calRawEvents = [];  // eventi live per il range attualmente caricato
+let calLoading = true;
+let calLoadError = false;
+let calFetchToken = 0;  // evita che una risposta lenta sovrascriva un fetch più recente
 
 function getCalDateRange(){
   const now = new Date();
@@ -2171,56 +2014,113 @@ function getCalDateRange(){
 }
 
 function fmtRange(startMs, endMs){
-  const f = ms => new Date(ms).toLocaleDateString('it-IT', {day:'2-digit', month:'short', timeZone:'UTC'});
-  return startMs===endMs ? f(startMs)+' 2026' : `${f(startMs)} — ${f(endMs)} 2026`;
+  const f = ms => new Date(ms).toLocaleDateString('it-IT', {day:'2-digit', month:'short', year:'numeric', timeZone:'UTC'});
+  return startMs===endMs ? f(startMs) : `${f(startMs)} — ${f(endMs)}`;
 }
 
-// Un evento con orario "HH:MM" è già passato se oggi + quell'ora sono nel passato; eventi "tutto il
-// giorno" o con orari non standard (es. "19:00 / 19:30 UTC") sono considerati sempre correnti/futuri.
-function eventIsPast(month, day, time){
-  const m = time.match(/^(\d{1,2}):(\d{2})$/);
-  if(!m) return false;
-  const dt = new Date(Date.UTC(2026, month, day, parseInt(m[1]), parseInt(m[2])));
-  return dt.getTime() < Date.now();
+// Formatta previous/forecast/actual: TradingView restituisce già il numero "scalato" (es. 27.8
+// con scale "K" = 27,8K) — antepone il simbolo valuta se presente, altrimenti lo mette in coda.
+function fmtCalVal(v, unit, scale){
+  if(v === null || v === undefined) return '—';
+  const numStr = Number(v).toLocaleString('it-IT', {maximumFractionDigits:2});
+  if(unit && ['€','$','£','¥'].includes(unit)) return `${unit}${numStr}${scale||''}`;
+  return `${numStr}${scale||''}${unit||''}`;
+}
+
+// Lettura sintetica per trading: se il dato è già uscito lo confronta con le attese (sorpresa
+// rialzista/ribassista/in linea), altrimenti dà una nota generica in base all'impatto — nessun
+// testo inventato, solo interpretazione dei numeri reali già ricevuti dal calendario live.
+function calTradingReading(e){
+  const hasActual = e.actual !== null && e.actual !== undefined;
+  if(hasActual){
+    if(e.forecast !== null && e.forecast !== undefined && e.forecast !== 0){
+      const diffPct = ((e.actual - e.forecast) / Math.abs(e.forecast)) * 100;
+      if(Math.abs(diffPct) < 3) return 'Dato in linea con le attese di consenso.';
+      return diffPct > 0 ? 'Dato sopra le attese — possibile impatto sulla valuta.' : 'Dato sotto le attese — possibile impatto sulla valuta.';
+    }
+    return 'Dato pubblicato, nessuna stima di consenso disponibile per il confronto.';
+  }
+  if(e.importance === 'alto') return 'Alto impatto: attesa volatilità nei minuti attorno al rilascio.';
+  if(e.importance === 'medio') return 'Impatto moderato: rilevante in caso di forte scostamento dalle attese.';
+  return 'Impatto contenuto: raramente market-moving.';
+}
+
+async function fetchCalEventsForRange(startMs, endMs){
+  const myToken = ++calFetchToken;
+  calLoading = true;
+  renderCalTable();
+  try{
+    const from = new Date(startMs).toISOString();
+    const to = new Date(endMs + 86400000 - 1).toISOString(); // includi tutto l'ultimo giorno del range
+    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if(myToken !== calFetchToken) return; // una richiesta più recente ha già preso il sopravvento
+    calRawEvents = data.events || [];
+    calLoadError = false;
+  }catch(e){
+    if(myToken !== calFetchToken) return;
+    calRawEvents = [];
+    calLoadError = true;
+  }finally{
+    if(myToken === calFetchToken){ calLoading = false; renderCalTable(); }
+  }
 }
 
 function renderCalTable(){
   const [startMs, endMs] = getCalDateRange();
   document.getElementById('icRange').textContent = fmtRange(startMs, endMs);
+  const wrap = document.getElementById('icTableBody');
 
-  const days = [];
-  for(let ms = startMs; ms <= endMs; ms += 86400000) days.push(new Date(ms));
+  if(calLoading){
+    wrap.innerHTML = '<div class="ic-empty-day">Caricamento calendario in corso…</div>';
+    return;
+  }
+  if(calLoadError){
+    wrap.innerHTML = '<div class="ic-empty-day">Calendario non raggiungibile in questo momento — riprova tra poco o ricarica la pagina.</div>';
+    return;
+  }
 
-  let html = '';
-  let rowIdx = 0;
-  days.forEach(d => {
-    const month = d.getUTCMonth();
-    const day = d.getUTCDate();
-    let evts = getAllEventsForDate(month, day).filter(e => calImpactFilter.has(e.imp));
-    if(calCurrencyFilter.size) evts = evts.filter(e => calCurrencyFilter.has(guessCurrency(e.title)));
-    if(calSoloFuture) evts = evts.filter(e => !eventIsPast(month, day, e.time));
-    const dateLabel = d.toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', month:'short', timeZone:'UTC'}).replace('.', '').toUpperCase();
-    html += `<div class="ic-date-header">📅 ${dateLabel}</div>`;
-    if(evts.length === 0){
-      html += `<div class="ic-empty-day">Nessun evento per i filtri selezionati in questo giorno.</div>`;
-      return;
-    }
-    evts.forEach(e => {
-      const myIdx = rowIdx++;
-      const cur = guessCurrency(e.title);
-      const cleanTitle = e.title.replace(/^\[\w{2,3}\]\s*/, '');
-      html += `
-      <div class="ic-row" onclick="toggleIcRow(${myIdx})">
-        <div class="ic-time">${/^\d{1,2}:\d{2}$/.test(e.time) ? e.time : '—'}</div>
-        <div class="ic-cur">${cur}</div>
-        <div class="ic-evt-name">${cleanTitle}</div>
-        <div class="ic-stats">Prec: <b>${e.prev}</b> &nbsp;Prev: <b>${e.fore}</b> &nbsp;Att: <b>${e.actual==='in uscita'?'—':e.actual}</b></div>
-        <div class="ic-impact-badge ${e.imp}">${e.imp}</div>
-      </div>
-      <div class="ic-detail-row" id="ic-detail-${myIdx}"><div class="ic-detail-inner">${e.desc}</div></div>`;
-    });
-  });
-  document.getElementById('icTableBody').innerHTML = html;
+  let evts = calRawEvents.filter(e => calImpactFilter.has(e.importance));
+  if(calCurrencyFilter.size) evts = evts.filter(e => calCurrencyFilter.has(e.currency));
+  if(calSoloFuture) evts = evts.filter(e => new Date(e.date).getTime() > Date.now());
+
+  const head = `<div class="ic-row ic-head ic-grid-cols">
+    <div>Data / ora (Londra)</div><div>Valuta</div><div>Impatto</div><div>Evento</div>
+    <div style="text-align:right;">Precedente</div><div style="text-align:right;">Previsto</div><div style="text-align:right;">Attuale</div><div>Lettura per trading</div>
+  </div>`;
+
+  if(!evts.length){
+    wrap.innerHTML = head + '<div class="ic-empty-day">Nessun evento per i filtri selezionati in questo periodo.</div>';
+    return;
+  }
+
+  const rows = evts.map((e, idx) => {
+    const d = new Date(e.date);
+    const dateLbl = d.toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', month:'short', timeZone:'Europe/London'}).replace('.', '');
+    const timeLbl = d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/London'});
+    const prevStr = fmtCalVal(e.previous, e.unit, e.scale);
+    const foreStr = fmtCalVal(e.forecast, e.unit, e.scale);
+    const actStr = fmtCalVal(e.actual, e.unit, e.scale);
+    const reading = calTradingReading(e);
+    const detail = e.comment
+      ? e.comment
+      : 'Nessuna descrizione dettagliata disponibile per questo evento dalla fonte del calendario.';
+    return `
+    <div class="ic-row ic-grid-cols" onclick="toggleIcRow(${idx})">
+      <div class="ic-datetime"><span class="ic-day">${dateLbl}</span> <span class="ic-time">${timeLbl}</span></div>
+      <div class="ic-cur">${e.currency || '—'}</div>
+      <div class="ic-impact-badge ${e.importance}">${e.importance}</div>
+      <div class="ic-evt-name">${e.title}</div>
+      <div class="ic-num">${prevStr}</div>
+      <div class="ic-num">${foreStr}</div>
+      <div class="ic-num ${actStr!=='—'?'ic-num-actual':''}">${actStr}</div>
+      <div class="ic-reading">${reading}</div>
+    </div>
+    <div class="ic-detail-row" id="ic-detail-${idx}"><div class="ic-detail-inner">${detail}${e.source?`<span class="ic-source">Fonte: ${e.source}${e.period?` · Periodo: ${e.period}`:''}</span>`:''}</div></div>`;
+  }).join('');
+
+  wrap.innerHTML = head + rows;
 }
 function toggleIcRow(idx){
   document.getElementById('ic-detail-'+idx).classList.toggle('open');
@@ -2229,15 +2129,15 @@ function setCalViewMode(mode){
   calViewMode = mode;
   calNavOffset = 0;
   document.querySelectorAll('#icViewTabs .ic-tab').forEach(t=>t.classList.toggle('active', t.dataset.mode===mode));
-  renderCalTable();
+  fetchCalEventsForRange(...getCalDateRange());
 }
 function calStep(dir){
   calNavOffset += dir;
-  renderCalTable();
+  fetchCalEventsForRange(...getCalDateRange());
 }
 function calGoToday(){
   calNavOffset = 0;
-  renderCalTable();
+  fetchCalEventsForRange(...getCalDateRange());
 }
 function toggleImpactChip(imp){
   if(calImpactFilter.has(imp)) calImpactFilter.delete(imp); else calImpactFilter.add(imp);
@@ -2256,7 +2156,7 @@ function toggleSoloFuture(){
 }
 document.querySelector('#icViewTabs [data-mode="settimana"]').classList.add('active');
 document.querySelectorAll('#icImpactChips .ic-chip').forEach(c=>c.classList.add('active'));
-renderCalTable();
+fetchCalEventsForRange(...getCalDateRange());
 
 // ---------- COT DATA (dettagliato, multi-asset — tutti riferiti al 4 ago 2026, rilascio 7-8 ago) ----------
 const cotData = [
@@ -3394,6 +3294,7 @@ function refreshLive(){
   document.getElementById('refreshNote').textContent = 'Aggiornamento in corso...';
   document.getElementById('refreshNote').style.color = 'var(--dim)';
   initLiveData();
+  fetchCalEventsForRange(...getCalDateRange());
 }
 
 // Tenta il collegamento ai dati live appena la pagina carica (silenzioso, nessun errore se non disponibili)
