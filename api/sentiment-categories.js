@@ -80,7 +80,7 @@ async function handleEvent(event) {
           + 'per DXY = dollaro; per GOLD = oro; per INDICI = equity). Usa SOLO nomi di fonti presenti nella lista. '
           + 'Niente prefazioni, solo JSON.';
 
-        const data = await claudeJSON({ system: SENT_SYS, prompt, maxTokens: 1700 });
+        const data = await claudeJSON({ system: SENT_SYS, prompt, maxTokens: 3000 });
         const byKey = {};
         (data.categories || []).forEach(c => { if (c && c.key) byKey[c.key] = c; });
 

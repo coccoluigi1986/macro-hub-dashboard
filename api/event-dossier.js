@@ -68,7 +68,7 @@ async function handleEvent(event) {
           + '  "what_to_expect": "cosa guardare esattamente all\'uscita, max 220 caratteri"\n'
           + '}\nSolo JSON.';
 
-        const data = await claudeJSON({ system: EVENT_SYS, prompt, maxTokens: 900 });
+        const data = await claudeJSON({ system: EVENT_SYS, prompt, maxTokens: 1500 });
         dossier = {
           ai: true,
           context: data.context || '',

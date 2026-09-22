@@ -48,7 +48,6 @@ async function handleEvent(event) {
     const items = await aggregateNews(30);
 
     let payload = null;
-    let lastError = process.env.ANTHROPIC_API_KEY ? null : 'ANTHROPIC_API_KEY non impostata';
     if (process.env.ANTHROPIC_API_KEY && items.length) {
       try {
         const prompt = 'NOTIZIE REALI DELLE ULTIME ORE:\n'
@@ -65,7 +64,7 @@ async function handleEvent(event) {
           + '}\n'
           + `Includi 4 driver e tutti e ${BIAS_ASSETS.length} gli asset. Solo JSON.`;
 
-        const data = await claudeJSON({ system: BIAS_SYS, prompt, maxTokens: 1400 });
+        const data = await claudeJSON({ system: BIAS_SYS, prompt, maxTokens: 2500 });
         payload = {
           generatedAt: new Date().toISOString(),
           ai: true,
@@ -80,11 +79,10 @@ async function handleEvent(event) {
         };
       } catch (e) {
         console.warn('daily bias AI failed:', e.message);
-        lastError = e.message; // diagnostica temporanea
       }
     }
 
-    if (!payload) payload = { ...fallback(), debugError: lastError };
+    if (!payload) payload = fallback();
 
     return {
       statusCode: 200,

@@ -54,7 +54,7 @@ async function fetchBatch(batchAssets, priceLines, newsText) {
     + `Regole: usa ESATTAMENTE i nomi degli asset elencati sopra, uno per ciascuno (${batchAssets.length} in totale). `
     + '"tone" indica se il fattore è un vento contrario (red), misto/incerto (gold) o favorevole (green) per l\'asset. '
     + 'Niente prefazioni, solo JSON.';
-  return claudeJSON({ system: SYS, prompt, maxTokens: 1200 });
+  return claudeJSON({ system: SYS, prompt, maxTokens: 2000 });
 }
 
 async function handleEvent(event) {
