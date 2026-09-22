@@ -569,8 +569,8 @@ tr:hover td{background:var(--panel2);}
 .ic-row:last-child{border-bottom:none;}
 .ic-row.ic-head{cursor:default; background:var(--panel2); font-size:9.5px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); position:sticky; top:0; z-index:1;}
 .ic-row.ic-head:hover{background:var(--panel2);}
-.ic-datetime{font-family:'IBM Plex Mono',monospace; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.ic-datetime .ic-day{color:var(--accent); font-weight:600;}
+.ic-datetime{display:flex; flex-direction:column; gap:1px; font-family:'IBM Plex Mono',monospace; font-size:11px;}
+.ic-datetime .ic-day{color:var(--accent); font-weight:600; white-space:nowrap;}
 .ic-datetime .ic-time{color:var(--dim);}
 .ic-cur{font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; color:var(--accent);}
 .ic-evt-name{color:var(--text); font-weight:500; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
