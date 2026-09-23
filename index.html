@@ -493,13 +493,15 @@ tr:hover td{background:var(--panel2);}
 .rt-title{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2); margin-bottom:12px; display:flex; justify-content:space-between; align-items:baseline;}
 .rt-title .rt-note{font-size:10px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--dim2); font-style:italic;}
 /* Riga riassuntiva: nome asset + singola barra direzionale + badge Bullish/Bearish/Cauto */
-.rt-sum-row{display:grid; grid-template-columns:76px 1fr 74px; gap:14px; align-items:center; padding:8px 0;}
+.rt-sum-row{display:grid; grid-template-columns:76px 1fr 92px; gap:14px; align-items:center; padding:8px 0;}
 .rt-sum-row .rt-name{font-size:12.5px; font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace;}
-.rt-sum-bar{height:8px; border-radius:4px; overflow:hidden; background:var(--panel2);}
-.rt-sum-bar .rt-sum-fill{height:100%; border-radius:4px;}
+.rt-sum-bar{height:8px; border-radius:4px; overflow:hidden; background:var(--panel2); display:flex;}
+.rt-sum-bar .rt-sum-fill{height:100%;}
 .rt-sum-bar .rt-sum-fill.green{background:var(--green);}
 .rt-sum-bar .rt-sum-fill.red{background:var(--red);}
 .rt-sum-bar .rt-sum-fill.gold{background:var(--gold);}
+.rt-split{font-size:11px; font-family:'IBM Plex Mono',monospace; text-align:right; white-space:nowrap;}
+.rt-split .up{color:var(--green); font-weight:600;} .rt-split .down{color:var(--red); font-weight:600;}
 /* Tabella di dettaglio: asset, retail bullish/bearish, fonte/metodo, lettura contrarian */
 .rt-table-wrap{overflow-x:auto; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;}
 .rt-table{width:100%; min-width:720px; table-layout:fixed; border-collapse:collapse; font-size:11.5px;}
@@ -2749,14 +2751,14 @@ renderGauge('rgGaugeRisk', 50);
 // esiste per quel dato specifico (Myfxbook blocca le richieste esterne con 403, IG richiede un
 // account broker autenticato, e il vecchio endpoint pubblico di OANDA Forex Labs è stato dismesso,
 // verificato direttamente prima di scrivere questo commento). Sostituita con una lettura
-// interamente live: direzione = segno della variazione % di OGGI (Twelve Data per oro/argento/
-// indici, proxy DXY/Frankfurter — dati BCE — per le valute), forza della barra = ampiezza del
-// movimento, più la correlazione DXY reale a 30 giorni (dxy-correlation.js) come contesto.
-// Bullish/Bearish è binario per costruzione (segno della variazione): nessuna zona "Cauto".
+// interamente live: la variazione % di OGGI (Twelve Data per oro/argento/indici, proxy DXY/
+// Frankfurter — dati BCE — per le valute) viene convertita in uno split percentuale verde/rosso
+// (vedi chgToSplit) invece di un\'etichetta Bullish/Bearish, più la correlazione DXY reale a 30
+// giorni (dxy-correlation.js) come contesto. AUD/USD non è più incluso: non compare più in
+// "Mercati — Asset Monitor" (rimosso in una richiesta precedente).
 const SENTIMENT_ASSETS = [
   {key:'eurusd', name:'EUR/USD'},
   {key:'gbpusd', name:'GBP/USD'},
-  {key:'audusd', name:'AUD/USD'},
   {key:'gold',   name:'XAU/USD'},
   {key:'silver', name:'XAG/USD'},
   {key:'dxy',    name:'DXY'},
@@ -2764,12 +2766,20 @@ const SENTIMENT_ASSETS = [
   {key:'sp500',  name:'S&P 500'},
 ];
 
+// Trasforma la variazione % di oggi in uno split percentuale 0-100 (verde/rosso): 50/50 = variazione
+// nulla, poi ±20 punti percentuali di split per ogni punto di variazione (es. -0,92% → ~32%/68%),
+// con un margine 5-95% per restare sempre leggibile anche sui movimenti più estremi.
+function chgToSplit(chg){
+  const green = Math.max(5, Math.min(95, Math.round(50 + chg*20)));
+  return { green, red: 100 - green };
+}
+
 function renderSentimentAssetsPending(){
   document.getElementById('rtSummary').innerHTML = SENTIMENT_ASSETS.map(a=>`
     <div class="rt-sum-row">
       <div class="rt-name">${a.name}</div>
-      <div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:20%;"></div></div>
-      <span class="pill gold">In attesa</span>
+      <div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:100%;"></div></div>
+      <span class="rt-split">In attesa</span>
     </div>`).join('');
   document.getElementById('rtTableBody').innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--dim2); font-style:italic; padding:16px;">Caricamento dati live in corso…</td></tr>`;
 }
@@ -2797,11 +2807,13 @@ function applySentimentAssetsLive(market, dxyCorr){
   if(!rows.some(r=>r.chg != null)) return false;
 
   document.getElementById('rtSummary').innerHTML = rows.map(r=>{
-    if(r.chg == null) return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:20%;"></div></div><span class="pill gold">N/D</span></div>`;
-    const bullish = r.chg > 0;
-    const color = bullish ? 'green' : 'red';
-    const barPct = Math.max(15, Math.min(95, Math.abs(r.chg)*25 + 20));
-    return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill ${color}" style="width:${barPct}%;"></div></div><span class="pill ${color}">${bullish?'Bullish':'Bearish'}</span></div>`;
+    if(r.chg == null) return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:100%;"></div></div><span class="rt-split">N/D</span></div>`;
+    const s = chgToSplit(r.chg);
+    return `<div class="rt-sum-row">
+      <div class="rt-name">${r.name}</div>
+      <div class="rt-sum-bar"><div class="rt-sum-fill green" style="width:${s.green}%;"></div><div class="rt-sum-fill red" style="width:${s.red}%;"></div></div>
+      <span class="rt-split"><span class="up">${s.green}%</span> / <span class="down">${s.red}%</span></span>
+    </div>`;
   }).join('');
 
   document.getElementById('rtTableBody').innerHTML = rows.map(r=>{
@@ -2818,7 +2830,7 @@ function applySentimentAssetsLive(market, dxyCorr){
   return true;
 }
 
-document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD, AUD/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni: più si avvicina a ±1, più il movimento dell\'asset tende a rispecchiare (correlazione negativa) o seguire (positiva) quello del dollaro.';
+document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. Lo split verde/rosso riflette l\'ampiezza della variazione di oggi (50/50 = invariato), non un dato di posizionamento dei trader retail. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni: più si avvicina a ±1, più il movimento dell\'asset tende a rispecchiare (correlazione negativa) o seguire (positiva) quello del dollaro.';
 
 // ---------- ASSET DASHBOARD ----------
 const assets = [
