@@ -207,7 +207,11 @@ async function handleEvent(event) {
       }
       const { corr, n } = correlate(dxyRets, dailyReturns(series));
       data[key] = { corr: corr == null ? null : Number(corr.toFixed(2)), n };
-      if (todayChange[key] !== undefined) data[key].changePercent = todayChange[key];
+      // Variazione % di oggi anche per gold/silver/indici/VIX/WTI dalla stessa serie storica
+      // Twelve Data già scaricata per la correlazione (se il piano copre il time_series ma non
+      // il quote in tempo reale, questo resta comunque un dato reale, solo con un giorno di ritardo massimo).
+      const ownChange = todayChange[key] !== undefined ? todayChange[key] : pctChangeLastTwo(series);
+      if (ownChange !== null) data[key].changePercent = ownChange;
       if (corr == null) warnings.push(key);
     });
     data.dxy = { changePercent: todayChange.dxy };
