@@ -17,34 +17,31 @@
 // - Frankfurter.app (dati BCE, gratis, nessuna chiave) per la serie storica giornaliera
 //   del DXY proxy e dei cambi EUR/USD, GBP/USD — stessa formula ICE già usata
 //   (in versione "solo oggi") da fx-data.js.
-// - Twelve Data (time_series) per indici, metalli, petrolio, VIX — stessa API key già
-//   usata da market-data.js.
-// - Financial Modeling Prep (treasury-rates) per lo yield US 10Y, che Twelve Data non
-//   copre sul piano gratuito.
+// - Yahoo Finance (lib/yahoo.js) per indici, metalli, petrolio, VIX — Twelve Data (usato prima)
+//   ha smesso di coprire questi simboli sul piano gratuito collegato a questo progetto
+//   ("not available with your plan", verificato direttamente), Yahoo sì e senza chiave.
+// - Financial Modeling Prep (treasury-rates) per lo yield US 10Y.
 //
-// SETUP RICHIESTO (in aggiunta a TWELVEDATA_API_KEY, già configurata per market-data.js):
-// 1. Registrati gratis su https://site.financialmodelingprep.com (piano Free)
-// 2. Su Vercel: Project settings → Environment Variables → aggiungi FMP_API_KEY
-// 3. Raggiungibile su: https://tuosito.vercel.app/api/dxy-correlation
-//
-// Se FMP_API_KEY non è configurata, tutto il resto funziona lo stesso: manca solo la
-// correlazione per l'US 10Y Yield (data.us10y torna con un errore esplicito).
+// SETUP RICHIESTO: solo FMP_API_KEY (opzionale) — Project settings → Environment Variables su
+// Vercel, chiave gratuita su https://site.financialmodelingprep.com. Se manca, tutto il resto
+// funziona lo stesso: manca solo la correlazione per l'US 10Y Yield (data.us10y torna con un
+// errore esplicito). Raggiungibile su: https://tuosito.vercel.app/api/dxy-correlation
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { fetchYahooSeries } = require('../lib/yahoo');
 
-const TD_SYMBOLS = {
-  sp500:  'SPX',
-  nasdaq: 'NDX',
-  dow:    'DJI',
-  gold:   'XAU/USD',
-  silver: 'XAG/USD',
-  wti:    'WTI/USD',
-  vix:    'VIX',
+const YAHOO_SYMBOLS = {
+  sp500:  '^GSPC',
+  nasdaq: '^NDX',
+  dow:    '^DJI',
+  gold:   'GC=F',
+  silver: 'SI=F',
+  wti:    'CL=F',
+  vix:    '^VIX',
 };
 
 const LOOKBACK_DAYS = 30;        // finestra di correlazione richiesta (giorni di trading in comune)
 const FETCH_CALENDAR_DAYS = 60;  // margine di giorni di calendario richiesti alle fonti, per compensare weekend/festivi e disallineamenti fra mercati
-const TD_OUTPUTSIZE = LOOKBACK_DAYS + 25; // margine di sedute richieste a Twelve Data
 
 function isoDate(d) { return d.toISOString().slice(0, 10); }
 
@@ -96,28 +93,18 @@ function pctChangeLastTwo(levelSeries) {
   return Number((((last - prev) / prev) * 100).toFixed(2));
 }
 
-// Serie storiche indici/metalli/petrolio/VIX da Twelve Data (richiesta unica, batch per simbolo).
-async function fetchTwelveDataSeries(apiKey) {
-  const symbolList = Object.values(TD_SYMBOLS).join(',');
-  const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbolList)}&interval=1day&outputsize=${TD_OUTPUTSIZE}&apikey=${apiKey}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Twelve Data time_series error: ${res.status}`);
-  const raw = await res.json();
-
+// Serie storiche indici/metalli/petrolio/VIX da Yahoo Finance (una richiesta per simbolo — ogni
+// fallimento è isolato, un simbolo che non risponde non deve compromettere gli altri).
+async function fetchAssetSeries() {
   const out = {};
-  Object.entries(TD_SYMBOLS).forEach(([key, sym]) => {
-    // Con più simboli nella stessa richiesta, Twelve Data risponde con un oggetto per simbolo;
-    // con un solo simbolo risponderebbe direttamente con {meta, values, status} — copriamo entrambi.
-    const entry = raw[sym] || (raw.meta && raw.meta.symbol === sym ? raw : null);
-    const series = new Map();
-    if (entry && Array.isArray(entry.values)) {
-      entry.values.forEach(v => {
-        const c = parseFloat(v.close);
-        if (!isNaN(c) && v.datetime) series.set(v.datetime.slice(0, 10), c);
-      });
+  await Promise.all(Object.entries(YAHOO_SYMBOLS).map(async ([key, sym]) => {
+    try {
+      out[key] = await fetchYahooSeries(sym);
+    } catch (e) {
+      console.warn(`Yahoo Finance series fallita per ${key} (${sym}):`, e.message);
+      out[key] = new Map();
     }
-    out[key] = series;
-  });
+  }));
   return out;
 }
 
@@ -202,24 +189,12 @@ function correlate(dxyRets, assetRets) {
 }
 
 async function handleEvent(event) {
-  const tdKey = process.env.TWELVEDATA_API_KEY;
   const fmpKey = process.env.FMP_API_KEY;
-  if (!tdKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'TWELVEDATA_API_KEY non configurata nelle Environment Variables di Vercel' }),
-    };
-  }
 
   try {
-    // fetchTwelveDataSeries() non deve poter far fallire l'intera risposta (statusCode 500) se
-    // Twelve Data è temporaneamente in rate limit (8 richieste/minuto sul piano gratuito) o
-    // sotto manutenzione: DXY/EUR/GBP/AUD vengono da Frankfurter, un servizio indipendente, e
-    // devono restare disponibili anche quando Twelve Data fallisce — degrado solo gold/silver/
-    // indici/VIX/WTI (vedi "Serie storica non disponibile" più sotto), non tutto il resto.
-    const [{ dxy, eurusd, gbpusd, audusd }, tdSeries, treasurySeries, retailSentiment] = await Promise.all([
+    const [{ dxy, eurusd, gbpusd, audusd }, assetSeries, treasurySeries, retailSentiment] = await Promise.all([
       fetchDxyProxySeries(),
-      fetchTwelveDataSeries(tdKey).catch(e => { console.warn('Twelve Data time_series fallito:', e.message); return {}; }),
+      fetchAssetSeries(),
       fmpKey ? fetchTreasurySeries(fmpKey) : Promise.resolve(new Map()),
       // Non deve far fallire l'intera risposta se Dukascopy è irraggiungibile — il client ricade
       // sullo split derivato dalla variazione % quando manca il posizionamento retail reale.
@@ -231,8 +206,8 @@ async function handleEvent(event) {
     const warnings = [];
 
     const priceSeries = {
-      sp500: tdSeries.sp500, nasdaq: tdSeries.nasdaq, dow: tdSeries.dow,
-      gold: tdSeries.gold, silver: tdSeries.silver, wti: tdSeries.wti, vix: tdSeries.vix,
+      sp500: assetSeries.sp500, nasdaq: assetSeries.nasdaq, dow: assetSeries.dow,
+      gold: assetSeries.gold, silver: assetSeries.silver, wti: assetSeries.wti, vix: assetSeries.vix,
       eurusd, gbpusd, audusd,
     };
     // Variazione % "di oggi" per il DXY proxy e per le 3 coppie FX — dalla stessa serie storica
@@ -250,8 +225,7 @@ async function handleEvent(event) {
       const { corr, n } = correlate(dxyRets, dailyReturns(series));
       data[key] = { corr: corr == null ? null : Number(corr.toFixed(2)), n };
       // Variazione % di oggi anche per gold/silver/indici/VIX/WTI dalla stessa serie storica
-      // Twelve Data già scaricata per la correlazione (se il piano copre il time_series ma non
-      // il quote in tempo reale, questo resta comunque un dato reale, solo con un giorno di ritardo massimo).
+      // Yahoo Finance già scaricata per la correlazione — nessuna chiamata aggiuntiva.
       const ownChange = todayChange[key] !== undefined ? todayChange[key] : pctChangeLastTwo(series);
       if (ownChange !== null) data[key].changePercent = ownChange;
       if (corr == null) warnings.push(key);
@@ -283,7 +257,7 @@ async function handleEvent(event) {
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),
-        source: 'Correlazione di Pearson sui rendimenti giornalieri — DXY proxy (Frankfurter/BCE) vs Twelve Data + FMP treasury-rates',
+        source: 'Correlazione di Pearson sui rendimenti giornalieri — DXY proxy (Frankfurter/BCE) vs Yahoo Finance + FMP treasury-rates',
         lookbackDays: LOOKBACK_DAYS,
         parseWarning: warnings.length ? `Correlazione non calcolabile per: ${warnings.join(', ')}` : null,
         data,
