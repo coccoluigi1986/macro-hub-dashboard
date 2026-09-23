@@ -178,9 +178,14 @@ async function handleEvent(event) {
   }
 
   try {
+    // fetchTwelveDataSeries() non deve poter far fallire l'intera risposta (statusCode 500) se
+    // Twelve Data è temporaneamente in rate limit (8 richieste/minuto sul piano gratuito) o
+    // sotto manutenzione: DXY/EUR/GBP/AUD vengono da Frankfurter, un servizio indipendente, e
+    // devono restare disponibili anche quando Twelve Data fallisce — degrado solo gold/silver/
+    // indici/VIX/WTI (vedi "Serie storica non disponibile" più sotto), non tutto il resto.
     const [{ dxy, eurusd, gbpusd, audusd }, tdSeries, treasurySeries] = await Promise.all([
       fetchDxyProxySeries(),
-      fetchTwelveDataSeries(tdKey),
+      fetchTwelveDataSeries(tdKey).catch(e => { console.warn('Twelve Data time_series fallito:', e.message); return {}; }),
       fmpKey ? fetchTreasurySeries(fmpKey) : Promise.resolve(new Map()),
     ]);
 
