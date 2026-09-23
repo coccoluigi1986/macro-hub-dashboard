@@ -45,8 +45,8 @@ const TD_OUTPUTSIZE = LOOKBACK_DAYS + 25; // margine di sedute richieste a Twelv
 
 function isoDate(d) { return d.toISOString().slice(0, 10); }
 
-// Serie storica del DXY proxy + dei cambi EUR/USD, GBP/USD dalla stessa fonte, giorno per
-// giorno, con la formula ICE ufficiale (peso SEK mancante redistribuito sulle altre 5
+// Serie storica del DXY proxy + dei cambi EUR/USD, GBP/USD, AUD/USD dalla stessa fonte, giorno
+// per giorno, con la formula ICE ufficiale (peso SEK mancante redistribuito sulle altre 5
 // valute) — identica a quella "snapshot" di fx-data.js ma calcolata per ogni data.
 async function fetchDxyProxySeries() {
   const end = new Date();
@@ -59,6 +59,7 @@ async function fetchDxyProxySeries() {
   const dxy = new Map();
   const eurusd = new Map();
   const gbpusd = new Map();
+  const audusd = new Map();
 
   Object.entries(json.rates || {}).forEach(([date, r]) => {
     if (!(r.EUR && r.JPY && r.GBP && r.CAD && r.CHF)) return;
@@ -74,9 +75,22 @@ async function fetchDxyProxySeries() {
     dxy.set(date, level);
     eurusd.set(date, e);
     gbpusd.set(date, 1 / r.GBP);
+    if (r.AUD) audusd.set(date, 1 / r.AUD);
   });
 
-  return { dxy, eurusd, gbpusd };
+  return { dxy, eurusd, gbpusd, audusd };
+}
+
+// Variazione % tra le ultime due date disponibili di una serie di livelli — usata per dare una
+// variazione "di oggi" realmente live al DXY proxy e alle coppie FX, dalla stessa serie storica
+// Frankfurter già scaricata sopra (nessuna chiamata aggiuntiva).
+function pctChangeLastTwo(levelSeries) {
+  const entries = [...levelSeries.entries()].sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+  if (entries.length < 2) return null;
+  const prev = entries[entries.length - 2][1];
+  const last = entries[entries.length - 1][1];
+  if (!prev) return null;
+  return Number((((last - prev) / prev) * 100).toFixed(2));
 }
 
 // Serie storiche indici/metalli/petrolio/VIX da Twelve Data (richiesta unica, batch per simbolo).
@@ -164,7 +178,7 @@ async function handleEvent(event) {
   }
 
   try {
-    const [{ dxy, eurusd, gbpusd }, tdSeries, treasurySeries] = await Promise.all([
+    const [{ dxy, eurusd, gbpusd, audusd }, tdSeries, treasurySeries] = await Promise.all([
       fetchDxyProxySeries(),
       fetchTwelveDataSeries(tdKey),
       fmpKey ? fetchTreasurySeries(fmpKey) : Promise.resolve(new Map()),
@@ -177,7 +191,13 @@ async function handleEvent(event) {
     const priceSeries = {
       sp500: tdSeries.sp500, nasdaq: tdSeries.nasdaq, dow: tdSeries.dow,
       gold: tdSeries.gold, silver: tdSeries.silver, wti: tdSeries.wti, vix: tdSeries.vix,
-      eurusd, gbpusd,
+      eurusd, gbpusd, audusd,
+    };
+    // Variazione % "di oggi" per il DXY proxy e per le 3 coppie FX — dalla stessa serie storica
+    // Frankfurter usata per la correlazione, usata dalla card "Correlazioni e Sentiment Asset".
+    const todayChange = {
+      dxy: pctChangeLastTwo(dxy), eurusd: pctChangeLastTwo(eurusd),
+      gbpusd: pctChangeLastTwo(gbpusd), audusd: pctChangeLastTwo(audusd),
     };
     Object.entries(priceSeries).forEach(([key, series]) => {
       if (!series || series.size === 0) {
@@ -187,8 +207,10 @@ async function handleEvent(event) {
       }
       const { corr, n } = correlate(dxyRets, dailyReturns(series));
       data[key] = { corr: corr == null ? null : Number(corr.toFixed(2)), n };
+      if (todayChange[key] !== undefined) data[key].changePercent = todayChange[key];
       if (corr == null) warnings.push(key);
     });
+    data.dxy = { changePercent: todayChange.dxy };
 
     if (treasurySeries.size) {
       const { corr, n } = correlate(dxyRets, dailyReturns(treasurySeries));

@@ -503,15 +503,14 @@ tr:hover td{background:var(--panel2);}
 /* Tabella di dettaglio: asset, retail bullish/bearish, fonte/metodo, lettura contrarian */
 .rt-table-wrap{overflow-x:auto; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;}
 .rt-table{width:100%; min-width:720px; table-layout:fixed; border-collapse:collapse; font-size:11.5px;}
-.rt-table col.c-asset{width:9%;} .rt-table col.c-bull{width:11%;} .rt-table col.c-bear{width:11%;}
-.rt-table col.c-method{width:19%;} .rt-table col.c-read{width:50%;}
+.rt-table col.c-asset{width:12%;} .rt-table col.c-bull{width:13%;} .rt-table col.c-bear{width:15%;}
+.rt-table col.c-read2{width:60%;}
 .rt-table th{text-align:left; font-size:9.5px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); padding:0 10px 8px; line-height:1.3;}
 .rt-table td{padding:9px 10px; border-top:1px solid var(--border); vertical-align:top;}
 .rt-table td.rt-num{font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
 .rt-table td.rt-num.up{color:var(--green); font-weight:600;}
 .rt-table td.rt-num.down{color:var(--red); font-weight:600;}
 .rt-table td.rt-asset{font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
-.rt-table td.rt-method{color:var(--dim2); font-size:11px;}
 .rt-table td.rt-read{color:var(--dim); line-height:1.4;}
 .sn-eyebrow{font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:22px 0 12px;}
 .sn-eyebrow:first-child{margin-top:0;}
@@ -915,13 +914,13 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   </div>
 
   <div class="rt-card">
-    <div class="rt-title"><span>📶 Correlazioni e Sentiment Asset</span><span class="rt-note">Stima qualitativa curata manualmente — non un feed broker live</span></div>
+    <div class="rt-title"><span>📶 Correlazioni e Sentiment Asset</span><span class="rt-note">Live — variazione % di oggi e correlazione DXY reale a 30 giorni</span></div>
     <div id="rtSummary"></div>
     <div class="rt-table-wrap">
       <table class="rt-table">
-        <colgroup><col class="c-asset"><col class="c-bull"><col class="c-bear"><col class="c-method"><col class="c-read"></colgroup>
+        <colgroup><col class="c-asset"><col class="c-bull"><col class="c-bear"><col class="c-read2"></colgroup>
         <thead><tr>
-          <th>Asset</th><th>Retail Bullish</th><th>Retail Bearish</th><th>Fonte / Metodo</th><th>Lettura Contrarian</th>
+          <th>Asset</th><th>Var. % oggi</th><th>Corr. DXY (30g)</th><th>Lettura</th>
         </tr></thead>
         <tbody id="rtTableBody"></tbody>
       </table>
@@ -2745,73 +2744,81 @@ document.getElementById('rgValueFG').style.color = gaugeColor(sentimentData[0].p
 // Risk-On/Risk-Off: valore di default in attesa del bias AI live (applyBiasDaily lo aggiorna a fetch completato).
 renderGauge('rgGaugeRisk', 50);
 
-// ---------- CORRELAZIONI E SENTIMENT ASSET (retail) ----------
-// Stima qualitativa curata manualmente (non un feed broker live tipo Myfxbook/IG/OANDA Client
-// Sentiment — nessuno di questi espone un'API gratuita affidabile) — utile come lettura contrarian
-// di massima, va verificata/aggiornata a mano come le altre card sentiment. La riga DXY invece NON
-// è inventata: è calcolata dalle tre righe EUR/GBP/AUD qui sotto (100 - media dei loro "bullish"),
-// perché il dollaro è per costruzione il lato opposto di quelle tre coppie.
-const RETAIL_METHOD = 'Stima qualitativa manuale (stile retail long/short)';
-const retailSentimentData = [
-  {name:'EUR/USD', bull:54, bear:46, method:RETAIL_METHOD, read:'Retail leggermente long: bias in linea col prezzo, non ancora un segnale contrarian.'},
-  {name:'GBP/USD', bull:30, bear:70, method:RETAIL_METHOD, read:'Retail molto short: posizionamento affollato al ribasso — segnale contrarian potenzialmente rialzista su GBP/USD.'},
-  {name:'AUD/USD', bull:51, bear:49, method:RETAIL_METHOD, read:'Retail quasi neutrale: nessun segnale di posizionamento, usare DXY e i dati Cina come filtro direzionale.'},
-  {name:'XAU/USD', bull:58, bear:42, method:RETAIL_METHOD, read:'Retail moderatamente long ma non ancora affollato: coerente col posizionamento COT net long strutturale sull\'oro.'},
-  {name:'XAG/USD', bull:55, bear:45, method:RETAIL_METHOD, read:'Retail moderatamente long: da confermare con il momentum dell\'oro e la domanda industriale.'},
-  {name:'NAS100',  bull:null, bear:null, method:'Nessuna fonte retail integrata', read:'Dato non disponibile per gli indici — nessun feed di sentiment retail equity integrato in questa dashboard.'},
-  {name:'S&P 500', bull:null, bear:null, method:'Nessuna fonte retail integrata', read:'Dato non disponibile per gli indici — nessun feed di sentiment retail equity integrato in questa dashboard.'},
+// ---------- CORRELAZIONI E SENTIMENT ASSET (live) ----------
+// Prima era una stima "retail long/short%" curata a mano — nessuna fonte gratuita e legittima
+// esiste per quel dato specifico (Myfxbook blocca le richieste esterne con 403, IG richiede un
+// account broker autenticato, e il vecchio endpoint pubblico di OANDA Forex Labs è stato dismesso,
+// verificato direttamente prima di scrivere questo commento). Sostituita con una lettura
+// interamente live: direzione = segno della variazione % di OGGI (Twelve Data per oro/argento/
+// indici, proxy DXY/Frankfurter — dati BCE — per le valute), forza della barra = ampiezza del
+// movimento, più la correlazione DXY reale a 30 giorni (dxy-correlation.js) come contesto.
+// Bullish/Bearish è binario per costruzione (segno della variazione): nessuna zona "Cauto".
+const SENTIMENT_ASSETS = [
+  {key:'eurusd', name:'EUR/USD'},
+  {key:'gbpusd', name:'GBP/USD'},
+  {key:'audusd', name:'AUD/USD'},
+  {key:'gold',   name:'XAU/USD'},
+  {key:'silver', name:'XAG/USD'},
+  {key:'dxy',    name:'DXY'},
+  {key:'nasdaq', name:'NAS100'},
+  {key:'sp500',  name:'S&P 500'},
 ];
-// Inserisce la riga DXY (calcolata) subito dopo XAG/USD, nella stessa posizione della referenza.
-{
-  const majors = ['EUR/USD','GBP/USD','AUD/USD'].map(n=>retailSentimentData.find(d=>d.name===n));
-  const avgBull = majors.reduce((s,m)=>s+m.bull,0)/majors.length;
-  const dxyBull = Math.round(100-avgBull);
-  const dxyRead = avgBull<=45
-    ? `Retail sui 3 major in media net short (${Math.round(avgBull)}% long EUR/GBP/AUD): posizionamento implicito long USD, coerente col trend DXY attuale.`
-    : avgBull>=55
-    ? `Retail sui 3 major in media net long (${Math.round(avgBull)}% long EUR/GBP/AUD): posizionamento implicito short USD, da monitorare per un possibile squeeze se DXY continua a salire.`
-    : 'Retail sui 3 major sostanzialmente bilanciato: nessun segnale implicito forte su USD.';
-  const xagIdx = retailSentimentData.findIndex(d=>d.name==='XAG/USD');
-  retailSentimentData.splice(xagIdx+1, 0, {
-    name:'DXY', bull:dxyBull, bear:100-dxyBull,
-    method:'Proxy calcolato da EUR/USD, GBP/USD, AUD/USD (100 − media retail bullish sui 3 major)',
-    read: dxyRead,
+
+function renderSentimentAssetsPending(){
+  document.getElementById('rtSummary').innerHTML = SENTIMENT_ASSETS.map(a=>`
+    <div class="rt-sum-row">
+      <div class="rt-name">${a.name}</div>
+      <div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:20%;"></div></div>
+      <span class="pill gold">In attesa</span>
+    </div>`).join('');
+  document.getElementById('rtTableBody').innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--dim2); font-style:italic; padding:16px;">Caricamento dati live in corso…</td></tr>`;
+}
+renderSentimentAssetsPending();
+
+function sentimentReading(r){
+  if(r.chg == null) return 'Dato live non disponibile in questo ciclo — riprova al prossimo refresh.';
+  const dir = r.chg > 0 ? 'in rialzo' : r.chg < 0 ? 'in ribasso' : 'stabile';
+  const chgTxt = `${r.chg>=0?'+':''}${r.chg.toFixed(2)}%`;
+  if(r.name === 'DXY') return `Dollar Index ${dir} di ${chgTxt} oggi (proxy calcolato sui cambi ufficiali BCE) — è il riferimento usato per la correlazione degli altri asset in tabella.`;
+  if(r.corr == null) return `${r.name} ${dir} di ${chgTxt} oggi. Correlazione DXY non calcolabile in questo ciclo (serie storica insufficiente).`;
+  return `${r.name} ${dir} di ${chgTxt} oggi; correlazione con il DXY ${corrLabel(r.corr).toLowerCase()} (${fmtCorr(r.corr)}) sui rendimenti degli ultimi 30 giorni.`;
+}
+
+// Applica i dati live già scaricati da initLiveData() per market-data.js (oro/argento/indici) e
+// dxy-correlation.js (proxy DXY/valute + correlazioni) — nessuna chiamata aggiuntiva.
+function applySentimentAssetsLive(market, dxyCorr){
+  const rows = SENTIMENT_ASSETS.map(a=>{
+    const m = market && market[a.key];
+    const c = dxyCorr && dxyCorr[a.key];
+    const chg = (m && m.changePercent != null) ? m.changePercent : (c && c.changePercent != null ? c.changePercent : null);
+    const corr = (c && c.corr != null) ? c.corr : null;
+    return {...a, chg, corr};
   });
+  if(!rows.some(r=>r.chg != null)) return false;
+
+  document.getElementById('rtSummary').innerHTML = rows.map(r=>{
+    if(r.chg == null) return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:20%;"></div></div><span class="pill gold">N/D</span></div>`;
+    const bullish = r.chg > 0;
+    const color = bullish ? 'green' : 'red';
+    const barPct = Math.max(15, Math.min(95, Math.abs(r.chg)*25 + 20));
+    return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill ${color}" style="width:${barPct}%;"></div></div><span class="pill ${color}">${bullish?'Bullish':'Bearish'}</span></div>`;
+  }).join('');
+
+  document.getElementById('rtTableBody').innerHTML = rows.map(r=>{
+    const chgTxt = r.chg != null ? `${r.chg>=0?'+':''}${r.chg.toFixed(2)}%` : 'N/D';
+    const chgCls = r.chg == null ? '' : (r.chg>=0?'up':'down');
+    const corrTxt = r.corr != null ? fmtCorr(r.corr) : (r.name==='DXY' ? '—' : 'N/D');
+    return `<tr>
+      <td class="rt-asset">${r.name}</td>
+      <td class="rt-num ${chgCls}">${chgTxt}</td>
+      <td class="rt-num">${corrTxt}</td>
+      <td class="rt-read">${sentimentReading(r)}</td>
+    </tr>`;
+  }).join('');
+  return true;
 }
 
-// Regola (unica, applicata a tutti gli asset): entro ±4 punti dal 50/50 non c'è segnale (Cauto);
-// oltre ±15 punti il posizionamento è considerato troppo affollato e la lettura si capovolge
-// (contrarian); nel mezzo la barra segue semplicemente la direzione naturale del retail.
-function retailDirection(bull){
-  if(bull===null || bull===undefined) return {label:'Cauto', color:'gold', barPct:15};
-  const dev = bull-50;
-  if(Math.abs(dev) < 4) return {label:'Cauto', color:'gold', barPct:20};
-  const extreme = Math.abs(dev) >= 15;
-  const bullish = extreme ? dev<0 : dev>0;
-  const barPct = Math.max(30, Math.min(92, Math.abs(dev)*2 + 30));
-  return {label: bullish?'Bullish':'Bearish', color: bullish?'green':'red', barPct};
-}
-
-document.getElementById('rtSummary').innerHTML = retailSentimentData.map(r=>{
-  const d = retailDirection(r.bull);
-  return `
-  <div class="rt-sum-row">
-    <div class="rt-name">${r.name}</div>
-    <div class="rt-sum-bar"><div class="rt-sum-fill ${d.color}" style="width:${d.barPct}%;"></div></div>
-    <span class="pill ${d.color}">${d.label}</span>
-  </div>`;
-}).join('');
-
-document.getElementById('rtTableBody').innerHTML = retailSentimentData.map(r=>`
-  <tr>
-    <td class="rt-asset">${r.name}</td>
-    <td class="rt-num ${r.bull!=null?'up':''}">${r.bull!=null ? r.bull+'%' : 'Da aggiornare'}</td>
-    <td class="rt-num ${r.bear!=null?'down':''}">${r.bear!=null ? r.bear+'%' : 'Da aggiornare'}</td>
-    <td class="rt-method">${r.method}</td>
-    <td class="rt-read">${r.read}</td>
-  </tr>`).join('');
-
-document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme a US10Y, preferire long su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti reali, ridurre o invertire l\'esposizione risk-on. Il sentiment retail va letto in chiave contrarian solo quando è molto sbilanciato (oltre 65/35 circa) — sotto quella soglia segue semplicemente il prezzo. Nasdaq e S&amp;P 500 restano "da aggiornare": nessuna fonte di sentiment retail equity integrata in questa dashboard.';
+document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD, AUD/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni: più si avvicina a ±1, più il movimento dell\'asset tende a rispecchiare (correlazione negativa) o seguire (positiva) quello del dollaro.';
 
 // ---------- ASSET DASHBOARD ----------
 const assets = [
@@ -3355,6 +3362,7 @@ async function initLiveData(){
   const marketUpdated = applyLiveMarketToMonitor(market);
   const cotUpdated = applyLiveCOTToReport(cot);
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
+  const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
   // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
   // bloccare il resto del refresh (bias/sentiment/status line), aggiorna la UI da sola a fine fetch.
@@ -3386,6 +3394,7 @@ async function initLiveData(){
   if(marketUpdated) parts.push('prezzi mercato (Twelve Data)');
   if(cotUpdated) parts.push('COT completo — metalli/valute/indici/cripto/WTI (CFTC)');
   if(corrUpdated) parts.push('correlazione DXY reale a 30g (Twelve Data/FMP)');
+  if(sentimentAssetsUpdated) parts.push('correlazioni e sentiment asset (live)');
   if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
   if(biasUpdated) parts.push('bias geo-macro AI');
   if(sentimentUpdated) parts.push('sentiment per categoria AI');
