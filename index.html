@@ -492,13 +492,27 @@ tr:hover td{background:var(--panel2);}
 .rt-card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin-bottom:20px;}
 .rt-title{font-size:10.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2); margin-bottom:12px; display:flex; justify-content:space-between; align-items:baseline;}
 .rt-title .rt-note{font-size:10px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--dim2); font-style:italic;}
-.rt-row{display:grid; grid-template-columns:70px 1fr 90px; gap:12px; align-items:center; padding:7px 0;}
-.rt-row .rt-name{font-size:12px; font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace;}
-.rt-bar{height:8px; border-radius:4px; overflow:hidden; display:flex; background:var(--panel2);}
-.rt-bar .rt-bull{background:var(--green); height:100%;}
-.rt-bar .rt-bear{background:var(--red); height:100%;}
-.rt-pct{font-size:11px; font-family:'IBM Plex Mono',monospace; text-align:right; white-space:nowrap;}
-.rt-pct .up{color:var(--green); font-weight:600;} .rt-pct .down{color:var(--red); font-weight:600;}
+/* Riga riassuntiva: nome asset + singola barra direzionale + badge Bullish/Bearish/Cauto */
+.rt-sum-row{display:grid; grid-template-columns:76px 1fr 74px; gap:14px; align-items:center; padding:8px 0;}
+.rt-sum-row .rt-name{font-size:12.5px; font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace;}
+.rt-sum-bar{height:8px; border-radius:4px; overflow:hidden; background:var(--panel2);}
+.rt-sum-bar .rt-sum-fill{height:100%; border-radius:4px;}
+.rt-sum-bar .rt-sum-fill.green{background:var(--green);}
+.rt-sum-bar .rt-sum-fill.red{background:var(--red);}
+.rt-sum-bar .rt-sum-fill.gold{background:var(--gold);}
+/* Tabella di dettaglio: asset, retail bullish/bearish, fonte/metodo, lettura contrarian */
+.rt-table-wrap{overflow-x:auto; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;}
+.rt-table{width:100%; min-width:720px; table-layout:fixed; border-collapse:collapse; font-size:11.5px;}
+.rt-table col.c-asset{width:9%;} .rt-table col.c-bull{width:9%;} .rt-table col.c-bear{width:9%;}
+.rt-table col.c-method{width:23%;} .rt-table col.c-read{width:50%;}
+.rt-table th{text-align:left; font-size:9.5px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); padding:0 10px 8px; white-space:nowrap;}
+.rt-table td{padding:9px 10px; border-top:1px solid var(--border); vertical-align:top;}
+.rt-table td.rt-num{font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
+.rt-table td.rt-num.up{color:var(--green); font-weight:600;}
+.rt-table td.rt-num.down{color:var(--red); font-weight:600;}
+.rt-table td.rt-asset{font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
+.rt-table td.rt-method{color:var(--dim2); font-size:11px;}
+.rt-table td.rt-read{color:var(--dim); line-height:1.4;}
 .sn-eyebrow{font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:22px 0 12px;}
 .sn-eyebrow:first-child{margin-top:0;}
 
@@ -901,8 +915,18 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   </div>
 
   <div class="rt-card">
-    <div class="rt-title"><span>📶 Sentiment Retail per Strumento</span><span class="rt-note">Stima qualitativa curata manualmente — non un feed broker live</span></div>
-    <div id="rtGrid"></div>
+    <div class="rt-title"><span>📶 Correlazioni e Sentiment Asset</span><span class="rt-note">Stima qualitativa curata manualmente — non un feed broker live</span></div>
+    <div id="rtSummary"></div>
+    <div class="rt-table-wrap">
+      <table class="rt-table">
+        <colgroup><col class="c-asset"><col class="c-bull"><col class="c-bear"><col class="c-method"><col class="c-read"></colgroup>
+        <thead><tr>
+          <th>Asset</th><th>Retail Bullish</th><th>Retail Bearish</th><th>Fonte / Metodo</th><th>Lettura Contrarian</th>
+        </tr></thead>
+        <tbody id="rtTableBody"></tbody>
+      </table>
+    </div>
+    <div class="section-note" id="rtOpNote" style="margin-top:14px; margin-bottom:0;"></div>
   </div>
 
   <div class="sn-eyebrow">🎯 Sentiment news per categoria (AI)</div>
@@ -2721,22 +2745,73 @@ document.getElementById('rgValueFG').style.color = gaugeColor(sentimentData[0].p
 // Risk-On/Risk-Off: valore di default in attesa del bias AI live (applyBiasDaily lo aggiorna a fetch completato).
 renderGauge('rgGaugeRisk', 50);
 
-// ---------- SENTIMENT RETAIL PER STRUMENTO ----------
-// Stima qualitativa curata manualmente (non un feed broker live tipo IG/OANDA Client Sentiment) —
-// utile come lettura contrarian di massima, va verificata/aggiornata a mano come le altre card sentiment.
+// ---------- CORRELAZIONI E SENTIMENT ASSET (retail) ----------
+// Stima qualitativa curata manualmente (non un feed broker live tipo Myfxbook/IG/OANDA Client
+// Sentiment — nessuno di questi espone un'API gratuita affidabile) — utile come lettura contrarian
+// di massima, va verificata/aggiornata a mano come le altre card sentiment. La riga DXY invece NON
+// è inventata: è calcolata dalle tre righe EUR/GBP/AUD qui sotto (100 - media dei loro "bullish"),
+// perché il dollaro è per costruzione il lato opposto di quelle tre coppie.
+const RETAIL_METHOD = 'Stima qualitativa manuale (stile retail long/short)';
 const retailSentimentData = [
-  {name:'EUR/USD', bull:53, bear:47},
-  {name:'GBP/USD', bull:57, bear:43},
-  {name:'XAU/USD', bull:51, bear:49},
-  {name:'XAG/USD', bull:54, bear:46},
-  {name:'NAS100',  bull:49, bear:51},
+  {name:'EUR/USD', bull:54, bear:46, method:RETAIL_METHOD, read:'Retail leggermente long: bias in linea col prezzo, non ancora un segnale contrarian.'},
+  {name:'GBP/USD', bull:30, bear:70, method:RETAIL_METHOD, read:'Retail molto short: posizionamento affollato al ribasso — segnale contrarian potenzialmente rialzista su GBP/USD.'},
+  {name:'AUD/USD', bull:51, bear:49, method:RETAIL_METHOD, read:'Retail quasi neutrale: nessun segnale di posizionamento, usare DXY e i dati Cina come filtro direzionale.'},
+  {name:'XAU/USD', bull:58, bear:42, method:RETAIL_METHOD, read:'Retail moderatamente long ma non ancora affollato: coerente col posizionamento COT net long strutturale sull\'oro.'},
+  {name:'XAG/USD', bull:55, bear:45, method:RETAIL_METHOD, read:'Retail moderatamente long: da confermare con il momentum dell\'oro e la domanda industriale.'},
+  {name:'NAS100',  bull:null, bear:null, method:'Nessuna fonte retail integrata', read:'Dato non disponibile per gli indici — nessun feed di sentiment retail equity integrato in questa dashboard.'},
+  {name:'S&P 500', bull:null, bear:null, method:'Nessuna fonte retail integrata', read:'Dato non disponibile per gli indici — nessun feed di sentiment retail equity integrato in questa dashboard.'},
 ];
-document.getElementById('rtGrid').innerHTML = retailSentimentData.map(r=>`
-  <div class="rt-row">
+// Inserisce la riga DXY (calcolata) subito dopo XAG/USD, nella stessa posizione della referenza.
+{
+  const majors = ['EUR/USD','GBP/USD','AUD/USD'].map(n=>retailSentimentData.find(d=>d.name===n));
+  const avgBull = majors.reduce((s,m)=>s+m.bull,0)/majors.length;
+  const dxyBull = Math.round(100-avgBull);
+  const dxyRead = avgBull<=45
+    ? `Retail sui 3 major in media net short (${Math.round(avgBull)}% long EUR/GBP/AUD): posizionamento implicito long USD, coerente col trend DXY attuale.`
+    : avgBull>=55
+    ? `Retail sui 3 major in media net long (${Math.round(avgBull)}% long EUR/GBP/AUD): posizionamento implicito short USD, da monitorare per un possibile squeeze se DXY continua a salire.`
+    : 'Retail sui 3 major sostanzialmente bilanciato: nessun segnale implicito forte su USD.';
+  const xagIdx = retailSentimentData.findIndex(d=>d.name==='XAG/USD');
+  retailSentimentData.splice(xagIdx+1, 0, {
+    name:'DXY', bull:dxyBull, bear:100-dxyBull,
+    method:'Proxy calcolato da EUR/USD, GBP/USD, AUD/USD (100 − media retail bullish sui 3 major)',
+    read: dxyRead,
+  });
+}
+
+// Regola (unica, applicata a tutti gli asset): entro ±4 punti dal 50/50 non c'è segnale (Cauto);
+// oltre ±15 punti il posizionamento è considerato troppo affollato e la lettura si capovolge
+// (contrarian); nel mezzo la barra segue semplicemente la direzione naturale del retail.
+function retailDirection(bull){
+  if(bull===null || bull===undefined) return {label:'Cauto', color:'gold', barPct:15};
+  const dev = bull-50;
+  if(Math.abs(dev) < 4) return {label:'Cauto', color:'gold', barPct:20};
+  const extreme = Math.abs(dev) >= 15;
+  const bullish = extreme ? dev<0 : dev>0;
+  const barPct = Math.max(30, Math.min(92, Math.abs(dev)*2 + 30));
+  return {label: bullish?'Bullish':'Bearish', color: bullish?'green':'red', barPct};
+}
+
+document.getElementById('rtSummary').innerHTML = retailSentimentData.map(r=>{
+  const d = retailDirection(r.bull);
+  return `
+  <div class="rt-sum-row">
     <div class="rt-name">${r.name}</div>
-    <div class="rt-bar"><div class="rt-bull" style="width:${r.bull}%;"></div><div class="rt-bear" style="width:${r.bear}%;"></div></div>
-    <div class="rt-pct"><span class="up">${r.bull}%</span> / <span class="down">${r.bear}%</span></div>
-  </div>`).join('');
+    <div class="rt-sum-bar"><div class="rt-sum-fill ${d.color}" style="width:${d.barPct}%;"></div></div>
+    <span class="pill ${d.color}">${d.label}</span>
+  </div>`;
+}).join('');
+
+document.getElementById('rtTableBody').innerHTML = retailSentimentData.map(r=>`
+  <tr>
+    <td class="rt-asset">${r.name}</td>
+    <td class="rt-num ${r.bull!=null?'up':''}">${r.bull!=null ? r.bull+'%' : 'Da aggiornare'}</td>
+    <td class="rt-num ${r.bear!=null?'down':''}">${r.bear!=null ? r.bear+'%' : 'Da aggiornare'}</td>
+    <td class="rt-method">${r.method}</td>
+    <td class="rt-read">${r.read}</td>
+  </tr>`).join('');
+
+document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme a US10Y, preferire long su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti reali, ridurre o invertire l\'esposizione risk-on. Il sentiment retail va letto in chiave contrarian solo quando è molto sbilanciato (oltre 65/35 circa) — sotto quella soglia segue semplicemente il prezzo. Nasdaq e S&amp;P 500 restano "da aggiornare": nessuna fonte di sentiment retail equity integrata in questa dashboard.';
 
 // ---------- ASSET DASHBOARD ----------
 const assets = [
