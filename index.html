@@ -504,9 +504,9 @@ tr:hover td{background:var(--panel2);}
 .rt-split .up{color:var(--green); font-weight:600;} .rt-split .down{color:var(--red); font-weight:600;}
 /* Tabella di dettaglio: asset, retail bullish/bearish, fonte/metodo, lettura contrarian */
 .rt-table-wrap{overflow-x:auto; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;}
-.rt-table{width:100%; min-width:720px; table-layout:fixed; border-collapse:collapse; font-size:11.5px;}
-.rt-table col.c-asset{width:12%;} .rt-table col.c-bull{width:13%;} .rt-table col.c-bear{width:15%;}
-.rt-table col.c-read2{width:60%;}
+.rt-table{width:100%; min-width:820px; table-layout:fixed; border-collapse:collapse; font-size:11.5px;}
+.rt-table col.c-asset{width:11%;} .rt-table col.c-bull{width:11%;} .rt-table col.c-bear{width:11%;}
+.rt-table col.c-chg{width:11%;} .rt-table col.c-read2{width:56%;}
 .rt-table th{text-align:left; font-size:9.5px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); padding:0 10px 8px; line-height:1.3;}
 .rt-table td{padding:9px 10px; border-top:1px solid var(--border); vertical-align:top;}
 .rt-table td.rt-num{font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
@@ -916,13 +916,13 @@ footer{padding:26px 28px; border-top:1px solid var(--border); color:var(--dim2);
   </div>
 
   <div class="rt-card">
-    <div class="rt-title"><span>📶 Correlazioni e Sentiment Asset</span><span class="rt-note">Live — variazione % di oggi e correlazione DXY reale a 30 giorni</span></div>
+    <div class="rt-title"><span>📶 Correlazioni e Sentiment Asset</span><span class="rt-note">Live — posizionamento retail (Dukascopy SWFX) e variazione % di oggi</span></div>
     <div id="rtSummary"></div>
     <div class="rt-table-wrap">
       <table class="rt-table">
-        <colgroup><col class="c-asset"><col class="c-bull"><col class="c-bear"><col class="c-read2"></colgroup>
+        <colgroup><col class="c-asset"><col class="c-bull"><col class="c-bear"><col class="c-chg"><col class="c-read2"></colgroup>
         <thead><tr>
-          <th>Asset</th><th>Var. % oggi</th><th>Corr. DXY (30g)</th><th>Lettura</th>
+          <th>Asset</th><th>Retail Long</th><th>Retail Short</th><th>Var. % oggi</th><th>Lettura</th>
         </tr></thead>
         <tbody id="rtTableBody"></tbody>
       </table>
@@ -2747,14 +2747,13 @@ document.getElementById('rgValueFG').style.color = gaugeColor(sentimentData[0].p
 renderGauge('rgGaugeRisk', 50);
 
 // ---------- CORRELAZIONI E SENTIMENT ASSET (live) ----------
-// Prima era una stima "retail long/short%" curata a mano — nessuna fonte gratuita e legittima
-// esiste per quel dato specifico (Myfxbook blocca le richieste esterne con 403, IG richiede un
-// account broker autenticato, e il vecchio endpoint pubblico di OANDA Forex Labs è stato dismesso,
-// verificato direttamente prima di scrivere questo commento). Sostituita con una lettura
-// interamente live: la variazione % di OGGI (Twelve Data per oro/argento/indici, proxy DXY/
-// Frankfurter — dati BCE — per le valute) viene convertita in uno split percentuale verde/rosso
-// (vedi chgToSplit) invece di un\'etichetta Bullish/Bearish, più la correlazione DXY reale a 30
-// giorni (dxy-correlation.js) come contesto. AUD/USD non è più incluso: non compare più in
+// Il posizionamento retail (long/short %) arriva ora dal Dukascopy SWFX Sentiment Index — un
+// indice pubblico calcolato dal broker stesso sui flussi reali del proprio marketplace,
+// aggiornato ogni 30 minuti, con un endpoint esplicitamente pensato per essere incorporato da
+// siti terzi (api/retail-sentiment.js). Diverso da Myfxbook/IG/OANDA (verificati e scartati in
+// una richiesta precedente: bloccati da bot-detection o richiedono un account broker). Se per
+// un asset Dukascopy non risponde, si ricade sullo split derivato dalla variazione % di oggi
+// (chgToSplit) invece di lasciare la riga vuota. AUD/USD non è incluso: non compare più in
 // "Mercati — Asset Monitor" (rimosso in una richiesta precedente).
 const SENTIMENT_ASSETS = [
   {key:'eurusd', name:'EUR/USD'},
@@ -2766,9 +2765,8 @@ const SENTIMENT_ASSETS = [
   {key:'sp500',  name:'S&P 500'},
 ];
 
-// Trasforma la variazione % di oggi in uno split percentuale 0-100 (verde/rosso): 50/50 = variazione
-// nulla, poi ±20 punti percentuali di split per ogni punto di variazione (es. -0,92% → ~32%/68%),
-// con un margine 5-95% per restare sempre leggibile anche sui movimenti più estremi.
+// Fallback quando manca il dato reale Dukascopy: trasforma la variazione % di oggi in uno split
+// 0-100 (50/50 = variazione nulla, poi ±20 punti per ogni punto di variazione), margine 5-95%.
 function chgToSplit(chg){
   const green = Math.max(5, Math.min(95, Math.round(50 + chg*20)));
   return { green, red: 100 - green };
@@ -2781,56 +2779,74 @@ function renderSentimentAssetsPending(){
       <div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:100%;"></div></div>
       <span class="rt-split">In attesa</span>
     </div>`).join('');
-  document.getElementById('rtTableBody').innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--dim2); font-style:italic; padding:16px;">Caricamento dati live in corso…</td></tr>`;
+  document.getElementById('rtTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--dim2); font-style:italic; padding:16px;">Caricamento dati live in corso…</td></tr>`;
 }
 renderSentimentAssetsPending();
 
 function sentimentReading(r){
-  if(r.chg == null) return 'Dato live non disponibile in questo ciclo — riprova al prossimo refresh.';
-  const dir = r.chg > 0 ? 'in rialzo' : r.chg < 0 ? 'in ribasso' : 'stabile';
-  const chgTxt = `${r.chg>=0?'+':''}${r.chg.toFixed(2)}%`;
-  if(r.name === 'DXY') return `Dollar Index ${dir} di ${chgTxt} oggi (proxy calcolato sui cambi ufficiali BCE) — è il riferimento usato per la correlazione degli altri asset in tabella.`;
-  if(r.corr == null) return `${r.name} ${dir} di ${chgTxt} oggi. Correlazione DXY non calcolabile in questo ciclo (serie storica insufficiente).`;
-  return `${r.name} ${dir} di ${chgTxt} oggi; correlazione con il DXY ${corrLabel(r.corr).toLowerCase()} (${fmtCorr(r.corr)}) sui rendimenti degli ultimi 30 giorni.`;
+  const parts = [];
+  if(r.long != null){
+    parts.push(r.long >= 65 || r.long <= 35
+      ? `Retail ${r.long}% long / ${r.short}% short — posizionamento sbilanciato, letto spesso in chiave contrarian oltre il 65-70% da un lato.`
+      : `Retail ${r.long}% long / ${r.short}% short — posizionamento vicino all'equilibrio.`);
+  }
+  if(r.chg != null){
+    const dir = r.chg > 0 ? 'in rialzo' : r.chg < 0 ? 'in ribasso' : 'stabile';
+    const chgTxt = `${r.chg>=0?'+':''}${r.chg.toFixed(2)}%`;
+    const priceTxt = r.name === 'DXY'
+      ? `Dollar Index ${dir} di ${chgTxt} oggi (proxy calcolato sui cambi ufficiali BCE).`
+      : `${r.name} ${dir} di ${chgTxt} oggi${r.corr!=null ? `; correlazione DXY ${corrLabel(r.corr).toLowerCase()} (${fmtCorr(r.corr)}) a 30g` : ''}.`;
+    parts.push(priceTxt);
+  }
+  if(!parts.length) return 'Dato live non disponibile in questo ciclo — riprova al prossimo refresh.';
+  return parts.join(' ');
 }
 
-// Applica i dati live già scaricati da initLiveData() per market-data.js (oro/argento/indici) e
-// dxy-correlation.js (proxy DXY/valute + correlazioni) — nessuna chiamata aggiuntiva.
-function applySentimentAssetsLive(market, dxyCorr){
+// Applica i dati live già scaricati da initLiveData(): retail-sentiment.js (Dukascopy, prioritario),
+// market-data.js (oro/argento/indici) e dxy-correlation.js (proxy DXY/valute + correlazioni) come
+// fallback e contesto — nessuna chiamata aggiuntiva rispetto a quelle già in corso.
+function applySentimentAssetsLive(market, dxyCorr, retailSentiment){
   const rows = SENTIMENT_ASSETS.map(a=>{
     const m = market && market[a.key];
     const c = dxyCorr && dxyCorr[a.key];
+    const s = retailSentiment && retailSentiment[a.key];
     const chg = (m && m.changePercent != null) ? m.changePercent : (c && c.changePercent != null ? c.changePercent : null);
     const corr = (c && c.corr != null) ? c.corr : null;
-    return {...a, chg, corr};
+    const long = (s && s.long != null) ? s.long : null;
+    const short = (s && s.short != null) ? s.short : null;
+    return {...a, chg, corr, long, short};
   });
-  if(!rows.some(r=>r.chg != null)) return false;
+  if(!rows.some(r=>r.long != null || r.chg != null)) return false;
 
   document.getElementById('rtSummary').innerHTML = rows.map(r=>{
-    if(r.chg == null) return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:100%;"></div></div><span class="rt-split">N/D</span></div>`;
-    const s = chgToSplit(r.chg);
+    let green, red;
+    if(r.long != null){ green = Math.round(r.long); red = Math.round(r.short); }
+    else if(r.chg != null){ const s = chgToSplit(r.chg); green = s.green; red = s.red; }
+    else return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:100%;"></div></div><span class="rt-split">N/D</span></div>`;
     return `<div class="rt-sum-row">
       <div class="rt-name">${r.name}</div>
-      <div class="rt-sum-bar"><div class="rt-sum-fill green" style="width:${s.green}%;"></div><div class="rt-sum-fill red" style="width:${s.red}%;"></div></div>
-      <span class="rt-split"><span class="up">${s.green}%</span> / <span class="down">${s.red}%</span></span>
+      <div class="rt-sum-bar"><div class="rt-sum-fill green" style="width:${green}%;"></div><div class="rt-sum-fill red" style="width:${red}%;"></div></div>
+      <span class="rt-split"><span class="up">${green}%</span> / <span class="down">${red}%</span></span>
     </div>`;
   }).join('');
 
   document.getElementById('rtTableBody').innerHTML = rows.map(r=>{
+    const longTxt = r.long != null ? `${r.long}%` : 'N/D';
+    const shortTxt = r.short != null ? `${r.short}%` : 'N/D';
     const chgTxt = r.chg != null ? `${r.chg>=0?'+':''}${r.chg.toFixed(2)}%` : 'N/D';
     const chgCls = r.chg == null ? '' : (r.chg>=0?'up':'down');
-    const corrTxt = r.corr != null ? fmtCorr(r.corr) : (r.name==='DXY' ? '—' : 'N/D');
     return `<tr>
       <td class="rt-asset">${r.name}</td>
+      <td class="rt-num up">${longTxt}</td>
+      <td class="rt-num down">${shortTxt}</td>
       <td class="rt-num ${chgCls}">${chgTxt}</td>
-      <td class="rt-num">${corrTxt}</td>
       <td class="rt-read">${sentimentReading(r)}</td>
     </tr>`;
   }).join('');
   return true;
 }
 
-document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. Lo split verde/rosso riflette l\'ampiezza della variazione di oggi (50/50 = invariato), non un dato di posizionamento dei trader retail. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni: più si avvicina a ±1, più il movimento dell\'asset tende a rispecchiare (correlazione negativa) o seguire (positiva) quello del dollaro.';
+document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. Il posizionamento retail (Dukascopy SWFX) va letto spesso in chiave contrarian quando molto sbilanciato (oltre il 65-70% da un lato); dove non disponibile, lo split riflette semplicemente l\'ampiezza della variazione di oggi. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni.';
 
 // ---------- ASSET DASHBOARD ----------
 const assets = [
@@ -2906,6 +2922,15 @@ async function fetchLiveDXYCorr(){
     if(!res.ok) return null;
     const json = await res.json();
     if(json.parseWarning) console.warn('DXY correlation warning:', json.parseWarning);
+    return json.data;
+  }catch(e){ return null; }
+}
+
+async function fetchLiveRetailSentiment(){
+  try{
+    const res = await fetch('/api/retail-sentiment');
+    if(!res.ok) return null;
+    const json = await res.json();
     return json.data;
   }catch(e){ return null; }
 }
@@ -3363,8 +3388,8 @@ function applyLiveFXToTicker(live){
 }
 
 async function initLiveData(){
-  const [macro, fx, market, cot, dxyCorr, bias, sentiment] = await Promise.all([
-    fetchLiveMacro(), fetchLiveFX(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
+  const [macro, fx, market, cot, dxyCorr, retailSentiment, bias, sentiment] = await Promise.all([
+    fetchLiveMacro(), fetchLiveFX(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(), fetchLiveRetailSentiment(),
     fetchBiasDaily(), fetchSentimentLive(false),
   ]);
   const macroUpdated = applyLiveMacroToCards(macro);
@@ -3374,7 +3399,7 @@ async function initLiveData(){
   const marketUpdated = applyLiveMarketToMonitor(market);
   const cotUpdated = applyLiveCOTToReport(cot);
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
-  const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
+  const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr, retailSentiment);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
   // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
   // bloccare il resto del refresh (bias/sentiment/status line), aggiorna la UI da sola a fine fetch.
