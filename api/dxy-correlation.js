@@ -229,7 +229,10 @@ async function handleEvent(event) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600', // cache 1 ora, una correlazione a 30g non cambia sensibilmente infragiornata
+        // 5 minuti: la correlazione a 30g da sola potrebbe restare in cache anche di più, ma questa
+        // risposta include anche la variazione % "di oggi" (DXY/FX/gold) usata dalla card
+        // "Correlazioni e Sentiment Asset" — quella deve restare ragionevolmente fresca.
+        'Cache-Control': 'public, max-age=300',
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),
