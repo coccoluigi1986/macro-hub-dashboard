@@ -107,35 +107,24 @@ a{color:inherit;}
 .sn-regen:hover{color:var(--accent); border-color:var(--accent);}
 .sn-regen:disabled{opacity:.5; cursor:default;}
 
-/* ===== VOLATILITY DEEP-DIVE (riusa dati di Mercati) ===== */
-.vol-header{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:9px;}
-.vol-toggle{display:flex; align-items:center; gap:4px; font-size:10.7px; color:var(--accent); font-weight:600; cursor:pointer; white-space:nowrap;}
-.vol-toggle svg{width:11px; height:11px; transition:transform .2s;}
-.vol-toggle.open svg{transform:rotate(180deg);}
-.vol-body{max-height:0; overflow:hidden; transition:max-height .35s ease;}
-.vol-body.open{max-height:3000px;}
-.vol-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:7px;}
-@media(max-width:1100px){.vol-grid{grid-template-columns:1fr 1fr;}}
-.vol-card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px 13px; cursor:pointer;}
-.vol-card-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;}
-.vol-card .vc-name{font-family:'Space Grotesk',sans-serif; font-size:13.5px; font-weight:700; color:var(--text);}
-.vol-card .vc-badge{font-size:9.3px; font-weight:700; padding:3px 7px; border-radius:20px;}
-.vol-card .vc-badge.elevata{background:rgba(240,104,94,.16); color:var(--red);}
-.vol-card .vc-badge.alta{background:rgba(240,104,94,.14); color:var(--red);}
-.vol-card .vc-badge.moderata{background:var(--gold-soft); color:var(--gold);}
-.vol-card .vc-badge.bassa{background:var(--panel2); color:var(--dim);}
-.vol-card .vc-sub{font-size:9.8px; color:var(--dim2); margin-bottom:7px;}
-.vol-card .vc-value{font-family:'Space Grotesk',sans-serif; font-size:24.2px; font-weight:700; color:var(--text); margin-bottom:9px;}
-.vol-card .vc-stats{display:grid; grid-template-columns:1fr 1fr; gap:7px; padding-top:9px; border-top:1px solid var(--border); margin-bottom:7px;}
-.vol-card .vc-stats .vcs-lbl{font-size:9.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--dim2); margin-bottom:3px;}
-.vol-card .vc-stats .vcs-val{font-size:11.6px; font-weight:600;}
-.vol-card .vc-expand{display:flex; align-items:center; gap:4px; font-size:10.7px; color:var(--accent); font-weight:600;}
-.vol-card .vc-expand svg{width:10px; height:10px; transition:transform .2s;}
-.vol-card.open .vc-expand svg{transform:rotate(180deg);}
-.vol-card .vc-detail{max-height:0; overflow:hidden; transition:max-height .25s ease;}
-.vol-card.open .vc-detail{max-height:200px; margin-top:7px;}
-.vol-card .vc-detail-inner{font-size:10.7px; color:var(--dim); line-height:1.55; padding-top:7px; border-top:1px solid var(--border);}
-.vol-disclaimer{font-size:10.2px; color:var(--dim2); margin-top:3px;}
+/* ===== INDICE VOLATILITÀ GIORNALIERA PER ASSET (tabella live, da calendario economico reale) ===== */
+.vd-table-wrap{overflow-x:auto; background:var(--panel); border:1px solid var(--border); border-radius:10px;}
+.vd-table{width:100%; min-width:880px; table-layout:fixed; border-collapse:collapse; font-size:11.5px;}
+.vd-table col.vd-c-day{width:8%;} .vd-table col.vd-c-asset{width:10%;} .vd-table col.vd-c-idx{width:7%;}
+.vd-table col.vd-c-time{width:17%;} .vd-table col.vd-c-cat{width:28%;} .vd-table col.vd-c-read{width:30%;}
+.vd-table th{text-align:left; font-size:9.3px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); padding:0 10px 8px; line-height:1.3;}
+.vd-table td{padding:8px 10px; border-top:1px solid var(--border); vertical-align:top;}
+.vd-table tr.vd-row:hover td{background:var(--panel2);}
+.vd-table td.vd-day{color:var(--accent); font-family:'IBM Plex Mono',monospace; font-weight:600; white-space:nowrap;}
+.vd-table td.vd-asset{font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
+.vd-idx{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:4px;}
+.vd-idx.basso{background:var(--panel2); color:var(--dim2);}
+.vd-idx.moderato{background:var(--gold-soft); color:var(--gold);}
+.vd-idx.alto{background:var(--red-soft); color:var(--red);}
+.vd-table td.vd-time{color:var(--dim); font-family:'IBM Plex Mono',monospace; font-size:10.5px;}
+.vd-table td.vd-cat{color:var(--dim);}
+.vd-table td.vd-read{color:var(--dim);}
+.vd-empty{padding:16px; text-align:center; color:var(--dim2); font-size:12px; font-style:italic;}
 
 /* ===== MARKET MONITOR (stile screenshot: card con sparkline, volatilità, corr DXY) ===== */
 .mkt-status-bar{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:12px;}
@@ -1168,19 +1157,17 @@ section.collapsed > *:not(.sec-head){display:none;}
 </section>
 
 <section id="vol">
-  <div class="sec-head"><span class="sec-num">13</span><h2>Approfondimento Volatilità per Asset</h2><span class="sec-desc">Dove si concentra il rischio di coda</span></div>
-  <div class="grid grid-4" id="volSummaryGrid" style="margin-bottom:22px;"></div>
-
-  <div class="vol-header">
-    <div>
-      <div class="page-subtitle" style="margin-bottom:0;">Regime di volatilità per asset — apri quando vuoi confrontare la volatilità realizzata tra gli 11 asset monitorati.</div>
-    </div>
-    <div class="vol-toggle open" id="volToggle" onclick="toggleVolSection()">Apri dettagli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
+  <div class="sec-head"><span class="sec-num">13</span><h2>Indice volatilità giornaliera per asset</h2><span class="sec-desc">Live — dal calendario economico reale</span></div>
+  <div class="vd-table-wrap">
+    <table class="vd-table">
+      <colgroup><col class="vd-c-day"><col class="vd-c-asset"><col class="vd-c-idx"><col class="vd-c-time"><col class="vd-c-cat"><col class="vd-c-read"></colgroup>
+      <thead><tr>
+        <th>Giorno</th><th>Asset</th><th>Indice</th><th>Fasce più volatili (Europa/Roma)</th><th>Catalizzatori principali</th><th>Lettura operativa</th>
+      </tr></thead>
+      <tbody id="volDayTableBody"></tbody>
+    </table>
   </div>
-  <div class="vol-body open" id="volBody">
-    <div class="vol-grid" id="volGrid"></div>
-    <div class="vol-disclaimer">La volatilità realizzata descrive il livello corrente; non è una previsione del prezzo futuro.</div>
-  </div>
+  <div class="section-note">L'indice (1-5) e gli orari derivano dagli eventi in calendario di impatto medio/alto per la valuta di riferimento di ciascun asset, nella settimana lavorativa corrente (Lun-Ven). Non è una previsione di volatilità realizzata: segnala solo <b>quando</b> ci si aspettano più probabilmente movimenti ampi.</div>
 </section>
 
 <section id="news">
@@ -2556,44 +2543,97 @@ const newsItems = [
 document.getElementById('newsGrid').innerHTML = newsItems.map(n=>`
   <div class="card"><div class="lbl">${n.src}</div><div class="sub" style="font-size:12.5px; margin-top:6px;">${n.txt}</div></div>`).join('');
 
-// ---------- VOLATILITY SUMMARY (sintesi qualitativa originale, ripristinata) ----------
-const volData = [
-  {a:'DXY / Forex', v:'Bassa-media', note:'Range compresso, in attesa di catalizzatore Fed'},
-  {a:'Petrolio (WTI/Brent)', v:'Alta', note:'Headline-driven da Iran/Hormuz, gap risk elevato'},
-  {a:'Oro', v:'Media', note:'Bid strutturale ma sensibile a real yields'},
-  {a:'Equity Index', v:'Bassa (VIX 14.6)', note:'Possibile compressione anomala, rischio mean-reversion'},
+// ---------- INDICE VOLATILITÀ GIORNALIERA PER ASSET (live, dal calendario economico reale) ----------
+// Prima era una stima qualitativa scritta a mano ("Alta"/"Media"/"Bassa" per asset). Ricostruita
+// come tabella giorno-per-giorno: per ogni asset e ogni giorno della settimana lavorativa
+// corrente, guarda gli eventi REALI di impatto medio/alto in calendario (stessa fonte/endpoint
+// della sezione Calendario Economico, /api/economic-calendar) per la valuta di riferimento, e ne
+// deriva un indice 1-5, le fasce orarie (Europa/Roma) e i catalizzatori — nessun testo inventato,
+// solo eventi realmente programmati. La "lettura operativa" resta un template deterministico
+// (stesso approccio già usato per il Calendario Economico e per Correlazioni e Sentiment Asset).
+const VOL_ASSETS = [
+  {label:'EUR/USD', currency:'EUR'},
+  {label:'GBP/USD', currency:'GBP'},
+  {label:'AUD/USD', currency:'AUD'},
+  {label:'XAU/USD / XAG/USD', currency:'USD'},
+  {label:'Nasdaq', currency:'USD'},
+  {label:'S&P 500', currency:'USD'},
 ];
-document.getElementById('volSummaryGrid').innerHTML = volData.map(v=>`
-  <div class="card"><div class="lbl">${v.a}</div><div class="val" style="font-size:16px;">${v.v}</div><div class="sub">${v.note}</div></div>`).join('');
 
-// ---------- VOLATILITY DEEP-DIVE (riusa marketData — stessi numeri di Mercati) ----------
-function volNote(m){
-  const up = m.chg >= 0;
-  return `Volatilità realizzata ${m.volLvl.toLowerCase()} (${m.vol}) su base 20 sedute. Movimento odierno ${up?'positivo':'negativo'} (${up?'+':''}${m.chg.toFixed(2)}%) con correlazione al DXY di ${m.corr}. ${m.volLvl==='Elevata'||m.volLvl==='Alta' ? 'Livello che invita a size ridotta e stop più ampi rispetto alla norma.' : m.volLvl==='Bassa' ? 'Range compresso — attenzione a un possibile break-out su catalizzatore macro.' : 'Livello nella norma storica recente.'}`;
+function currentWorkWeekRange(){
+  const now = new Date();
+  const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const oneDay = 86400000;
+  const dow = now.getDay()===0?7:now.getDay(); // lunedì=1..domenica=7
+  const monday = todayUTC - (dow-1)*oneDay;
+  return [monday, monday + 4*oneDay]; // lunedì..venerdì
 }
-// ordina per volatilità decrescente, come nello screenshot di riferimento
-const volSorted = [...marketData].sort((a,b)=> parseFloat(b.vol.replace(',','.')) - parseFloat(a.vol.replace(',','.')));
-document.getElementById('volGrid').innerHTML = volSorted.map((m,idx)=>{
-  const up = m.chg >= 0;
-  const badgeClass = m.volLvl.toLowerCase();
-  return `
-  <div class="vol-card" id="volc-${idx}" onclick="toggleVolCard(${idx})">
-    <div class="vol-card-top"><div class="vc-name">${m.name}</div><div class="vc-badge ${badgeClass}">${m.volLvl}</div></div>
-    <div class="vc-sub">Volatilità realizzata annualizzata</div>
-    <div class="vc-value">${m.vol}</div>
-    <div class="vc-stats">
-      <div><div class="vcs-lbl">Movimento oggi</div><div class="vcs-val" style="color:${up?'var(--green)':'var(--red)'};">${up?'+':''}${m.chg.toFixed(2)}%</div></div>
-      <div><div class="vcs-lbl">Corr. DXY</div><div class="vcs-val">${m.corr}</div></div>
-    </div>
-    <div class="vc-expand">Apri dettagli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
-    <div class="vc-detail"><div class="vc-detail-inner">${volNote(m)}</div></div>
-  </div>`;
-}).join('');
-function toggleVolCard(idx){ document.getElementById('volc-'+idx).classList.toggle('open'); }
-function toggleVolSection(){
-  document.getElementById('volToggle').classList.toggle('open');
-  document.getElementById('volBody').classList.toggle('open');
+
+function volIndexScore(events){
+  const high = events.filter(e=>e.importance==='alto').length;
+  const med = events.filter(e=>e.importance==='medio').length;
+  return Math.max(1, Math.min(5, high*2 + med));
 }
+function volIndexClass(score){ return score>=4 ? 'alto' : score===3 ? 'moderato' : 'basso'; }
+
+function volTimeWindows(events){
+  if(!events.length) return '—';
+  const times = [...new Set(events.map(e=>new Date(e.date).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Europe/Rome'})))];
+  times.sort();
+  return times.slice(0,5).join(', ');
+}
+function volCatalysts(events){
+  if(!events.length) return 'Nessun evento medio/alto impatto in calendario';
+  const titles = [...new Set(events.map(e=>e.title))];
+  return titles.slice(0,4).join(', ') + (titles.length>4 ? ` +${titles.length-4}` : '');
+}
+function volReading(asset, events, score){
+  if(!events.length) return `${asset.label}: nessun catalizzatore ${asset.currency} rilevante questo giorno — volatilità attesa contenuta, da flusso ordini.`;
+  const top = [...events].sort((a,b)=> (a.importance==='alto'?0:1) - (b.importance==='alto'?0:1))[0];
+  const tier = score>=4 ? 'Alta probabilità di movimento ampio' : score===3 ? 'Possibile movimento moderato' : 'Volatilità probabilmente contenuta';
+  const rest = events.length>1 ? ` (+${events.length-1} altri eventi ${asset.currency})` : '';
+  return `${tier} su ${asset.label} in occasione di ${top.title}${rest}.`;
+}
+
+async function renderVolatilityTable(){
+  const tbody = document.getElementById('volDayTableBody');
+  if(!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" class="vd-empty">Caricamento calendario in corso…</td></tr>';
+  try{
+    const [monday, friday] = currentWorkWeekRange();
+    const from = new Date(monday).toISOString();
+    const to = new Date(friday + 86400000 - 1).toISOString();
+    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    const events = (data.events||[]).filter(e=>e.importance==='alto' || e.importance==='medio');
+
+    let rows = '';
+    for(let dayMs=monday; dayMs<=friday; dayMs+=86400000){
+      const dayLabel = new Date(dayMs).toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', timeZone:'UTC'}).replace('.', '');
+      const dayLocal = new Date(dayMs).toLocaleDateString('en-CA', {timeZone:'UTC'});
+      VOL_ASSETS.forEach(asset=>{
+        const dayEvents = events.filter(e=>
+          e.currency === asset.currency &&
+          new Date(e.date).toLocaleDateString('en-CA', {timeZone:'Europe/Rome'}) === dayLocal
+        ).sort((a,b)=> new Date(a.date) - new Date(b.date));
+        const score = volIndexScore(dayEvents);
+        rows += `<tr class="vd-row">
+          <td class="vd-day">${dayLabel}</td>
+          <td class="vd-asset">${asset.label}</td>
+          <td><span class="vd-idx ${volIndexClass(score)}">${score}/5</span></td>
+          <td class="vd-time">${volTimeWindows(dayEvents)}</td>
+          <td class="vd-cat">${volCatalysts(dayEvents)}</td>
+          <td class="vd-read">${volReading(asset, dayEvents, score)}</td>
+        </tr>`;
+      });
+    }
+    tbody.innerHTML = rows || '<tr><td colspan="6" class="vd-empty">Nessun dato disponibile.</td></tr>';
+  }catch(e){
+    tbody.innerHTML = '<tr><td colspan="6" class="vd-empty">Calendario non raggiungibile in questo momento — riprova tra poco.</td></tr>';
+  }
+}
+renderVolatilityTable();
 
 // ---------- SENTIMENT NEWS PER CATEGORIA ----------
 const snData = [
@@ -3503,6 +3543,7 @@ function refreshLive(){
   document.getElementById('refreshNote').style.color = 'var(--dim)';
   initLiveData();
   fetchCalEventsForRange(...getCalDateRange());
+  renderVolatilityTable();
 }
 
 // Tenta il collegamento ai dati live appena la pagina carica (silenzioso, nessun errore se non disponibili)
