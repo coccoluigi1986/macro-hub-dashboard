@@ -2802,18 +2802,17 @@ function sentimentReading(r){
   return parts.join(' ');
 }
 
-// Applica i dati live già scaricati da initLiveData(): retail-sentiment.js (Dukascopy, prioritario),
-// market-data.js (oro/argento/indici) e dxy-correlation.js (proxy DXY/valute + correlazioni) come
-// fallback e contesto — nessuna chiamata aggiuntiva rispetto a quelle già in corso.
-function applySentimentAssetsLive(market, dxyCorr, retailSentiment){
+// Applica i dati live già scaricati da initLiveData(): dxy-correlation.js include sia la
+// correlazione/variazione % sia il posizionamento retail reale (Dukascopy, vedi commento in
+// quel file) nella stessa risposta — nessuna chiamata aggiuntiva rispetto a quelle già in corso.
+function applySentimentAssetsLive(market, dxyCorr){
   const rows = SENTIMENT_ASSETS.map(a=>{
     const m = market && market[a.key];
     const c = dxyCorr && dxyCorr[a.key];
-    const s = retailSentiment && retailSentiment[a.key];
     const chg = (m && m.changePercent != null) ? m.changePercent : (c && c.changePercent != null ? c.changePercent : null);
     const corr = (c && c.corr != null) ? c.corr : null;
-    const long = (s && s.long != null) ? s.long : null;
-    const short = (s && s.short != null) ? s.short : null;
+    const long = (c && c.long != null) ? c.long : null;
+    const short = (c && c.short != null) ? c.short : null;
     return {...a, chg, corr, long, short};
   });
   if(!rows.some(r=>r.long != null || r.chg != null)) return false;
@@ -2922,15 +2921,6 @@ async function fetchLiveDXYCorr(){
     if(!res.ok) return null;
     const json = await res.json();
     if(json.parseWarning) console.warn('DXY correlation warning:', json.parseWarning);
-    return json.data;
-  }catch(e){ return null; }
-}
-
-async function fetchLiveRetailSentiment(){
-  try{
-    const res = await fetch('/api/retail-sentiment');
-    if(!res.ok) return null;
-    const json = await res.json();
     return json.data;
   }catch(e){ return null; }
 }
@@ -3388,8 +3378,8 @@ function applyLiveFXToTicker(live){
 }
 
 async function initLiveData(){
-  const [macro, fx, market, cot, dxyCorr, retailSentiment, bias, sentiment] = await Promise.all([
-    fetchLiveMacro(), fetchLiveFX(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(), fetchLiveRetailSentiment(),
+  const [macro, fx, market, cot, dxyCorr, bias, sentiment] = await Promise.all([
+    fetchLiveMacro(), fetchLiveFX(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
     fetchBiasDaily(), fetchSentimentLive(false),
   ]);
   const macroUpdated = applyLiveMacroToCards(macro);
@@ -3399,7 +3389,7 @@ async function initLiveData(){
   const marketUpdated = applyLiveMarketToMonitor(market);
   const cotUpdated = applyLiveCOTToReport(cot);
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
-  const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr, retailSentiment);
+  const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
   // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
   // bloccare il resto del refresh (bias/sentiment/status line), aggiorna la UI da sola a fine fetch.

@@ -2,7 +2,10 @@
 //
 // Serverless Function (Vercel): correlazione REALE a 30 giorni tra il DXY e ogni asset
 // mostrato in "Mercati — Asset Monitor", calcolata su serie storiche vere invece delle
-// stime scritte a mano che c'erano prima nel campo "corr" di marketData.
+// stime scritte a mano che c'erano prima nel campo "corr" di marketData. Include anche il
+// posizionamento retail reale (Dukascopy SWFX Sentiment Index, vedi fetchRetailSentiment più
+// sotto) per la card "Correlazioni e Sentiment Asset" — vive qui e non in una funzione a sé
+// per restare entro il limite di 12 Serverless Functions del piano Hobby di Vercel.
 //
 // METODOLOGIA: correlazione di Pearson sui RENDIMENTI GIORNALIERI (variazione % giorno
 // su giorno, non sui livelli di prezzo) degli ultimi 30 giorni di trading in comune tra
@@ -118,6 +121,37 @@ async function fetchTwelveDataSeries(apiKey) {
   return out;
 }
 
+// Posizionamento retail REALE (long/short %) dal Dukascopy SWFX Sentiment Index — indice
+// pubblico calcolato dal broker sui flussi reali del proprio marketplace, aggiornato ogni 30
+// minuti, via un endpoint pubblico e documentato pensato per essere incorporato da siti terzi
+// (pagina "get this widget" su dukascopy.com/.../sentiment/). La "key" è quella pubblica del
+// widget embeddabile (presente nell'HTML pubblico della loro pagina), non una credenziale
+// privata. Vive qui insieme alla correlazione — invece che in una funzione serverless a sé —
+// per restare sotto il limite di 12 funzioni del piano Hobby di Vercel.
+const DUKA_URL = 'https://freeserv.dukascopy.com/2.0/api/'
+  + '?group=quotes&method=realtimeSentimentIndex&enabled=true&key=bsq3l3p5lc8w4s0c'
+  + '&liquidity=consumers&type=swfx';
+const DUKA_INSTRUMENT_MAP = {
+  'EUR/USD': 'eurusd', 'GBP/USD': 'gbpusd', 'XAU/USD': 'gold', 'XAG/USD': 'silver',
+  'DOLLAR.IDX/USD': 'dxy', 'USATECH.IDX/USD': 'nasdaq', 'USA500.IDX/USD': 'sp500',
+};
+async function fetchRetailSentiment() {
+  const res = await fetch(DUKA_URL, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; macro-hub-dashboard/1.0)' } });
+  if (!res.ok) throw new Error(`Dukascopy sentiment error ${res.status}`);
+  const raw = await res.json();
+  if (!Array.isArray(raw)) throw new Error(raw && raw.error ? String(raw.error) : 'Risposta inattesa da Dukascopy');
+  const out = {};
+  raw.forEach((item) => {
+    const key = DUKA_INSTRUMENT_MAP[item.title];
+    if (!key) return;
+    const long = Number(item.long);
+    const short = Number(item.short);
+    if (Number.isNaN(long) || Number.isNaN(short)) return;
+    out[key] = { long: Number(long.toFixed(1)), short: Number(short.toFixed(1)) };
+  });
+  return out;
+}
+
 // Serie storica dello yield US 10Y da FMP (Twelve Data non lo copre sul piano gratuito).
 async function fetchTreasurySeries(apiKey) {
   const end = new Date();
@@ -183,10 +217,13 @@ async function handleEvent(event) {
     // sotto manutenzione: DXY/EUR/GBP/AUD vengono da Frankfurter, un servizio indipendente, e
     // devono restare disponibili anche quando Twelve Data fallisce — degrado solo gold/silver/
     // indici/VIX/WTI (vedi "Serie storica non disponibile" più sotto), non tutto il resto.
-    const [{ dxy, eurusd, gbpusd, audusd }, tdSeries, treasurySeries] = await Promise.all([
+    const [{ dxy, eurusd, gbpusd, audusd }, tdSeries, treasurySeries, retailSentiment] = await Promise.all([
       fetchDxyProxySeries(),
       fetchTwelveDataSeries(tdKey).catch(e => { console.warn('Twelve Data time_series fallito:', e.message); return {}; }),
       fmpKey ? fetchTreasurySeries(fmpKey) : Promise.resolve(new Map()),
+      // Non deve far fallire l'intera risposta se Dukascopy è irraggiungibile — il client ricade
+      // sullo split derivato dalla variazione % quando manca il posizionamento retail reale.
+      fetchRetailSentiment().catch(e => { console.warn('Dukascopy sentiment fallito:', e.message); return {}; }),
     ]);
 
     const dxyRets = dailyReturns(dxy);
@@ -220,6 +257,11 @@ async function handleEvent(event) {
       if (corr == null) warnings.push(key);
     });
     data.dxy = { changePercent: todayChange.dxy };
+
+    // Aggiunge long/short reali (quando Dukascopy li ha) alle stesse chiavi già presenti in "data".
+    Object.entries(retailSentiment).forEach(([key, s]) => {
+      data[key] = { ...(data[key] || {}), long: s.long, short: s.short };
+    });
 
     if (treasurySeries.size) {
       const { corr, n } = correlate(dxyRets, dailyReturns(treasurySeries));

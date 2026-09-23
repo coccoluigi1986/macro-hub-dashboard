@@ -4,6 +4,6 @@
   "version": "1.0.0",
   "description": "Dashboard macro-geopolitica-monetaria — index.html statico + Serverless Functions in /api (nessuna dipendenza npm, solo fetch nativo).",
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   }
 }
