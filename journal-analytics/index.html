@@ -249,19 +249,43 @@ tr:last-child td { border-bottom: none; }
 .ico.good { background: var(--good-bg); color: var(--good); }
 .ico.warn { background: var(--warning-bg); color: var(--warning); }
 
+.row-2-even { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+
+.rec-box { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--surface-2); margin-bottom: 12px; }
+.rec-box:last-child { margin-bottom: 0; }
+.rec-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+.rec-title { font-size: 14.5px; font-weight: 800; }
+.rec-priority { flex: none; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em; }
+.rec-priority.high { background: var(--critical-bg); color: var(--critical); }
+.rec-priority.medium { background: var(--warning-bg); color: var(--warning); }
+.rec-priority.low { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+.rec-desc { font-size: 12.5px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.45; }
+.rec-action, .rec-verify { font-size: 13px; margin-bottom: 6px; display: flex; gap: 8px; }
+.rec-verify { color: var(--good); margin-bottom: 10px; }
+.rec-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; font-size: 11.5px; color: var(--text-secondary); }
+.rec-chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--critical); display: inline-block; }
+
+.check-list { list-style: none; margin: 0; padding: 0; }
+.check-list li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.45; }
+.check-list li:last-child { border-bottom: none; padding-bottom: 0; }
+.check-list li:first-child { padding-top: 0; }
+.check-list .ico { flex: none; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; margin-top: 1px; }
+.check-list .ico.bad { background: var(--critical-bg); color: var(--critical); }
+.check-list .ico.watch { background: var(--warning-bg); color: var(--warning); }
+
 .ideal-row .stat-tile { text-align: center; }
 
 footer.note { font-size: 11.5px; color: var(--muted); text-align: center; padding-top: 4px; }
 
 @media (max-width: 860px) {
   .stat-grid { grid-template-columns: repeat(3, 1fr); }
-  .row-2, .row-4, .insight-grid { grid-template-columns: 1fr 1fr; }
+  .row-2, .row-4, .insight-grid, .row-2-even { grid-template-columns: 1fr 1fr; }
   header.top { justify-content: center; text-align: center; }
   header.top .period { text-align: center; }
 }
 @media (max-width: 480px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .row-2, .row-4, .insight-grid, .spotlight-grid, .legend-list { grid-template-columns: 1fr; }
+  .row-2, .row-4, .insight-grid, .row-2-even, .spotlight-grid, .legend-list { grid-template-columns: 1fr; }
   .dropzone .dz-text { display: none; }
   .cal-header { justify-content: center; text-align: center; }
 }
@@ -380,6 +404,27 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
   </section>
 
   <section class="card">
+    <h2>Consigli personalizzati <span class="n">raccomandazioni generate dai pattern deboli rilevati in questi dati</span></h2>
+    <div id="recommendationsList"></div>
+  </section>
+
+  <section class="row-2-even">
+    <div class="card">
+      <h2>Punti di forza</h2>
+      <ul class="check-list" id="strengthsList"></ul>
+    </div>
+    <div class="card">
+      <h2>Punti deboli</h2>
+      <ul class="check-list" id="weaknessesList"></ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Cosa tenere d'occhio</h2>
+    <ul class="check-list" id="watchList"></ul>
+  </section>
+
+  <section class="card">
     <h2>Il trade statisticamente &laquo;ideale&raquo; del periodo <span class="n">valori più frequenti/mediani, non un trade realmente accaduto</span></h2>
     <div class="stat-grid ideal-row" id="idealRow"></div>
   </section>
@@ -473,6 +518,19 @@ const DAY_ACCENT = {
   thursday: 'Giovedì', friday: 'Venerdì', saturday: 'Sabato', sunday: 'Domenica',
 };
 const DAY_ORDER = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+// generic words excluded when mining notes for recurring "confluence" terms,
+// so the result is trading vocabulary (manipolazione, liquidità, retest...)
+// rather than connective/filler words
+const NOTES_STOPWORDS = new Set([
+  'anche','ancora','dopo','prima','molto','poco','sempre','oggi','ieri','questa','questo','queste','questi',
+  'quella','quello','quelle','quelli','sono','stato','stata','stati','state','essere','avere','fatto','fatta',
+  'fatti','fatte','come','dove','quando','perche','perché','mentre','durante','sopra','sotto','dentro','fuori',
+  'verso','senza','contro','sulla','sullo','sugli','sulle','della','dello','degli','delle','nella','nello',
+  'negli','nelle','alla','allo','agli','alle','dalla','dallo','dagli','dalle','trade','operazione','operazioni',
+  'entrata','entry','ingresso','uscita','exit','stop','target','prezzo','livello','livelli','grafico','mercato',
+  'sessione','giornata','direzione','chiusura','apertura','posizione','rischio','guadagno','perdita','risultato',
+  'buono','buona','bene','male','giusto','giusta','sbagliato','sbagliata','avevo','aveva','poteva','potevo',
+]);
 const MONTH_NAMES_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
 function dayNameFromDate(d) {
@@ -785,6 +843,64 @@ function computeAll(trades) {
   }
   const bestHourRow = bestByWinRate(hourStats, idealMinSample);
 
+  // Diagnostics feed "Consigli personalizzati" / "Punti di forza" / "Punti
+  // deboli" / "Cosa tenere d'occhio": real per-trade computations (not a
+  // restatement of numbers already shown elsewhere), so they need a minimum
+  // sample to be meaningful and are simply omitted below that.
+  let diagnostics = null;
+  if (trades.length >= 10) {
+    // recurring note terms ("confluences") and their own win rate
+    const tagGroups = new Map();
+    trades.forEach(t => {
+      const text = [t.note, t.note_post, t.pro, t.contro].filter(Boolean).join(' ').toLowerCase();
+      const words = new Set((text.match(/[a-zàèéìòù]{4,}/g) || []).filter(w => !NOTES_STOPWORDS.has(w)));
+      words.forEach(w => {
+        if (!tagGroups.has(w)) tagGroups.set(w, []);
+        tagGroups.get(w).push(t);
+      });
+    });
+    const tagStats = [];
+    for (const [tag, ts] of tagGroups) {
+      const tagWins = ts.filter(t => t.risultato.toLowerCase() === 'target').length;
+      const tagLosses = ts.filter(t => t.risultato.toLowerCase() === 'stop loss').length;
+      const wl = tagWins + tagLosses;
+      if (ts.length < 2 || wl === 0) continue;
+      tagStats.push({ tag, n: ts.length, win_rate: Math.round((tagWins / wl) * 1000) / 10 });
+    }
+
+    // longest run of consecutive Target outcomes, in chronological order
+    let streak = 0, maxStreak = 0;
+    trades.forEach(t => {
+      if (t.risultato.toLowerCase() === 'target') { streak++; maxStreak = Math.max(maxStreak, streak); }
+      else streak = 0;
+    });
+
+    // realized R (actual outcome ÷ risk taken) vs the R needed to break even
+    // at this win rate (wins * avgR = losses, for unit risk per trade)
+    const realizedRs = trades
+      .filter(t => t.rischio_pct && t.risultato_pct != null)
+      .map(t => t.risultato_pct / t.rischio_pct);
+    const avgRealizedR = realizedRs.length ? realizedRs.reduce((a, b) => a + b, 0) / realizedRs.length : null;
+    const requiredR = wins.length > 0 ? losses.length / wins.length : null;
+
+    // simplified per-trade Sharpe-like ratio: mean ÷ stdev of the per-trade
+    // % return series (not annualized — a consistency read, not a formal Sharpe)
+    const returns = trades.map(t => t.risultato_pct || 0);
+    const meanRet = returns.reduce((a, b) => a + b, 0) / returns.length;
+    const variance = returns.reduce((a, b) => a + (b - meanRet) ** 2, 0) / returns.length;
+    const stdevRet = Math.sqrt(variance);
+    const sharpe = stdevRet > 0 ? meanRet / stdevRet : null;
+
+    diagnostics = {
+      hour_stats: hourStats,
+      tag_stats: tagStats,
+      max_streak: maxStreak,
+      avg_realized_r: avgRealizedR != null ? Math.round(avgRealizedR * 1000) / 1000 : null,
+      required_r: requiredR != null ? Math.round(requiredR * 1000) / 1000 : null,
+      sharpe: sharpe != null ? Math.round(sharpe * 1000) / 1000 : null,
+    };
+  }
+
   const median = arr => {
     if (!arr.length) return null;
     const srt = [...arr].sort((a, b) => a - b);
@@ -815,7 +931,7 @@ function computeAll(trades) {
   monthStats = monthStats.filter(r => r.key !== 'N/D').sort((a, b) => (firstDateByMonth.get(a.key) || 0) - (firstDateByMonth.get(b.key) || 0));
   monthStats.forEach(r => { r.key = r.label; delete r.label; });
 
-  return { summary, setup_stats: setupStats, setup_session_profile: setupSessionProfile, day_stats: dayStats, session_stats: sessionStats, dir_stats: dirStats, symbol_stats: symbolStats, tf_stats: tfStats, month_stats: monthStats, eq_points: eqPoints, ideal_trade: idealTrade };
+  return { summary, setup_stats: setupStats, setup_session_profile: setupSessionProfile, day_stats: dayStats, session_stats: sessionStats, dir_stats: dirStats, symbol_stats: symbolStats, tf_stats: tfStats, month_stats: monthStats, eq_points: eqPoints, ideal_trade: idealTrade, diagnostics };
 }
 
 function esc(s) {
@@ -1145,6 +1261,171 @@ function calGoToMonth(year, month) {
   updateCalendarGrid();
 }
 
+function recBox(title, descHtml, actionHtml, verifyHtml, footerHtml, tier) {
+  const tierLabel = tier === 'high' ? 'Alta priorità' : (tier === 'medium' ? 'Media priorità' : 'Bassa priorità');
+  return `<div class="rec-box">
+  <div class="rec-head"><div class="rec-title">${title}</div><span class="rec-priority ${tier}">${tierLabel}</span></div>
+  <div class="rec-desc">${descHtml}</div>
+  <div class="rec-action">&rarr; <strong>${actionHtml}</strong></div>
+  <div class="rec-verify">&check; ${verifyHtml}</div>
+  ${footerHtml ? `<div><span class="rec-chip"><i></i>${footerHtml}</span></div>` : ''}
+</div>`;
+}
+
+function buildRecommendations(data) {
+  const diag = data.diagnostics;
+  const baselineWR = data.summary.win_rate;
+  const candidates = [];
+
+  if (diag) {
+    const hourCandidates = diag.hour_stats.filter(h => h.n >= 3 && h.win_rate != null);
+    if (hourCandidates.length) {
+      const worst = [...hourCandidates].sort((a, b) => a.win_rate - b.win_rate || b.n - a.n)[0];
+      if (worst.win_rate <= 50 && baselineWR - worst.win_rate >= 10) {
+        const hh = String(worst.hour).padStart(2, '0');
+        const hh1 = String((worst.hour + 1) % 24).padStart(2, '0');
+        candidates.push({
+          severity: baselineWR - worst.win_rate,
+          title: `Evita di operare nella fascia ${hh}:00`,
+          desc: `Le loss si concentrano attorno a questo orario: win rate ${worst.win_rate}% su ${worst.n} trade.`,
+          action: `Non aprire nuovi trade nella fascia ${hh}:00-${hh1}:00.`,
+          verify: `Verifica sui prossimi 20 trade che nessuno sia aperto in quella fascia.`,
+          footer: `Fascia oraria peggiore: <strong>${hh}:00 - ${worst.win_rate}%</strong>`,
+        });
+      }
+    }
+  }
+
+  const dayCandidates = data.day_stats.filter(d => d.n >= 3 && d.win_rate != null);
+  if (dayCandidates.length) {
+    const worst = [...dayCandidates].sort((a, b) => a.win_rate - b.win_rate || b.n - a.n)[0];
+    if (worst.win_rate <= 50 && baselineWR - worst.win_rate >= 10) {
+      candidates.push({
+        severity: baselineWR - worst.win_rate,
+        title: `Evita di operare di ${esc(worst.key)}`,
+        desc: `Il win rate scende sensibilmente in questo giorno: ${worst.win_rate}% su ${worst.n} trade, contro il ${baselineWR}% medio.`,
+        action: `Non aprire nuovi trade di ${esc(worst.key)}.`,
+        verify: `Verifica sui prossimi 10 trade di ${esc(worst.key)} che il win rate risalga.`,
+        footer: `Giorno peggiore: <strong>${esc(worst.key)} - ${worst.win_rate}%</strong>`,
+      });
+    }
+  }
+
+  const symbolCandidates = data.symbol_stats.filter(s => s.n >= 3 && s.total_pct < 0);
+  if (symbolCandidates.length) {
+    const worst = [...symbolCandidates].sort((a, b) => a.total_pct - b.total_pct)[0];
+    candidates.push({
+      severity: Math.abs(worst.total_pct) * 3,
+      title: `Rivedi l'operatività su ${esc(worst.key)}`,
+      desc: `Contributo negativo al conto: ${pctFmt(worst.total_pct)} su ${worst.n} operazioni${worst.win_rate != null ? ` (win rate ${worst.win_rate}%)` : ''}.`,
+      action: `Riduci la size oppure sospendi ${esc(worst.key)} finché il pattern non viene rivisto.`,
+      verify: `Verifica sui prossimi 10 trade su ${esc(worst.key)} che il contributo torni positivo.`,
+      footer: `Strumento più debole: <strong>${esc(worst.key)} ${pctFmt(worst.total_pct)}</strong>`,
+    });
+  }
+
+  candidates.sort((a, b) => b.severity - a.severity);
+  const top = candidates.slice(0, 2);
+  if (!top.length) {
+    return `<div class="rec-box"><div class="rec-desc" style="margin:0;">Nessun pattern abbastanza significativo da generare un consiglio in questo momento: continua a registrare i trade per affinare l'analisi.</div></div>`;
+  }
+  return top.map(c => {
+    const tier = c.severity >= 30 ? 'high' : (c.severity >= 18 ? 'medium' : 'low');
+    return recBox(c.title, c.desc, c.action, c.verify, c.footer, tier);
+  }).join('');
+}
+
+function buildStrengths(data) {
+  const diag = data.diagnostics;
+  const s = data.summary;
+  const items = [];
+
+  if (s.profit_factor != null && s.profit_factor >= 1.5) {
+    items.push(`Profit factor solido: <strong>${s.profit_factor}</strong> &mdash; le vincite pesano più delle perdite.`);
+  } else if (s.profit_factor == null && s.losses === 0 && s.wins > 0) {
+    items.push(`Zero perdite lorde su ${s.wins} vincite: profit factor non calcolabile, ma segnale molto positivo su un campione ancora piccolo.`);
+  }
+
+  if (s.win_rate >= 65) {
+    items.push(`Win rate elevato: <strong>${s.win_rate}%</strong> su ${s.n_trades} trade.`);
+  }
+
+  const dayCandidates = data.day_stats.filter(d => d.n >= 2 && d.win_rate != null);
+  if (dayCandidates.length) {
+    const best = [...dayCandidates].sort((a, b) => b.win_rate - a.win_rate || b.n - a.n)[0];
+    if (best.win_rate >= 60) items.push(`Giorno migliore: <strong>${esc(best.key)}</strong> (${best.win_rate}% win rate, ${pctFmt(best.total_pct)}).`);
+  }
+
+  if (diag) {
+    const hourCandidates = diag.hour_stats.filter(h => h.n >= 2 && h.win_rate != null);
+    if (hourCandidates.length) {
+      const best = [...hourCandidates].sort((a, b) => b.win_rate - a.win_rate || b.n - a.n)[0];
+      if (best.win_rate >= 70) items.push(`Fascia oraria migliore: <strong>${String(best.hour).padStart(2, '0')}:00</strong> (${best.win_rate}% win rate su ${best.n} trade).`);
+    }
+  }
+
+  const symbolCandidates = data.symbol_stats.filter(sy => sy.n >= 2);
+  if (symbolCandidates.length) {
+    const best = symbolCandidates.map(sy => ({ ...sy, avgPct: sy.total_pct / sy.n })).sort((a, b) => b.avgPct - a.avgPct)[0];
+    if (best.avgPct > 0) items.push(`Strumento più redditizio: <strong>${esc(best.key)}</strong> (${pctFmt(Math.round(best.avgPct * 100) / 100)} medio a trade).`);
+  }
+
+  if (diag && diag.tag_stats.length) {
+    const eligible = diag.tag_stats.filter(t => t.n >= 2);
+    const best = eligible.length ? [...eligible].sort((a, b) => b.win_rate - a.win_rate || b.n - a.n)[0] : null;
+    if (best && best.win_rate >= 70) items.push(`Confluenza più forte: <strong>"${esc(best.tag)}"</strong> (${best.win_rate}% win rate su ${best.n} trade).`);
+  }
+
+  if (diag && diag.max_streak >= 3) {
+    items.push(`Serie positiva più lunga: <strong>${diag.max_streak} vincite consecutive</strong>.`);
+  }
+
+  if (!items.length) items.push('Servono più operazioni per individuare punti di forza affidabili.');
+  return items.slice(0, 6).map(t => `<li><span class="ico good">&check;</span><span>${t}</span></li>`).join('');
+}
+
+function buildWeaknesses(data) {
+  const diag = data.diagnostics;
+  const items = [];
+
+  if (diag && diag.avg_realized_r != null && diag.required_r != null && diag.avg_realized_r < diag.required_r) {
+    items.push(`R:R medio realizzato basso: <strong>${diag.avg_realized_r.toFixed(2)}R</strong>, sotto la soglia di sostenibilità per questo win rate (minimo stimato ${diag.required_r.toFixed(2)}R).`);
+  }
+
+  if (diag && diag.sharpe != null && diag.sharpe < 0.3) {
+    items.push(`Sharpe ratio basso: <strong>${diag.sharpe.toFixed(2)}</strong> &mdash; i risultati sono molto dispersi da un trade all'altro.`);
+  }
+
+  const negSetups = data.setup_stats.filter(r => r.total_pct < 0);
+  if (negSetups.length) {
+    const worst = [...negSetups].sort((a, b) => a.total_pct - b.total_pct)[0];
+    items.push(`Il setup <strong>${esc(worst.key)}</strong> in ${esc(worst.direzione)} ha contribuito negativamente: ${pctFmt(worst.total_pct)} su ${worst.n} operazioni.`);
+  }
+
+  if (!items.length) items.push('Nessun punto debole significativo rilevato su questi dati.');
+  return items.slice(0, 6).map(t => `<li><span class="ico bad">&times;</span><span>${t}</span></li>`).join('');
+}
+
+function buildWatchlist(data) {
+  const diag = data.diagnostics;
+  const items = [];
+
+  if (diag && diag.sharpe != null && diag.sharpe >= 0.3 && diag.sharpe < 0.7) {
+    items.push(`Sharpe ratio appena sotto la soglia buona (<strong>${diag.sharpe.toFixed(2)}</strong>): la dispersione dei risultati tra trade merita attenzione.`);
+  }
+
+  if (diag && diag.tag_stats.length) {
+    const borderline = diag.tag_stats.filter(t => t.n >= 2 && t.win_rate >= 45 && t.win_rate <= 55).sort((a, b) => b.n - a.n).slice(0, 2);
+    if (borderline.length) {
+      const list = borderline.map(t => `"${esc(t.tag)}" (${t.win_rate}%)`).join(', ');
+      items.push(`Confluenze border-line da monitorare: ${list}.`);
+    }
+  }
+
+  if (!items.length) items.push("Nessun elemento borderline da monitorare al momento.");
+  return items.slice(0, 6).map(t => `<li><span class="ico watch">&bull;</span><span>${t}</span></li>`).join('');
+}
+
 function generateInsights(data) {
   const good = [], warn = [];
   const s = data.summary;
@@ -1301,6 +1582,13 @@ function renderAll(data) {
     renderInsightList(document.getElementById('insightsWarn'), insights.warn, '!', 'warn');
   });
 
+  safeRender('diagnostics cards', () => {
+    document.getElementById('recommendationsList').innerHTML = buildRecommendations(data);
+    document.getElementById('strengthsList').innerHTML = buildStrengths(data);
+    document.getElementById('weaknessesList').innerHTML = buildWeaknesses(data);
+    document.getElementById('watchList').innerHTML = buildWatchlist(data);
+  });
+
   safeRender('idealRow', () => {
     document.getElementById('idealRow').innerHTML = buildIdealRow(data.ideal_trade);
   });
@@ -1369,6 +1657,10 @@ function renderEmptyState() {
   document.getElementById('monthStrip').innerHTML = EMPTY_NOTE;
   document.getElementById('insightsGood').innerHTML = `<li>${EMPTY_NOTE}</li>`;
   document.getElementById('insightsWarn').innerHTML = '';
+  document.getElementById('recommendationsList').innerHTML = EMPTY_NOTE;
+  document.getElementById('strengthsList').innerHTML = `<li>${EMPTY_NOTE}</li>`;
+  document.getElementById('weaknessesList').innerHTML = '';
+  document.getElementById('watchList').innerHTML = `<li>${EMPTY_NOTE}</li>`;
   document.getElementById('idealRow').innerHTML = buildIdealRow({});
   document.getElementById('footerNote').textContent = 'Carica un file per vedere l\'analisi.';
 }
