@@ -204,6 +204,39 @@ tr:last-child td { border-bottom: none; }
 .month-wr { font-size: 9px; color: var(--muted); white-space: nowrap; }
 .month-label { font-size: 9.5px; color: var(--text-secondary); text-transform: uppercase; margin-top: 2px; white-space: nowrap; }
 
+.cal-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.cal-header h2 { margin: 0; }
+.cal-sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+.cal-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cal-btn { border: 1px solid var(--border); background: var(--surface-2); color: var(--text-secondary); font-size: 12.5px; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+.cal-btn:hover { border-color: var(--series-1); color: var(--text-primary); }
+.cal-btn:disabled { opacity: 0.45; cursor: default; }
+.cal-btn.active { background: color-mix(in srgb, var(--series-1) 16%, var(--surface)); border-color: var(--series-1); color: var(--series-1); }
+.cal-nav { padding: 6px 10px; font-size: 14px; line-height: 1; }
+.cal-month-label { font-size: 15px; font-weight: 800; min-width: 128px; text-align: center; }
+.cal-scroll { overflow-x: auto; }
+.cal-grid { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; min-width: 560px; }
+.cal-grid-head { display: grid; background: var(--surface-2); }
+.cal-grid-head > div { padding: 8px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+.cal-week { display: grid; border-top: 1px solid var(--border); }
+.cal-day { min-height: 74px; padding: 6px 8px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; }
+.cal-day:last-child { border-right: none; }
+.cal-day.out { background: color-mix(in srgb, var(--surface-2) 45%, transparent); }
+.cal-day-num { font-size: 11.5px; color: var(--muted); font-weight: 700; }
+.cal-day-pills { display: flex; flex-direction: column; gap: 3px; }
+.cal-pill { font-size: 10.5px; font-weight: 700; padding: 2px 6px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-pill.pos { background: var(--good-bg); color: var(--good); }
+.cal-pill.neg { background: var(--critical-bg); color: var(--critical); }
+.cal-total { background: var(--surface-2); border-right: none; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; padding: 6px 10px; gap: 4px; }
+.cal-total-label { font-size: 9.5px; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
+.cal-total-val { font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+.cal-total-val.pos { background: var(--good-bg); color: var(--good); }
+.cal-total-val.neg { background: var(--critical-bg); color: var(--critical); }
+.cal-total-val.zero { background: var(--surface-2); color: var(--muted); }
+.cal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 11.5px; color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; }
+.cal-month-total { font-size: 13px; font-weight: 800; padding: 4px 12px; border-radius: 999px; background: var(--good-bg); color: var(--good); text-transform: none; letter-spacing: 0; }
+.cal-month-total.neg { background: var(--critical-bg); color: var(--critical); }
+
 .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
 .pill { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; display: inline-flex; gap: 6px; align-items: center; }
 .pill.long { background: var(--good-bg); color: var(--good); }
@@ -230,6 +263,7 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .row-2, .row-4, .insight-grid, .spotlight-grid, .legend-list { grid-template-columns: 1fr; }
   .dropzone .dz-text { display: none; }
+  .cal-header { justify-content: center; text-align: center; }
 }
 </style>
 </head>
@@ -272,6 +306,27 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
       <h2>Per simbolo <span class="n">win rate &middot; TP/SL medi in pips</span></h2>
       <div class="pill-row" id="dirPillRow"></div>
       <div id="symbolRows"></div>
+    </div>
+  </section>
+
+  <section class="card" id="calendarCard">
+    <div class="cal-header">
+      <div>
+        <h2>&#128197; Calendario</h2>
+        <div class="cal-sub">Il tuo mese di trading, giorno per giorno</div>
+      </div>
+      <div class="cal-controls">
+        <button type="button" class="cal-btn" id="calWeekendBtn">Weekend</button>
+        <button type="button" class="cal-btn cal-nav" id="calPrevBtn" aria-label="Mese precedente">&#8249;</button>
+        <div class="cal-month-label" id="calMonthLabel">&ndash;</div>
+        <button type="button" class="cal-btn cal-nav" id="calNextBtn" aria-label="Mese successivo">&#8250;</button>
+        <button type="button" class="cal-btn" id="calTodayBtn">Oggi</button>
+      </div>
+    </div>
+    <div class="cal-scroll"><div id="calendarGrid"></div></div>
+    <div class="cal-footer">
+      <span>Totale equity mensile</span>
+      <span class="cal-month-total" id="calMonthTotal">&mdash;</span>
     </div>
   </section>
 
@@ -578,6 +633,7 @@ function computeAll(trades) {
       cum: Math.round(cum * 100000) / 1000,
       pct: Math.round((t.risultato_pct || 0) * 100000) / 1000,
       esito: t.risultato,
+      simbolo: t.simbolo || null,
     };
   });
 
@@ -876,6 +932,114 @@ function buildEquitySVG(eq) {
   return s;
 }
 
+const CAL_DAY_LABELS = ['LUN', 'MAR', 'MER', 'GIO', 'VEN', 'SAB', 'DOM'];
+let calState = { year: null, month: null, showWeekend: false };
+let currentCalTrades = [];
+
+function toISODateLocal(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function parseEqDate(s) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{2})$/.exec(s || '');
+  if (!m) return null;
+  return new Date(2000 + parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10));
+}
+
+function buildCalTrades(eqPoints) {
+  return eqPoints.map(p => {
+    const d = parseEqDate(p.data);
+    return d ? { date: toISODateLocal(d), pct: p.pct, simbolo: p.simbolo || null } : null;
+  }).filter(Boolean);
+}
+
+function updateCalendarGrid() {
+  const gridEl = document.getElementById('calendarGrid');
+  const labelEl = document.getElementById('calMonthLabel');
+  const totalEl = document.getElementById('calMonthTotal');
+  const weekendBtn = document.getElementById('calWeekendBtn');
+  const prevBtn = document.getElementById('calPrevBtn');
+  const nextBtn = document.getElementById('calNextBtn');
+  const todayBtn = document.getElementById('calTodayBtn');
+  const hasData = calState.year != null;
+
+  weekendBtn.classList.toggle('active', calState.showWeekend);
+  [prevBtn, nextBtn, todayBtn, weekendBtn].forEach(b => { b.disabled = !hasData; });
+
+  if (!hasData) {
+    labelEl.textContent = '–';
+    gridEl.innerHTML = EMPTY_NOTE;
+    totalEl.textContent = '—';
+    totalEl.className = 'cal-month-total';
+    return;
+  }
+
+  const { year, month, showWeekend } = calState;
+  labelEl.textContent = `${MONTH_NAMES_IT[month]} ${year}`;
+
+  const byDate = new Map();
+  currentCalTrades.forEach(t => {
+    if (!byDate.has(t.date)) byDate.set(t.date, []);
+    byDate.get(t.date).push(t);
+  });
+
+  const cols = showWeekend ? 7 : 5;
+  const dayLabels = showWeekend ? CAL_DAY_LABELS : CAL_DAY_LABELS.slice(0, 5);
+  const colStyle = `grid-template-columns: repeat(${cols}, minmax(70px,1fr)) 92px;`;
+
+  const head = `<div class="cal-grid-head" style="${colStyle}">` +
+    dayLabels.map(d => `<div>${d}</div>`).join('') +
+    `<div style="text-align:right;">Totale</div></div>`;
+
+  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7; // 0 = Monday
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  let weeksHTML = '';
+  let monthTotal = 0;
+  let weekNum = 1;
+  for (let w = 0; w < cells.length; w += 7) {
+    const weekCells = cells.slice(w, w + 7);
+    let weekTotal = 0;
+    let dayCellsHTML = '';
+    weekCells.forEach((d, idx) => {
+      if (!d) { weekTotal += 0; if (idx < cols) dayCellsHTML += `<div class="cal-day out"></div>`; return; }
+      const iso = toISODateLocal(d);
+      const dayTrades = byDate.get(iso) || [];
+      const dayTotal = dayTrades.reduce((s, t) => s + t.pct, 0);
+      weekTotal += dayTotal;
+      monthTotal += dayTotal;
+      if (idx < cols) {
+        const pillsHTML = dayTrades.map(t => {
+          const cls = t.pct >= 0 ? 'pos' : 'neg';
+          const sign = t.pct >= 0 ? '+' : '';
+          const sym = t.simbolo ? ` ${esc(t.simbolo)}` : '';
+          return `<span class="cal-pill ${cls}">${sign}${t.pct.toFixed(2)}%${sym}</span>`;
+        }).join('');
+        dayCellsHTML += `<div class="cal-day"><div class="cal-day-num">${d.getDate()}</div><div class="cal-day-pills">${pillsHTML}</div></div>`;
+      }
+    });
+    const totCls = weekTotal > 0.0001 ? 'pos' : (weekTotal < -0.0001 ? 'neg' : 'zero');
+    const sign = weekTotal >= 0 ? '+' : '';
+    weeksHTML += `<div class="cal-week" style="${colStyle}">${dayCellsHTML}<div class="cal-total"><div class="cal-total-label">Sett. ${weekNum}</div><div class="cal-total-val ${totCls}">${sign}${weekTotal.toFixed(2)}%</div></div></div>`;
+    weekNum++;
+  }
+
+  gridEl.innerHTML = `<div class="cal-grid">${head}${weeksHTML}</div>`;
+  const mSign = monthTotal >= 0 ? '+' : '';
+  totalEl.textContent = `${mSign}${monthTotal.toFixed(2)}%`;
+  totalEl.className = 'cal-month-total' + (monthTotal < -0.0001 ? ' neg' : '');
+}
+
+function calGoToMonth(year, month) {
+  calState.year = year;
+  calState.month = month;
+  updateCalendarGrid();
+}
+
 function generateInsights(data) {
   const good = [], warn = [];
   const s = data.summary;
@@ -981,6 +1145,17 @@ function renderAll(data) {
     document.getElementById('outcomeSplit').innerHTML = buildOutcomeSplit(s);
   });
 
+  safeRender('calendar', () => {
+    currentCalTrades = buildCalTrades(data.eq_points);
+    if (currentCalTrades.length) {
+      const [y, m] = currentCalTrades[currentCalTrades.length - 1].date.split('-').map(Number);
+      calState = { year: y, month: m - 1, showWeekend: false };
+    } else {
+      calState = { year: null, month: null, showWeekend: false };
+    }
+    updateCalendarGrid();
+  });
+
   safeRender('symbol section', () => {
     document.getElementById('dirPillRow').innerHTML = `
     <span class="pill long">Long &middot; ${s.long_n} op.</span>
@@ -1075,6 +1250,9 @@ function renderEmptyState() {
     .map(label => `<div class="stat-tile"><div class="label">${label}</div><div class="value">—</div></div>`).join('');
   document.getElementById('eqChart').innerHTML = EMPTY_NOTE;
   document.getElementById('outcomeSplit').innerHTML = '';
+  currentCalTrades = [];
+  calState = { year: null, month: null, showWeekend: false };
+  updateCalendarGrid();
   document.getElementById('dirPillRow').innerHTML = '';
   document.getElementById('symbolRows').innerHTML = EMPTY_NOTE;
   document.getElementById('setupTbody').innerHTML = `<tr><td colspan="6">${EMPTY_NOTE}</td></tr>`;
@@ -1253,6 +1431,29 @@ async function handleFiles(fileList) {
     showError(`<b>${label}</b> ${errors.map(esc).join(' &middot; ')}`);
   }
 }
+
+document.getElementById('calPrevBtn').addEventListener('click', () => {
+  if (calState.year == null) return;
+  let { year, month } = calState;
+  month--; if (month < 0) { month = 11; year--; }
+  calGoToMonth(year, month);
+});
+document.getElementById('calNextBtn').addEventListener('click', () => {
+  if (calState.year == null) return;
+  let { year, month } = calState;
+  month++; if (month > 11) { month = 0; year++; }
+  calGoToMonth(year, month);
+});
+document.getElementById('calTodayBtn').addEventListener('click', () => {
+  if (calState.year == null) return;
+  const now = new Date();
+  calGoToMonth(now.getFullYear(), now.getMonth());
+});
+document.getElementById('calWeekendBtn').addEventListener('click', () => {
+  if (calState.year == null) return;
+  calState.showWeekend = !calState.showWeekend;
+  updateCalendarGrid();
+});
 
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
