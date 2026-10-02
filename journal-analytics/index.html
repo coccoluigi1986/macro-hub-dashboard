@@ -545,18 +545,63 @@ function extractTrades(matrix) {
   return trades;
 }
 
+// Concept-based setup recognition: instead of matching one fixed literal phrase
+// (e.g. the exact string "rottura barrier"), each concept is detected with a
+// regex that tolerates inflections/synonyms ("rottura", "rotto", "rompe",
+// "break"...) so notes phrased differently from the dashboard's own labels
+// are still recognised correctly instead of falling into "Altro / misto".
+const SETUP_RE = {
+  rottura: /rottur\w*|rott[oa]\b|rompe\w*|spezz\w*|break\w*/,
+  barrier: /barrier\w*/,
+  retest: /retest\w*|ri-?test\w*/,
+  doppioTopBottom: /doppio\s+(?:massim\w*|minim\w*|max\w*|min\w*)/,
+  manipolazione: /manipolazion\w*/,
+  liquidita: /liquidit[aà]\w*/,
+  entryDiretta: /(?:entry|entrata|ingresso)\s+dirett\w*/,
+  demandSupply: /\bdemand\w*\b|\bsupply\w*\b/,
+  cambioStruttura: /cambio\s+(?:di\s+|della\s+|dello\s+)?struttur\w*|break\s+of\s+structure|\bbos\b/,
+};
+
+// true if both patterns occur within `gap` characters of each other, in
+// either order, instead of requiring them to form one exact adjacent phrase
+function nearWords(txt, reA, reB, gap) {
+  const fwd = new RegExp(`(?:${reA.source})[\\s\\S]{0,${gap}}(?:${reB.source})`);
+  const bwd = new RegExp(`(?:${reB.source})[\\s\\S]{0,${gap}}(?:${reA.source})`);
+  return fwd.test(txt) || bwd.test(txt);
+}
+
+function detectSetupConcepts(txt) {
+  const found = new Set();
+  if (nearWords(txt, SETUP_RE.rottura, SETUP_RE.barrier, 40)) found.add('barrier_break');
+  if (SETUP_RE.retest.test(txt)) found.add('retest');
+  if (SETUP_RE.doppioTopBottom.test(txt)) found.add('double_top_bottom');
+  if (SETUP_RE.manipolazione.test(txt)) found.add('manipulation');
+  if (SETUP_RE.liquidita.test(txt)) found.add('liquidity');
+  if (SETUP_RE.entryDiretta.test(txt)) found.add('direct_entry');
+  if (SETUP_RE.demandSupply.test(txt)) found.add('demand_supply');
+  if (SETUP_RE.cambioStruttura.test(txt)) found.add('structure_change');
+  return found;
+}
+
+// checked in order: multi-concept (more specific) rules first, single-concept
+// fallbacks after, so a note with richer evidence gets the more precise label
+const SETUP_RULES = [
+  [['barrier_break', 'retest'], 'Rottura barrier + retest'],
+  [['manipulation', 'liquidity'], 'Manipolazione + liquidità'],
+  [['direct_entry', 'demand_supply'], 'Entry diretta demand/supply'],
+  [['double_top_bottom'], 'Doppio massimo/minimo'],
+  [['structure_change'], 'Cambio struttura'],
+  [['liquidity'], 'Presa di liquidità'],
+  [['barrier_break'], 'Rottura barrier'],
+  [['manipulation'], 'Manipolazione'],
+];
+
 function classifySetup(t) {
   const txt = [t.note, t.note_post, t.pro, t.contro].filter(Boolean).join(' ').toLowerCase();
-  const has = (...kws) => kws.every(k => txt.includes(k));
-  const hasAny = (...kws) => kws.some(k => txt.includes(k));
-  if (has('rottura barrier', 'retest')) return 'Rottura barrier + retest';
-  if (hasAny('doppio massimo', 'doppio minimo', 'doppio max', 'doppio min')) return 'Doppio massimo/minimo';
-  if (hasAny('manipolazione') && hasAny('liquidit')) return 'Manipolazione + liquidità';
-  if (has('entry diretta') && hasAny('demand', 'supply')) return 'Entry diretta demand/supply';
-  if (hasAny('cambio strutt')) return 'Cambio struttura';
-  if (hasAny('liquidit')) return 'Presa di liquidità';
-  if (hasAny('rottura barrier')) return 'Rottura barrier';
-  if (hasAny('manipolazione')) return 'Manipolazione';
+  const concepts = detectSetupConcepts(txt);
+  for (const [required, label] of SETUP_RULES) {
+    if (required.every(c => concepts.has(c))) return label;
+  }
   return 'Altro / misto';
 }
 
