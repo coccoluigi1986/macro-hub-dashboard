@@ -344,7 +344,7 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
   </section>
 
   <section class="card">
-    <h2>Legenda setup <span class="n">come viene classificato ogni trade, in ordine di priorità</span></h2>
+    <h2>Legenda setup <span class="n">statistiche reali calcolate su questi dati, per tipo di setup</span></h2>
     <dl class="legend-list" id="setupLegend"></dl>
   </section>
 
@@ -727,6 +727,31 @@ function computeAll(trades) {
   const setupTotalN = new Map();
   setupStats.forEach(r => setupTotalN.set(r.key, (setupTotalN.get(r.key) || 0) + r.n));
   setupStats.sort((a, b) => (setupTotalN.get(b.key) - setupTotalN.get(a.key)) || (b.n - a.n));
+
+  // dominant session per setup name (direction-agnostic), used to replace the
+  // old static legend text with a real "soprattutto in sessione X" read on
+  // the actual data instead of a fixed description
+  const setupSessionProfile = {};
+  {
+    const bySetupName = new Map();
+    trades.forEach(t => {
+      if (!bySetupName.has(t.setup)) bySetupName.set(t.setup, []);
+      bySetupName.get(t.setup).push(t);
+    });
+    for (const [name, ts] of bySetupName) {
+      const sessCounts = new Map();
+      ts.forEach(t => {
+        const sess = sessionFromHour(t.hour);
+        if (sess === 'N/D') return;
+        sessCounts.set(sess, (sessCounts.get(sess) || 0) + 1);
+      });
+      let top = null, topN = 0, totalWithSession = 0;
+      for (const [sess, c] of sessCounts) { totalWithSession += c; if (c > topN) { top = sess; topN = c; } }
+      // only call out a session as "typical" with enough samples and a real lean, not a near-even split
+      if (top && totalWithSession >= 3 && topN / totalWithSession >= 0.4) setupSessionProfile[name] = top;
+    }
+  }
+
   let dayStats = bucketStats(trades, t => t.giorno || 'N/D');
   dayStats = dayStats.filter(r => DAY_ORDER.includes(r.key)).sort((a, b) => DAY_ORDER.indexOf(a.key) - DAY_ORDER.indexOf(b.key));
   const sessionStats = bucketStats(trades, t => sessionFromHour(t.hour)).sort((a, b) => b.n - a.n);
@@ -790,7 +815,7 @@ function computeAll(trades) {
   monthStats = monthStats.filter(r => r.key !== 'N/D').sort((a, b) => (firstDateByMonth.get(a.key) || 0) - (firstDateByMonth.get(b.key) || 0));
   monthStats.forEach(r => { r.key = r.label; delete r.label; });
 
-  return { summary, setup_stats: setupStats, day_stats: dayStats, session_stats: sessionStats, dir_stats: dirStats, symbol_stats: symbolStats, tf_stats: tfStats, month_stats: monthStats, eq_points: eqPoints, ideal_trade: idealTrade };
+  return { summary, setup_stats: setupStats, setup_session_profile: setupSessionProfile, day_stats: dayStats, session_stats: sessionStats, dir_stats: dirStats, symbol_stats: symbolStats, tf_stats: tfStats, month_stats: monthStats, eq_points: eqPoints, ideal_trade: idealTrade };
 }
 
 function esc(s) {
@@ -839,17 +864,52 @@ function buildSetupRow(row) {
 </tr>`;
 }
 
-const SETUP_LEGEND = [
-  ['Rottura barrier + retest', 'Le note citano sia una rottura di barrier/struttura sia un retest della zona.'],
-  ['Doppio massimo/minimo', 'Pattern di doppio massimo o doppio minimo individuato nelle note.'],
-  ['Manipolazione + liquidità', 'Citate sia una manipolazione di prezzo sia una presa di liquidità.'],
-  ['Entry diretta demand/supply', 'Ingresso diretto su una zona demand o supply, senza retest esplicito.'],
-  ['Cambio struttura', 'Le note descrivono un cambio di struttura di mercato (break of structure).'],
-  ['Presa di liquidità', 'Presa/caccia di liquidità come elemento centrale, senza gli altri pattern sopra.'],
-  ['Rottura barrier', 'Rottura di barrier/struttura senza retest esplicito.'],
-  ['Manipolazione', 'Manipolazione di prezzo come elemento centrale, senza presa di liquidità esplicita.'],
-  ['Altro / misto', 'Trade che non rientra chiaramente in nessuno dei pattern precedenti.'],
+const SETUP_LEGEND_NAMES = [
+  'Rottura barrier + retest',
+  'Doppio massimo/minimo',
+  'Manipolazione + liquidità',
+  'Entry diretta demand/supply',
+  'Cambio struttura',
+  'Presa di liquidità',
+  'Rottura barrier',
+  'Manipolazione',
+  'Altro / misto',
 ];
+
+// Legend descriptions are computed from this dataset's own numbers (win rate,
+// R:R, frequenza, sessione tipica), not a fixed explanatory sentence, so two
+// different journals show two different descriptions for the same setup name.
+function buildSetupLegend(data) {
+  const totalN = data.summary.n_trades || 0;
+  const byName = new Map();
+  data.setup_stats.forEach(r => {
+    if (!byName.has(r.key)) byName.set(r.key, { n: 0, wins: 0, losses: 0, be: 0, total_pct: 0, rrSum: 0, rrCount: 0 });
+    const acc = byName.get(r.key);
+    acc.n += r.n; acc.wins += r.wins; acc.losses += r.losses; acc.be += r.be; acc.total_pct += r.total_pct;
+    if (r.avg_rr != null) { acc.rrSum += r.avg_rr * r.n; acc.rrCount += r.n; }
+  });
+  const sessionProfile = data.setup_session_profile || {};
+
+  return SETUP_LEGEND_NAMES.map(label => {
+    const acc = byName.get(label);
+    let desc;
+    if (!acc || acc.n === 0) {
+      desc = 'Nessuna operazione di questo tipo in questi dati.';
+    } else {
+      const wl = acc.wins + acc.losses;
+      const winRate = wl ? Math.round((acc.wins / wl) * 1000) / 10 : null;
+      const avgRr = acc.rrCount ? Math.round((acc.rrSum / acc.rrCount) * 100) / 100 : null;
+      const share = totalN ? Math.round((acc.n / totalN) * 1000) / 10 : null;
+      const parts = [`${acc.n} operazion${acc.n === 1 ? 'e' : 'i'}${share != null ? ` (${share}% del totale)` : ''}`];
+      if (winRate != null) parts.push(`win rate ${winRate}%`);
+      if (avgRr != null) parts.push(`R:R medio ${avgRr.toFixed(2)}`);
+      parts.push(`${pctFmt(acc.total_pct)} cumulato`);
+      if (sessionProfile[label]) parts.push(`soprattutto in sessione ${sessionProfile[label]}`);
+      desc = esc(parts.join(' · ')) + '.';
+    }
+    return `<dt><span class="setup-dot" style="background:var(--muted)"></span>${esc(label)}</dt><dd>${desc}</dd>`;
+  }).join('');
+}
 
 function buildSetupSpotlight(data) {
   const rows = data.setup_stats.filter(r => r.n > 0);
@@ -1216,8 +1276,7 @@ function renderAll(data) {
   safeRender('setup section', () => {
     document.getElementById('setupTbody').innerHTML = data.setup_stats.map(buildSetupRow).join('');
     document.getElementById('setupSpotlight').innerHTML = buildSetupSpotlight(data);
-    document.getElementById('setupLegend').innerHTML = SETUP_LEGEND.map(([label, desc]) =>
-      `<dt><span class="setup-dot" style="background:var(--muted)"></span>${esc(label)}</dt><dd>${esc(desc)}</dd>`).join('');
+    document.getElementById('setupLegend').innerHTML = buildSetupLegend(data);
   });
 
   safeRender('breakdown rows', () => {
