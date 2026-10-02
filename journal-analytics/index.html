@@ -1079,8 +1079,7 @@ function renderEmptyState() {
   document.getElementById('symbolRows').innerHTML = EMPTY_NOTE;
   document.getElementById('setupTbody').innerHTML = `<tr><td colspan="6">${EMPTY_NOTE}</td></tr>`;
   document.getElementById('setupSpotlight').innerHTML = '';
-  document.getElementById('setupLegend').innerHTML = SETUP_LEGEND.map(([label, desc]) =>
-    `<dt><span class="setup-dot" style="background:var(--muted)"></span>${esc(label)}</dt><dd>${esc(desc)}</dd>`).join('');
+  document.getElementById('setupLegend').innerHTML = `<dt></dt><dd>${EMPTY_NOTE}</dd>`;
   document.getElementById('dirRows').innerHTML = EMPTY_NOTE;
   document.getElementById('dayRows').innerHTML = EMPTY_NOTE;
   document.getElementById('sessionRows').innerHTML = EMPTY_NOTE;
