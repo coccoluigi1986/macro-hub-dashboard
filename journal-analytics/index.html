@@ -170,6 +170,24 @@ header.top .period strong { display:block; color: var(--text-primary); font-size
 .outcome-bar { display: flex; height: 10px; border-radius: 6px; overflow: hidden; background: var(--surface-2); }
 .outcome-bar span { height: 100%; }
 
+.pie-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.pie-wrap .eq-legend { flex-direction: column; gap: 8px; margin-top: 0; }
+.pie-center-val { font-size: 20px; font-weight: 800; fill: var(--text-primary); }
+.pie-center-label { font-size: 9.5px; fill: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+
+.qual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.qual-col h3 { font-size: 13.5px; font-weight: 800; margin: 0 0 8px; display: flex; align-items: baseline; gap: 8px; }
+.qual-col .qual-n { font-size: 11.5px; font-weight: 500; color: var(--muted); }
+.qual-emotion { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 8px; }
+.qual-empty { font-size: 12.5px; color: var(--muted); margin: 0; }
+.theme-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.theme-list li { display: flex; justify-content: space-between; font-size: 12.5px; padding: 6px 10px; background: var(--surface-2); border-radius: 7px; }
+.theme-list li b { color: var(--text-secondary); font-weight: 700; }
+.qual-cross { margin-top: 16px; padding: 12px 14px; border-radius: 10px; font-size: 12.5px; line-height: 1.45; background: var(--warning-bg); color: var(--text-primary); border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--border)); }
+.qual-cross strong { color: var(--warning); }
+.qual-cross-empty { background: var(--surface-2); color: var(--muted); border-color: var(--border); }
+.qual-cross-empty strong { color: var(--text-secondary); }
+
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
 th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); font-weight: 700; padding: 0 8px 8px; border-bottom: 1px solid var(--border); }
 td { padding: 9px 8px; border-bottom: 1px solid var(--border); }
@@ -279,13 +297,13 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
 
 @media (max-width: 860px) {
   .stat-grid { grid-template-columns: repeat(3, 1fr); }
-  .row-2, .row-4, .insight-grid, .row-2-even { grid-template-columns: 1fr 1fr; }
+  .row-2, .row-4, .insight-grid, .row-2-even, .qual-grid { grid-template-columns: 1fr 1fr; }
   header.top { justify-content: center; text-align: center; }
   header.top .period { text-align: center; }
 }
 @media (max-width: 480px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
-  .row-2, .row-4, .insight-grid, .row-2-even, .spotlight-grid, .legend-list { grid-template-columns: 1fr; }
+  .row-2, .row-4, .insight-grid, .row-2-even, .qual-grid, .spotlight-grid, .legend-list { grid-template-columns: 1fr; }
   .dropzone .dz-text { display: none; }
   .cal-header { justify-content: center; text-align: center; }
 }
@@ -322,6 +340,18 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
 
   <section class="row-2">
     <div class="card">
+      <h2>Andamento mensile <span class="n">tabella e R totali per mese</span></h2>
+      <div id="monthlyTable"></div>
+      <div class="month-strip" id="monthStripR" style="margin-top:14px;"></div>
+    </div>
+    <div class="card">
+      <h2>Distribuzione risultati <span class="n">Target &middot; Parziale &middot; Breakeven &middot; Stop Loss</span></h2>
+      <div id="outcomePie"></div>
+    </div>
+  </section>
+
+  <section class="row-2">
+    <div class="card">
       <h2>Curva equity cumulata <span class="n">% sul capitale, per operazione progressiva</span></h2>
       <div id="eqChart"></div>
       <div class="outcome-split" id="outcomeSplit"></div>
@@ -355,12 +385,12 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
   </section>
 
   <section class="card">
-    <h2>Performance per tipo di setup <span class="n">classificazione automatica dalle note di ogni trade</span></h2>
+    <h2>Performance per tipo di setup <span class="n">dalla colonna Setup del file, o dalle note quando assente</span></h2>
     <div class="spotlight-grid" id="setupSpotlight"></div>
     <div style="overflow-x:auto;">
     <table>
       <thead><tr>
-        <th>Setup</th><th class="num">N</th><th class="num">Esiti</th><th class="num">Win rate</th><th class="num">R:R medio</th><th class="num">Rendimento</th>
+        <th>Setup</th><th class="num">N</th><th class="num">Esiti</th><th class="num">Win rate</th><th class="num">R:R medio</th><th class="num">P.Factor</th><th class="num">Expectancy</th><th class="num">Rendimento</th>
       </tr></thead>
       <tbody id="setupTbody"></tbody>
     </table>
@@ -370,6 +400,11 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
   <section class="card">
     <h2>Legenda setup <span class="n">statistiche reali calcolate su questi dati, per tipo di setup</span></h2>
     <dl class="legend-list" id="setupLegend"></dl>
+  </section>
+
+  <section class="card">
+    <h2>Analisi qualitativa &middot; Stop Loss &amp; Breakeven <span class="n">temi ricorrenti nelle note ed emozione più frequente per esito</span></h2>
+    <div id="qualitativeAnalysis"></div>
   </section>
 
   <section class="row-4">
@@ -384,6 +419,10 @@ footer.note { font-size: 11.5px; color: var(--muted); text-align: center; paddin
     <div class="card">
       <h2>Sessione</h2>
       <div id="sessionRows"></div>
+    </div>
+    <div class="card">
+      <h2>Fasce orarie</h2>
+      <div id="hourBandRows"></div>
     </div>
     <div class="card">
       <h2>Timeframe</h2>
@@ -451,12 +490,17 @@ const HEADER_RULES = [
   ['pips_sl', h => h.includes('pips') && (h.includes('sl') || h.includes('stop'))],
   ['risultato_valuta', h => h.includes('risultato') && (h.includes('valuta') || h.includes('€') || h.includes('euro'))],
   ['risultato_pct', h => h.includes('risultato') && h.includes('%')],
+  ['risultato_r', h => h.includes('risultato') && /\br\b/.test(h) && !h.includes('%') && !h.includes('valuta')],
   ['risultato', h => h.trim() === 'risultato'],
   ['tf_entrata', h => h.includes('tf') && (h.includes('entrata') || h.includes('entry'))],
   ['note_post', h => h.includes('note') && h.includes('post')],
-  ['note', h => h.trim() === 'note'],
+  ['note', h => h.includes('note') && !h.includes('post')],
   ['pro', h => h.trim() === 'pro'],
   ['contro', h => h.trim() === 'contro'],
+  ['mese', h => h.trim() === 'mese'],
+  ['setup_col', h => h.trim() === 'setup'],
+  ['sessione_col', h => h.trim() === 'sessione'],
+  ['emozioni', h => h.includes('emozion')],
 ];
 
 function normHeader(s) {
@@ -487,7 +531,7 @@ function findHeaderRow(matrix) {
   return bestScore >= 3 ? best : -1;
 }
 
-const VALID_RESULTS = ['target', 'stop loss', 'breakeven'];
+const VALID_RESULTS = ['target', 'stop loss', 'breakeven', 'parziale'];
 
 function excelSerialToDate(serial) {
   const utcDays = Math.floor(serial - 25569);
@@ -583,17 +627,25 @@ function extractTrades(matrix) {
     let hour = null;
     if (typeof orarioRaw === 'number') hour = Math.floor((orarioRaw * 24) % 24);
     else if (orarioRaw instanceof Date) hour = orarioRaw.getHours();
+    else if (typeof orarioRaw === 'string') {
+      const m = /^(\d{1,2}):(\d{2})/.exec(orarioRaw.trim());
+      if (m) hour = Math.min(23, parseInt(m[1], 10));
+    }
 
     const rr = decodeRR(get('rr'), getFmt('rr'));
     const mese = dateObj ? MONTH_NAMES_IT[dateObj.getMonth()] : (get('mese') || null);
+    const risultatoRRaw = get('risultato_r');
+    const risultato_r = typeof risultatoRRaw === 'number' ? risultatoRRaw : null;
 
     trades.push({
       simbolo: get('simbolo'), data: dateObj, hour, mese, giorno,
       direzione: get('direzione'), rischio_pct: get('rischio_pct'), rr,
       pips_tp: get('pips_tp'), pips_sl: get('pips_sl'),
       risultato, risultato_pct: get('risultato_pct'), risultato_valuta: get('risultato_valuta'),
+      risultato_r,
       tf_entrata: get('tf_entrata'), note: get('note'), note_post: get('note_post'),
       pro: get('pro'), contro: get('contro'),
+      setup_col: get('setup_col'), sessione_col: get('sessione_col'), emozioni: get('emozioni'),
     });
   }
   if (trades.length === 0) {
@@ -671,6 +723,31 @@ function sessionFromHour(h) {
   return 'Post-NY';
 }
 
+// the new journal format gives the session directly per trade (handles
+// broker-time/DST edge cases we can't infer from the hour alone) — prefer
+// it, and only fall back to the hour-based heuristic for older files
+function sessionOf(t) {
+  return t.sessione_col || sessionFromHour(t.hour);
+}
+
+// the new journal format gives the setup directly (e.g. "1 - long"),
+// combining a setup id with its direction — prefer it over the free-text
+// classifier, and only fall back to classifySetup() for older files
+function parseSetupColumn(raw) {
+  if (raw == null) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  const m = /^(.*?)\s*-\s*(long|short)$/i.exec(s);
+  if (m) return { key: m[1].trim(), direzione: m[2][0].toUpperCase() + m[2].slice(1).toLowerCase() };
+  return { key: s, direzione: null };
+}
+
+function hourBandOf(h) {
+  if (h == null) return null;
+  const start = Math.floor(h / 3) * 3;
+  return `${String(start).padStart(2, '0')}:00-${String((start + 3) % 24).padStart(2, '0')}:00`;
+}
+
 function bucketStats(trades, keyFn, opts) {
   opts = opts || {};
   const groups = new Map();
@@ -681,15 +758,34 @@ function bucketStats(trades, keyFn, opts) {
   }
   const out = [];
   for (const [key, ts] of groups) {
-    const wins = ts.filter(t => t.risultato.toLowerCase() === 'target');
-    const losses = ts.filter(t => t.risultato.toLowerCase() === 'stop loss');
+    // a partial close is a profitable outcome, so it counts as a "win" for
+    // rate/profit-factor purposes; tp/pz/be/sl stay available individually
+    // for a precise outcome breakdown (e.g. "Parziali + BE" display)
+    const tp = ts.filter(t => t.risultato.toLowerCase() === 'target').length;
+    const pz = ts.filter(t => t.risultato.toLowerCase() === 'parziale').length;
+    const sl = ts.filter(t => t.risultato.toLowerCase() === 'stop loss').length;
     const n = ts.length;
-    const wl = wins.length + losses.length;
-    const winRate = wl ? Math.round((wins.length / wl) * 1000) / 10 : null;
+    const be = n - tp - pz - sl;
+    const winsN = tp + pz;
+    const wl = winsN + sl;
+    const winRate = wl ? Math.round((winsN / wl) * 1000) / 10 : null;
     const totalPct = Math.round(ts.reduce((s, t) => s + (t.risultato_pct || 0), 0) * 10000) / 100;
     const rrs = ts.map(t => t.rr).filter(v => v != null);
     const avgRr = rrs.length ? Math.round((rrs.reduce((a, b) => a + b, 0) / rrs.length) * 100) / 100 : null;
-    const row = { key, n, wins: wins.length, losses: losses.length, be: n - wins.length - losses.length, win_rate: winRate, total_pct: totalPct, avg_rr: avgRr };
+    const row = { key, n, tp, pz, be, sl, wins: winsN, losses: sl, win_rate: winRate, total_pct: totalPct, avg_rr: avgRr };
+
+    const rVals = ts.map(t => t.risultato_r).filter(v => v != null);
+    if (rVals.length) {
+      const totalR = Math.round(rVals.reduce((a, b) => a + b, 0) * 100) / 100;
+      row.total_r = totalR;
+      row.expectancy_r = Math.round((totalR / rVals.length) * 100) / 100;
+      const grossWinR = rVals.filter(v => v > 0).reduce((a, b) => a + b, 0);
+      const grossLossR = -rVals.filter(v => v < 0).reduce((a, b) => a + b, 0);
+      row.profit_factor_r = grossLossR > 0 ? Math.round((grossWinR / grossLossR) * 100) / 100 : null;
+    } else {
+      row.total_r = null; row.expectancy_r = null; row.profit_factor_r = null;
+    }
+
     if (opts.withPips) {
       const tps = ts.map(t => t.pips_tp).filter(v => v != null);
       const sls = ts.map(t => t.pips_sl).filter(v => v != null);
@@ -709,20 +805,47 @@ function foldSmall(rows, minN, otherLabel) {
   const wins = small.reduce((s, r) => s + r.wins, 0);
   const losses = small.reduce((s, r) => s + r.losses, 0);
   const be = small.reduce((s, r) => s + r.be, 0);
+  const tp = small.reduce((s, r) => s + (r.tp || 0), 0);
+  const pz = small.reduce((s, r) => s + (r.pz || 0), 0);
+  const sl = small.reduce((s, r) => s + (r.sl || 0), 0);
   const wl = wins + losses;
   const totalPct = Math.round(small.reduce((s, r) => s + r.total_pct, 0) * 100) / 100;
   const rrWeighted = small.reduce((s, r) => s + (r.avg_rr || 0) * r.n, 0) / n;
-  big.push({ key: otherLabel, n, wins, losses, be, win_rate: wl ? Math.round((wins / wl) * 1000) / 10 : null, total_pct: totalPct, avg_rr: Math.round(rrWeighted * 100) / 100 });
+  const hasR = small.some(r => r.total_r != null);
+  const totalR = hasR ? Math.round(small.reduce((s, r) => s + (r.total_r || 0), 0) * 100) / 100 : null;
+  big.push({
+    key: otherLabel, n, wins, losses, be, tp, pz, sl,
+    win_rate: wl ? Math.round((wins / wl) * 1000) / 10 : null,
+    total_pct: totalPct, avg_rr: Math.round(rrWeighted * 100) / 100,
+    total_r: totalR, expectancy_r: hasR && n ? Math.round((totalR / n) * 100) / 100 : null, profit_factor_r: null,
+  });
   return big;
 }
 
 function computeAll(trades) {
-  const wins = trades.filter(t => t.risultato.toLowerCase() === 'target');
+  const tpOnly = trades.filter(t => t.risultato.toLowerCase() === 'target');
+  const parziali = trades.filter(t => t.risultato.toLowerCase() === 'parziale');
+  // a partial close is a profitable outcome, so "wins" (used everywhere a
+  // win rate is computed) is Target + Parziale; tp/pz stay available
+  // separately for the outcome breakdown (Target / Parziale / BE / SL)
+  const wins = tpOnly.concat(parziali);
   const losses = trades.filter(t => t.risultato.toLowerCase() === 'stop loss');
   const bes = trades.filter(t => t.risultato.toLowerCase() === 'breakeven');
-  const winRate = Math.round((wins.length / (wins.length + losses.length)) * 1000) / 10;
+  const winRate = Math.round((wins.length / (wins.length + losses.length)) * 1000) / 10; // "Win Rate escludendo i BE"
+  const winRateGlobal = Math.round((wins.length / trades.length) * 1000) / 10; // "Win Rate globale"
   const rrs = trades.map(t => t.rr).filter(v => v != null);
   const avgRr = rrs.length ? Math.round((rrs.reduce((a, b) => a + b, 0) / rrs.length) * 100) / 100 : null;
+
+  // R-based summary: only populated when the file provides a per-trade
+  // "Risultato in R" column (the new journal format) — null otherwise,
+  // and every consumer below treats null gracefully
+  const rVals = trades.map(t => t.risultato_r).filter(v => v != null);
+  const hasRData = rVals.length > 0;
+  const totalR = hasRData ? Math.round(rVals.reduce((a, b) => a + b, 0) * 100) / 100 : null;
+  const expectancyR = hasRData ? Math.round((totalR / rVals.length) * 100) / 100 : null;
+  const grossWinR = hasRData ? rVals.filter(v => v > 0).reduce((a, b) => a + b, 0) : 0;
+  const grossLossR = hasRData ? -rVals.filter(v => v < 0).reduce((a, b) => a + b, 0) : 0;
+  const profitFactorR = hasRData && grossLossR > 0 ? Math.round((grossWinR / grossLossR) * 100) / 100 : null;
 
   let cum = 0, peak = 0, maxdd = 0, peakIdx = 0, maxddPeakIdx = 0, maxddTroughIdx = 0;
   const eqPoints = trades.map((t, i) => {
@@ -760,7 +883,10 @@ function computeAll(trades) {
 
   const summary = {
     n_trades: trades.length, wins: wins.length, losses: losses.length, bes: bes.length,
-    win_rate: winRate, avg_rr: avgRr, total_return_pct: totalReturn, profit_factor: profitFactor,
+    tp_count: tpOnly.length, pz_count: parziali.length, pz_be_combined: parziali.length + bes.length,
+    win_rate: winRate, win_rate_global: winRateGlobal,
+    avg_rr: avgRr, total_return_pct: totalReturn, profit_factor: profitFactor,
+    total_r: totalR, expectancy_r: expectancyR, profit_factor_r: profitFactorR,
     max_dd_pct: Math.round(maxdd * 10000) / 100,
     max_dd_trades: maxdd > 0 ? (maxddTroughIdx - maxddPeakIdx) : 0,
     max_dd_r: maxddRValid ? maxddR : null,
@@ -770,7 +896,11 @@ function computeAll(trades) {
     date_start: eqPoints[0].data, date_end: eqPoints[eqPoints.length - 1].data,
   };
 
-  trades.forEach(t => { t.setup = classifySetup(t); });
+  trades.forEach(t => {
+    const direct = parseSetupColumn(t.setup_col);
+    if (direct) { t.setup = direct.key; t.setup_direzione_hint = direct.direzione; }
+    else { t.setup = classifySetup(t); t.setup_direzione_hint = null; }
+  });
 
   const normDir = d => {
     const x = (d || '').toLowerCase();
@@ -778,7 +908,7 @@ function computeAll(trades) {
     if (x === 'short') return 'Short';
     return d || 'N/D';
   };
-  let setupStats = bucketStats(trades, t => t.setup + '␟' + normDir(t.direzione)).map(r => {
+  let setupStats = bucketStats(trades, t => t.setup + '␟' + (t.setup_direzione_hint || normDir(t.direzione))).map(r => {
     const sep = r.key.indexOf('␟');
     return { ...r, key: r.key.slice(0, sep), direzione: r.key.slice(sep + 1) };
   });
@@ -799,7 +929,7 @@ function computeAll(trades) {
     for (const [name, ts] of bySetupName) {
       const sessCounts = new Map();
       ts.forEach(t => {
-        const sess = sessionFromHour(t.hour);
+        const sess = sessionOf(t);
         if (sess === 'N/D') return;
         sessCounts.set(sess, (sessCounts.get(sess) || 0) + 1);
       });
@@ -812,13 +942,16 @@ function computeAll(trades) {
 
   let dayStats = bucketStats(trades, t => t.giorno || 'N/D');
   dayStats = dayStats.filter(r => DAY_ORDER.includes(r.key)).sort((a, b) => DAY_ORDER.indexOf(a.key) - DAY_ORDER.indexOf(b.key));
-  const sessionStats = bucketStats(trades, t => sessionFromHour(t.hour)).sort((a, b) => b.n - a.n);
+  const sessionStats = bucketStats(trades, t => sessionOf(t)).sort((a, b) => b.n - a.n);
   const dirStats = bucketStats(trades, t => normDir(t.direzione), { withPips: true }).sort((a, b) => b.n - a.n);
   const symbolStats = foldSmall(bucketStats(trades, t => t.simbolo || 'N/D', { withPips: true }).sort((a, b) => b.n - a.n), 1, 'Altri');
   let tfStats = bucketStats(trades, t => t.tf_entrata || 'N/D').sort((a, b) => b.n - a.n);
   tfStats = foldSmall(tfStats, 3, 'Altri TF').sort((a, b) => b.n - a.n);
+  const hourBandStats = bucketStats(trades.filter(t => t.hour != null), t => hourBandOf(t.hour)).sort((a, b) => a.key.localeCompare(b.key));
 
-  const idealMinSample = Math.max(5, Math.round(trades.length * 0.08));
+  // the "ideal trade" profile only picks from categories with more than 5
+  // trades, per spec, not an adaptive/scaled sample size like elsewhere
+  const idealMinSample = 6;
   const bestByWinRate = (rows, minN) => {
     const q = rows.filter(r => r.n >= minN && r.win_rate != null);
     const pool = q.length ? q : rows.filter(r => r.win_rate != null);
@@ -827,6 +960,21 @@ function computeAll(trades) {
   };
   const bestDay = bestByWinRate(dayStats, idealMinSample);
   const bestSession = bestByWinRate(sessionStats, idealMinSample);
+  const bestDirection = bestByWinRate(dirStats, idealMinSample);
+
+  // setup performance aggregated by name only (ignoring direction), used to
+  // pick the single best setup for the ideal-trade profile
+  const setupByName = new Map();
+  setupStats.forEach(r => {
+    if (!setupByName.has(r.key)) setupByName.set(r.key, { key: r.key, n: 0, wins: 0, losses: 0, total_pct: 0 });
+    const acc = setupByName.get(r.key);
+    acc.n += r.n; acc.wins += r.wins; acc.losses += r.losses; acc.total_pct += r.total_pct;
+  });
+  const setupAgg = [...setupByName.values()].map(acc => {
+    const wl = acc.wins + acc.losses;
+    return { ...acc, win_rate: wl ? Math.round((acc.wins / wl) * 1000) / 10 : null };
+  });
+  const bestSetup = bestByWinRate(setupAgg, idealMinSample);
 
   const hourGroups = new Map();
   trades.forEach(t => {
@@ -836,7 +984,7 @@ function computeAll(trades) {
   });
   const hourStats = [];
   for (const [h, ts] of hourGroups) {
-    const wins = ts.filter(t => t.risultato.toLowerCase() === 'target');
+    const wins = ts.filter(t => ['target', 'parziale'].includes(t.risultato.toLowerCase()));
     const losses = ts.filter(t => t.risultato.toLowerCase() === 'stop loss');
     const wl = wins.length + losses.length;
     hourStats.push({ hour: h, n: ts.length, win_rate: wl ? Math.round(wins.length / wl * 1000) / 10 : null });
@@ -875,11 +1023,12 @@ function computeAll(trades) {
       else streak = 0;
     });
 
-    // realized R (actual outcome ÷ risk taken) vs the R needed to break even
-    // at this win rate (wins * avgR = losses, for unit risk per trade)
+    // realized R (actual outcome ÷ risk taken, or the direct "Risultato in R"
+    // column when the file provides it) vs the R needed to break even at
+    // this win rate (wins * avgR = losses, for unit risk per trade)
     const realizedRs = trades
-      .filter(t => t.rischio_pct && t.risultato_pct != null)
-      .map(t => t.risultato_pct / t.rischio_pct);
+      .map(t => t.risultato_r != null ? t.risultato_r : (t.rischio_pct && t.risultato_pct != null ? t.risultato_pct / t.rischio_pct : null))
+      .filter(v => v != null);
     const avgRealizedR = realizedRs.length ? realizedRs.reduce((a, b) => a + b, 0) / realizedRs.length : null;
     const requiredR = wins.length > 0 ? losses.length / wins.length : null;
 
@@ -891,13 +1040,48 @@ function computeAll(trades) {
     const stdevRet = Math.sqrt(variance);
     const sharpe = stdevRet > 0 ? meanRet / stdevRet : null;
 
+    // qualitative read on Stop Loss / Breakeven trades: recurring note terms
+    // and the most common logged emotion, each requiring its own minimum
+    // sample so a single trade can't dictate a "pattern"
+    const mineThemes = group => {
+      const counts = new Map();
+      group.forEach(t => {
+        const text = [t.note, t.note_post, t.pro, t.contro].filter(Boolean).join(' ').toLowerCase();
+        const words = new Set((text.match(/[a-zàèéìòù]{4,}/g) || []).filter(w => !NOTES_STOPWORDS.has(w)));
+        words.forEach(w => counts.set(w, (counts.get(w) || 0) + 1));
+      });
+      return [...counts.entries()].map(([term, n]) => ({ term, n }))
+        .filter(x => x.n >= 2).sort((a, b) => b.n - a.n).slice(0, 5);
+    };
+    const topEmotion = group => {
+      const counts = new Map();
+      group.forEach(t => { if (t.emozioni) counts.set(t.emozioni, (counts.get(t.emozioni) || 0) + 1); });
+      if (!counts.size) return null;
+      const [term, n] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+      return { term, n, pct: Math.round((n / group.length) * 1000) / 10 };
+    };
+    const slTrades = trades.filter(t => t.risultato.toLowerCase() === 'stop loss');
+    const beTrades = trades.filter(t => t.risultato.toLowerCase() === 'breakeven');
+    const slThemes = mineThemes(slTrades);
+    const beThemes = mineThemes(beTrades);
+    const slThemeSet = new Set(slThemes.map(x => x.term));
+    const beThemeSet = new Set(beThemes.map(x => x.term));
+
     diagnostics = {
       hour_stats: hourStats,
+      hour_band_stats: hourBandStats,
       tag_stats: tagStats,
       max_streak: maxStreak,
       avg_realized_r: avgRealizedR != null ? Math.round(avgRealizedR * 1000) / 1000 : null,
       required_r: requiredR != null ? Math.round(requiredR * 1000) / 1000 : null,
       sharpe: sharpe != null ? Math.round(sharpe * 1000) / 1000 : null,
+      sl_n: slTrades.length,
+      be_n: beTrades.length,
+      sl_themes: slThemes,
+      be_themes: beThemes,
+      sl_top_emotion: slTrades.length >= 3 ? topEmotion(slTrades) : null,
+      be_top_emotion: beTrades.length >= 3 ? topEmotion(beTrades) : null,
+      cross_themes: [...slThemeSet].filter(t => beThemeSet.has(t)),
     };
   }
 
@@ -915,6 +1099,8 @@ function computeAll(trades) {
     day: bestDay ? bestDay.key : null,
     session: bestSession ? bestSession.key : null,
     hour_range: bestHourRow ? `${String(bestHourRow.hour).padStart(2, '0')}-${String((bestHourRow.hour + 3) % 24).padStart(2, '0')}` : null,
+    direction: bestDirection ? bestDirection.key : null,
+    setup: bestSetup ? bestSetup.key : null,
     stop_pips: stopPipsMed != null ? Math.round(stopPipsMed) : null,
     target_pips: targetPipsMed != null ? Math.round(targetPipsMed) : null,
     rr_median: rrMed != null ? Math.round(rrMed * 100) / 100 : null,
@@ -955,10 +1141,13 @@ function buildBarRow(label, row, extraFoot) {
   const pct = row.total_pct;
   const pctCls = pct >= 0 ? 'delta-pos' : 'delta-neg';
   const rrDisp = row.avg_rr != null ? row.avg_rr.toFixed(2) : '—';
+  const footParts = [`${row.n} op.`, `R:R ${rrDisp}`, `<span class="${pctCls}">${pctFmt(pct)}</span> cumulato`];
+  if (row.expectancy_r != null) footParts.push(`Expectancy ${row.expectancy_r >= 0 ? '+' : ''}${row.expectancy_r.toFixed(2)}R`);
+  if (extraFoot) footParts.push(extraFoot);
   return `<div class="bar-row">
   <div class="bar-row-head"><span class="bar-label">${esc(label)}</span><span class="bar-wr" style="color:${color}">${wrDisp}</span></div>
   <div class="bar-track"><div class="bar-fill" style="width:${width}%; background:${color};"></div></div>
-  <div class="bar-foot">${row.n} op. &middot; R:R ${rrDisp} &middot; <span class="${pctCls}">${pctFmt(pct)}</span> cumulato${extraFoot ? ' &middot; ' + extraFoot : ''}</div>
+  <div class="bar-foot">${footParts.join(' &middot; ')}</div>
 </div>`;
 }
 
@@ -969,60 +1158,56 @@ function buildSetupRow(row) {
   const pct = row.total_pct;
   const pctCls = pct >= 0 ? 'delta-pos' : 'delta-neg';
   const rrDisp = row.avg_rr != null ? row.avg_rr.toFixed(2) : '—';
+  const pfDisp = row.profit_factor_r != null ? row.profit_factor_r.toFixed(2) : '—';
+  const expDisp = row.expectancy_r != null ? `${row.expectancy_r >= 0 ? '+' : ''}${row.expectancy_r.toFixed(2)}R` : '—';
   const dirCls = row.direzione === 'Long' ? 'dir-long' : (row.direzione === 'Short' ? 'dir-short' : 'dir-other');
+  const tp = row.tp != null ? row.tp : row.wins;
+  const pz = row.pz || 0;
+  const sl = row.sl != null ? row.sl : row.losses;
   return `<tr>
   <td class="setup-name"><span class="setup-dot" style="background:${color}"></span>${esc(row.key)}<span class="dir-tag ${dirCls}">${esc(row.direzione)}</span></td>
   <td class="num">${row.n}</td>
-  <td class="num">${row.wins}W&nbsp;/&nbsp;${row.losses}L&nbsp;/&nbsp;${row.be}BE</td>
+  <td class="num">${tp}TP&nbsp;/&nbsp;${pz}Pz&nbsp;/&nbsp;${row.be}BE&nbsp;/&nbsp;${sl}SL</td>
   <td class="num" style="color:${color}; font-weight:700;">${wrDisp}</td>
   <td class="num">${rrDisp}</td>
+  <td class="num">${pfDisp}</td>
+  <td class="num">${expDisp}</td>
   <td class="num ${pctCls}">${pctFmt(pct)}</td>
 </tr>`;
 }
 
-const SETUP_LEGEND_NAMES = [
-  'Rottura barrier + retest',
-  'Doppio massimo/minimo',
-  'Manipolazione + liquidità',
-  'Entry diretta demand/supply',
-  'Cambio struttura',
-  'Presa di liquidità',
-  'Rottura barrier',
-  'Manipolazione',
-  'Altro / misto',
-];
-
 // Legend descriptions are computed from this dataset's own numbers (win rate,
 // R:R, frequenza, sessione tipica), not a fixed explanatory sentence, so two
 // different journals show two different descriptions for the same setup name.
+// The setup list itself is also read off the data (whatever appears in
+// setup_stats, in frequency order) rather than a fixed vocabulary, since the
+// Setup column can hold arbitrary values (e.g. "1", "2"...) that don't match
+// the free-text classifier's labels.
 function buildSetupLegend(data) {
   const totalN = data.summary.n_trades || 0;
   const byName = new Map();
+  const order = [];
   data.setup_stats.forEach(r => {
-    if (!byName.has(r.key)) byName.set(r.key, { n: 0, wins: 0, losses: 0, be: 0, total_pct: 0, rrSum: 0, rrCount: 0 });
+    if (!byName.has(r.key)) { byName.set(r.key, { n: 0, wins: 0, losses: 0, be: 0, total_pct: 0, rrSum: 0, rrCount: 0 }); order.push(r.key); }
     const acc = byName.get(r.key);
     acc.n += r.n; acc.wins += r.wins; acc.losses += r.losses; acc.be += r.be; acc.total_pct += r.total_pct;
     if (r.avg_rr != null) { acc.rrSum += r.avg_rr * r.n; acc.rrCount += r.n; }
   });
   const sessionProfile = data.setup_session_profile || {};
+  if (!order.length) return '';
 
-  return SETUP_LEGEND_NAMES.map(label => {
+  return order.map(label => {
     const acc = byName.get(label);
-    let desc;
-    if (!acc || acc.n === 0) {
-      desc = 'Nessuna operazione di questo tipo in questi dati.';
-    } else {
-      const wl = acc.wins + acc.losses;
-      const winRate = wl ? Math.round((acc.wins / wl) * 1000) / 10 : null;
-      const avgRr = acc.rrCount ? Math.round((acc.rrSum / acc.rrCount) * 100) / 100 : null;
-      const share = totalN ? Math.round((acc.n / totalN) * 1000) / 10 : null;
-      const parts = [`${acc.n} operazion${acc.n === 1 ? 'e' : 'i'}${share != null ? ` (${share}% del totale)` : ''}`];
-      if (winRate != null) parts.push(`win rate ${winRate}%`);
-      if (avgRr != null) parts.push(`R:R medio ${avgRr.toFixed(2)}`);
-      parts.push(`${pctFmt(acc.total_pct)} cumulato`);
-      if (sessionProfile[label]) parts.push(`soprattutto in sessione ${sessionProfile[label]}`);
-      desc = esc(parts.join(' · ')) + '.';
-    }
+    const wl = acc.wins + acc.losses;
+    const winRate = wl ? Math.round((acc.wins / wl) * 1000) / 10 : null;
+    const avgRr = acc.rrCount ? Math.round((acc.rrSum / acc.rrCount) * 100) / 100 : null;
+    const share = totalN ? Math.round((acc.n / totalN) * 1000) / 10 : null;
+    const parts = [`${acc.n} operazion${acc.n === 1 ? 'e' : 'i'}${share != null ? ` (${share}% del totale)` : ''}`];
+    if (winRate != null) parts.push(`win rate ${winRate}%`);
+    if (avgRr != null) parts.push(`R:R medio ${avgRr.toFixed(2)}`);
+    parts.push(`${pctFmt(acc.total_pct)} cumulato`);
+    if (sessionProfile[label]) parts.push(`soprattutto in sessione ${sessionProfile[label]}`);
+    const desc = esc(parts.join(' · ')) + '.';
     return `<dt><span class="setup-dot" style="background:var(--muted)"></span>${esc(label)}</dt><dd>${desc}</dd>`;
   }).join('');
 }
@@ -1071,6 +1256,8 @@ function buildIdealRow(it) {
     ['Giorno migliore', it.day],
     ['Sessione migliore', it.session],
     ['Fascia oraria top', it.hour_range],
+    ['Direzione migliore', it.direction],
+    ['Setup migliore', it.setup],
     ['Stop tipico', it.stop_pips != null ? `${it.stop_pips} pt` : null],
     ['Target tipico', it.target_pips != null ? `${it.target_pips} pt` : null],
     ['R:R mediano', it.rr_median != null ? `1:${it.rr_median.toFixed(2)}` : null],
@@ -1080,18 +1267,43 @@ function buildIdealRow(it) {
   ).join('');
 }
 
+function outcomeItems(s) {
+  return [
+    { label: 'Target', n: s.tp_count != null ? s.tp_count : s.wins, color: 'var(--good)' },
+    { label: 'Parziale', n: s.pz_count || 0, color: 'var(--series-1)' },
+    { label: 'Breakeven', n: s.bes, color: 'var(--muted)' },
+    { label: 'Stop Loss', n: s.losses, color: 'var(--critical)' },
+  ].filter(it => it.n > 0);
+}
+
 function buildOutcomeSplit(s) {
   const total = s.n_trades || 1;
-  const items = [
-    { label: 'Target', n: s.wins, color: 'var(--good)' },
-    { label: 'Stop Loss', n: s.losses, color: 'var(--critical)' },
-    { label: 'Breakeven', n: s.bes, color: 'var(--muted)' },
-  ];
+  const items = outcomeItems(s);
   const bar = items.map(it => `<span style="width:${(it.n / total * 100).toFixed(2)}%; background:${it.color};"></span>`).join('');
   const legend = items.map(it =>
     `<span><i style="background:${it.color}"></i>${it.label} <b>${(it.n / total * 100).toFixed(1)}%</b> (${it.n})</span>`
   ).join('');
   return `<div class="outcome-bar">${bar}</div><div class="eq-legend">${legend}</div>`;
+}
+
+function buildOutcomePie(s) {
+  const items = outcomeItems(s);
+  const total = items.reduce((a, b) => a + b.n, 0) || 1;
+  const R = 68, CX = 86, CY = 86, STROKE = 26;
+  const circumference = 2 * Math.PI * R;
+  let offset = 0;
+  let svg = `<svg viewBox="0 0 172 172" width="172" height="172" role="img" aria-label="Distribuzione risultati">`;
+  svg += `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="var(--surface-2)" stroke-width="${STROKE}"/>`;
+  items.forEach(it => {
+    const frac = it.n / total;
+    const dash = frac * circumference;
+    svg += `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${it.color}" stroke-width="${STROKE}" stroke-dasharray="${dash.toFixed(2)} ${(circumference - dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" transform="rotate(-90 ${CX} ${CY})"><title>${esc(it.label)}: ${it.n} (${(frac * 100).toFixed(1)}%)</title></circle>`;
+    offset += dash;
+  });
+  svg += `<text x="${CX}" y="${CY - 4}" text-anchor="middle" class="pie-center-val">${total}</text><text x="${CX}" y="${CY + 14}" text-anchor="middle" class="pie-center-label">trade</text>`;
+  svg += '</svg>';
+  const legend = items.map(it => `<span><i style="background:${it.color}"></i>${esc(it.label)} <b>${(it.n / total * 100).toFixed(1)}%</b> (${it.n})</span>`).join('');
+  return `<div class="pie-wrap">${svg}<div class="eq-legend">${legend}</div></div>`;
 }
 
 function buildMonthCol(row, maxAbs) {
@@ -1105,6 +1317,40 @@ function buildMonthCol(row, maxAbs) {
   <div class="month-wr">${wrDisp}</div>
   <div class="month-label">${esc(row.key.slice(0, 3))}</div>
 </div>`;
+}
+
+function buildMonthColR(row, maxAbs) {
+  if (row.total_r == null) {
+    return `<div class="month-col" title="${esc(row.key)}: dato R non disponibile">
+  <div class="month-bar-track"></div>
+  <div class="month-val">—</div>
+  <div class="month-label">${esc(row.key.slice(0, 3))}</div>
+</div>`;
+  }
+  const h = Math.max(3, Math.abs(row.total_r) / maxAbs * 100);
+  const cls = row.total_r >= 0 ? 'month-bar-pos' : 'month-bar-neg';
+  const valDisp = (row.total_r >= 0 ? '+' : '') + row.total_r.toFixed(1) + 'R';
+  return `<div class="month-col" title="${esc(row.key)}: ${valDisp}">
+  <div class="month-bar-track"><div class="month-bar ${cls}" style="height:${h}%"></div></div>
+  <div class="month-val">${valDisp}</div>
+  <div class="month-label">${esc(row.key.slice(0, 3))}</div>
+</div>`;
+}
+
+function buildMonthlyTable(rows) {
+  if (!rows.length) return EMPTY_NOTE;
+  const trs = rows.map(r => {
+    const wrDisp = r.win_rate != null ? r.win_rate.toFixed(1) + '%' : '—';
+    const pctCls = r.total_pct >= 0 ? 'delta-pos' : 'delta-neg';
+    const rDisp = r.total_r != null ? `${r.total_r >= 0 ? '+' : ''}${r.total_r.toFixed(2)}R` : '—';
+    const pfDisp = r.profit_factor_r != null ? r.profit_factor_r.toFixed(2) : '—';
+    const expDisp = r.expectancy_r != null ? `${r.expectancy_r >= 0 ? '+' : ''}${r.expectancy_r.toFixed(2)}R` : '—';
+    return `<tr><td>${esc(r.key)}</td><td class="num">${r.n}</td><td class="num">${wrDisp}</td><td class="num ${pctCls}">${pctFmt(r.total_pct)}</td><td class="num">${pfDisp}</td><td class="num">${rDisp}</td><td class="num">${expDisp}</td></tr>`;
+  }).join('');
+  return `<div style="overflow-x:auto;"><table>
+  <thead><tr><th>Mese</th><th class="num">N Trade</th><th class="num">Win Rate</th><th class="num">P&amp;L %</th><th class="num">P.Factor</th><th class="num">R Totali</th><th class="num">Media R</th></tr></thead>
+  <tbody>${trs}</tbody>
+</table></div>`;
 }
 
 function buildEquitySVG(eq) {
@@ -1324,6 +1570,30 @@ function buildRecommendations(data) {
     });
   }
 
+  if (diag && diag.sl_top_emotion && diag.sl_top_emotion.pct >= 40) {
+    const em = diag.sl_top_emotion;
+    candidates.push({
+      severity: em.pct * 0.6,
+      title: `Attenzione allo stato emotivo «${esc(em.term)}»`,
+      desc: `Lo stato emotivo «${esc(em.term)}» ricorre nel ${em.pct}% degli Stop Loss (${em.n} su ${diag.sl_n}).`,
+      action: `Prima di aprire un trade in stato «${esc(em.term)}», fermati e rivaluta il setup.`,
+      verify: `Verifica sui prossimi 10 Stop Loss quante volte ricorre ancora questo stato.`,
+      footer: `Emozione più frequente negli SL: <strong>${esc(em.term)} - ${em.pct}%</strong>`,
+    });
+  }
+
+  if (diag && diag.cross_themes && diag.cross_themes.length) {
+    const theme = diag.cross_themes[0];
+    candidates.push({
+      severity: 22,
+      title: `Rivedi il tema ricorrente «${esc(theme)}»`,
+      desc: `Il termine «${esc(theme)}» compare nelle note sia degli Stop Loss sia dei Breakeven: è un pattern trasversale, non isolato a un solo esito.`,
+      action: `Scrivi una regola esplicita su come gestire «${esc(theme)}» prima dell'entrata.`,
+      verify: `Verifica sui prossimi 10 trade con questo tema se la regola viene rispettata.`,
+      footer: `Tema trasversale: <strong>${esc(theme)}</strong>`,
+    });
+  }
+
   candidates.sort((a, b) => b.severity - a.severity);
   const top = candidates.slice(0, 2);
   if (!top.length) {
@@ -1426,6 +1696,40 @@ function buildWatchlist(data) {
   return items.slice(0, 6).map(t => `<li><span class="ico watch">&bull;</span><span>${t}</span></li>`).join('');
 }
 
+// qualitative read on *why* Stop Loss and Breakeven trades happened: recurring
+// note terms and the most-logged emotion for each outcome, mined directly
+// from this journal's own notes/emozioni column (not a fixed vocabulary)
+function buildQualitativeAnalysis(data) {
+  const diag = data.diagnostics;
+  if (!diag) return EMPTY_NOTE;
+
+  const themeList = (themes, n) => themes.length
+    ? `<ul class="theme-list">${themes.map(t => `<li><span>${esc(t.term)}</span><b>${t.n}&times;</b></li>`).join('')}</ul>`
+    : `<p class="qual-empty">Nessun tema ricorrente individuato nelle note.</p>`;
+
+  const emotionLine = (em, n) => em
+    ? `<p class="qual-emotion">Emozione più frequente: <strong>${esc(em.term)}</strong> (${em.pct}% &middot; ${em.n} su ${n})</p>`
+    : '';
+
+  const slCol = `<div class="qual-col">
+    <h3>Stop Loss <span class="qual-n">${diag.sl_n} operazioni</span></h3>
+    ${emotionLine(diag.sl_top_emotion, diag.sl_n)}
+    ${themeList(diag.sl_themes)}
+  </div>`;
+
+  const beCol = `<div class="qual-col">
+    <h3>Breakeven <span class="qual-n">${diag.be_n} operazioni</span></h3>
+    ${emotionLine(diag.be_top_emotion, diag.be_n)}
+    ${themeList(diag.be_themes)}
+  </div>`;
+
+  const crossHtml = diag.cross_themes.length
+    ? `<div class="qual-cross"><strong>Pattern trasversali:</strong> ${diag.cross_themes.map(esc).map(t => `"${t}"`).join(', ')} ricorrono sia negli Stop Loss sia nei Breakeven.</div>`
+    : `<div class="qual-cross qual-cross-empty">Nessun tema ricorre sia negli Stop Loss sia nei Breakeven in questi dati.</div>`;
+
+  return `<div class="qual-grid">${slCol}${beCol}</div>${crossHtml}`;
+}
+
 function generateInsights(data) {
   const good = [], warn = [];
   const s = data.summary;
@@ -1513,12 +1817,21 @@ function renderAll(data) {
   });
 
   safeRender('statGrid', () => {
+    const tpCount = s.tp_count != null ? s.tp_count : s.wins;
+    const winRateGlobal = s.win_rate_global != null ? s.win_rate_global : Math.round((s.wins / s.n_trades) * 1000) / 10;
+    const breakdownFoot = s.pz_count > 0
+      ? `${tpCount} TP &middot; ${s.pz_count} Pz &middot; ${s.bes} BE &middot; ${s.losses} SL`
+      : `${tpCount} TP &middot; ${s.bes} BE &middot; ${s.losses} SL`;
+    const rTiles = s.total_r != null ? `
+    <div class="stat-tile ${s.total_r >= 0 ? 'good' : 'crit'}"><div class="label">R Totali</div><div class="value">${s.total_r >= 0 ? '+' : ''}${s.total_r}R</div><div class="foot">somma R per operazione</div></div>
+    <div class="stat-tile ${s.expectancy_r >= 0 ? 'good' : 'crit'}"><div class="label">Expectancy</div><div class="value">${s.expectancy_r >= 0 ? '+' : ''}${s.expectancy_r}R</div><div class="foot">R medio per trade</div></div>` : '';
     document.getElementById('statGrid').innerHTML = `
-    <div class="stat-tile"><div class="label">Operazioni totali</div><div class="value">${s.n_trades}</div><div class="foot">${s.wins} vinte &middot; ${s.losses} perse &middot; ${s.bes} BE</div></div>
-    <div class="stat-tile good"><div class="label">Win rate</div><div class="value">${s.win_rate}%</div><div class="foot">su Target + Stop Loss</div></div>
+    <div class="stat-tile"><div class="label">Operazioni totali</div><div class="value">${s.n_trades}</div><div class="foot">${breakdownFoot}</div></div>
+    <div class="stat-tile good"><div class="label">Win rate (escl. BE)</div><div class="value">${s.win_rate}%</div><div class="foot">su Target+Parziale vs Stop Loss</div></div>
+    <div class="stat-tile"><div class="label">Win rate globale</div><div class="value">${winRateGlobal}%</div><div class="foot">su tutte le operazioni</div></div>
     <div class="stat-tile"><div class="label">R:R medio</div><div class="value">${s.avg_rr ?? '—'}</div><div class="foot">rischio 1 &rarr; reward ${s.avg_rr ?? '—'}</div></div>
     <div class="stat-tile ${s.total_return_pct >= 0 ? 'good' : 'crit'}"><div class="label">Rendimento totale</div><div class="value">${pctFmt(s.total_return_pct)}</div><div class="foot">somma % per operazione</div></div>
-    <div class="stat-tile"><div class="label">Profit factor</div><div class="value">${s.profit_factor ?? '—'}</div><div class="foot">utile lordo / perdita lorda</div></div>
+    <div class="stat-tile"><div class="label">Profit factor</div><div class="value">${s.profit_factor ?? '—'}</div><div class="foot">utile lordo / perdita lorda</div></div>${rTiles}
     <div class="stat-tile crit"><div class="label">Max drawdown</div><div class="value">&minus;${s.max_dd_pct}%</div><div class="foot">sul capitale equity</div></div>
     <div class="stat-tile crit"><div class="label">Max drawdown (trade)</div><div class="value">${s.max_dd_r != null ? (s.max_dd_r >= 0 ? '+' : '') + s.max_dd_r + 'R' : '—'}</div><div class="foot">${pctFmt(-s.max_dd_pct)} su ${s.max_dd_trades} ${s.max_dd_trades === 1 ? 'operazione' : 'operazioni'}</div></div>
   `;
@@ -1529,6 +1842,16 @@ function renderAll(data) {
   });
   safeRender('outcomeSplit', () => {
     document.getElementById('outcomeSplit').innerHTML = buildOutcomeSplit(s);
+  });
+
+  safeRender('monthly table+chart', () => {
+    document.getElementById('monthlyTable').innerHTML = buildMonthlyTable(data.month_stats);
+    const maxAbsR = Math.max(1, ...data.month_stats.map(m => Math.abs(m.total_r || 0)));
+    document.getElementById('monthStripR').innerHTML = data.month_stats.map(m => buildMonthColR(m, maxAbsR)).join('');
+  });
+
+  safeRender('outcomePie', () => {
+    document.getElementById('outcomePie').innerHTML = buildOutcomePie(s);
   });
 
   safeRender('calendar', () => {
@@ -1569,6 +1892,13 @@ function renderAll(data) {
     document.getElementById('dayRows').innerHTML = data.day_stats.map(r => buildBarRow(r.key, r)).join('');
     document.getElementById('sessionRows').innerHTML = data.session_stats.map(r => buildBarRow(r.key, r)).join('');
     document.getElementById('tfRows').innerHTML = data.tf_stats.map(r => buildBarRow(r.key, r)).join('');
+    document.getElementById('hourBandRows').innerHTML = (data.diagnostics && data.diagnostics.hour_band_stats.length)
+      ? data.diagnostics.hour_band_stats.map(r => buildBarRow(r.key, r)).join('')
+      : EMPTY_NOTE;
+  });
+
+  safeRender('qualitative analysis', () => {
+    document.getElementById('qualitativeAnalysis').innerHTML = buildQualitativeAnalysis(data);
   });
 
   safeRender('monthStrip', () => {
@@ -1595,7 +1925,7 @@ function renderAll(data) {
 
   safeRender('footerNote', () => {
     document.getElementById('footerNote').innerHTML =
-      `Dati estratti da ${s.n_trades} operazioni con esito registrato. Win rate calcolato su Target+Stop Loss (Breakeven escluso dal denominatore). R:R decodificato dal formato ora del file Excel quando presente.`;
+      `Dati estratti da ${s.n_trades} operazioni con esito registrato. "Win rate (escl. BE)" conta Target+Parziale su Target+Parziale+Stop Loss; "Win rate globale" li conta su tutte le operazioni, Breakeven incluso. Le metriche in R richiedono la colonna "Risultato in R" nel file.`;
   });
 }
 
@@ -1638,16 +1968,21 @@ const EMPTY_NOTE = '<div style="color:var(--muted); font-size:12.5px; padding:6p
 
 function renderEmptyState() {
   document.getElementById('periodLabel').textContent = '–';
-  document.getElementById('statGrid').innerHTML = ['Operazioni totali','Win rate','R:R medio','Rendimento totale','Profit factor','Max drawdown','Max drawdown (trade)']
+  document.getElementById('statGrid').innerHTML = ['Operazioni totali','Win rate (escl. BE)','Win rate globale','R:R medio','Rendimento totale','Profit factor','Max drawdown','Max drawdown (trade)']
     .map(label => `<div class="stat-tile"><div class="label">${label}</div><div class="value">—</div></div>`).join('');
   document.getElementById('eqChart').innerHTML = EMPTY_NOTE;
   document.getElementById('outcomeSplit').innerHTML = '';
+  document.getElementById('monthlyTable').innerHTML = EMPTY_NOTE;
+  document.getElementById('monthStripR').innerHTML = '';
+  document.getElementById('outcomePie').innerHTML = EMPTY_NOTE;
+  document.getElementById('hourBandRows').innerHTML = EMPTY_NOTE;
+  document.getElementById('qualitativeAnalysis').innerHTML = EMPTY_NOTE;
   currentCalTrades = [];
   calState = { year: null, month: null, showWeekend: false };
   updateCalendarGrid();
   document.getElementById('dirPillRow').innerHTML = '';
   document.getElementById('symbolRows').innerHTML = EMPTY_NOTE;
-  document.getElementById('setupTbody').innerHTML = `<tr><td colspan="6">${EMPTY_NOTE}</td></tr>`;
+  document.getElementById('setupTbody').innerHTML = `<tr><td colspan="8">${EMPTY_NOTE}</td></tr>`;
   document.getElementById('setupSpotlight').innerHTML = '';
   document.getElementById('setupLegend').innerHTML = `<dt></dt><dd>${EMPTY_NOTE}</dd>`;
   document.getElementById('dirRows').innerHTML = EMPTY_NOTE;
