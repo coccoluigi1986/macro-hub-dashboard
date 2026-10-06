@@ -1,0 +1,31 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "FRED_API_KEY",
+      "description": "Federal Reserve Economic Data API key — required for /api/fred-data (macro indicators). Get it free at https://fred.stlouisfed.org/docs/api/api_key.html",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "ANTHROPIC_API_KEY",
+      "description": "Anthropic/Claude API key — optional, enables AI-generated bias/sentiment/dossier text. Without it, functions fall back to static text. Get it at https://console.anthropic.com",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "FMP_API_KEY",
+      "description": "Financial Modeling Prep API key — optional, used for treasury yield series in /api/dxy-correlation. Get it at https://site.financialmodelingprep.com/developer/docs",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "FINNHUB_KEY",
+      "description": "Finnhub API key — optional, adds Finnhub news alongside RSS feeds. Get it at https://finnhub.io",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    }
+  ]
+}
