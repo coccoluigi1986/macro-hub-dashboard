@@ -17,6 +17,7 @@
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchYahooQuote } = require('../lib/yahoo');
+const { fetchPositioning } = require('../lib/positioning');
 
 const SYMBOLS = {
   sp500:  '^GSPC',   // S&P 500
@@ -37,6 +38,9 @@ const SYMBOLS = {
 
 async function handleEvent() {
   try {
+    // Fear & Greed (CNN) e AAII, insieme ai prezzi: fetchPositioning non lancia mai, ogni indicatore
+    // non raggiungibile torna semplicemente null.
+    const positioningPromise = fetchPositioning();
     const entries = await Promise.all(
       Object.entries(SYMBOLS).map(async ([key, sym]) => {
         try {
@@ -62,6 +66,7 @@ async function handleEvent() {
         source: 'Yahoo Finance (endpoint pubblico "chart")',
         parseWarning: errors.length ? `Simboli non disponibili: ${errors.join(' | ')}` : null,
         data,
+        positioning: await positioningPromise,
       }),
     };
   } catch (err) {

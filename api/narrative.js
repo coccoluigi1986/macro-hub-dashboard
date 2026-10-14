@@ -9,7 +9,12 @@
 //   - prossimi eventi ad alto impatto dal calendario economico (lib/calendar.js)
 // e la regola esplicita di non citare nulla che non sia nei dati forniti.
 //
-// Query: ?section=geo|fed|hawkdove|assets|indices
+// Alcune sezioni aggiungono al grounding blocchi extra (campo "needs"):
+//   released    → ultimi dati macro USA/UE/lavoro già usciti, con atteso e precedente (lib/macro-cards.js)
+//   cot         → posizionamento CFTC con percentili a 52 settimane (lib/cot.js)
+//   positioning → CNN Fear & Greed e AAII (lib/positioning.js)
+//
+// Query: ?section=geo|fed|hawkdove|assets|indices|macro|sentiment|newscmp
 // Risposta: { generatedAt, section, ai, data } — se Gemini non risponde, ai:false e data:null
 // (il client mostra "analisi non disponibile" invece di testo vecchio).
 // Cache CDN 3h quando l'AI ha risposto, 2 min altrimenti (un errore transitorio non resta congelato).
@@ -20,6 +25,9 @@ const { llmJSON, llmConfigured } = require('../lib/llm');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchFredSnapshot } = require('../lib/fred');
 const { fetchCalendarEvents } = require('../lib/calendar');
+const { fetchMacroCards, macroCardLines } = require('../lib/macro-cards');
+const { fetchCotSnapshot } = require('../lib/cot');
+const { fetchPositioning } = require('../lib/positioning');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const QUOTES = {
@@ -76,18 +84,79 @@ async function calendarLines() {
   return [...near.slice(0, 18), ...decisions].filter(e => !seen.has(e.id) && seen.add(e.id)).map(fmt).join('\n');
 }
 
-async function buildContext() {
+// Ultimi dati macro già usciti (stesse card mostrate nelle sezioni Macro / Europa / Lavoro)
+async function releasedLines() {
+  return macroCardLines(await fetchMacroCards());
+}
+
+const COT_LABELS = {
+  gold: 'Oro', silver: 'Argento', eur: 'EUR (Euro FX)', gbp: 'GBP', jpy: 'JPY', dxy: 'US Dollar Index (futures)',
+  sp500: 'S&P 500 E-mini', nasdaq: 'Nasdaq 100', dow: 'Dow Jones', russell: 'Russell 2000', vix: 'VIX futures',
+  wti: 'WTI', brent: 'Brent', bitcoin: 'Bitcoin (CME)', ether: 'Ether (CME)',
+};
+// ICU it-IT non raggruppa i numeri a 4 cifre ("8297" accanto a "36.076"): separatore delle migliaia esplicito
+const itInt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const sgn = (n) => `${n >= 0 ? '+' : ''}${itInt(n)}`;
+
+async function cotLines() {
+  const snap = await fetchCotSnapshot(null);
+  const L = [];
+  for (const [key, label] of Object.entries(COT_LABELS)) {
+    const d = snap.data[key];
+    if (!d || d.error) continue;
+    const mm = d.managedMoneyNet != null;
+    const net = mm ? d.managedMoneyNet : d.nonCommercialNet;
+    if (net == null) continue;
+    const who = mm ? 'Managed Money' : 'Non-Commercial';
+    const cl = mm ? d.managedMoneyChangeLong : d.nonCommercialChangeLong;
+    const cs = mm ? d.managedMoneyChangeShort : d.nonCommercialChangeShort;
+    const chg = cl != null && cs != null ? `, variazione settimanale ${sgn(cl - cs)} (long ${sgn(cl)} / short ${sgn(cs)})` : '';
+    const oi = d.openInterest != null ? `; open interest ${itInt(d.openInterest)}${d.openInterestChange != null ? ` (${sgn(d.openInterestChange)} sett.)` : ''}` : '';
+    const pct = d.netPercentile52w != null ? `; posizionamento netto al ${d.netPercentile52w}° percentile delle ultime 52 settimane (${d.netPercentile26w}° su 26)` : '';
+    const comm = !mm && d.commercialNet != null ? `; Commercial net ${sgn(d.commercialNet)}` : '';
+    L.push(`- ${label}: ${who} net ${sgn(net)}${chg}${oi}${pct}${comm} [report del ${d.reportDate}]`);
+  }
+  return L.join('\n');
+}
+
+async function positioningLines() {
+  const p = await fetchPositioning();
+  const L = [];
+  if (p.fearGreed) {
+    const f = p.fearGreed;
+    L.push(`- CNN Fear & Greed: ${f.score}/100 (${f.ratingIt}); chiusura precedente ${f.previousClose}, 1 settimana fa ${f.previousWeek}, 1 mese fa ${f.previousMonth}, 1 anno fa ${f.previousYear}`);
+  }
+  if (p.aaii) {
+    const a = p.aaii;
+    L.push(`- AAII Sentiment Survey (rilevazione ${a.date}): bullish ${a.bullish}%, neutral ${a.neutral}%, bearish ${a.bearish}% (spread bull-bear ${a.spread >= 0 ? '+' : ''}${a.spread} pt)`
+      + (a.previous ? `; rilevazione precedente (${a.previous.date}): bullish ${a.previous.bullish}%, bearish ${a.previous.bearish}%` : ''));
+  }
+  L.push('- NAAIM Exposure Index e CBOE Put/Call Ratio: NON DISPONIBILI (nessuna fonte gratuita aggiornata) — non citarne valori');
+  return L.join('\n');
+}
+
+const EXTRA_BLOCKS = {
+  released: { title: 'ULTIMI DATI MACRO PUBBLICATI (calendario economico: valore attuale, atteso dal consensus, precedente)', fn: releasedLines },
+  cot: { title: 'POSIZIONAMENTO COT (CFTC, ultimo report settimanale; i percentili sono calcolati sulle ultime 52 settimane)', fn: cotLines },
+  positioning: { title: 'INDICATORI DI SENTIMENT (fonti reali)', fn: positioningLines },
+};
+
+async function buildContext(needs = []) {
   const safe = (p) => p.catch((e) => { console.warn('narrative grounding fallito:', e.message); return ''; });
-  const [news, market, macro, calendar] = await Promise.all([
+  const extraKeys = needs.filter((k) => EXTRA_BLOCKS[k]);
+  const [news, market, macro, calendar, ...extras] = await Promise.all([
     aggregateNews(40).then(items => items.slice(0, 30).map((n, i) => `${i + 1}. [${n.source} ${n.published.slice(5, 16).replace('T', ' ')} UTC] ${n.title} — ${n.summary.slice(0, 170)}`).join('\n')).catch((e) => { console.warn('news fallite:', e.message); return ''; }),
     safe(marketLines()), safe(fredLines()), safe(calendarLines()),
+    ...extraKeys.map((k) => safe(EXTRA_BLOCKS[k].fn())),
   ]);
   const today = new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Rome' });
+  const extraText = extraKeys.map((k, i) => `${EXTRA_BLOCKS[k].title}:\n${extras[i] || '- non disponibili'}\n\n`).join('');
   return {
     hasData: Boolean(news || market),
     text: `DATA DI OGGI: ${today}\n\nNOTIZIE REALI RECENTI (fonte, ora UTC):\n${news || '- nessuna notizia disponibile'}\n\n`
       + `PREZZI DI OGGI (Yahoo Finance):\n${market || '- non disponibili'}\n\n`
       + `DATI MACRO UFFICIALI (FRED):\n${macro || '- non disponibili'}\n\n`
+      + extraText
       + `PROSSIMI EVENTI AD ALTO IMPATTO (calendario economico):\n${calendar || '- non disponibili'}\n`,
   };
 }
@@ -180,7 +249,80 @@ const SECTIONS = {
       + '}',
     normalize: (d) => ({ indices: objs(d.indices, 4).map(i => ({ key: str(i.key), text: str(i.text) })) }),
   },
+  // Note di commento sotto le card Macro USA / Europa / Lavoro / Rendimenti + "Cosa prezza il mercato".
+  // Le card stesse (valori) arrivano dal calendario reale; qui l'AI le interpreta senza poterle contraddire.
+  macro: {
+    needs: ['released'],
+    maxTokens: 5000,
+    task: 'Produci le NOTE DI LETTURA delle sezioni Macro USA, Europa (Eurozona/BCE), Lavoro e Rendimenti/VIX/DXY, più le liste "cosa prezza il mercato" e "rischi non prezzati". '
+      + 'Per i dati macro usa ESCLUSIVAMENTE il blocco "ULTIMI DATI MACRO PUBBLICATI" e i dati FRED: cita sempre il mese/periodo di riferimento e non parlare di dati più vecchi come se fossero recenti. '
+      + 'Per la BCE usa solo ciò che compare nei dati (es. tasso sui depositi) e nelle notizie.',
+    schema: '{\n'
+      + '  "us_note": "Lettura d\'insieme del quadro macro USA (inflazione, attività PMI/ISM, crescita): cosa dicono i dati usciti rispetto alle attese e cosa implicano per la Fed, max 760 caratteri, con <b>..</b> su 2-3 concetti",\n'
+      + '  "eu_note": "Lettura d\'insieme dell\'Eurozona (inflazione, crescita, BCE) e confronto con gli USA, max 760 caratteri, con <b>..</b>",\n'
+      + '  "jobs_note": "Perché conta il mercato del lavoro oggi: payrolls, disoccupazione, salari, sussidi, JOLTs — cosa segnalano, max 760 caratteri, con <b>..</b>",\n'
+      + '  "rates_note": "Lettura di rendimento 10Y, curva, DXY e VIX con i valori di oggi dai dati, max 620 caratteri, con <b>..</b>",\n'
+      + '  "priced": [ 4 oggetti {"label":"cosa è già prezzato, max 60 caratteri","detail":"max 190 caratteri"} ],\n'
+      + '  "risks": [ 3 oggetti {"label":"rischio non prezzato, max 60 caratteri","detail":"max 190 caratteri"} ]\n'
+      + '}',
+    normalize: (d) => ({
+      usNote: str(d.us_note), euNote: str(d.eu_note), jobsNote: str(d.jobs_note), ratesNote: str(d.rates_note),
+      priced: objs(d.priced, 4).map(p => ({ label: str(p.label), detail: str(p.detail) })),
+      risks: objs(d.risks, 3).map(p => ({ label: str(p.label), detail: str(p.detail) })),
+    }),
+  },
+  // Sentiment (indicatori di posizionamento), Risk-On/Off, validazione incrociata news vs COT/OI/macro e nota COT.
+  sentiment: {
+    needs: ['released', 'cot', 'positioning'],
+    maxTokens: 6500,
+    task: 'Produci: la lettura degli INDICATORI DI SENTIMENT (Fear & Greed, AAII; NAAIM e Put/Call non sono disponibili: dillo senza inventare valori), '
+      + 'il quadro RISK-ON / RISK-OFF (VIX, azionario, oro, regime), la VALIDAZIONE INCROCIATA sull\'ORO (la narrativa delle notizie contro COT, open interest e macro) e una nota generale sul COT. '
+      + 'Per il COT usa solo le righe del blocco POSIZIONAMENTO COT (i percentili sono su 52 settimane, non su 6 mesi). '
+      + 'La validazione incrociata confronta cosa dicono le NOTIZIE con cosa mostrano i dati: "aligned" = notizie e dati puntano nella stessa direzione, "conflict" = si contraddicono.',
+    schema: '{\n'
+      + '  "sent_note": "Lettura d\'insieme di Fear & Greed e AAII: livello, variazione rispetto a settimana/mese precedenti, cosa implica; chiudi dicendo che NAAIM e Put/Call non sono disponibili, max 820 caratteri, con <b>..</b>",\n'
+      + '  "risk": {\n'
+      + '    "vix_sub": "lettura del livello del VIX di oggi, max 150 caratteri",\n'
+      + '    "equity_sub": "lettura dell\'S&P 500 di oggi, max 150 caratteri",\n'
+      + '    "gold_sub": "lettura dell\'oro di oggi, max 150 caratteri",\n'
+      + '    "regime": {"label":"max 22 caratteri maiuscolo, es. RISK-OFF / RISK-ON / MISTO","tone":"risk_on|risk_off|mixed","sub":"max 170 caratteri"},\n'
+      + '    "note": "lettura d\'insieme del regime di rischio, max 620 caratteri, con <b>..</b>"\n'
+      + '  },\n'
+      + '  "xval": [ 3 oggetti in quest\'ordine: "News vs COT", "News vs Open Interest", "News vs Macro" (focus ORO),\n'
+      + '    {"title":"...","status":"aligned|conflict","text":"max 520 caratteri, con numeri presenti nei dati e <b>..</b>"} ],\n'
+      + '  "xv_bias": "bias risultante sull\'oro dai 3 controlli incrociati e indicazione operativa, max 760 caratteri, con <b>..</b>",\n'
+      + '  "cot_note": "nota generale sul posizionamento COT di oggi: gli asset con posizionamento più estremo per percentile e cosa significa, max 760 caratteri, con <b>..</b>"\n'
+      + '}',
+    normalize: (d) => {
+      const r = d.risk || {};
+      const rg = r.regime || {};
+      return {
+        sentNote: str(d.sent_note),
+        risk: {
+          vixSub: str(r.vix_sub), equitySub: str(r.equity_sub), goldSub: str(r.gold_sub), note: str(r.note),
+          regime: { label: str(rg.label), tone: ['risk_on', 'risk_off', 'mixed'].includes(rg.tone) ? rg.tone : 'mixed', sub: str(rg.sub) },
+        },
+        xval: objs(d.xval, 3).map(x => ({ title: str(x.title), status: x.status === 'aligned' ? 'aligned' : 'conflict', text: str(x.text) })),
+        xvBias: str(d.xv_bias),
+        cotNote: str(d.cot_note),
+      };
+    },
+  },
+  // "Notizie macro a confronto": come fonti diverse raccontano gli stessi temi, dalle notizie reali.
+  newscmp: {
+    maxTokens: 2000,
+    task: 'Produci la sezione NOTIZIE MACRO A CONFRONTO: 4 sintesi di come fonti DIVERSE tra quelle presenti nelle notizie raccontano i temi macro dominanti di oggi (inflazione, Fed/tassi, energia/geopolitica, mercati). '
+      + 'Sono sintesi comparate, non citazioni testuali; ogni voce deve basarsi su una notizia realmente presente nell\'elenco e usare come "src" il nome della fonte come compare nell\'elenco.',
+    schema: '{\n'
+      + '  "items": [ 4 oggetti {"src":"nome fonte presente nelle notizie","txt":"2-3 frasi che sintetizzano come quella fonte racconta il tema, max 330 caratteri"} ]\n'
+      + '}',
+    normalize: (d) => ({ items: objs(d.items, 4).map(i => ({ src: str(i.src), txt: str(i.txt) })) }),
+  },
 };
+
+// Per fed e hawkdove i dati macro già usciti (ISM, PCE, lavoro...) migliorano il grounding.
+SECTIONS.fed.needs = ['released'];
+SECTIONS.hawkdove.needs = ['released'];
 
 async function handleEvent(event) {
   try {
@@ -193,7 +335,7 @@ async function handleEvent(event) {
     let data = null;
     if (llmConfigured()) {
       try {
-        const ctx = await buildContext();
+        const ctx = await buildContext(spec.needs || []);
         if (ctx.hasData) {
           const prompt = `${ctx.text}\n${spec.task}\nRestituisci JSON con questa struttura esatta:\n${spec.schema}\nSolo JSON.`;
           const raw = await llmJSON({ system: SYS, prompt, maxTokens: spec.maxTokens });

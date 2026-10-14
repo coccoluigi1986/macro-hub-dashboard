@@ -12,10 +12,23 @@
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchCalendarEvents } = require('../lib/calendar');
+const { fetchMacroCards } = require('../lib/macro-cards');
 
 async function handleEvent(event) {
   try {
     const params = event.queryStringParameters || {};
+
+    // ?view=macro → card Macro USA / Europa / Lavoro costruite dagli ultimi dati già usciti
+    // (attuale, atteso, precedente), invece dei valori scritti a mano di luglio. Vedi lib/macro-cards.js.
+    if (params.view === 'macro') {
+      const cards = await fetchMacroCards();
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=900' },
+        body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar', ...cards }),
+      };
+    }
+
     const from = params.from;
     const to = params.to;
     if (!from || !to) {
