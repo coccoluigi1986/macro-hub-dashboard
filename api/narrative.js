@@ -124,7 +124,7 @@ async function positioningLines() {
   const L = [];
   if (p.fearGreed) {
     const f = p.fearGreed;
-    L.push(`- CNN Fear & Greed: ${f.score}/100 (${f.ratingIt}); chiusura precedente ${f.previousClose}, 1 settimana fa ${f.previousWeek}, 1 mese fa ${f.previousMonth}, 1 anno fa ${f.previousYear}`);
+    L.push(`- CNN Fear & Greed: ${f.score}/100 (${f.ratingIt}); valore di IERI ${f.previousClose}; 7 giorni fa ${f.previousWeek}; 30 giorni fa ${f.previousMonth}; 1 anno fa ${f.previousYear}`);
   }
   if (p.aaii) {
     const a = p.aaii;
