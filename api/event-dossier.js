@@ -1,7 +1,7 @@
 // api/event-dossier.js
 //
 // Serverless Function (Vercel): dossier AI per il "Prossimo evento chiave" — aggiunge un
-// blocco di contesto generato da Claude (perché conta oggi, note sui tempi, asset da
+// blocco di contesto generato da Gemini (perché conta oggi, note sui tempi, asset da
 // monitorare, cosa aspettarsi) SOPRA i dati dell'evento — che restano quelli del calendario
 // curato a mano già presente in index.html (keyEvents). Non sostituisce gli scenari
 // "sopra/sotto le attese" già scritti a mano: quelli restano come sono, il dossier AI è un
@@ -15,7 +15,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/event-dossier?title=...&date=...&impact=alto
 
 const { aggregateNews } = require('../lib/news');
-const { claudeJSON } = require('../lib/claude');
+const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const EVENT_SYS = 'Sei un analista macro senior che prepara il dossier pre-evento per un desk di trading. '
@@ -44,7 +44,7 @@ async function handleEvent(event) {
     const previous = p.previous || 'n/d';
 
     let dossier = null;
-    if (process.env.ANTHROPIC_API_KEY) {
+    if (llmConfigured()) {
       try {
         const local = new Date(dateIso).toLocaleString('it-IT', {
           weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome',
@@ -68,7 +68,7 @@ async function handleEvent(event) {
           + '  "what_to_expect": "cosa guardare esattamente all\'uscita, max 220 caratteri"\n'
           + '}\nSolo JSON.';
 
-        const data = await claudeJSON({ system: EVENT_SYS, prompt, maxTokens: 1500 });
+        const data = await llmJSON({ system: EVENT_SYS, prompt, maxTokens: 1500 });
         dossier = {
           ai: true,
           context: data.context || '',

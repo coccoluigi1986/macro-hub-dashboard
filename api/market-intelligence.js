@@ -4,23 +4,23 @@
 // "Mercati — Asset Monitor": prima i campi "driver" (il paragrafo "da cosa si muove e il
 // perché") e "bars" (i due fattori chiave) di marketData in index.html erano scritti a
 // mano una volta sola e restavano statici per sempre, anche quando il prezzo veniva
-// aggiornato live. Questa funzione li rigenera con Claude a partire da notizie reali
+// aggiornato live. Questa funzione li rigenera con Gemini a partire da notizie reali
 // (lib/news.js) e dai prezzi/variazioni ATTUALI passati dal client (stesso snapshot già
 // mostrato nelle card, per evitare disallineamenti).
 //
 // Gli 11 asset sono divisi in piccoli batch e generati in PARALLELO (Promise.allSettled):
-// una singola chiamata Claude per tutti gli 11 asset andava in timeout (>30s) — batch più
+// una singola chiamata LLM per tutti gli 11 asset andava in timeout (>30s) — batch più
 // piccoli in parallelo restano ben sotto il limite, e se un batch fallisce gli altri
 // restano comunque validi (degradazione parziale, non un 500 totale).
 //
-// Se ANTHROPIC_API_KEY manca o tutti i batch falliscono, il client tiene semplicemente il
+// Se GEMINI_API_KEY manca o tutti i batch falliscono, il client tiene semplicemente il
 // driver statico di fallback già presente in marketData — stesso pattern del resto della dashboard.
 //
 // Query param: ?snapshot=<JSON URL-encoded> — { "<nome asset>": {"val":"...", "chg": n}, ... }
 // Raggiungibile su: https://tuosito.vercel.app/api/market-intelligence
 
 const { aggregateNews } = require('../lib/news');
-const { claudeJSON } = require('../lib/claude');
+const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const BATCHES = [
@@ -54,7 +54,7 @@ async function fetchBatch(batchAssets, priceLines, newsText) {
     + `Regole: usa ESATTAMENTE i nomi degli asset elencati sopra, uno per ciascuno (${batchAssets.length} in totale). `
     + '"tone" indica se il fattore è un vento contrario (red), misto/incerto (gold) o favorevole (green) per l\'asset. '
     + 'Niente prefazioni, solo JSON.';
-  return claudeJSON({ system: SYS, prompt, maxTokens: 2000 });
+  return llmJSON({ system: SYS, prompt, maxTokens: 2000 });
 }
 
 async function handleEvent(event) {
@@ -69,7 +69,7 @@ async function handleEvent(event) {
     const assets = {};
     let anyAi = false;
 
-    if (process.env.ANTHROPIC_API_KEY && items.length) {
+    if (llmConfigured() && items.length) {
       const priceLines = ASSETS.map(a => {
         const s = snapshot[a];
         return s ? `- ${a}: ${s.val}${s.chg != null ? ` (${s.chg >= 0 ? '+' : ''}${s.chg}%)` : ''}` : `- ${a}: prezzo non disponibile`;

@@ -1,18 +1,18 @@
 // api/sentiment-categories.js
 //
 // Serverless Function (Vercel): sentiment operativo per 6 categorie (Fed/Tassi, Geopolitica,
-// Macro, DXY/Dollaro, Gold/Commodities, Indici/Equity), generato da Claude a partire da
+// Macro, DXY/Dollaro, Gold/Commodities, Indici/Equity), generato da Gemini a partire da
 // notizie reali aggregate (lib/news.js). Porting diretto del prompt/schema JSON di
 // backend/routers/intel.py::sentiment_categories() nel progetto di riferimento macrohub3.
 //
-// Se ANTHROPIC_API_KEY manca o la chiamata fallisce, torna un fallback testuale
+// Se GEMINI_API_KEY manca o la chiamata fallisce, torna un fallback testuale
 // esplicito ("Analisi AI non disponibile...") invece di un errore — stesso pattern
 // del resto delle funzioni live di questa dashboard.
 //
 // Raggiungibile su: https://tuosito.vercel.app/api/sentiment-categories
 
 const { aggregateNews } = require('../lib/news');
-const { claudeJSON } = require('../lib/claude');
+const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const CATEGORIES = [
@@ -60,7 +60,7 @@ async function handleEvent(event) {
     }
 
     let payload = null;
-    if (process.env.ANTHROPIC_API_KEY) {
+    if (llmConfigured()) {
       try {
         const catSpec = CATEGORIES.map(c => `- "${c.key}" (${c.label})`).join('\n');
         const prompt = 'Ecco le ultime notizie reali dai mercati (fonte e ora UTC tra parentesi):\n\n'
@@ -80,7 +80,7 @@ async function handleEvent(event) {
           + 'per DXY = dollaro; per GOLD = oro; per INDICI = equity). Usa SOLO nomi di fonti presenti nella lista. '
           + 'Niente prefazioni, solo JSON.';
 
-        const data = await claudeJSON({ system: SENT_SYS, prompt, maxTokens: 3000 });
+        const data = await llmJSON({ system: SENT_SYS, prompt, maxTokens: 3000 });
         const byKey = {};
         (data.categories || []).forEach(c => { if (c && c.key) byKey[c.key] = c; });
 

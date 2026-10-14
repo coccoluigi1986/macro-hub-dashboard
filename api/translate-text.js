@@ -11,7 +11,7 @@
 // { translated: null } cosicché il client possa mostrare semplicemente il testo originale.
 // Raggiungibile su: https://tuosito.vercel.app/api/translate-text?text=...
 
-const { claudeText } = require('../lib/claude');
+const { llmText, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const SYS = 'Sei un traduttore professionale specializzato in economia e finanza. Traduci il testo '
@@ -42,9 +42,9 @@ async function handleEvent(event) {
     }
 
     let translated = null;
-    if (process.env.ANTHROPIC_API_KEY) {
+    if (llmConfigured()) {
       try {
-        translated = await claudeText({ system: SYS, prompt: text, maxTokens: 700 });
+        translated = await llmText({ system: SYS, prompt: text, maxTokens: 700 });
         if (cache.size >= MAX_CACHE) cache.clear();
         cache.set(text, translated);
       } catch (e) {

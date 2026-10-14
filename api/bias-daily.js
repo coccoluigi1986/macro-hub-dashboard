@@ -1,7 +1,7 @@
 // api/bias-daily.js
 //
 // Serverless Function (Vercel): lettura del bias giornaliero geopolitico-macro (RISK-ON /
-// RISK-OFF / NEUTRALE), generata da Claude a partire dalle notizie reali più recenti.
+// RISK-OFF / NEUTRALE), generata da Gemini a partire dalle notizie reali più recenti.
 // Porting del prompt/schema JSON di backend/routers/intel.py::bias_daily() nel progetto
 // di riferimento macrohub3.
 //
@@ -10,13 +10,13 @@
 // non lo facciamo per non dover replicare quello scraping — il bias si basa solo sulle notizie
 // reali, che comunque menzionano quasi sempre gli eventi macro imminenti rilevanti.
 //
-// Se ANTHROPIC_API_KEY manca o la chiamata fallisce, torna un fallback esplicito
+// Se GEMINI_API_KEY manca o la chiamata fallisce, torna un fallback esplicito
 // ("Lettura AI non disponibile...") invece di un errore.
 //
 // Raggiungibile su: https://tuosito.vercel.app/api/bias-daily
 
 const { aggregateNews } = require('../lib/news');
-const { claudeJSON } = require('../lib/claude');
+const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const BIAS_SYS = 'Sei un analista macro-geopolitico senior. Rispondi SEMPRE in italiano. '
@@ -48,7 +48,7 @@ async function handleEvent(event) {
     const items = await aggregateNews(30);
 
     let payload = null;
-    if (process.env.ANTHROPIC_API_KEY && items.length) {
+    if (llmConfigured() && items.length) {
       try {
         const prompt = 'NOTIZIE REALI DELLE ULTIME ORE:\n'
           + `${newsBlock(items, 24)}\n\n`
@@ -64,7 +64,7 @@ async function handleEvent(event) {
           + '}\n'
           + `Includi 4 driver e tutti e ${BIAS_ASSETS.length} gli asset. Solo JSON.`;
 
-        const data = await claudeJSON({ system: BIAS_SYS, prompt, maxTokens: 2500 });
+        const data = await llmJSON({ system: BIAS_SYS, prompt, maxTokens: 2500 });
         payload = {
           generatedAt: new Date().toISOString(),
           ai: true,
