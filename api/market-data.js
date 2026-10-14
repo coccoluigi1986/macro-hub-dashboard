@@ -31,6 +31,8 @@ const SYMBOLS = {
   dxy:    'DX-Y.NYB', // US Dollar Index reale (ICE) — il "proxy" da cambi BCE di fx-data.js sta ~7 punti sotto
   us10y:  '^TNX',    // Rendimento Treasury 10Y, già in % (5.19 = 5,19%)
   brent:  'BZ=F',    // Brent futures
+  usdjpy: 'JPY=X',    // USD/JPY (prima da Frankfurter/BCE tramite fx-data.js, rimosso per il limite di 12 funzioni)
+  russell:'^RUT',    // Russell 2000
 };
 
 async function handleEvent() {

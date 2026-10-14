@@ -962,25 +962,9 @@ section.collapsed > *:not(.sec-head){display:none;}
 </section>
 
 <section id="geo">
-  <div class="sec-head"><span class="sec-num">06</span><h2>Geopolitica</h2><span class="sec-desc">Driver del rischio globale attivo</span></div>
-  <div class="grid grid-2">
-    <div class="card">
-      <div class="lbl">Conflitto USA/Israele – Iran</div>
-      <div class="sub" style="font-size:12.5px; margin-top:8px;">
-        Il conflitto, riacceso con intensità crescente da fine luglio, resta il principale motore geopolitico dei mercati. Lo Strait of Hormuz (~20% del petrolio mondiale via mare) è nominalmente riaperto ma con traffico ridotto e rischioso: le navi transitano spegnendo i transponder per evitare attacchi. Gli USA hanno rafforzato il blocco navale sui porti iraniani e il Segretario al Tesoro Bessent ha annunciato nuove misure economiche "senza precedenti" contro Teheran. I colloqui Iran-Oman sulla riapertura dello stretto restano in stallo.
-      </div>
-    </div>
-    <div class="card">
-      <div class="lbl">Impatto su energia &amp; supply chain</div>
-      <div class="sub" style="font-size:12.5px; margin-top:8px;">
-        L'IEA ha rivisto al ribasso la domanda globale di petrolio, mentre l'OPEC ha tagliato per la quarta volta consecutiva le stime di crescita della domanda 2026 (a 580K b/d). I danni economici diretti del conflitto sono stimati oltre $25 miliardi. Attacchi Houthi contro la raffineria saudita di Jazan aggiungono rischio addizionale sul fronte Mar Rosso. Risultato: Brent +34% su base annua, con premio geopolitico che si somma a un deficit d'offerta strutturale.
-      </div>
-    </div>
-  </div>
-  <div class="section-note">
-    <b>Cosa monitorare:</b> qualsiasi notizia su riapertura/nuova chiusura dello Strait of Hormuz è oggi il singolo evento a più alto impatto potenziale su petrolio, oro, DXY e risk sentiment globale — più della maggior parte dei dati macro schedulati. Un'escalation spingerebbe oil/gold al rialzo e risk-off su equity; una de-escalation (accordo Iran-Oman) potrebbe innescare un repricing rapido al ribasso del petrolio e sollievo su azionario.
-    <div class="source-tag">Fonte: Congress.gov CRS, Reuters, CNBC, IEA/OPEC — aggiornamento 13-14 agosto 2026</div>
-  </div>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Geopolitica</h2><span class="sec-desc">Driver del rischio globale attivo — analisi AI live</span></div>
+  <div class="grid grid-2" id="geoCards"><div class="card"><div class="sub">Analisi in caricamento…</div></div></div>
+  <div class="section-note" id="geoMonitor" style="display:none;"></div>
 
   <div class="eyebrow" style="margin-top:26px;">📰 Notizie Macro-Geopolitiche</div>
   <div class="sn-grid" id="geoNewsGrid"></div>
@@ -989,67 +973,54 @@ section.collapsed > *:not(.sec-head){display:none;}
     <div class="xvb-label">⚔ Bias di conflitto geopolitico</div>
     <div class="xvb-text" id="geoBiasText"></div>
   </div>
+  <div class="source-tag" id="geoMeta"></div>
 </section>
 
 <section id="fed">
-  <div class="sec-head"><span class="sec-num">07</span><h2>Banche Centrali — Fed &amp; CME FedWatch</h2><span class="sec-desc">Probabilità implicite dai Fed Funds futures</span></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Banche Centrali — Fed &amp; CME FedWatch</h2><span class="sec-desc">Dati ufficiali FRED + analisi AI live</span></div>
   <div class="grid grid-3" style="margin-bottom:16px;">
-    <div class="card"><div class="lbl">Target Range Attuale</div><div class="val" style="color:var(--red);">3.75% – 4.00%</div><div class="sub">Rialzo di 25pb confermato al FOMC del 16 set 2026, voto 12-0 — primo rialzo dal 2023, dopo l'inflazione ancora sopra target di agosto</div></div>
-    <div class="card"><div class="lbl">Prossimo FOMC</div><div class="val">27-28 Ott 2026</div><div class="sub">Dot plot post-16set: 16 membri su 18 vedono un altro rialzo entro fine anno (4 ne vedono due)</div></div>
-    <div class="card"><div class="lbl">Ultimo CPI vs target Fed</div><div class="val">3.4% <span style="font-size:13px;color:var(--dim);">vs 2%</span></div><div class="sub">Core 2.4% YoY (ago) — benzina +3,9% m/m ha pesato per oltre 1/3 del rialzo headline</div></div>
+    <div class="card"><div class="lbl">Target Range Attuale</div><div class="val" id="fedTargetVal" style="color:var(--red);">—</div><div class="sub" id="fedTargetSub">Fonte: FRED (limite inferiore e superiore del target range)</div></div>
+    <div class="card"><div class="lbl">Prossimo FOMC</div><div class="val" id="fedNextVal">—</div><div class="sub" id="fedNextSub">Dal calendario economico</div></div>
+    <div class="card"><div class="lbl">Ultimo CPI vs target Fed</div><div class="val" id="fedCpiVal">—</div><div class="sub" id="fedCpiSub">Fonte: FRED</div></div>
   </div>
 
   <div class="card" style="margin-bottom:16px; border-color:var(--red);">
-    <div class="lbl" style="margin-bottom:14px;">Esito FOMC 16 settembre 2026 — <span style="color:var(--red);">rialzo confermato, non più una probabilità</span></div>
-    <div class="probrow"><div class="plabel">Rialzo +25 pb (3.75-4.00%) — ESITO</div><div class="probbar"><div style="width:100%; background:var(--red);">100%</div></div><div class="probval">100%</div></div>
-    <div class="sub" style="margin-top:8px;"><b>Cosa è successo:</b> il FOMC ha alzato i tassi di 25pb a 3,75-4,00%, primo rialzo dal 2023, citando inflazione ancora elevata. Voto unanime 12-0. Warsh ha tenuto la conferenza stampa più breve nella storia dei chair Fed (~30 minuti), coerente con la sua filosofia di comunicazione minimale. Il dot plot aggiornato mostra 16 membri su 18 che vedono un altro rialzo entro fine 2026 (4 ne vedono due) — il prossimo meeting (27-28 ottobre) parte quindi con un bias hawkish esplicito, non da azzerare come al meeting precedente.</div>
+    <div class="lbl" style="margin-bottom:10px;" id="fedDecisionLbl">Stato della politica monetaria</div>
+    <div class="sub" id="fedDecisionText">Analisi in caricamento…</div>
   </div>
 
   <div class="grid grid-2">
     <div class="card">
-      <div class="lbl">Perché il dot plot vede altri RIALZI entro fine anno</div>
-      <div class="sub" style="font-size:12.5px;">
-        • CPI di agosto 3,4% YoY / core 2,4% — ancora sopra il target 2%, con benzina +3,9% m/m a pesare per oltre 1/3 del rialzo<br>
-        • Voto FOMC unanime 12-0 per il rialzo — nessun dissenso dovish, segnale di consenso ampio sul rischio inflazione<br>
-        • Warsh: "l'inflazione resta preoccupante nonostante un'economia impressionante" — utili S&amp;P 500 +20% annuo citati come margine per stringere ulteriormente<br>
-        • Shock energetico dalla guerra Iran/Hormuz ancora in trasmissione ai prezzi finali<br>
-        • 16 membri su 18 nel dot plot vedono almeno un altro rialzo entro dicembre
-      </div>
+      <div class="lbl">Perché la Fed potrebbe restare restrittiva o alzare ancora</div>
+      <div class="sub" id="fedWhyUp" style="font-size:12.5px;"></div>
     </div>
     <div class="card">
-      <div class="lbl">Perché il ciclo di rialzi potrebbe fermarsi qui</div>
-      <div class="sub" style="font-size:12.5px;">
-        • Sentiment AAII crollato a un minimo da 16 mesi (bullish 28,8%, bearish 53,3%) — segnale di stress già visibile nel posizionamento retail<br>
-        • Fear &amp; Greed Index sceso a 29 ("Fear") — il mercato ha già iniziato a prezzare un contesto più restrittivo<br>
-        • Un ulteriore rialzo a ottobre rischia di essere pro-ciclico in un contesto di crescita già rallentata nel Q2<br>
-        • Il costo del capitale più alto pesa progressivamente su small cap e settori a leva più elevata<br>
-        • Una de-escalation improvvisa su Hormuz toglierebbe la componente energetica dello shock inflazionistico, riducendo l'urgenza di nuovi rialzi
-      </div>
+      <div class="lbl">Perché il ciclo restrittivo potrebbe fermarsi</div>
+      <div class="sub" id="fedWhyPause" style="font-size:12.5px;"></div>
     </div>
   </div>
 
-  <div class="section-note">
-    <b>Sintesi operativa — come adeguarsi:</b> il FOMC ha sciolto il nodo in senso hawkish: rialzo confermato, voto unanime, dot plot che segnala altri rialzi entro fine anno. Non è più un regime di incertezza binaria come nelle settimane pre-meeting — il mercato ora deve prezzare la CONTINUAZIONE di un ciclo restrittivo, non più il suo avvio. Operativamente: 1) il dollaro ha già reagito con forza (DXY sui massimi da 7 settimane) — il rischio asimmetrico da qui è un ulteriore allungo su un dato CPI/PPI caldo di ottobre, non un'inversione immediata; 2) l'oro resta sostenuto dal doppio motore geopolitico (Hormuz) + hedge su un ciclo Fed più lungo del previsto, ma il posizionamento COT già molto affollato lo rende vulnerabile a prese di profitto su qualsiasi sorpresa dovish; 3) i rendimenti reali restano la chiave per l'equity growth: un 10Y sopra 4.6% con breakeven inflazione stabile mantiene il real yield elevato, un vento contrario per Nasdaq/duration lunga; 4) il sentiment retail (AAII) e il Fear&amp;Greed sono già scesi bruscamente — il rischio ora è tanto un ulteriore hawkish surprise quanto un eccesso di pessimismo che prepara un rimbalzo tecnico.
-  </div>
+  <div class="section-note" id="fedSynthesis" style="display:none;"></div>
+  <div class="source-tag" id="fedMeta"></div>
 </section>
 
 <section id="hawkdove">
-  <div class="sec-head"><span class="sec-num">08</span><h2>Barometro Hawkish / Dovish</h2><span class="sec-desc">Bilancio dei fattori in gioco</span></div>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Barometro Hawkish / Dovish</h2><span class="sec-desc">Bilancio dei fattori in gioco — analisi AI live</span></div>
   <div class="grid grid-2">
     <div class="card" style="border-color:var(--red);">
-      <div class="lbl" style="color:var(--red);">🦅 Spinte Hawkish (rialzo confermato + dot plot verso altri rialzi)</div>
-      <div class="sub" style="font-size:12.5px;">Rialzo +25pb confermato il 16 set (voto 12-0) · Dot plot: 16/18 membri vedono un altro rialzo entro fine anno · CPI ago 3,4% YoY ancora sopra target · Shock petrolifero da guerra Iran/Hormuz · Warsh: inflazione "ancora preoccupante"</div>
+      <div class="lbl" style="color:var(--red);">🦅 Spinte Hawkish</div>
+      <div class="sub" id="hdHawk" style="font-size:12.5px;">Analisi in caricamento…</div>
     </div>
     <div class="card" style="border-color:var(--green);">
-      <div class="lbl" style="color:var(--green);">🕊️ Spinte Dovish (limiti al ciclo di rialzi)</div>
-      <div class="sub" style="font-size:12.5px;">Sentiment AAII ai minimi da 16 mesi (bearish 53,3%) · Fear&amp;Greed sceso a 29 ("Fear") · Crescita Q2 già rallentata · Costo del capitale in aumento pesa su small cap/duration lunga · Una de-escalation su Hormuz toglierebbe la componente energetica dello shock inflazionistico</div>
+      <div class="lbl" style="color:var(--green);">🕊️ Spinte Dovish</div>
+      <div class="sub" id="hdDove" style="font-size:12.5px;"></div>
     </div>
   </div>
-  <div class="section-note">Il FOMC ha risolto l'incertezza in senso <b>hawkish</b>: rialzo confermato, voto unanime, dot plot che segnala almeno un altro rialzo entro dicembre. Il mercato (AAII, Fear&amp;Greed) ha già reagito con un deterioramento marcato del sentiment. Attenzione ai dati di ottobre (CPI, PPI, NFP) come catalizzatori per il meeting del 27-28 ottobre.</div>
+  <div class="section-note" id="hdNote" style="display:none;"></div>
 
   <div class="eyebrow" style="margin-top:26px;">📋 Cosa dicono i dati usciti</div>
   <div class="page-title" style="font-size:20px;" id="hdRegimeTitle"></div>
-  <div class="hd-quote" id="hdRegimeQuote"></div>
+  <div class="hd-quote" id="hdRegimeQuote" style="display:none;"></div>
   <div id="hdCategories"></div>
   <div id="hdConflicts"></div>
   <div class="hd-fomc-box">
@@ -1059,6 +1030,7 @@ section.collapsed > *:not(.sec-head){display:none;}
     <div class="hd-fomc-note" id="hdFomcNote"></div>
   </div>
   <div class="hd-synthesis" id="hdSynthesis"></div>
+  <div class="source-tag" id="hdMeta"></div>
 </section>
 
 <section id="calendar">
@@ -1176,13 +1148,15 @@ section.collapsed > *:not(.sec-head){display:none;}
 </section>
 
 <section id="assets">
-  <div class="sec-head"><span class="sec-num">15</span><h2>Cruscotto Asset — Bias, Sentiment, Outlook</h2><span class="sec-desc">Correlazione con DXY · scenario · fattori geopolitici in conflitto</span></div>
-  <div id="assetCards"></div>
+  <div class="sec-head"><span class="sec-num">15</span><h2>Cruscotto Asset — Bias, Sentiment, Outlook</h2><span class="sec-desc">Correlazione con DXY · scenario · analisi AI live</span></div>
+  <div id="assetCards"><div class="section-note">Analisi in caricamento…</div></div>
+  <div class="source-tag" id="assetsMeta"></div>
 </section>
 
 <section id="indices">
-  <div class="sec-head"><span class="sec-num">16</span><h2>Indici Azionari — Comportamento &amp; Note Operative</h2><span class="sec-desc">Come si muovono le azioni e perché</span></div>
-  <div id="indicesCards"></div>
+  <div class="sec-head"><span class="sec-num">16</span><h2>Indici Azionari — Comportamento &amp; Note Operative</h2><span class="sec-desc">Come si muovono le azioni e perché — analisi AI live</span></div>
+  <div id="indicesCards"><div class="section-note">Analisi in caricamento…</div></div>
+  <div class="source-tag" id="indicesMeta"></div>
 </section>
 
 <!-- ============ MACRO ============ -->
@@ -1230,7 +1204,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 
 
 <footer>
-  <span id="footerTimestamp">Dashboard creata il 14 agosto 2026.</span> I dati con badge "● Live" (Mercati, Macro USA/Europa, COT) provengono da fonti gratuite (FRED, CFTC, Frankfurter/BCE, Yahoo Finance, Dukascopy, TradingView) e si aggiornano automaticamente ad ogni apertura della pagina o click su "Ricarica vista". Le sezioni di analisi narrativa (Geopolitica, Sentiment News per Categoria, sintesi del Barometro Hawkish/Dovish) sono <b>curate manualmente</b> e mostrano onestamente da quanti giorni non vengono riverificate — nessuna fonte gratuita automatizza questo tipo di analisi. Nessuna parte di questo strumento costituisce consulenza finanziaria.
+  <span id="footerTimestamp">Dashboard creata il 14 agosto 2026.</span> I dati con badge "● Live" (Mercati, Macro USA/Europa, COT) provengono da fonti gratuite (FRED, CFTC, Frankfurter/BCE, Yahoo Finance, Dukascopy, TradingView) e si aggiornano automaticamente ad ogni apertura della pagina o click su "Ricarica vista". Le analisi narrative (Geopolitica, Fed, Barometro Hawkish/Dovish, Cruscotto Asset, Indici, Sentiment News, Bias giornaliero) sono generate dall'AI (Gemini) a partire da notizie, prezzi e dati ufficiali reali e si rigenerano da sole. Restano <b>scritte a mano</b> solo alcune note di commento (sotto le card macro, COT, Risk-On/Off, Notizie a confronto), che possono invecchiare. Nessuna parte di questo strumento costituisce consulenza finanziaria.
 </footer>
 
 </main>
@@ -1262,7 +1236,7 @@ function toggleSection(id){
   const sec = document.getElementById(id);
   if(!sec) return;
   sec.classList.toggle('collapsed');
-  if(sec.classList.contains('collapsed')) collapsedSectionIds.add(id); else collapsedSectionIds.delete(id);
+  if(sec.classList.contains('collapsed')) collapsedSectionIds.add(id); else { collapsedSectionIds.delete(id); if(typeof ensureNarrative === 'function' && NARRATIVE_SECTIONS.includes(id)) ensureNarrative(id); }
   try{ localStorage.setItem(SEC_COLLAPSE_STORAGE_KEY, JSON.stringify([...collapsedSectionIds])); }catch(e){}
 }
 
@@ -1333,6 +1307,7 @@ async function loadKeyEvents(){
   }catch(err){ keyEventsState = 'error'; }
   refreshKeyEvent(true);
   renderWeekCalendar();
+  if(typeof applyFedNextFomc === 'function') applyFedNextFomc();
 }
 
 function pickNextKeyEvent(){
@@ -1834,42 +1809,6 @@ function applyLiveMacroToHawkDove(live){
   return any;
 }
 renderHdCategories();
-
-document.getElementById('hdRegimeTitle').textContent = 'Raffreddamento con eccezioni hawkish';
-document.getElementById('hdRegimeQuote').innerHTML = 'Inflazione e mercato del lavoro USA si stanno raffreddando più delle attese, aprendo spazio a un taglio Fed — ma la tenuta del settore manifatturiero (ISM) e la sorprendente forza dell\'Eurozona complicano il quadro. <b>Regime tendenzialmente di supporto per l\'oro, ma non unanime.</b>';
-
-const hdConflicts = [
-  'Inflazione dovish ma attività industriale (ISM Manufacturing) hawkish: i due fronti si contraddicono — il regime può ribaltarsi col prossimo dato.',
-  'Crescita USA (PIL) dovish ma Europa hawkish: mentre gli USA rallentano, l\'Eurozona accelera — divergenza transatlantica da monitorare da vicino sul cross EUR/USD.',
-];
-document.getElementById('hdConflicts').innerHTML = hdConflicts.map(c=>`<div class="hd-conflict">⚠ ${c}</div>`).join('');
-
-document.getElementById('hdFomcHeadline').innerHTML = 'FOMC del 16 settembre: <b>rialzo di 25pb confermato</b> a 3,75-4,00%, voto unanime 12-0 — non è più una previsione. Il dot plot aggiornato segnala che 16 membri su 18 vedono almeno un altro rialzo entro fine 2026.';
-document.getElementById('hdFomcRows').innerHTML = `
-  <div class="hd-fomc-row"><span>FOMC del 16 settembre — ESITO</span><b style="color:var(--red);">Rialzo +25pb confermato (voto 12-0) → 3,75-4,00%</b></div>
-  <div class="hd-fomc-row"><span>Dot plot post-16set (prossimi meeting entro dicembre)</span><b style="color:var(--red);">16/18 membri vedono un altro rialzo, 4 ne vedono due</b></div>
-  <div class="hd-fomc-row"><span>Prossimo FOMC — 27-28 ottobre 2026</span><b>Bias esplicitamente hawkish da dot plot, probabilità puntuali non ancora liquide</b></div>
-`;
-document.getElementById('hdFomcNote').textContent = 'Le probabilità puntuali per il meeting del 27-28 ottobre non sono ancora sufficientemente liquide/pubblicate a questa distanza temporale — questa sezione verrà aggiornata quando i dati diventeranno disponibili, invece di stimarli senza fonte verificata. Il dot plot resta però un indicatore direzionale esplicito e verificato.';
-document.getElementById('hdSynthesis').innerHTML = 'Il FOMC ha risolto l\'incertezza in senso hawkish: rialzo confermato, voto unanime, dot plot che segnala altri rialzi entro fine anno. Il mercato ha già reagito con un deterioramento marcato del sentiment (AAII ai minimi da 16 mesi, Fear&amp;Greed sceso a "Fear") mentre il dollaro tratta sui massimi da 7 settimane. Il rischio da qui non è più "hike o hold", ma quanto lontano si spinga il ciclo — i prossimi dati chiave (<b>CPI e PPI di ottobre</b>, <b>NFP di inizio ottobre</b>) diranno se il dot plot troverà conferma o se il deterioramento del sentiment anticipa già un rallentamento reale che fermerebbe la Fed prima.';
-
-// ---------- NOTIZIE MACRO-GEOPOLITICHE + BIAS DI CONFLITTO ----------
-const geoNewsData = [
-  {cat:'Stretto di Hormuz', trend:'bear', desc:'Largamente bloccato dal 28 febbraio (guerra USA/Israele-Iran, 6+ mesi). Nuova escalation il 3-4 set: attacchi USA su target iraniani, ritorsioni contro basi USA regionali. 20 marittimi morti, 35 feriti dall\'inizio del conflitto.', sources:['Wikipedia','Bloomberg']},
-  {cat:'Petrolio — nuovo balzo', trend:'bear', desc:'WTI verso $92/bbl (+9% in una settimana), Brent sotto $96 — settimana migliore da luglio. Riacutizzazione dopo un periodo di relativa calma.', sources:['Bloomberg']},
-  {cat:'Blocco navale &amp; sanzioni', trend:'bear', desc:'Blocco navale USA sui porti iraniani attivo dal 13 aprile. Formato il "Persian Gulf Strait Authority"; firmato l\'"Islamabad Memorandum". Pressione sanzionatoria in aumento, poco spazio per de-escalation nel breve.', sources:['Wikipedia','Reuters']},
-  {cat:'Domanda energia', trend:'neutral', desc:'IEA/OPEC hanno tagliato le stime di domanda globale per 4 revisioni consecutive — il rally attuale è guidato dal rischio evento, non dai fondamentali.', sources:['IEA','OPEC']},
-];
-document.getElementById('geoNewsGrid').innerHTML = geoNewsData.map(g=>{
-  const trendLbl = g.trend==='bear'?'↗ Rischio in aumento':g.trend==='bull'?'↘ Rischio in calo':'→ Stabile';
-  return `<div class="sn-card trend-${g.trend}">
-    <div class="sn-card-top"><div class="sn-cat">${g.cat}</div><div class="sn-trend ${g.trend}">${trendLbl}</div></div>
-    <div class="sn-desc">${g.desc}</div>
-    <div class="sn-sources">Fonti: ${g.sources.map(x=>`<span>[${x}]</span>`).join(' ')}</div>
-  </div>`;
-}).join('');
-
-document.getElementById('geoBiasText').innerHTML = '<b>Guerra aperta, non più "tensioni"</b> — dal 28 febbraio lo Stretto è largamente bloccato, con un\'escalation fresca il 3-4 settembre che ha spinto WTI verso $92 (+9% in una settimana). Bias netto: <b>premio geopolitico strutturale su oro e petrolio</b>, nessun segnale di de-escalation all\'orizzonte. <b>Operativamente:</b> rischio asimmetrico verso l\'alto — un\'ulteriore escalation genera gap overnight su oil/oro/DXY più facilmente di quanto un cessate il fuoco possa sgonfiare i prezzi in modo ordinato.';
 
 // ---------- JOBS GRID ----------
 const jobsData = [
@@ -2848,30 +2787,172 @@ function applySentimentAssetsLive(market, dxyCorr){
 
 document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. Il posizionamento retail (Dukascopy SWFX) va letto spesso in chiave contrarian quando molto sbilanciato (oltre il 65-70% da un lato); dove non disponibile, lo split riflette semplicemente l\'ampiezza della variazione di oggi. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni.';
 
-// ---------- ASSET DASHBOARD ----------
-const assets = [
-  {name:'EUR/USD', bias:'neutral', biasLbl:'NEUTRALE / LIEVE RIBASSO', dxy:'Correlazione inversa forte (~ -0.95)', sentiment:'Misto — attesa Fed domina', outlook:'55% laterale / 30% ribasso / 15% rialzo', text:'Il cross resta ostaggio del ciclo Fed: un sorpresa hawkish USA (rialzo o hold aggressivo) spinge DXY su e EUR/USD giù verso supporti chiave. La BCE, in un contesto di crescita EU debole, ha meno margine per essere aggressiva. Nessun conflitto geopolitico diretto sull\'Eurozona, ma l\'esposizione a shock energetici (import gas/petrolio) resta un fattore di rischio strutturale al ribasso.'},
-  {name:'USD/JPY', bias:'bull', biasLbl:'RIALZISTA (USD forte)', dxy:'Correlazione diretta con yield USA', sentiment:'Rialzista se spread tassi USA-Giappone resta ampio', outlook:'50% rialzo / 35% laterale / 15% ribasso', text:'Il differenziale di tasso resta il driver dominante: finché la Fed non taglia concretamente, lo yen resta strutturalmente debole. Rischio principale: intervento verbale/diretto della Banca del Giappone se il cross si avvicina a soglie storicamente sensibili — attenzione a headline risk improvviso in entrambe le direzioni.'},
-  {name:'Oro (XAU/USD)', bias:'bull', biasLbl:'RIALZISTA STRUTTURALE', dxy:'Correlazione inversa ma indebolita dal premio geopolitico', sentiment:'Positivo — domanda hedge + posizionamento COT net long', outlook:'50% rialzo / 35% laterale / 15% ribasso', text:'L\'oro beneficia di un doppio motore: rischio geopolitico Iran/Hormuz e attesa di un ciclo Fed meno restrittivo nei prossimi trimestri. Il posizionamento COT (net long 130.7K managed money) conferma il sentiment costruttivo, ma livelli di posizionamento elevati aumentano il rischio di storni tecnici violenti su notizie di de-escalation improvvisa.'},
-  {name:'Petrolio (WTI/Brent)', bias:'bull', biasLbl:'RIALZISTA CON ALTA VOLATILITÀ', dxy:'Correlazione debole/instabile, dominata da fattori supply', sentiment:'Rialzista headline-driven, ma IEA/OPEC tagliano stime domanda', outlook:'45% rialzo / 30% laterale / 25% ribasso brusco su de-escalation', text:'Prezzo sostenuto dal rischio concreto sullo Stretto di Hormuz e dal blocco navale USA-Iran, ma la domanda globale è in indebolimento secondo IEA e OPEC (4ª revisione al ribasso consecutiva). Questo crea un mercato a "due velocità": premio geopolitico sopra un fondamentale di domanda debole. Un accordo Iran-Oman potrebbe innescare un repricing ribassista rapido e ampio.'},
-  {name:'S&P 500 / Nasdaq', bias:'bull', biasLbl:'RIALZISTA MA FRAGILE', dxy:'Correlazione inversa moderata (dollaro forte pesa su multinazionali)', sentiment:'Positivo — trainato da utili tech/AI (es. Microsoft, Nvidia)', outlook:'55% rialzo moderato / 30% laterale / 15% correzione su shock Iran', text:'Gli indici sono vicino ai massimi storici sostenuti da utili robusti nel comparto tecnologico/AI, con VIX basso a confermare la fiducia del mercato. Il rischio principale non è nei dati macro USA ma in un evento esogeno (escalation Iran, sorpresa Fed hawkish, dato inflazione molto sopra attese) che potrebbe innescare una correzione rapida vista la bassa protezione implicita (VIX 14.6).'},
-];
-document.getElementById('assetCards').innerHTML = assets.map(a=>`
-  <div class="asset-card">
-    <div class="asset-head"><span class="aname">${a.name}</span><span class="asset-bias ${a.bias}">${a.biasLbl}</span></div>
-    <div class="asset-meta"><span>Corr. DXY: <b>${a.dxy}</b></span><span>Sentiment: <b>${a.sentiment}</b></span><span>Outlook prob.: <b>${a.outlook}</b></span></div>
-    <div class="asset-body"><p>${a.text}</p></div>
-  </div>`).join('');
+// ---------- ANALISI NARRATIVE AI LIVE (Geopolitica, Fed, Hawkish/Dovish, Cruscotto Asset, Indici) ----------
+// Prima erano testi scritti a mano (CPI di agosto, FOMC del 16 settembre, "7 settimane di massimi del DXY"...)
+// che invecchiavano in silenzio. Ora ogni sezione chiede un'analisi a /api/narrative, generata da Gemini a
+// partire da notizie reali, prezzi di oggi, dati FRED e calendario economico (con il divieto di citare fatti
+// non presenti in quei dati). Le sezioni chiuse si caricano alla prima apertura.
+const NARRATIVE_SECTIONS = ['geo','fed','hawkdove','assets','indices'];
+const NARRATIVE_STATE = {};              // sezione -> 'loading' | 'done'
+let lastMarketQuotes = null;             // ultimo payload di /api/market-data (per nomi+prezzi degli indici)
 
-// ---------- INDICES ----------
-const indices = [
-  {name:'S&P 500 — 7,799 (+0.65%)', text:'Guidato dal peso crescente del comparto tech/AI: earnings robusti compensano il freno dei tassi elevati. Operativamente: livello di riferimento chiave sopra la SMA a 50gg; volumi in aumento su breakout confermano forza, non seguire breakout su volumi bassi in questo contesto di bassa volatilità generale.'},
-  {name:'Nasdaq Composite — 26,803 (+0.81%)', text:'Più sensibile del S&P alla componente growth/duration: qualsiasi sorpresa hawkish della Fed (rialzo tassi o yield in salita) colpisce l\'indice in modo sproporzionato. Da monitorare in relazione diretta al 10Y: un 10Y sopra 4.75-4.80% è storicamente un livello di frizione per i multipli tech.'},
-  {name:'Dow Jones — 53,840 (+0.13%)', text:'Meno esposto alla componente tech, più correlato a ciclo industriale/energia: beneficia parzialmente del rialzo dei prezzi energetici (componenti oil&gas) mentre viene penalizzato da costi input più alti per gli industriali.'},
-  {name:'Russell 2000 — 3,053 (+0.24%)', text:'Le small cap restano il termometro più sensibile al costo del capitale: un rialzo dei tassi a settembre pesa più duramente qui che sui large cap, dato il maggior ricorso al debito a tasso variabile.'},
+// Testo AI → HTML sicuro: escape totale, poi si riabilita solo <b>..</b>
+function safeHtml(t){ return escHtml(t || '').replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>'); }
+function bulletList(items){ return (items||[]).map(x=>`• ${safeHtml(x)}`).join('<br>'); }
+
+async function fetchNarrative(section){
+  try{
+    const res = await fetch(`/api/narrative?section=${section}`);
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ return null; }
+}
+
+function setNarrativeMeta(id, res){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const time = res.generatedAt ? new Date(res.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '';
+  el.textContent = `Analisi generata alle ${time} da notizie reali, prezzi di mercato, dati FRED e calendario economico (Gemini) — si rigenera da sola ogni 3 ore.`;
+}
+
+function renderNarrativeGeo(d, res){
+  document.getElementById('geoCards').innerHTML = d.cards.map(c=>`
+    <div class="card"><div class="lbl">${escHtml(c.label)}</div><div class="sub" style="font-size:12.5px; margin-top:8px;">${safeHtml(c.text)}</div></div>`).join('');
+  const mon = document.getElementById('geoMonitor');
+  if(d.monitor){ mon.innerHTML = `<b>Cosa monitorare:</b> ${safeHtml(d.monitor)}`; mon.style.display = ''; }
+  const TREND = {up:{cls:'bear', lbl:'↗ Rischio in aumento'}, down:{cls:'bull', lbl:'↘ Rischio in calo'}, flat:{cls:'neutral', lbl:'→ Stabile'}};
+  document.getElementById('geoNewsGrid').innerHTML = d.news.map(g=>{
+    const t = TREND[g.trend] || TREND.flat;
+    return `<div class="sn-card trend-${t.cls}">
+      <div class="sn-card-top"><div class="sn-cat">${escHtml(g.cat)}</div><div class="sn-trend ${t.cls}">${t.lbl}</div></div>
+      <div class="sn-desc">${safeHtml(g.desc)}</div>
+      ${g.sources.length ? `<div class="sn-sources">Fonti: ${g.sources.map(x=>`<span>[${escHtml(x)}]</span>`).join(' ')}</div>` : ''}
+    </div>`;
+  }).join('');
+  document.getElementById('geoBiasText').innerHTML = safeHtml(d.bias);
+  setNarrativeMeta('geoMeta', res);
+}
+
+function renderNarrativeFed(d, res){
+  document.getElementById('fedDecisionLbl').textContent = d.decision.headline || 'Stato della politica monetaria';
+  document.getElementById('fedDecisionText').innerHTML = safeHtml(d.decision.text);
+  document.getElementById('fedWhyUp').innerHTML = bulletList(d.whyUp);
+  document.getElementById('fedWhyPause').innerHTML = bulletList(d.whyPause);
+  const syn = document.getElementById('fedSynthesis');
+  if(d.synthesis){ syn.innerHTML = `<b>Sintesi operativa — come adeguarsi:</b> ${safeHtml(d.synthesis)}`; syn.style.display = ''; }
+  setNarrativeMeta('fedMeta', res);
+}
+
+function renderNarrativeHawkDove(d, res){
+  const TONE = {hawk:'var(--red)', dove:'var(--green)', neutral:'var(--text)'};
+  document.getElementById('hdHawk').innerHTML = (d.hawk||[]).map(safeHtml).join(' · ');
+  document.getElementById('hdDove').innerHTML = (d.dove||[]).map(safeHtml).join(' · ');
+  const note = document.getElementById('hdNote');
+  if(d.note){ note.innerHTML = safeHtml(d.note); note.style.display = ''; }
+  document.getElementById('hdRegimeTitle').textContent = d.regimeTitle;
+  const q = document.getElementById('hdRegimeQuote');
+  if(d.regimeQuote){ q.innerHTML = safeHtml(d.regimeQuote); q.style.display = ''; }
+  document.getElementById('hdConflicts').innerHTML = (d.conflicts||[]).map(c=>`<div class="hd-conflict">⚠ ${safeHtml(c)}</div>`).join('');
+  document.getElementById('hdFomcHeadline').innerHTML = safeHtml(d.fomc.headline);
+  document.getElementById('hdFomcRows').innerHTML = (d.fomc.rows||[]).map(r=>
+    `<div class="hd-fomc-row"><span>${escHtml(r.label)}</span><b style="color:${TONE[r.tone]};">${escHtml(r.value)}</b></div>`).join('');
+  document.getElementById('hdFomcNote').textContent = d.fomc.note;
+  document.getElementById('hdSynthesis').innerHTML = safeHtml(d.synthesis);
+  setNarrativeMeta('hdMeta', res);
+}
+
+// Le 5 card del Cruscotto Asset, nell'ordine in cui l'AI le restituisce. La correlazione con il DXY NON viene
+// dall'AI: è quella reale a 30 giorni già calcolata per la sezione Mercati (dxy-correlation.js).
+const ASSET_CARDS = [
+  {key:'eurusd', name:'EUR/USD', corrAsset:'EUR/USD'},
+  {key:'usdjpy', name:'USD/JPY', corrAsset:null},
+  {key:'gold',   name:'Oro (XAU/USD)', corrAsset:'Gold Futures'},
+  {key:'oil',    name:'Petrolio (WTI/Brent)', corrAsset:'WTI Crude Oil'},
+  {key:'equity', name:'S&P 500 / Nasdaq', corrAsset:'S&P 500'},
 ];
-document.getElementById('indicesCards').innerHTML = indices.map(i=>`
-  <div class="asset-card"><div class="asset-head"><span class="aname">${i.name}</span></div><div class="asset-body"><p>${i.text}</p></div></div>`).join('');
+function renderNarrativeAssets(d, res){
+  const byKey = {}; d.assets.forEach(a=>{ byKey[a.key] = a; });
+  document.getElementById('assetCards').innerHTML = ASSET_CARDS.filter(c=>byKey[c.key]).map(c=>{
+    const a = byKey[c.key];
+    const m = c.corrAsset ? marketData.find(x=>x.name===c.corrAsset) : null;
+    const corrTxt = m && m.corr && m.corr !== '—' ? `${m.corrLbl} (${m.corr})` : 'non monitorata';
+    return `<div class="asset-card">
+      <div class="asset-head"><span class="aname">${c.name}</span><span class="asset-bias ${a.bias}">${escHtml(a.biasLabel)}</span></div>
+      <div class="asset-meta"><span>Corr. DXY (30g): <b>${escHtml(corrTxt)}</b></span><span>Sentiment: <b>${escHtml(a.sentiment)}</b></span><span>Scenari indicativi: <b>${escHtml(a.outlook)}</b></span></div>
+      <div class="asset-body"><p>${safeHtml(a.text)}</p></div>
+    </div>`;
+  }).join('');
+  setNarrativeMeta('assetsMeta', res);
+}
+
+const INDEX_CARDS = [
+  {key:'sp500', label:'S&P 500'}, {key:'nasdaq', label:'Nasdaq 100'}, {key:'dow', label:'Dow Jones'}, {key:'russell', label:'Russell 2000'},
+];
+function renderNarrativeIndices(d, res){
+  const byKey = {}; d.indices.forEach(i=>{ byKey[i.key] = i; });
+  document.getElementById('indicesCards').innerHTML = INDEX_CARDS.filter(c=>byKey[c.key]).map(c=>{
+    const q = lastMarketQuotes && lastMarketQuotes[c.key];
+    const live = q && !q.error && q.price != null
+      ? ` — ${q.price.toLocaleString('it-IT',{maximumFractionDigits:0})}${q.changePercent!=null ? ` (${q.changePercent>=0?'+':''}${q.changePercent.toFixed(2)}%)` : ''}` : '';
+    return `<div class="asset-card"><div class="asset-head"><span class="aname">${c.label}${live}</span></div><div class="asset-body"><p>${safeHtml(byKey[c.key].text)}</p></div></div>`;
+  }).join('');
+  setNarrativeMeta('indicesMeta', res);
+}
+
+const NARRATIVE_RENDERERS = {geo:renderNarrativeGeo, fed:renderNarrativeFed, hawkdove:renderNarrativeHawkDove, assets:renderNarrativeAssets, indices:renderNarrativeIndices};
+const NARRATIVE_UNAVAILABLE = 'Analisi AI non disponibile in questo ciclo — riprova tra qualche minuto.';
+function showNarrativeUnavailable(section){
+  const target = {geo:'geoCards', fed:'fedDecisionText', hawkdove:'hdHawk', assets:'assetCards', indices:'indicesCards'}[section];
+  const el = document.getElementById(target);
+  if(el) el.innerHTML = section==='geo' ? `<div class="card"><div class="sub">${NARRATIVE_UNAVAILABLE}</div></div>` : NARRATIVE_UNAVAILABLE;
+}
+
+// Carica l'analisi di una sezione (una sola volta). Se la sezione è chiusa si rimanda alla prima apertura
+// (toggleSection richiama questa funzione), così non si spendono chiamate AI per sezioni che nessuno guarda.
+function ensureNarrative(section){
+  if(NARRATIVE_STATE[section]) return;
+  const sec = document.getElementById(section);
+  if(!sec || sec.classList.contains('collapsed')) return;
+  NARRATIVE_STATE[section] = 'loading';
+  fetchNarrative(section).then(res=>{
+    if(res && res.ai && res.data){
+      try{ NARRATIVE_RENDERERS[section](res.data, res); NARRATIVE_STATE[section] = 'done'; }
+      catch(e){ console.warn('Rendering analisi', section, 'fallito:', e.message); NARRATIVE_STATE[section] = null; showNarrativeUnavailable(section); }
+    } else {
+      NARRATIVE_STATE[section] = null;   // consente un nuovo tentativo alla prossima apertura
+      showNarrativeUnavailable(section);
+    }
+  });
+}
+NARRATIVE_SECTIONS.forEach(ensureNarrative);
+
+// Card Fed in alto: dati ufficiali FRED (target range, CPI) e prossima decisione dal calendario — niente testo fisso.
+function applyFedCards(macro){
+  if(!macro) return false;
+  const set = (id, html)=>{ const el = document.getElementById(id); if(el) el.innerHTML = html; };
+  let any = false;
+  if(macro.fedTargetLower != null && macro.fedTargetUpper != null){
+    set('fedTargetVal', `${macro.fedTargetLower.toFixed(2).replace('.',',')}% – ${macro.fedTargetUpper.toFixed(2).replace('.',',')}%`);
+    const ff = parseFloat(macro.fedFundsRate);
+    set('fedTargetSub', `Fed funds effettivo ${isNaN(ff) ? '—' : ff.toFixed(2).replace('.',',')+'%'} · fonte FRED`);
+    any = true;
+  }
+  const cpi = parseFloat(macro.cpiYoY), core = parseFloat(macro.coreCpiYoY);
+  if(!isNaN(cpi)){
+    set('fedCpiVal', `${cpi.toFixed(1).replace('.',',')}% <span style="font-size:13px;color:var(--dim);">vs 2%</span>`);
+    set('fedCpiSub', `${!isNaN(core) ? `Core ${core.toFixed(1).replace('.',',')}% YoY · ` : ''}riferimento ${fmtItDate(macro.cpiDate) || '—'} (FRED)`);
+    any = true;
+  }
+  return any;
+}
+function applyFedNextFomc(){
+  const ev = keyEvents.find(e => e.currency==='USD' && /interest rate decision|fomc/i.test(e.rawTitle) && e.utc > Date.now());
+  const val = document.getElementById('fedNextVal'), sub = document.getElementById('fedNextSub');
+  if(!val || !sub) return;
+  if(!ev){ val.textContent = '—'; sub.textContent = 'Nessuna decisione Fed nel calendario dei prossimi 45 giorni'; return; }
+  val.textContent = new Date(ev.utc).toLocaleDateString('it-IT', {day:'numeric', month:'long', year:'numeric', timeZone:'Europe/Rome'});
+  sub.textContent = `Decisione sui tassi alle ${new Date(ev.utc).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'})} (Italia) — dal calendario economico`;
+}
 
 // ---------- LIVE DATA via Serverless Functions (Vercel) (con fallback allo snapshot statico) ----------
 // Se questo file gira su Vercel con le funzioni configurate, aggiorna i valori reali.
@@ -2885,15 +2966,6 @@ async function fetchLiveMacro(){
     const json = await res.json();
     return json.data;
   }catch(e){ return null; } // offline, locale, o funzione non ancora deployata: nessun errore visibile
-}
-
-async function fetchLiveFX(){
-  try{
-    const res = await fetch('/api/fx-data');
-    if(!res.ok) return null;
-    const json = await res.json();
-    return json.data;
-  }catch(e){ return null; }
 }
 
 async function fetchLiveMarket(){
@@ -3069,6 +3141,7 @@ function fmtItDate(iso){
 
 function applyLiveMarketToMonitor(live){
   if(!live) return false;
+  lastMarketQuotes = live;
   let any = false;
   // decimali di visualizzazione per asset (cambi a 4, DXY a 2, rendimento 10Y a 3, il resto a 2)
   const map = {
@@ -3103,7 +3176,7 @@ function applyLiveMarketToMonitor(live){
 
 // Ticker in alto, costruito solo da dati live (Yahoo Finance, Frankfurter, FRED, CFTC). Le voci di cui
 // manca il dato vengono semplicemente omesse, invece di mostrare un valore vecchio scritto a mano.
-function buildLiveTicker({fx, market, macro, cot}){
+function buildLiveTicker({market, macro, cot}){
   const items = [];
   const quote = k => (market && market[k] && !market[k].error && market[k].price != null) ? market[k] : null;
   const num = (v, dec) => v.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
@@ -3116,7 +3189,7 @@ function buildLiveTicker({fx, market, macro, cot}){
   addQuote('DXY', 'dxy', 2);
   addQuote('EUR/USD', 'eurusd', 4);
   addQuote('GBP/USD', 'gbpusd', 4);
-  if(fx && fx.USDJPY) items.push({n:'USD/JPY', v:fx.USDJPY, d:'BCE', up:null});
+  addQuote('USD/JPY', 'usdjpy', 2);
   const y = quote('us10y');
   if(y){
     const bp = y.previousClose != null ? (y.price - y.previousClose) * 100 : null;
@@ -3411,37 +3484,19 @@ function applyLiveMarketPricing(live){
   return any;
 }
 
-function applyLiveFXToTicker(live){
-  if(!live) return false;
-  // Fallback per le card "Mercati": se Yahoo Finance (applyLiveMarketToMonitor, applicato dopo) non
-  // risponde, restano almeno i cambi ufficiali BCE di Frankfurter. Il "DXY proxy" NON viene più mostrato:
-  // usa una formula senza il peso della corona svedese e sta ~7 punti sotto il vero Dollar Index
-  // (95,4 contro 102,5 al momento della verifica) — il DXY vero arriva ora da Yahoo (DX-Y.NYB).
-  let marketAny = false;
-  const fxMap = { 'EUR/USD': live.EURUSD, 'GBP/USD': live.GBPUSD };
-  Object.entries(fxMap).forEach(([name, value])=>{
-    if(!value) return;
-    const asset = marketData.find(m=>m.name===name);
-    if(asset){ asset.val = value; marketAny = true; }
-  });
-  if(marketAny) renderMarketMonitor();
-
-  return marketAny;
-}
-
 async function initLiveData(){
-  const [macro, fx, market, cot, dxyCorr, bias, sentiment] = await Promise.all([
-    fetchLiveMacro(), fetchLiveFX(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
+  const [macro, market, cot, dxyCorr, bias, sentiment] = await Promise.all([
+    fetchLiveMacro(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
     fetchBiasDaily(), fetchSentimentLive(false),
   ]);
   const macroUpdated = applyLiveMacroToCards(macro);
   renderTodaysReleases(macro);
   const hawkDoveUpdated = applyLiveMacroToHawkDove(macro);
-  const fxUpdated = applyLiveFXToTicker(fx);
   const marketUpdated = applyLiveMarketToMonitor(market);
   const cotUpdated = applyLiveCOTToReport(cot);
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
-  try{ buildLiveTicker({fx, market, macro, cot}); }catch(e){ console.warn('Ticker live non aggiornato:', e.message); }
+  applyFedCards(macro);
+  try{ buildLiveTicker({market, macro, cot}); }catch(e){ console.warn('Ticker live non aggiornato:', e.message); }
   const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
   // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
@@ -3470,7 +3525,6 @@ async function initLiveData(){
   const parts = [];
   if(macroUpdated.length) parts.push('CPI/PPI/PIL/lavoro (FRED)');
   if(hawkDoveUpdated) parts.push('Barometro Hawkish/Dovish (FRED)');
-  if(fxUpdated) parts.push('cambi FX (BCE)');
   if(marketUpdated) parts.push('prezzi mercato (Yahoo Finance)');
   if(cotUpdated) parts.push('COT completo — metalli/valute/indici/cripto/WTI (CFTC)');
   if(corrUpdated) parts.push('correlazione DXY reale a 30g (Yahoo Finance/Frankfurter/FMP)');
@@ -3480,8 +3534,8 @@ async function initLiveData(){
   if(sentimentUpdated) parts.push('sentiment per categoria AI');
   if(priorityUpdated) parts.push('headline e rischi chiave (AI)');
   const staticNote = priorityUpdated
-    ? 'Solo gli scenari "sopra/sotto le attese" del calendario restano curati manualmente.'
-    : `Geopolitica e scenari narrativi restano curati manualmente (analisi di ${snapLbl}).`;
+    ? 'Restano scritte a mano solo alcune note di commento (macro, COT, Risk-On/Off, Notizie a confronto).'
+    : `Alcune note di commento (macro, COT, Risk-On/Off) restano scritte a mano — verificate ${snapLbl}.`;
   if(parts.length){
     note.innerHTML = `✓ Aggiornati: ${parts.join(', ')}. <span style="color:var(--dim2);">${staticNote}</span>`;
     note.style.color = 'var(--green)';
