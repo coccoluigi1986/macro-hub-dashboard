@@ -3214,10 +3214,12 @@ function buildLiveTicker({fx, market, macro, cot}){
   if(g && g.nonCommercialNet != null){
     items.push({n:'GOLD COT NET', v:`${g.nonCommercialNet>=0?'+':''}${(g.nonCommercialNet/1000).toFixed(1)}K`, d:'non-comm.', up:g.nonCommercialNet >= 0});
   }
-  if(macro && macro.fedFundsRate != null) items.push({n:'FED FUNDS', v:macro.fedFundsRate.toFixed(2) + '%', d:'effettivo', up:null});
-  if(macro && macro.cpiYoY != null){
-    items.push({n:'CPI YoY', v:macro.cpiYoY + '%', d: macro.coreCpiYoY != null ? `core ${macro.coreCpiYoY}%` : '', up:null});
-  }
+  // fred-data.js restituisce questi valori come stringhe ("3.88"), non come numeri
+  const ff = macro ? parseFloat(macro.fedFundsRate) : NaN;
+  if(!isNaN(ff)) items.push({n:'FED FUNDS', v:ff.toFixed(2) + '%', d:'effettivo', up:null});
+  const cpi = macro ? parseFloat(macro.cpiYoY) : NaN;
+  const core = macro ? parseFloat(macro.coreCpiYoY) : NaN;
+  if(!isNaN(cpi)) items.push({n:'CPI YoY', v:cpi.toFixed(1) + '%', d: !isNaN(core) ? `core ${core.toFixed(1)}%` : '', up:null});
   if(!items.length) return false;
   tickerData = items;
   renderTicker();
@@ -3520,7 +3522,7 @@ async function initLiveData(){
   const marketUpdated = applyLiveMarketToMonitor(market);
   const cotUpdated = applyLiveCOTToReport(cot);
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
-  buildLiveTicker({fx, market, macro, cot});
+  try{ buildLiveTicker({fx, market, macro, cot}); }catch(e){ console.warn('Ticker live non aggiornato:', e.message); }
   const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
   // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
