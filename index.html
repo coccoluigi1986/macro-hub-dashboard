@@ -1290,150 +1290,66 @@ function tickClock(){
 }
 setInterval(tickClock, 1000); tickClock();
 
-// ---------- PROSSIMO EVENTO CHIAVE (dinamico — avanza da solo quando un evento passa) ----------
-// Tutti gli orari sono espressi in UTC (ET reale +4h = UTC, che corrisponde a ora Italia -2h in CEST)
-const keyEvents = [
-  {utc: Date.UTC(2026,7,17,12,30), stars:3, title:'NY Empire State Manufacturing Index (ago)', attese:'—', precedente:'15,60',
-   bad:'DXY SU, US 10Y SU, Gold GIÙ, Nasdaq/S&amp;P misti — sorpresa espansiva rafforza le attese di Fed restrittiva', good:'DXY GIÙ, US 10Y GIÙ, Gold SU — segnale di rallentamento industriale rafforza le attese di taglio',
-   note:'Primo indicatore manifatturiero del mese: un dato forte riduce l\'urgenza di un taglio Fed a settembre; un dato debole la rafforza.',
-   hist:'Indice regionale Fed di New York, storicamente volatile da un mese all\'altro — reazione di mercato solitamente contenuta ma osservata come primo segnale del ciclo industriale.',
-   assets:'DXY · US 10Y · Gold · Nasdaq · S&amp;P 500', expect:'Indice generale, nuovi ordini, occupazione, prezzi pagati e scostamento dallo zero.'},
-  {utc: Date.UTC(2026,7,18,12,30), stars:2, title:'Housing Starts &amp; Building Permits USA (lug)', attese:'1,340M (starts)', precedente:'1,427M (starts) · 19,0% (permits MoM)',
-   bad:'US 10Y SU, DXY SU, titoli homebuilder GIÙ, Gold GIÙ — mercato immobiliare resiliente nonostante i tassi elevati', good:'US 10Y GIÙ, DXY GIÙ, titoli homebuilder SU, Gold SU — ulteriore raffreddamento del settore, coerente con un ciclo Fed meno restrittivo',
-   note:'Il settore immobiliare è tra i più sensibili ai tassi sui mutui a 30 anni — un rallentamento marcato qui aggiunge peso allo scenario di taglio Fed.',
-   hist:'Dato spesso volatile e soggetto a revisioni; il mercato tende a guardare la media mobile a 3 mesi più del singolo dato mensile.',
-   assets:'US 10Y · DXY · Titoli homebuilder · Gold', expect:'Variazione mensile dei cantieri avviati, permessi di costruzione e revisioni del mese precedente.'},
-  {utc: Date.UTC(2026,7,19,18,0), stars:3, title:'Minute FOMC — riunione di luglio', attese:'toni relativamente hawkish attesi', precedente:'—',
-   bad:'DXY SU, oro GIÙ, US 10Y SU, S&amp;P/Nasdaq GIÙ — minute più hawkish del previsto confermano il rischio di rialzo a settembre', good:'DXY GIÙ, oro SU, US 10Y GIÙ, S&amp;P/Nasdaq SU — minute più concilianti riducono il rischio di rialzo',
-   note:'Le minute della riunione con la spaccatura 9-3 (la più netta dal 2016) possono chiarire quanto vicini fossero gli altri membri ai tre dissenzienti hawkish (Hammack, Kashkari, Logan).',
-   hist:'Le minute FOMC generano tipicamente una reazione più contenuta della decisione stessa, ma possono muovere sensibilmente DXY e Treasury se il tono si discosta dalle attese.',
-   assets:'DXY · Gold · US 10Y · S&amp;P 500 · Nasdaq', expect:'Toni sui rischi inflazione/lavoro, dettagli sulla spaccatura 9-3, riferimenti impliciti a settembre.'},
-  {utc: Date.UTC(2026,7,21,13,45), stars:2, title:'PMI Flash S&amp;P Global — Manifatturiero e Servizi (ago)', attese:'—', precedente:'55,6 / 54,1 (ISM lug)',
-   bad:'DXY SU, US 10Y SU, Gold GIÙ, materie prime miste — espansione sopra attese riduce l\'urgenza di un taglio Fed', good:'DXY GIÙ, US 10Y GIÙ, Gold SU, Nasdaq/S&amp;P sostenuti — rallentamento anticipa un possibile raffreddamento dell\'ISM ufficiale',
-   note:'Prima lettura flash di agosto, anticipa di una settimana i dati ISM ufficiali — utile per intercettare in anticipo un cambio di trend.',
-   hist:'Il PMI flash S&amp;P Global tende ad avere una correlazione alta ma non perfetta con l\'ISM ufficiale che segue nei giorni successivi.',
-   assets:'DXY · US 10Y · Gold · Nasdaq · S&amp;P 500 · materie prime', expect:'PMI headline, nuovi ordini, occupazione, prezzi pagati e scostamento da 50.'},
-  {utc: Date.UTC(2026,7,26,12,30), stars:3, title:'PIL USA Q2 2026 — Seconda stima', attese:'revisione attesa verso l\'alto o conferma', precedente:'1,5% (stima advance, sotto il 2,1% atteso)',
-   bad:'DXY SU, US 10Y SU, Gold GIÙ, S&amp;P/Nasdaq SU — conferma di crescita più resiliente del temuto riduce il rischio recessione', good:'DXY GIÙ, Gold SU, US 10Y GIÙ, S&amp;P/Nasdaq GIÙ — revisione al ribasso rafforza la tesi di un rallentamento più marcato e le attese di taglio Fed',
-   note:'La stima advance aveva sorpreso al ribasso. Una revisione ulteriore verso il basso aumenterebbe le probabilità implicite di taglio Fed a settembre.',
-   hist:'Le revisioni del PIL raramente sorprendono in modo drammatico rispetto alla stima advance, ma possono comunque muovere il sentiment su crescita vs recessione.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq', expect:'Revisione dei consumi, commercio estero, variazione scorte e deflatore PIL.'},
-  {utc: Date.UTC(2026,7,28,14,0), stars:3, title:'ESITO — Discorso di Warsh a Jackson Hole (28 ago, avvenuto)', attese:'—', precedente:'—',
-   bad:'CONFERMATO: DXY sostenuto, US 2Y da 4,22% a 4,30%, probabilità rialzo Fed sopra il 50% (da ~33% pre-discorso)', good:'—',
-   note:'<b>Esito reale:</b> Warsh ha rotto con la tradizione dei predecessori e ha rifiutato di dare forward guidance esplicita sui tassi, ma il tono è stato nettamente hawkish: \u201cquesta estate i dati sono stati migliori delle attese, ma non mi dicono che i trend di fondo siano migliorati in modo significativo\u201d. Ha definito l\'inflazione ancora concerning nonostante un\'economia impressionante (utili S&amp;P 500 +20% annuo). Ha sottolineato che un errore della Fed nel contenere l\'inflazione danneggerebbe soprattutto gli americani senza patrimonio finanziario, non gli investitori.',
-   hist:'<b>Reazione di mercato:</b> il rendimento del Treasury a 2 anni (il più sensibile alle attese Fed) è salito da 4,22% a 4,30% subito dopo il discorso. La probabilità di un rialzo a settembre prezzata dal mercato è passata da circa 1 su 3 (33%) prima del discorso a <b>sopra il 50%</b> subito dopo — il singolo movimento di probabilità più ampio dell\'estate. L\'azionario ha tenuto sostanzialmente stabile nell\'immediato, ma il repricing sul mercato obbligazionario è stato netto.',
-   assets:'DXY · Gold · US 10Y/2Y · VIX · S&amp;P 500', expect:'Linguaggio su inflazione e lavoro, riferimenti impliciti al FOMC di settembre, tono generale hawkish/dovish.'},
-  {utc: Date.UTC(2026,8,1,14,0), stars:3, title:'ISM Manufacturing PMI (ago)', attese:'~54-56 (consolidamento atteso)', precedente:'55,6',
-   bad:'DXY SU, US 10Y SU, Gold GIÙ, materie prime SU — espansione sopra attese riduce il rischio di taglio Fed', good:'DXY GIÙ, Gold SU, US 10Y GIÙ, Nasdaq sostenuto — raffreddamento del settore rafforza lo scenario dovish',
-   note:'Dopo il balzo di luglio al massimo da maggio 2022, il mercato verifica se l\'espansione manifatturiera regge nonostante lo shock dei costi energetici.',
-   hist:'L\'indice prezzi pagati (componente interna) è spesso osservato più dell\'headline per intercettare pressioni inflazionistiche in arrivo.',
-   assets:'DXY · US 10Y · Gold · Nasdaq · materie prime', expect:'Indice headline, nuovi ordini, prezzi pagati, occupazione e scostamento da 50.'},
-  {utc: Date.UTC(2026,8,3,14,0), stars:2, title:'ISM Services PMI (ago)', attese:'~54', precedente:'54,1',
-   bad:'DXY SU, Gold GIÙ, S&amp;P 500 debole — settore servizi resiliente, in particolare se i prezzi pagati restano elevati', good:'DXY GIÙ, Gold SU, US 10Y GIÙ, S&amp;P 500 sostenuto — raffreddamento dei servizi rafforza lo scenario di taglio',
-   note:'Il settore servizi rappresenta circa il 90% dell\'economia USA — focus particolare sull\'indice prezzi, ai massimi da agosto 2022 a luglio.',
-   hist:'Un\'ulteriore accelerazione dei prezzi pagati rafforzerebbe lo scenario hawkish per il FOMC di metà settembre.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Indice headline, prezzi pagati (componente chiave), nuovi ordini e occupazione.'},
-  {utc: Date.UTC(2026,8,4,12,30), stars:3, title:'Non-Farm Payrolls (ago) + tasso di disoccupazione', attese:'consensus non ancora consolidato', precedente:'-23.000 / 4,1%',
-   bad:'Oro GIÙ, dollaro SU, US 10Y SU, S&amp;P/Nasdaq deboli — il mercato prezza una Fed più restrittiva', good:'Oro SU, dollaro GIÙ, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti — il mercato prezza tagli più vicini',
-   note:'Dopo il crollo di luglio (-23K, primo dato negativo del ciclo), un rimbalzo sopra attese storicamente affosserebbe l\'oro in giornata; una nuova sorpresa negativa rafforzerebbe lo scenario di taglio a settembre.',
-   hist:'Storico Non-Farm Payrolls: giornata media ±0,8-1,0% sull\'oro nelle ultime release — sopra le attese l\'oro tende a cedere -0,2/-0,4% medio, sotto le attese a guadagnare +0,4/+0,6% medio.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq', expect:'Variazione payroll, tasso disoccupazione, salari orari, revisioni mesi precedenti e licenziamenti temporanei.'},
-  {utc: Date.UTC(2026,8,10,12,30), stars:3, title:'PPI — Producer Price Index (ago)', attese:'lieve accelerazione possibile', precedente:'0,0% MoM / 4,7% YoY',
-   bad:'Dollaro SU, oro GIÙ, US 10Y SU — pressioni a monte più forti del previsto anticipano un CPI caldo', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ — dato più freddo del previsto allenta la pressione sul CPI del giorno dopo',
-   note:'Spesso anticipatore del CPI del giorno successivo — un dato sopra attese aumenta il timore di trasmissione dei costi energetici ai prezzi finali.',
-   hist:'Pubblicato lo stesso giorno delle richieste sussidio settimanali — giornata a doppio catalizzatore, tipicamente ad alta volatilità intraday su DXY e Treasury.',
-   assets:'DXY · US 10Y · Gold', expect:'Variazione MoM/YoY headline, componente servizi vs beni, PPI core.'},
-  {utc: Date.UTC(2026,8,10,12,15), stars:3, title:'[EU] BCE — Decisione tassi + conferenza stampa Lagarde', attese:'70-78% probabilità di rialzo +25pb a 2,50%', precedente:'2,25% (rialzo confermato a giu, hold a lug)',
-   bad:'Euro SU, dollaro GIÙ, rendimenti Bund SU, Gold misto — rialzo confermato con tono hawkish rafforza l\'euro', good:'Euro GIÙ, dollaro SU, rendimenti Bund GIÙ, Gold sostenuto — hold o tono dovish a sorpresa indebolisce l\'euro',
-   note:'Secondo rialzo consecutivo atteso, sullo stesso shock energetico da guerra Iran che guida anche la Fed — un ciclo hawkish sostanzialmente simmetrico tra le due sponde dell\'Atlantico.',
-   hist:'Decisione alle 14:15 CET, conferenza stampa di Lagarde alle 14:45 CET. Pubblicata lo stesso giorno del PPI USA — giornata a doppio catalizzatore per EUR/USD e per il differenziale di tasso USA-Eurozona.',
-   assets:'EUR/USD · DXY · Gold · Rendimenti Bund', expect:'Decisione sui tre tassi chiave, tono della conferenza stampa di Lagarde, eventuali nuove proiezioni staff.'},
-  {utc: Date.UTC(2026,8,11,12,30), stars:3, title:'CPI — Consumer Price Index (ago)', attese:'atteso un terzo mese di lieve raffreddamento', precedente:'3,4% YoY / 2,5% core YoY',
-   bad:'Oro GIÙ, dollaro SU, US 10Y SU, S&amp;P/Nasdaq deboli — CPI sopra attese sposta rapidamente le probabilità FedWatch verso il rialzo', good:'Oro SU, dollaro GIÙ, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti — CPI sotto attese rafforza lo scenario taglio/hold dovish',
-   note:'Il dato macro singolarmente più importante del mese, pubblicato appena 5 giorni prima della decisione Fed del 16 settembre.',
-   hist:'Determina in larga parte l\'esito del FOMC: dopo il discorso hawkish di Warsh a Jackson Hole (28 ago), il mercato prezza ora ~52% di probabilità di rialzo, 38% hold, 10% taglio — un netto spostamento rispetto al 35%/50%/15% di due settimane fa.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq', expect:'Headline MoM/YoY, core MoM/YoY, componente energia e shelter.'},
-  {utc: Date.UTC(2026,8,16,12,30), stars:2, title:'Retail Sales (ago)', attese:'—', precedente:'-0,6% MoM (lug)',
-   bad:'Dollaro SU, US 10Y SU, Gold GIÙ, S&amp;P 500 debole — consumi resilienti riducono l\'urgenza di un taglio', good:'Dollaro GIÙ, US 10Y GIÙ, Gold SU, S&amp;P 500 sostenuto — debolezza dei consumi rafforza la lettura dovish del FOMC dello stesso giorno',
-   note:'Pubblicato la mattina stessa della decisione FOMC — un dato debole rafforzerebbe la lettura dovish; uno forte complicherebbe la comunicazione di Warsh nel pomeriggio.',
-   hist:'Le vendite al dettaglio di luglio avevano deluso (-0,6% contro +0,1% atteso) — il mercato osserva se si tratta di un pattern o di un dato isolato.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Variazione MoM headline, dato ex-auto, revisioni del mese precedente.'},
-  {utc: Date.UTC(2026,8,16,18,0), stars:3, title:'FOMC — Decisione tassi + Dot Plot + conferenza stampa Warsh', attese:'~52% rialzo +25pb / 38% hold / 10% taglio -25pb (aggiornato post Jackson Hole)', precedente:'3,50%-3,75% (hold)',
-   bad:'Dollaro SU, oro GIÙ, US 10Y SU, S&amp;P/Nasdaq deboli, VIX SU — rialzo o hold con linguaggio hawkish confermano il rischio restrittivo', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti, VIX GIÙ — hold con linguaggio dovish o taglio a sorpresa alimentano il risk-on',
-   note:'L\'evento macro più importante del trimestre. Il dot plot con le proiezioni tassi 2026/2027 è spesso più market-moving della decisione stessa.',
-   hist:'La conferenza stampa di Warsh (30 min dopo la decisione) è il momento in cui il linguaggio viene analizzato parola per parola — attesa volatilità elevata su DXY, oro, equity e Treasury nelle 2 ore successive.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq · VIX', expect:'Decisione sui tassi, dot plot, linguaggio dello statement, conferenza stampa di Warsh.'},
-
-  // ---- Agenda aggiornata dopo l'ESITO REALE del FOMC del 16 settembre: rialzo +25pb a 3,75-4,00% (voto
-  // unanime 12-0), dot plot hawkish — 16 membri su 18 vedono un altro rialzo entro fine anno, 4 ne vedono due.
-  // Il tema da qui non è più "rialzo o taglio", ma "la Fed si ferma qui o rialza ancora a ottobre".
-  {utc: Date.UTC(2026,8,23,13,45), stars:2, title:'PMI Flash S&amp;P Global — Manifatturiero e Servizi (set)', attese:'~53 / ~55 (consolidamento atteso)', precedente:'53,3 / 54,6 (PMI Flash ago)',
-   bad:'DXY SU, US 10Y SU, Gold GIÙ — espansione sopra attese rafforza le probabilità di un altro rialzo a ottobre, coerente col dot plot', good:'DXY GIÙ, US 10Y GIÙ, Gold SU — raffreddamento del settore mette in discussione un secondo rialzo già a ottobre',
-   note:'Prima lettura di settembre dopo il rialzo e il dot plot hawkish del FOMC — il mercato verifica se l\'attività reale giustifica un altro rialzo già al meeting del 27-28 ottobre.',
-   hist:'Il PMI flash S&amp;P Global anticipa di una settimana l\'ISM ufficiale; una divergenza marcata tra i due è già successa quest\'estate ed è motivo di attenzione extra.',
-   assets:'DXY · US 10Y · Gold · Nasdaq · S&amp;P 500', expect:'PMI headline, nuovi ordini, occupazione, prezzi pagati e scostamento da 50.'},
-
-  {utc: Date.UTC(2026,8,25,12,30), stars:3, title:'PCE Price Index — indice preferito dalla Fed (ago)', attese:'~2,9% YoY headline / ~2,8% core', precedente:'2,9% YoY / 2,8% core (lug)',
-   bad:'Dollaro SU, oro GIÙ, US 10Y SU — PCE core sopra attese rafforza il caso per un secondo rialzo a ottobre, in linea col dot plot', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ — un PCE più freddo del previsto complicherebbe il piano di altri rialzi segnalato dal dot plot',
-   note:'Il PCE core, non il CPI, è la metrica ufficiale del mandato Fed sul 2% — pubblicato 9 giorni dopo il rialzo del 16 settembre, è il primo vero test se il dot plot troverà conferma nei dati.',
-   hist:'Storicamente il PCE si muove in modo più contenuto del CPI, ma essendo l\'indicatore che la Fed guarda esplicitamente, la reazione di mercato su DXY e Treasury può essere sproporzionata rispetto all\'entità della sorpresa.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Headline e core MoM/YoY, spesa per consumi personali, reddito disponibile.'},
-
-  {utc: Date.UTC(2026,9,1,14,0), stars:2, title:'ISM Manufacturing PMI (set)', attese:'~54-55 (consolidamento post-rialzo)', precedente:'54,8 (ago)',
-   bad:'DXY SU, US 10Y SU, Gold GIÙ, materie prime SU — manifatturiero resiliente rafforza il caso per il secondo rialzo segnalato dal dot plot', good:'DXY GIÙ, Gold SU, US 10Y GIÙ — raffreddamento del settore mette in dubbio un altro rialzo già a ottobre',
-   note:'Primo dato ISM del trimestre dopo il rialzo Fed — la componente prezzi pagati resta la più osservata per intercettare la trasmissione dello shock energetico da Iran/Hormuz.',
-   hist:'L\'indice prezzi pagati era salito ai massimi da inizio ciclo in estate — una nuova accelerazione qui rafforzerebbe la narrativa "altro rialzo a ottobre" del dot plot.',
-   assets:'DXY · US 10Y · Gold · Nasdaq · materie prime', expect:'Indice headline, nuovi ordini, prezzi pagati, occupazione e scostamento da 50.'},
-
-  {utc: Date.UTC(2026,9,2,12,30), stars:3, title:'Non-Farm Payrolls (set) + tasso di disoccupazione', attese:'consensus non ancora consolidato', precedente:'da confermare (ago)',
-   bad:'Oro GIÙ, dollaro SU, US 10Y SU, S&amp;P/Nasdaq deboli — un mercato del lavoro solido darebbe alla Fed via libera per il secondo rialzo del dot plot', good:'Oro SU, dollaro GIÙ, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti — un dato debole complicherebbe il piano di altri rialzi, nonostante il tono hawkish del 16 settembre',
-   note:'Il mercato del lavoro è il principale limite al piano di ulteriori rialzi: dopo il crollo del sentiment AAII ai minimi da 16 mesi, un dato debole qui rimetterebbe in discussione il dot plot.',
-   hist:'Storico Non-Farm Payrolls: giornata ad alta volatilità su DXY, oro e Treasury nelle prime due ore dalla pubblicazione, in particolare sulle revisioni dei mesi precedenti.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq', expect:'Variazione payroll, tasso disoccupazione, salari orari, revisioni mesi precedenti e licenziamenti temporanei.'},
-
-  {utc: Date.UTC(2026,9,6,14,0), stars:2, title:'ISM Services PMI (set)', attese:'~54 (in linea)', precedente:'54,1 (ago)',
-   bad:'DXY SU, Gold GIÙ, S&amp;P 500 debole — settore servizi (~90% dell\'economia USA) resiliente rafforza il caso per un secondo rialzo, in particolare se i prezzi pagati restano elevati', good:'DXY GIÙ, Gold SU, US 10Y GIÙ, S&amp;P 500 sostenuto — raffreddamento dei servizi metterebbe in dubbio il secondo rialzo del dot plot',
-   note:'Focus sulla componente prezzi — un\'ulteriore accelerazione qui è il segnale più diretto di trasmissione dello shock energetico ai servizi, a supporto del dot plot hawkish.',
-   hist:'Pubblicato a ridosso del CPI di metà mese — insieme ai due dati compongono il quadro inflazione più completo prima della riunione Fed del 27-28 ottobre.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Indice headline, prezzi pagati (componente chiave), nuovi ordini e occupazione.'},
-
-  {utc: Date.UTC(2026,9,9,12,30), stars:3, title:'CPI — Consumer Price Index (set)', attese:'atteso un ulteriore mese sopra il 3% YoY', precedente:'3,4% YoY / 2,4% core YoY (ago) — benzina +3,9% m/m ha pesato per oltre 1/3 del rialzo headline',
-   bad:'Oro GIÙ, dollaro SU, US 10Y SU, S&amp;P/Nasdaq deboli — CPI sopra attese conferma il dot plot e rende quasi certo il secondo rialzo a ottobre', good:'Oro SU, dollaro GIÙ, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti — CPI sotto attese rimetterebbe in discussione il piano di altri rialzi',
-   note:'Il dato macro singolarmente più importante del mese — ultima stampa CPI piena prima del FOMC del 27-28 ottobre, decisiva per confermare o smentire il dot plot hawkish del 16 settembre.',
-   hist:'Dopo il rialzo e il dot plot hawkish di settembre, il mercato ha alzato la soglia di sorpresa richiesta per escludere un secondo rialzo — un CPI "solo in linea" difficilmente basterà a rimuoverlo dai prezzi.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq', expect:'Headline MoM/YoY, core MoM/YoY, componente energia e shelter.'},
-
-  {utc: Date.UTC(2026,9,15,12,30), stars:2, title:'PPI — Producer Price Index (set)', attese:'lieve accelerazione possibile su energia', precedente:'0,1% MoM / 4,6% YoY (ago)',
-   bad:'Dollaro SU, oro GIÙ, US 10Y SU — pressioni a monte più forti del previsto, coerenti con il premio energetico da Hormuz che si trasmette lungo la filiera e rafforza il caso per ottobre', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ — dato più freddo del previsto allenterebbe la pressione verso un secondo rialzo',
-   note:'Spesso anticipatore del CPI del mese successivo — un dato sopra attese qui aumenterebbe il timore di trasmissione dei costi energetici ai prezzi finali, a supporto del dot plot.',
-   hist:'Pubblicato lo stesso giorno delle richieste sussidio settimanali — giornata a doppio catalizzatore, tipicamente ad alta volatilità intraday su DXY e Treasury.',
-   assets:'DXY · US 10Y · Gold', expect:'Variazione MoM/YoY headline, componente servizi vs beni, PPI core.'},
-
-  {utc: Date.UTC(2026,9,16,12,30), stars:2, title:'Retail Sales (set)', attese:'—', precedente:'0,2% MoM (ago)',
-   bad:'Dollaro SU, US 10Y SU, Gold GIÙ, S&amp;P 500 debole — consumi resilienti danno alla Fed più margine per il secondo rialzo del dot plot', good:'Dollaro GIÙ, US 10Y GIÙ, Gold SU, S&amp;P 500 sostenuto — debolezza dei consumi, in linea col crollo del sentiment AAII, rimetterebbe in discussione altri rialzi',
-   note:'Ultimo grande dato sui consumi prima della riunione Fed di fine mese — il mercato lo userà per calibrare le attese sul linguaggio del prossimo statement, alla luce del crollo di sentiment già visto su AAII e Fear&amp;Greed.',
-   hist:'Le vendite al dettaglio sono state relativamente stabili nel trimestre estivo nonostante lo shock sui prezzi energetici — un\'inversione qui sarebbe un segnale nuovo.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500', expect:'Variazione MoM headline, dato ex-auto, revisioni del mese precedente.'},
-
-  {utc: Date.UTC(2026,9,28,18,0), stars:3, title:'FOMC — Decisione tassi + Dot Plot + conferenza stampa Warsh', attese:'secondo rialzo +25pb ampiamente prezzato dal dot plot di settembre (16/18 membri lo vedono)', precedente:'3,75%-4,00% (rialzo confermato 16 set, voto 12-0)',
-   bad:'Dollaro SU, oro GIÙ, US 10Y SU, S&amp;P/Nasdaq deboli, VIX SU — conferma del secondo rialzo o linguaggio ancora più restrittivo del dot plot di settembre', good:'Dollaro GIÙ, oro SU, US 10Y GIÙ, S&amp;P/Nasdaq sostenuti, VIX GIÙ — pausa a sorpresa nonostante il dot plot, complice il deterioramento del sentiment (AAII, Fear&amp;Greed)',
-   note:'Secondo meeting dopo il dot plot hawkish di settembre — il mercato verifica se la Fed procede col secondo rialzo segnalato o se il brusco calo di sentiment (AAII ai minimi da 16 mesi) la induce a una pausa.',
-   hist:'La conferenza stampa di Warsh (record di brevità al meeting di settembre, ~30 minuti) resta il momento in cui il linguaggio viene analizzato parola per parola — attesa volatilità elevata su DXY, oro, equity e Treasury nelle 2 ore successive.',
-   assets:'DXY · US 10Y · Gold · S&amp;P 500 · Nasdaq · VIX', expect:'Decisione sui tassi, eventuale aggiornamento del dot plot, linguaggio dello statement, conferenza stampa di Warsh.'},
-];
-
+// ---------- PROSSIMO EVENTO CHIAVE (live, dal calendario economico reale) ----------
+// Prima era un elenco di eventi scritti a mano con attese e scenari fissi, che si esauriva da solo
+// (l'ultimo era il 28 ottobre). Ora gli eventi ad alto impatto dei prossimi 45 giorni arrivano dallo
+// stesso calendario live della sezione "Calendario Economico" (/api/economic-calendar): attese e
+// precedente sono i valori reali di consensus, mentre contesto e scenari "sopra/sotto le attese"
+// li genera il dossier AI (/api/event-dossier). Orari in UTC, mostrati in ora italiana.
+let keyEvents = [];
+let keyEventsState = 'loading'; // loading | ready | error
 let currentKeyEvent = null;
+
+function escHtml(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Priorità per scegliere il "prossimo evento chiave" tra tutti gli eventi ad alto impatto: decisioni sui
+// tassi, NFP, inflazione, PCE, PIL, PPI, vendite al dettaglio, disoccupazione, PMI ISM — con i dati USA davanti.
+function keyEventPriority(e){
+  let pr = 0;
+  if(e.currency === 'USD') pr += 2;
+  if(/rate decision|interest rate|fomc|non.?farm|payrolls|\bcpi\b|inflation rate|\bpce\b|\bgdp\b|\bppi\b|retail sales|unemployment rate|ism (manufacturing|services) pmi/i.test(e.title)) pr += 3;
+  if(/speech|speaks|testimony|minutes|auction/i.test(e.title)) pr -= 2;
+  return pr;
+}
+
+async function loadKeyEvents(){
+  try{
+    const from = new Date(); from.setUTCHours(0,0,0,0);
+    const to = new Date(from.getTime() + 45*86400000);
+    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    keyEvents = (data.events||[]).filter(e=>e.importance==='alto').map(e=>{
+      const ev = {
+        utc: new Date(e.date).getTime(), stars:3, currency:e.currency||'',
+        title: `${e.currency ? e.currency+' · ' : ''}${e.title}`, rawTitle:e.title,
+        attese: fmtCalVal(e.forecast,e.unit,e.scale), precedente: fmtCalVal(e.previous,e.unit,e.scale),
+        actual: e.actual!=null ? fmtCalVal(e.actual,e.unit,e.scale) : null,
+      };
+      ev.priority = keyEventPriority({currency:ev.currency, title:e.title});
+      return ev;
+    });
+    keyEventsState = 'ready';
+  }catch(err){ keyEventsState = 'error'; }
+  refreshKeyEvent(true);
+  renderWeekCalendar();
+}
 
 function pickNextKeyEvent(){
   const now = Date.now();
   const upcoming = keyEvents.filter(e => e.utc > now).sort((a,b)=>a.utc-b.utc);
-  return upcoming.length ? upcoming[0] : null;
+  if(!upcoming.length) return null;
+  // il prossimo evento "pesante" (priorità alta); se non ce ne sono, semplicemente il prossimo in ordine di tempo
+  return upcoming.find(e => e.priority >= 3) || upcoming[0];
 }
 
 function renderKeyEvent(ev){
   const container = document.getElementById('nextEventContainer');
   if(!ev){
-    container.innerHTML = `<div class="event-card"><div class="ec-why-desc">Nessun evento ad alto/medio impatto in programma nel calendario caricato. Aggiorna la dashboard in chat per estendere l\'orizzonte del calendario.</div></div>`;
+    const msg = keyEventsState==='loading' ? 'Caricamento del calendario economico in corso…'
+      : keyEventsState==='error' ? 'Calendario economico non raggiungibile in questo momento — riprova tra poco.'
+      : 'Nessun evento ad alto impatto nei prossimi 45 giorni nel calendario.';
+    container.innerHTML = `<div class="event-card"><div class="ec-why-desc">${msg}</div></div>`;
     return;
   }
   const d = new Date(ev.utc);
@@ -1445,33 +1361,26 @@ function renderKeyEvent(ev){
     <div class="ec-top">
       <div>
         <div class="ec-stars">${stars}</div>
-        <div class="ec-title">${ev.title}</div>
+        <div class="ec-title">${escHtml(ev.title)}</div>
       </div>
       <div class="ec-date">${dateStr} · ore ${timeStr} (Italia)</div>
     </div>
     <div class="ec-countdown" id="ecCountdown">--:--:--:--</div>
     <div class="ec-pills">
-      <div class="ec-pill">ATTESE <b>${ev.attese}</b></div>
-      <div class="ec-pill">PRECEDENTE <b>${ev.precedente}</b></div>
-      <div class="ec-pill">ACTUAL <b>—</b></div>
+      <div class="ec-pill">ATTESE <b>${escHtml(ev.attese)}</b></div>
+      <div class="ec-pill">PRECEDENTE <b>${escHtml(ev.precedente)}</b></div>
+      <div class="ec-pill">ACTUAL <b>${ev.actual!=null ? escHtml(ev.actual) : '—'}</b></div>
     </div>
     <div class="ec-scenarios">
       <div class="ec-scenario bad">
         <div class="ec-sc-label">SE ESCE SOPRA LE ATTESE</div>
-        <div class="ec-sc-text">${ev.bad}</div>
+        <div class="ec-sc-text" id="ecIfAbove">Analisi AI in caricamento…</div>
       </div>
       <div class="ec-scenario good">
         <div class="ec-sc-label">SE ESCE SOTTO LE ATTESE</div>
-        <div class="ec-sc-text">${ev.good}</div>
+        <div class="ec-sc-text" id="ecIfBelow">Analisi AI in caricamento…</div>
       </div>
     </div>
-    <div class="ec-note">${ev.note}</div>
-    <div class="ec-hist">${ev.hist}</div>
-    ${ev.assets && ev.expect ? `
-    <div class="ec-infobox-grid">
-      <div class="ec-infobox"><div class="ec-infobox-lbl">Asset da monitorare</div><div class="ec-infobox-text">${ev.assets}</div></div>
-      <div class="ec-infobox"><div class="ec-infobox-lbl">Cosa aspettarsi all'uscita</div><div class="ec-infobox-text">${ev.expect}</div></div>
-    </div>` : ''}
     <div id="ecAiDossier"></div>
   </div>`;
   loadEventDossier(ev);
@@ -1479,7 +1388,7 @@ function renderKeyEvent(ev){
 
 function refreshKeyEvent(force){
   const now = Date.now();
-  if(force || !currentKeyEvent || currentKeyEvent.utc <= now){
+  if(force || (keyEventsState!=='loading' && (!currentKeyEvent || currentKeyEvent.utc <= now))){
     currentKeyEvent = pickNextKeyEvent();
     renderKeyEvent(currentKeyEvent);
   }
@@ -1508,12 +1417,17 @@ function renderWeekCalendar(){
   const sevenDaysAhead = Date.now() + 7*86400000;
   const upcoming = keyEvents
     .filter(e => e.utc >= startOfToday && e.utc <= sevenDaysAhead)
-    .sort((a,b) => a.utc - b.utc);
+    .sort((a,b) => a.utc - b.utc || b.priority - a.priority);
 
+  if(keyEventsState === 'loading'){
+    document.getElementById('weekBadge').textContent = '…';
+    document.getElementById('weekList').innerHTML = '<div class="week-empty">Caricamento del calendario economico in corso…</div>';
+    return;
+  }
   document.getElementById('weekBadge').textContent = `${upcoming.length} disponibil${upcoming.length===1?'e':'i'}`;
 
   if(upcoming.length === 0){
-    document.getElementById('weekList').innerHTML = `<div class="week-empty">Il calendario connesso non ha ancora restituito eventi nei prossimi sette giorni. La dashboard riprova automaticamente e mantiene visibili le prossime decisioni ufficiali.</div>`;
+    document.getElementById('weekList').innerHTML = `<div class="week-empty">${keyEventsState==='error' ? 'Calendario economico non raggiungibile in questo momento — riprova tra poco.' : 'Nessun evento ad alto impatto nei prossimi sette giorni.'}</div>`;
     return;
   }
 
@@ -1524,12 +1438,13 @@ function renderWeekCalendar(){
     const stars = '★'.repeat(e.stars) + '☆'.repeat(3-e.stars);
     return `<div class="week-item">
       <div class="wi-date">${dateStr}<br>${timeStr}</div>
-      <div class="wi-title">${e.title}</div>
+      <div class="wi-title">${escHtml(e.title)}</div>
       <div class="wi-stars">${stars}</div>
     </div>`;
   }).join('');
 }
 renderWeekCalendar();
+loadKeyEvents();
 
 // ---------- TIMESTAMP ONESTI per le sezioni di analisi curata (Geopolitica, Sentiment News) ----------
 // Queste sezioni contengono testo scritto/analizzato manualmente, non dati da API — non possono
@@ -3121,12 +3036,17 @@ function applyBiasDaily(data){
   return true;
 }
 
-// Aggiunge un blocco "Dossier AI" al card dell'evento chiave corrente, senza toccare gli
-// scenari sopra/sotto le attese già scritti a mano (event-dossier.js li lascia intatti).
+// Riempie il card dell'evento chiave corrente con il dossier AI: scenari "sopra/sotto le attese" e blocco
+// di contesto (perché conta oggi, cosa aspettarsi, asset da monitorare).
 async function loadEventDossier(ev){
   if(!ev) return;
   const data = await fetchEventDossier(ev);
   const container = document.getElementById('ecAiDossier'); // ri-verifica: l'evento potrebbe essere cambiato nel frattempo
+  if(ev !== currentKeyEvent) return;
+  const ifAbove = document.getElementById('ecIfAbove'), ifBelow = document.getElementById('ecIfBelow');
+  const dosForScenarios = data && data.dossier;
+  if(ifAbove) ifAbove.textContent = (dosForScenarios && dosForScenarios.ifAbove) || 'Scenario AI non disponibile in questo ciclo.';
+  if(ifBelow) ifBelow.textContent = (dosForScenarios && dosForScenarios.ifBelow) || 'Scenario AI non disponibile in questo ciclo.';
   if(!container || !data || !data.dossier) return;
   const dos = data.dossier;
   const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '';
@@ -3392,30 +3312,29 @@ function isToday(iso){
   const todayIso = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
   return iso === todayIso;
 }
-function findMatchingKeyEvent(titleFragment){
-  const now = Date.now();
+function findMatchingKeyEvent(titleRegex){
   const todayStart = new Date(); todayStart.setHours(0,0,0,0);
   const todayEnd = new Date(); todayEnd.setHours(23,59,59,999);
-  return keyEvents.find(e => e.title.includes(titleFragment) && e.utc >= todayStart.getTime() && e.utc <= todayEnd.getTime());
+  return keyEvents.find(e => e.currency === 'USD' && titleRegex.test(e.rawTitle) && e.utc >= todayStart.getTime() && e.utc <= todayEnd.getTime());
 }
 function renderTodaysReleases(live){
   if(!live) return;
   const releases = [];
 
   if(isToday(live.nfpDate) && live.nfpChangeThousands!=null){
-    const ev = findMatchingKeyEvent('Non-Farm Payrolls') || findMatchingKeyEvent('Payrolls');
+    const ev = findMatchingKeyEvent(/non.?farm|payrolls/i);
     releases.push({
       title:'📊 Non-Farm Payrolls — appena uscito',
       vals:`Attuale: <b>${live.nfpChangeThousands>=0?'+':''}${live.nfpChangeThousands}.000</b>${ev?` · Attese: <b>${ev.attese}</b>`:''} · Precedente: <b>${ev?ev.precedente:'—'}</b>`,
-      read: ev ? `${live.nfpChangeThousands >= parseFloat(ev.attese)||0 ? ev.bad : ev.good}` : 'Confronta con le attese di consensus per capire la direzione del mercato.',
+      read: 'Confronta con le attese di consensus per capire la direzione del mercato.',
     });
   }
   if(isToday(live.cpiDate) && live.cpiYoY){
-    const ev = findMatchingKeyEvent('CPI — Consumer');
+    const ev = findMatchingKeyEvent(/\bcpi\b|inflation rate/i);
     releases.push({
       title:'📊 CPI — appena uscito',
       vals:`Attuale: <b>${toItNum(live.cpiYoY)}%</b> YoY${ev?` · Attese: <b>${ev.attese}</b>`:''} · Precedente: <b>${ev?ev.precedente:'—'}</b>`,
-      read: ev ? ev.note : 'Dato inflazione appena pubblicato — verifica l\'impatto su Fed Funds futures.',
+      read: 'Dato inflazione appena pubblicato — verifica l\'impatto su Fed Funds futures.',
     });
   }
   if(isToday(live.unemploymentDate) && live.unemploymentRate && !isToday(live.nfpDate)){
@@ -3585,6 +3504,7 @@ function refreshLive(){
   initLiveData();
   fetchCalEventsForRange(...getCalDateRange());
   renderVolatilityTable();
+  loadKeyEvents();
 }
 
 // Tenta il collegamento ai dati live appena la pagina carica (silenzioso, nessun errore se non disponibili)

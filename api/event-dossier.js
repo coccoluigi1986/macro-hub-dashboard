@@ -28,6 +28,8 @@ function fallback() {
     timingNote: '',
     assetsToWatch: ['DXY', 'Gold', 'EUR/USD', 'US10Y'],
     whatToExpect: 'Attesa volatilità nei 20 minuti attorno al rilascio.',
+    ifAbove: '',
+    ifBelow: '',
   };
 }
 
@@ -65,8 +67,10 @@ async function handleEvent(event) {
           + '  "context": "il perche macro/geopolitico di questo evento OGGI, alla luce delle notizie sopra, max 260 caratteri",\n'
           + '  "timing_note": "nota su orari e sovrapposizioni con altri eventi o catalizzatori vicini, max 200 caratteri (stringa vuota se non rilevante)",\n'
           + '  "assets_to_watch": ["4 asset separati"],\n'
-          + '  "what_to_expect": "cosa guardare esattamente all\'uscita, max 220 caratteri"\n'
-          + '}\nSolo JSON.';
+          + '  "what_to_expect": "cosa guardare esattamente all\'uscita, max 220 caratteri",\n'
+          + '  "if_above": "reazione tipica dei mercati se il dato esce SOPRA le attese (dollaro, oro, rendimenti, equity), max 200 caratteri",\n'
+          + '  "if_below": "reazione tipica dei mercati se il dato esce SOTTO le attese, max 200 caratteri"\n'
+          + '}\nIn if_above/if_below ragiona sulla natura dell\'indicatore (un dato sopra le attese non è sempre "positivo" per la valuta: dipende da cosa misura e dal contesto di politica monetaria). Solo JSON.';
 
         const data = await llmJSON({ system: EVENT_SYS, prompt, maxTokens: 1500 });
         dossier = {
@@ -75,6 +79,8 @@ async function handleEvent(event) {
           timingNote: data.timing_note || '',
           assetsToWatch: (data.assets_to_watch || []).slice(0, 4),
           whatToExpect: data.what_to_expect || '',
+          ifAbove: data.if_above || '',
+          ifBelow: data.if_below || '',
         };
       } catch (e) {
         console.warn('event dossier AI failed:', e.message);
