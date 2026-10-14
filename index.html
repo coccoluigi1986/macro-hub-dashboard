@@ -1230,7 +1230,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 
 
 <footer>
-  <span id="footerTimestamp">Dashboard creata il 14 agosto 2026.</span> I dati con badge "● Live" (Mercati, Macro USA/Europa, COT) provengono da fonti ufficiali gratuite (FRED, CFTC, Twelve Data, Frankfurter) e si aggiornano automaticamente ad ogni apertura della pagina o click su "Ricarica vista". Le sezioni di analisi narrativa (Geopolitica, Sentiment News per Categoria, sintesi del Barometro Hawkish/Dovish) sono <b>curate manualmente</b> e mostrano onestamente da quanti giorni non vengono riverificate — nessuna fonte gratuita automatizza questo tipo di analisi. Nessuna parte di questo strumento costituisce consulenza finanziaria.
+  <span id="footerTimestamp">Dashboard creata il 14 agosto 2026.</span> I dati con badge "● Live" (Mercati, Macro USA/Europa, COT) provengono da fonti gratuite (FRED, CFTC, Frankfurter/BCE, Yahoo Finance, Dukascopy, TradingView) e si aggiornano automaticamente ad ogni apertura della pagina o click su "Ricarica vista". Le sezioni di analisi narrativa (Geopolitica, Sentiment News per Categoria, sintesi del Barometro Hawkish/Dovish) sono <b>curate manualmente</b> e mostrano onestamente da quanti giorni non vengono riverificate — nessuna fonte gratuita automatizza questo tipo di analisi. Nessuna parte di questo strumento costituisce consulenza finanziaria.
 </footer>
 
 </main>
@@ -1653,7 +1653,7 @@ function genSeries(up){
 
 // NOTA: i campi "corr"/"corrLbl" qui sotto sono lo snapshot statico di fallback (come val/chg/vol) —
 // se la funzione dxy-correlation.js è deployata, applyLiveCorrToMonitor() li sovrascrive con la
-// correlazione di Pearson REALE a 30 giorni calcolata su serie storiche (Twelve Data/FMP), invece
+// correlazione di Pearson REALE a 30 giorni calcolata su serie storiche (Yahoo Finance/Frankfurter/FMP), invece
 // di questa stima scritta a mano.
 const marketData = [
   {cat:'DXY', name:'DXY', ticker:'US Dollar Index', val:'100,21', chg:0.15, vol:'4,9%', volLvl:'Bassa', corr:'—', corrLbl:'Riferimento',
@@ -2497,7 +2497,7 @@ function renderDecisionPanel(assetName){
           </tr>`).join('')}
         </tbody>
       </table>
-      <div class="source-tag" style="margin-top:10px;">Modello a 3 fattori costruito solo su dati reali disponibili (CFTC, Twelve Data, Frankfurter/FRED) — nessun dato "flussi CME" o "retail contrarian" incluso, perché richiederebbero fonti a pagamento che questa dashboard non usa.</div>
+      <div class="source-tag" style="margin-top:10px;">Modello a 3 fattori costruito solo su dati reali disponibili (CFTC, Yahoo Finance, Frankfurter/FRED) — nessun dato "flussi CME" o "retail contrarian" incluso, perché richiederebbero fonti a pagamento che questa dashboard non usa.</div>
     </div>
   `;
 }
@@ -2640,7 +2640,7 @@ const snData = [
   {cat:'Fed / Tassi', trend:'neutral', desc:'Segnali contrastanti: Jackson Hole (28 ago) ha spinto le attese di rialzo a settembre, ma 3 NFP deboli consecutivi e inflazione in raffreddamento fanno dubitare alcuni economisti (es. Citi) che il rialzo si concretizzi. FOMC 16 settembre, esito tutt\'altro che scontato.', sources:['CNBC','Chase','Polymarket']},
   {cat:'Geopolitica', trend:'bear', desc:'Guerra Iran aperta dal 28 febbraio, nuova escalation 3-4 set: WTI verso $92 (+9% w/w). Nessun segnale di de-escalation — premio geopolitico strutturale su oro/petrolio.', sources:['Bloomberg','Wikipedia']},
   {cat:'Macro', trend:'neutral', desc:'CPI in raffreddamento (3,3% YoY) ma PIL Q2 debole (1,5%) e lavoro in frenata (3 NFP deboli). Quadro da stagflazione lieve, non chiaramente hawkish né dovish.', sources:['FRED','BEA','BLS']},
-  {cat:'DXY / Dollaro', trend:'neutral', desc:'DXY in range, tirato tra rischio Fed hawkish e domanda di beni rifugio da conflitto Iran — nessuna direzione netta finché non arriva un catalizzatore (NFP, CPI, o headline Hormuz).', sources:['Twelve Data']},
+  {cat:'DXY / Dollaro', trend:'neutral', desc:'DXY in range, tirato tra rischio Fed hawkish e domanda di beni rifugio da conflitto Iran — nessuna direzione netta finché non arriva un catalizzatore (NFP, CPI, o headline Hormuz).', sources:['Yahoo Finance']},
 ];
 function renderSentimentGrid(categories){
   document.getElementById('snGrid').innerHTML = categories.map(s=>{
@@ -2965,8 +2965,8 @@ const indices = [
 document.getElementById('indicesCards').innerHTML = indices.map(i=>`
   <div class="asset-card"><div class="asset-head"><span class="aname">${i.name}</span></div><div class="asset-body"><p>${i.text}</p></div></div>`).join('');
 
-// ---------- LIVE DATA via Netlify Functions (con fallback allo snapshot statico) ----------
-// Se questo file gira su Netlify con le funzioni configurate, aggiorna i valori reali.
+// ---------- LIVE DATA via Serverless Functions (Vercel) (con fallback allo snapshot statico) ----------
+// Se questo file gira su Vercel con le funzioni configurate, aggiorna i valori reali.
 // Se gira in locale o le funzioni non sono ancora pronte, non succede nulla di rotto:
 // resta semplicemente lo snapshot statico che già vedi.
 
@@ -3188,7 +3188,7 @@ function fmtCorr(v){
   return (v>=0?'+':'') + v.toFixed(2).replace('.', ',');
 }
 // Sovrascrive corr/corrLbl in marketData con la correlazione DXY reale a 30g calcolata
-// server-side su serie storiche (Twelve Data/FMP), al posto delle stime scritte a mano.
+// server-side su serie storiche (Yahoo Finance/Frankfurter/FMP), al posto delle stime scritte a mano.
 function applyLiveCorrToMonitor(live){
   if(!live) return false;
   let any = false;
@@ -3511,9 +3511,9 @@ async function initLiveData(){
   if(macroUpdated.length) parts.push('CPI/PPI/PIL/lavoro (FRED)');
   if(hawkDoveUpdated) parts.push('Barometro Hawkish/Dovish (FRED)');
   if(fxUpdated) parts.push('cambi FX + DXY proxy');
-  if(marketUpdated) parts.push('prezzi mercato (Twelve Data)');
+  if(marketUpdated) parts.push('prezzi mercato (Yahoo Finance)');
   if(cotUpdated) parts.push('COT completo — metalli/valute/indici/cripto/WTI (CFTC)');
-  if(corrUpdated) parts.push('correlazione DXY reale a 30g (Twelve Data/FMP)');
+  if(corrUpdated) parts.push('correlazione DXY reale a 30g (Yahoo Finance/Frankfurter/FMP)');
   if(sentimentAssetsUpdated) parts.push('correlazioni e sentiment asset (live)');
   if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
   if(biasUpdated) parts.push('bias geo-macro AI');
@@ -3527,7 +3527,7 @@ async function initLiveData(){
     note.style.color = 'var(--green)';
     statusLine.innerHTML = `<span style="color:var(--green);">● Live</span> — ${parts.join(', ')} aggiornati al ${now}. ${staticNote}`;
   } else {
-    note.textContent = 'Funzioni live non rilevate — mostro lo snapshot statico (verifica il deploy delle Netlify Functions)';
+    note.textContent = 'Funzioni live non rilevate — mostro lo snapshot statico (verifica il deploy delle Serverless Functions su Vercel)';
     note.style.color = 'var(--gold)';
     statusLine.innerHTML = `<span style="color:var(--gold);">● Snapshot statico</span> — nessuna funzione live rilevata su questo dominio. Ultima analisi manuale verificata ${snapLbl}.`;
   }
