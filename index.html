@@ -1139,7 +1139,7 @@ section.collapsed > *:not(.sec-head){display:none;}
       <div class="rg-sub" id="rgSubRisk">Barometro geo-macro AI · snapshot statico</div>
     </div>
     <div class="grid grid-4" style="margin-bottom:0;">
-      <div class="card"><div class="lbl">VIX</div><div class="val" id="vixVal">14.9</div><div class="sub">Ancora sotto 15 nonostante il conflitto attivo — segnale di <span style="color:var(--gold);">complacency</span> sui prezzi, mentre il sentiment (AAII, Fear&amp;Greed) è già girato</div></div>
+      <div class="card"><div class="lbl">VIX</div><div class="val" id="vixVal">—</div><div class="sub">Ancora sotto 15 nonostante il conflitto attivo — segnale di <span style="color:var(--gold);">complacency</span> sui prezzi, mentre il sentiment (AAII, Fear&amp;Greed) è già girato</div></div>
       <div class="card"><div class="lbl">Equity (S&amp;P 500)</div><div class="val" style="color:var(--green);">7.650 <span class="pill green">+0.17%</span></div><div class="sub">Sostanzialmente stabile dopo il rialzo Fed del 16 settembre — il prezzo non ha (ancora) seguito il crollo di sentiment</div></div>
       <div class="card"><div class="lbl">Oro</div><div class="val" style="color:var(--gold);">Bid strutturale</div><div class="sub">Managed money net long, domanda da hedge geopolitico + copertura su un ciclo Fed più lungo del previsto</div></div>
       <div class="card"><div class="lbl">Regime attuale</div><div class="val" style="color:var(--red); font-size:17px;">RISK-OFF emergente</div><div class="sub">Prezzo ancora vicino ai massimi ma sentiment (AAII, Fear&amp;Greed) già in caduta dopo il rialzo Fed — divergenza da monitorare</div></div>
@@ -1562,18 +1562,11 @@ function renderContentTimestamps(opts){
 renderContentTimestamps();
 setInterval(renderWeekCalendar, 60000); // ricalcola ogni minuto, così la finestra mobile resta sempre aggiornata
 
-// ---------- TICKER TAPE (static snapshot values, refreshed live for FX where possible) ----------
-const tickerData = [
-  {n:'DXY', v:'100.21', d:'max 7 sett.', up:true},
-  {n:'US10Y', v:'4.65%', d:'+0.01', up:true},
-  {n:'VIX', v:'14.88', d:'-3.63%', up:false},
-  {n:'WTI', v:'$81.27', d:'+0.02%', up:true},
-  {n:'BRENT', v:'$88.38', d:'+1.51%', up:true},
-  {n:'GOLD COT NET', v:'+130.8K', d:'managed money', up:true},
-  {n:'S&P500', v:'7,650', d:'+0.17%', up:true},
-  {n:'NASDAQ 100', v:'29,530', d:'+0.39%', up:true},
-  {n:'FED FUNDS', v:'3.75-4.00%', d:'rialzo 16 set', up:true},
-  {n:'CPI YoY', v:'3.4%', d:'core 2.4%', up:false},
+// ---------- TICKER TAPE (100% live: costruito da buildLiveTicker() quando arrivano i dati) ----------
+// Prima conteneva prezzi scritti a mano che restavano accanto a quelli live e li contraddicevano
+// (DXY 100.21 vs proxy 95, VIX 14.88 vs 17, WTI $81 vs $95...). Ora parte con un solo segnaposto.
+let tickerData = [
+  {n:'Prezzi live', v:'caricamento…', d:'', up:null},
 ];
 function renderTicker(){
   const el = document.getElementById('tickerTape');
@@ -1981,9 +1974,9 @@ document.getElementById('jobsGrid').innerHTML = jobsData.map(m=>`
 
 // ---------- RATES GRID ----------
 document.getElementById('ratesGrid').innerHTML = `
-  <div class="card"><div class="lbl">US 10Y Treasury</div><div class="val">4.65%</div><div class="sub">Vicino ai massimi post-crisi 2008 in asta, ora anche col rialzo Fed del 16 set</div></div>
-  <div class="card"><div class="lbl">DXY</div><div class="val">100.21</div><div class="sub">Massimi da 7 settimane — dollaro sostenuto dal dot plot hawkish</div></div>
-  <div class="card"><div class="lbl">VIX</div><div class="val" style="color:var(--gold);">14.88</div><div class="sub">Volatilità ancora bassa nonostante il crollo di sentiment retail</div></div>
+  <div class="card"><div class="lbl">US 10Y Treasury</div><div class="val" id="rateUs10yVal">—</div><div class="sub">Vicino ai massimi post-crisi 2008 in asta, ora anche col rialzo Fed del 16 set</div></div>
+  <div class="card"><div class="lbl">DXY</div><div class="val" id="rateDxyVal">—</div><div class="sub">Massimi da 7 settimane — dollaro sostenuto dal dot plot hawkish</div></div>
+  <div class="card"><div class="lbl">VIX</div><div class="val" id="rateVixVal" style="color:var(--gold);">—</div><div class="sub">Volatilità ancora bassa nonostante il crollo di sentiment retail</div></div>
   <div class="card"><div class="lbl">Spread 10Y-2Y</div><div class="val" id="rateSpreadVal">—</div><div class="sub">Monitorare per segnali recessivi / curva</div></div>
 `;
 
@@ -2887,7 +2880,7 @@ function sentimentReading(r){
     const dir = r.chg > 0 ? 'in rialzo' : r.chg < 0 ? 'in ribasso' : 'stabile';
     const chgTxt = `${r.chg>=0?'+':''}${r.chg.toFixed(2)}%`;
     const priceTxt = r.name === 'DXY'
-      ? `Dollar Index ${dir} di ${chgTxt} oggi (proxy calcolato sui cambi ufficiali BCE).`
+      ? `Dollar Index ${dir} di ${chgTxt} oggi.`
       : `${r.name} ${dir} di ${chgTxt} oggi${r.corr!=null ? `; correlazione DXY ${corrLabel(r.corr).toLowerCase()} (${fmtCorr(r.corr)}) a 30g` : ''}.`;
     parts.push(priceTxt);
   }
@@ -3157,21 +3150,78 @@ function fmtItDate(iso){
 function applyLiveMarketToMonitor(live){
   if(!live) return false;
   let any = false;
-  const map = { sp500:'S&P 500', nasdaq:'Nasdaq 100', dow:'Dow Jones', gold:'Gold Futures', silver:'Silver Futures', wti:'WTI Crude Oil', vix:'VIX' };
-  Object.entries(map).forEach(([key, name])=>{
+  // decimali di visualizzazione per asset (cambi a 4, DXY a 2, rendimento 10Y a 3, il resto a 2)
+  const map = {
+    dxy:{name:'DXY', dec:2}, eurusd:{name:'EUR/USD', dec:4}, gbpusd:{name:'GBP/USD', dec:4},
+    sp500:{name:'S&P 500', dec:2}, nasdaq:{name:'Nasdaq 100', dec:2}, dow:{name:'Dow Jones', dec:2},
+    gold:{name:'Gold Futures', dec:2}, silver:{name:'Silver Futures', dec:2}, wti:{name:'WTI Crude Oil', dec:2},
+    vix:{name:'VIX', dec:2}, us10y:{name:'US 10Y Yield', dec:3},
+  };
+  Object.entries(map).forEach(([key, cfg])=>{
     const q = live[key];
     if(!q){ return; }
-    if(q.error){ console.warn(`Market data — ${name}: ${q.error}`); return; }
+    if(q.error){ console.warn(`Market data — ${cfg.name}: ${q.error}`); return; }
     if(q.price === null || q.price === undefined) return;
-    const asset = marketData.find(m=>m.name===name);
+    const asset = marketData.find(m=>m.name===cfg.name);
     if(asset){
-      asset.val = q.price.toLocaleString('it-IT', {minimumFractionDigits:2, maximumFractionDigits:2});
+      asset.val = q.price.toLocaleString('it-IT', {minimumFractionDigits:cfg.dec, maximumFractionDigits:cfg.dec});
       if(q.changePercent !== null && q.changePercent !== undefined) asset.chg = q.changePercent;
       any = true;
     }
   });
+  // Card numeriche fuori da "Mercati" (sezioni Rendimenti e Risk-On/Off): prima avevano numeri fissi.
+  const setTxt = (id, txt)=>{ const el = document.getElementById(id); if(el) el.textContent = txt; };
+  if(live.us10y && live.us10y.price != null) setTxt('rateUs10yVal', live.us10y.price.toFixed(2) + '%');
+  if(live.dxy && live.dxy.price != null) setTxt('rateDxyVal', live.dxy.price.toFixed(2));
+  if(live.vix && live.vix.price != null){
+    setTxt('rateVixVal', live.vix.price.toFixed(2));
+    setTxt('vixVal', live.vix.price.toFixed(1));
+  }
   if(any) renderMarketMonitor();
   return any;
+}
+
+// Ticker in alto, costruito solo da dati live (Yahoo Finance, Frankfurter, FRED, CFTC). Le voci di cui
+// manca il dato vengono semplicemente omesse, invece di mostrare un valore vecchio scritto a mano.
+function buildLiveTicker({fx, market, macro, cot}){
+  const items = [];
+  const quote = k => (market && market[k] && !market[k].error && market[k].price != null) ? market[k] : null;
+  const num = (v, dec) => v.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+  const pct = c => `${c>=0?'+':''}${c.toFixed(2)}%`;
+  const addQuote = (label, key, dec, prefix='')=>{
+    const q = quote(key); if(!q) return;
+    const has = q.changePercent != null;
+    items.push({n:label, v:prefix + num(q.price, dec), d: has ? pct(q.changePercent) : 'live', up: has ? q.changePercent >= 0 : null});
+  };
+  addQuote('DXY', 'dxy', 2);
+  addQuote('EUR/USD', 'eurusd', 4);
+  addQuote('GBP/USD', 'gbpusd', 4);
+  if(fx && fx.USDJPY) items.push({n:'USD/JPY', v:fx.USDJPY, d:'BCE', up:null});
+  const y = quote('us10y');
+  if(y){
+    const bp = y.previousClose != null ? (y.price - y.previousClose) * 100 : null;
+    items.push({n:'US10Y', v:num(y.price, 2) + '%', d: bp != null ? `${bp>=0?'+':''}${bp.toFixed(0)}pb` : 'live', up: bp != null ? bp >= 0 : null});
+  }
+  addQuote('VIX', 'vix', 2);
+  addQuote('WTI', 'wti', 2, '$');
+  addQuote('BRENT', 'brent', 2, '$');
+  addQuote('GOLD', 'gold', 2, '$');
+  addQuote('SILVER', 'silver', 2, '$');
+  addQuote('S&P500', 'sp500', 0);
+  addQuote('NASDAQ 100', 'nasdaq', 0);
+  addQuote('DOW', 'dow', 0);
+  const g = cot && cot.data && cot.data.gold;
+  if(g && g.nonCommercialNet != null){
+    items.push({n:'GOLD COT NET', v:`${g.nonCommercialNet>=0?'+':''}${(g.nonCommercialNet/1000).toFixed(1)}K`, d:'non-comm.', up:g.nonCommercialNet >= 0});
+  }
+  if(macro && macro.fedFundsRate != null) items.push({n:'FED FUNDS', v:macro.fedFundsRate.toFixed(2) + '%', d:'effettivo', up:null});
+  if(macro && macro.cpiYoY != null){
+    items.push({n:'CPI YoY', v:macro.cpiYoY + '%', d: macro.coreCpiYoY != null ? `core ${macro.coreCpiYoY}%` : '', up:null});
+  }
+  if(!items.length) return false;
+  tickerData = items;
+  renderTicker();
+  return true;
 }
 
 // Etichetta qualitativa della forza della correlazione — soglie standard in analisi finanziaria,
@@ -3442,24 +3492,12 @@ function applyLiveMarketPricing(live){
 
 function applyLiveFXToTicker(live){
   if(!live) return false;
-  // Rimuove eventuali voci LIVE inserite da un refresh precedente, per evitare duplicati infiniti
-  for(let i=tickerData.length-1; i>=0; i--){
-    if(tickerData[i].n && tickerData[i].n.includes('· LIVE')) tickerData.splice(i,1);
-  }
-  const liveTicks = [];
-  if(live.EURUSD) liveTicks.push({n:'EUR/USD · LIVE', v:live.EURUSD, d:'live', up:null});
-  if(live.USDJPY) liveTicks.push({n:'USD/JPY · LIVE', v:live.USDJPY, d:'live', up:null});
-  if(live.GBPUSD) liveTicks.push({n:'GBP/USD · LIVE', v:live.GBPUSD, d:'live', up:null});
-  if(live.DXYProxy) liveTicks.push({n:'DXY proxy · LIVE', v:live.DXYProxy, d:'stima interna', up:null});
-  if(liveTicks.length){ tickerData.splice(0,0,...liveTicks); renderTicker(); }
-
-  // Aggiorna anche le card corrispondenti dentro "Mercati — Asset Monitor" (prima si vedeva
-  // solo nel ticker in alto, non qui — bug segnalato e corretto).
-  // Nota: il valore del cambio (chg %) resta quello dell'ultima verifica manuale, perché calcolare
-  // una variazione giornaliera vera richiederebbe anche il prezzo di chiusura del giorno prima,
-  // che questa API gratuita non fornisce — solo il prezzo attuale è realmente live.
+  // Fallback per le card "Mercati": se Yahoo Finance (applyLiveMarketToMonitor, applicato dopo) non
+  // risponde, restano almeno i cambi ufficiali BCE di Frankfurter. Il "DXY proxy" NON viene più mostrato:
+  // usa una formula senza il peso della corona svedese e sta ~7 punti sotto il vero Dollar Index
+  // (95,4 contro 102,5 al momento della verifica) — il DXY vero arriva ora da Yahoo (DX-Y.NYB).
   let marketAny = false;
-  const fxMap = { 'DXY': live.DXYProxy, 'EUR/USD': live.EURUSD, 'GBP/USD': live.GBPUSD };
+  const fxMap = { 'EUR/USD': live.EURUSD, 'GBP/USD': live.GBPUSD };
   Object.entries(fxMap).forEach(([name, value])=>{
     if(!value) return;
     const asset = marketData.find(m=>m.name===name);
@@ -3467,7 +3505,7 @@ function applyLiveFXToTicker(live){
   });
   if(marketAny) renderMarketMonitor();
 
-  return liveTicks.length > 0 || marketAny;
+  return marketAny;
 }
 
 async function initLiveData(){
@@ -3482,6 +3520,7 @@ async function initLiveData(){
   const marketUpdated = applyLiveMarketToMonitor(market);
   const cotUpdated = applyLiveCOTToReport(cot);
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
+  buildLiveTicker({fx, market, macro, cot});
   const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
   // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
@@ -3510,7 +3549,7 @@ async function initLiveData(){
   const parts = [];
   if(macroUpdated.length) parts.push('CPI/PPI/PIL/lavoro (FRED)');
   if(hawkDoveUpdated) parts.push('Barometro Hawkish/Dovish (FRED)');
-  if(fxUpdated) parts.push('cambi FX + DXY proxy');
+  if(fxUpdated) parts.push('cambi FX (BCE)');
   if(marketUpdated) parts.push('prezzi mercato (Yahoo Finance)');
   if(cotUpdated) parts.push('COT completo — metalli/valute/indici/cripto/WTI (CFTC)');
   if(corrUpdated) parts.push('correlazione DXY reale a 30g (Yahoo Finance/Frankfurter/FMP)');

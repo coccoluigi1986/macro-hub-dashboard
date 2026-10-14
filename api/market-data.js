@@ -27,6 +27,10 @@ const SYMBOLS = {
   wti:    'CL=F',    // Petrolio WTI futures (NYMEX)
   vix:    '^VIX',    // Indice di volatilità CBOE
   eurusd: 'EURUSD=X',
+  gbpusd: 'GBPUSD=X',
+  dxy:    'DX-Y.NYB', // US Dollar Index reale (ICE) — il "proxy" da cambi BCE di fx-data.js sta ~7 punti sotto
+  us10y:  '^TNX',    // Rendimento Treasury 10Y, già in % (5.19 = 5,19%)
+  brent:  'BZ=F',    // Brent futures
 };
 
 async function handleEvent() {
