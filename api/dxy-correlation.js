@@ -38,6 +38,7 @@ const YAHOO_SYMBOLS = {
   silver: 'SI=F',
   wti:    'CL=F',
   vix:    '^VIX',
+  us10y:  '^TNX',   // rendimento 10Y (in %): rende correlazione/volatilità/sparkline disponibili senza la chiave FMP
 };
 
 const LOOKBACK_DAYS = 30;        // finestra di correlazione richiesta (giorni di trading in comune)
@@ -188,6 +189,28 @@ function correlate(dxyRets, assetRets) {
   return { corr: pearson(a, b), n: recent.length };
 }
 
+// Volatilità realizzata annualizzata, in %: deviazione standard dei rendimenti giornalieri degli ultimi
+// `days` giorni di trading × √252. Prima il campo "Volatilità 7g" della card Mercati era un numero scritto a mano.
+function realizedVol(levelSeries, days) {
+  const rets = [...dailyReturns(levelSeries).entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(e => e[1]);
+  const w = rets.slice(-days);
+  if (w.length < Math.min(days, 5)) return null;
+  const mean = w.reduce((s, r) => s + r, 0) / w.length;
+  const variance = w.reduce((s, r) => s + (r - mean) * (r - mean), 0) / (w.length - 1);
+  return Math.sqrt(variance) * Math.sqrt(252) * 100;
+}
+// vol7 = volatilità degli ultimi 7 giorni; volRatio = vol7 / vol30 (>1: l'asset si sta muovendo più del solito)
+function volStats(series) {
+  const v7 = realizedVol(series, 7), v30 = realizedVol(series, 30);
+  if (v7 == null) return {};
+  return { vol7: Number(v7.toFixed(1)), volRatio: v30 ? Number((v7 / v30).toFixed(2)) : null, spark: sparkValues(series) };
+}
+// Ultime 10 chiusure giornaliere reali: servono allo sparkline della card (prima era una serie sintetica)
+function sparkValues(levelSeries, n = 10) {
+  return [...levelSeries.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1)).slice(-n)
+    .map((e) => Number(Number(e[1]).toFixed(4))).filter((v) => !isNaN(v));
+}
+
 async function handleEvent(event) {
   const fmpKey = process.env.FMP_API_KEY;
 
@@ -208,6 +231,7 @@ async function handleEvent(event) {
     const priceSeries = {
       sp500: assetSeries.sp500, nasdaq: assetSeries.nasdaq, dow: assetSeries.dow,
       gold: assetSeries.gold, silver: assetSeries.silver, wti: assetSeries.wti, vix: assetSeries.vix,
+      us10y: assetSeries.us10y,
       eurusd, gbpusd, audusd,
     };
     // Variazione % "di oggi" per il DXY proxy e per le 3 coppie FX — dalla stessa serie storica
@@ -223,21 +247,24 @@ async function handleEvent(event) {
         return;
       }
       const { corr, n } = correlate(dxyRets, dailyReturns(series));
-      data[key] = { corr: corr == null ? null : Number(corr.toFixed(2)), n };
+      data[key] = { corr: corr == null ? null : Number(corr.toFixed(2)), n, ...volStats(series) };
       // Variazione % di oggi anche per gold/silver/indici/VIX/WTI dalla stessa serie storica
       // Yahoo Finance già scaricata per la correlazione — nessuna chiamata aggiuntiva.
       const ownChange = todayChange[key] !== undefined ? todayChange[key] : pctChangeLastTwo(series);
       if (ownChange !== null) data[key].changePercent = ownChange;
       if (corr == null) warnings.push(key);
     });
-    data.dxy = { changePercent: todayChange.dxy };
+    data.dxy = { changePercent: todayChange.dxy, ...volStats(dxy) };
 
     // Aggiunge long/short reali (quando Dukascopy li ha) alle stesse chiavi già presenti in "data".
     Object.entries(retailSentiment).forEach(([key, s]) => {
       data[key] = { ...(data[key] || {}), long: s.long, short: s.short };
     });
 
-    if (treasurySeries.size) {
+    // Il 10Y arriva già da Yahoo (^TNX) nel ciclo qui sopra; la serie FMP resta solo come ripiego se Yahoo non risponde.
+    if (data.us10y && !data.us10y.error) {
+      // già calcolato
+    } else if (treasurySeries.size) {
       const { corr, n } = correlate(dxyRets, dailyReturns(treasurySeries));
       data.us10y = { corr: corr == null ? null : Number(corr.toFixed(2)), n };
       if (corr == null) warnings.push('us10y');
@@ -257,7 +284,7 @@ async function handleEvent(event) {
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),
-        source: 'Correlazione di Pearson sui rendimenti giornalieri — DXY proxy (Frankfurter/BCE) vs Yahoo Finance + FMP treasury-rates',
+        source: 'Correlazione di Pearson a 30g e volatilità realizzata a 7g sui rendimenti giornalieri — DXY ricostruito dai cambi BCE (Frankfurter) vs serie Yahoo Finance',
         lookbackDays: LOOKBACK_DAYS,
         parseWarning: warnings.length ? `Correlazione non calcolabile per: ${warnings.join(', ')}` : null,
         data,

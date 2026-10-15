@@ -725,7 +725,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 <header>
   <div>
     <h1>MACRO HUB <span>TRADING</span></h1>
-    <div class="subtitle">Dashboard macro-geopolitica-monetaria · Fonti: BLS, BEA, Federal Reserve, CFTC, CME Group, ISM, TradingEconomics, Reuters, CNBC</div>
+    <div class="subtitle">Dashboard macro-geopolitica-monetaria · Fonti: Yahoo Finance, FRED, CFTC, calendario economico TradingView, CNN, AAII, Dukascopy, Investing.com, CNBC, WSJ, Federal Reserve · Analisi AI: Google Gemini</div>
   </div>
   <div class="refresh-box">
     Ora locale: <span id="liveClock" class="mono">--:--:--</span><br>
@@ -749,7 +749,7 @@ section.collapsed > *:not(.sec-head){display:none;}
   <div class="navlabel">Geopolitica</div>
   <a href="javascript:void(0)" onclick="goToSection('geo')">🌍 Geopolitica</a>
   <div class="navlabel">Banche centrali</div>
-  <a href="javascript:void(0)" onclick="goToSection('fed')">Fed &amp; FedWatch</a>
+  <a href="javascript:void(0)" onclick="goToSection('fed')">Fed e tassi</a>
   <a href="javascript:void(0)" onclick="goToSection('hawkdove')">Hawkish / Dovish</a>
   <div class="navlabel">Calendario &amp; posizionamento</div>
   <a href="javascript:void(0)" onclick="goToSection('calendar')">Calendario economico</a>
@@ -884,7 +884,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 
 <!-- ============ MACRO EUROPA ============ -->
 <section id="macroeu">
-  <div class="sec-head"><span class="sec-num">03</span><h2>Europa — Eurozona, PMI, BCE</h2><span class="sec-desc">Dati Eurostat/ECB ufficiali · separato dal quadro USA</span></div>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Europa — Eurozona, BCE</h2><span class="sec-desc">Dati Eurostat/BCE dal calendario economico reale · separato dal quadro USA</span></div>
   <div class="grid grid-4" id="macroEuGrid"></div>
   <div class="section-note" id="macroEuNote">Lettura AI in caricamento…</div>
   <div class="source-tag" id="macroEuMeta">Dati: calendario economico reale (TradingView) — Eurostat/BCE, con atteso dal consensus e precedente.</div>
@@ -898,7 +898,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 </section>
 
 <section id="sentiment">
-  <div class="sec-head"><span class="sec-num">05</span><h2>Sentiment di Mercato — News per Categoria</h2><span class="sec-desc">Fed/Tassi · Geopolitica · Macro · DXY · Fear &amp; Greed · AAII · NAAIM · Put/Call</span></div>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Sentiment di Mercato — News per Categoria</h2><span class="sec-desc">Fed/Tassi · Geopolitica · Macro · DXY · Fear &amp; Greed · AAII · posizionamento retail</span></div>
 
   <div class="sn-eyebrow" style="margin-top:0;">📟 Fear &amp; Greed · Sentiment Retail</div>
   <div class="rg-row" style="grid-template-columns:220px 1fr; align-items:center;">
@@ -949,7 +949,7 @@ section.collapsed > *:not(.sec-head){display:none;}
     <div class="xvb-text" id="xvBiasText"></div>
   </div>
 
-  <div class="sn-eyebrow">📊 Indicatori di posizionamento — Fear &amp; Greed · AAII · NAAIM · Put/Call</div>
+  <div class="sn-eyebrow">📊 Indicatori di posizionamento — Fear &amp; Greed · AAII</div>
   <div class="grid grid-4" id="sentimentGrid"></div>
   <div class="section-note" id="sentNote">Lettura AI in caricamento…</div>
   <div class="source-tag" id="sentMeta">Fonti: CNN Business (Fear &amp; Greed) e AAII, letti dal vivo. NAAIM e CBOE Put/Call non hanno più una fonte gratuita aggiornata e non vengono mostrati.</div>
@@ -971,7 +971,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 </section>
 
 <section id="fed">
-  <div class="sec-head"><span class="sec-num">07</span><h2>Banche Centrali — Fed &amp; CME FedWatch</h2><span class="sec-desc">Dati ufficiali FRED + analisi AI live</span></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Banche Centrali — Fed</h2><span class="sec-desc">Dati ufficiali FRED + analisi AI live</span></div>
   <div class="grid grid-3" style="margin-bottom:16px;">
     <div class="card"><div class="lbl">Target Range Attuale</div><div class="val" id="fedTargetVal" style="color:var(--red);">—</div><div class="sub" id="fedTargetSub">Fonte: FRED (limite inferiore e superiore del target range)</div></div>
     <div class="card"><div class="lbl">Prossimo FOMC</div><div class="val" id="fedNextVal">—</div><div class="sub" id="fedNextSub">Dal calendario economico</div></div>
@@ -1198,7 +1198,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 
 
 <footer>
-  <span id="footerTimestamp">Tutti i dati si aggiornano da soli.</span> Prezzi (Yahoo Finance), card Macro USA/Europa/Lavoro (calendario economico TradingView), dati ufficiali (FRED), COT (CFTC, con percentili a 52 settimane), Fear &amp; Greed (CNN) e AAII sono letti dal vivo ad ogni apertura della pagina o click su "Ricarica vista". Le analisi narrative (Geopolitica, Fed, Barometro Hawkish/Dovish, Macro, Sentiment, COT, Risk-On/Off, Notizie a confronto, Cruscotto Asset, Indici, Bias giornaliero) sono generate dall'AI (Gemini) a partire da notizie, prezzi e dati ufficiali reali e si rigenerano da sole. NAAIM e CBOE Put/Call non sono mostrati perché non esiste una fonte gratuita aggiornata. Nessuna parte di questo strumento costituisce consulenza finanziaria.
+  <span id="footerTimestamp">Tutti i dati si aggiornano da soli.</span> Prezzi (Yahoo Finance), card Macro USA/Europa/Lavoro (calendario economico TradingView), dati ufficiali (FRED), COT (CFTC, con percentili a 52 settimane), Fear &amp; Greed (CNN) e AAII sono letti dal vivo ad ogni apertura della pagina o click su "Ricarica vista". Le analisi narrative (Geopolitica, Fed, Barometro Hawkish/Dovish, Macro, Sentiment, COT, Risk-On/Off, Notizie a confronto, Cruscotto Asset, Indici, Bias giornaliero) sono generate dall'AI (Gemini) a partire da notizie, prezzi e dati ufficiali reali e si rigenerano da sole. NAAIM e CBOE Put/Call non sono mostrati perché non esiste una fonte gratuita aggiornata. Nessuna parte di questo strumento costituisce consulenza finanziaria. <a href="/presentazione.html" style="color:var(--accent);">Presentazione del progetto →</a>
 </footer>
 
 </main>
@@ -1251,6 +1251,13 @@ function initCollapsibleSections(){
   });
 }
 initCollapsibleSections();
+
+// Link diretti alle sezioni (usati dalla pagina di presentazione): /#geo, /#cot, /#fed ...
+// La sezione viene aperta (se era chiusa) e raggiunta dopo il primo caricamento dei contenuti.
+(function(){
+  const id = (location.hash || '').slice(1);
+  if(id) setTimeout(()=>{ goToSection(id); }, 1500);
+})();
 
 // ---------- CLOCK ----------
 function tickClock(){
@@ -1494,12 +1501,6 @@ function sparkSVG(points, color){
     <path d="${d}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
 }
-// serie fittizie ma coerenti con la direzione reale (bull=trend up, bear=trend down) per lo sparkline a 7 giorni
-function genSeries(up){
-  const base = [50,52,49,53,51,55,53];
-  const trend = up ? [48,49,51,52,54,56,58] : [58,56,55,53,54,51,49];
-  return up===null? base : trend;
-}
 
 // NOTA: i campi "corr"/"corrLbl" qui sotto sono lo snapshot statico di fallback (come val/chg/vol) —
 // se la funzione dxy-correlation.js è deployata, applyLiveCorrToMonitor() li sovrascrive con la
@@ -1583,6 +1584,11 @@ const marketData = [
 // Le card partono senza commenti scritti a mano (parlavano di rialzi Fed di settembre e di COT di agosto):
 // driver e fattori chiave arrivano dall'analisi AI live (api/market-intelligence). Finché non risponde, segnaposto.
 marketData.forEach(m=>{ m.driver = 'Analisi AI in caricamento…'; m.bars = []; });
+// Volatilità 7g e correlazione DXY sono calcolate live da /api/dxy-correlation: i valori scritti a mano qui sopra
+// non devono restare visibili se il calcolo non risponde.
+marketData.forEach(m=>{ m.vol = '—'; m.volLvl = 'in attesa'; if(m.name !== 'DXY'){ m.corr = '—'; m.corrLbl = 'in attesa'; } });
+// Anche prezzo e variazione partono vuoti: i valori scritti a mano (es. DXY 100,21) non devono mai comparire come fossero attuali.
+marketData.forEach(m=>{ m.val = '—'; m.chg = null; });
 
 function renderMarketMonitor(){
   const cats = [...new Set(marketData.map(m=>m.cat))];
@@ -1591,18 +1597,18 @@ function renderMarketMonitor(){
     html += `<div class="mkt-cat-label">${cat}</div><div class="mkt-grid">`;
     marketData.filter(m=>m.cat===cat).forEach((m,i)=>{
       const idx = marketData.indexOf(m);
-      const up = m.chg >= 0;
-      const color = up ? 'var(--green)'.includes('var')? getComputedColor('green') : '' : getComputedColor('red');
+      const hasChg = typeof m.chg === 'number';   // senza dato live non si mostra né un segno né un badge inventati
+      const up = hasChg && m.chg >= 0;
       html += `
       <div class="mkt-card" id="mkt-${idx}" onclick="toggleMkt(${idx})">
         <div class="mkt-card-top">
           <div><div class="mkt-name">${m.name}</div><div class="mkt-ticker">${m.ticker}</div></div>
-          <div class="mkt-badge ${up?'bull':'bear'}">${up?'Bullish':'Bearish'}</div>
+          <div class="mkt-badge ${!hasChg ? '' : up ? 'bull' : 'bear'}">${!hasChg ? '—' : up ? 'Bullish' : 'Bearish'}</div>
         </div>
         <div class="mkt-body">
           <div>
             <div class="mkt-value">${m.val}</div>
-            <div class="mkt-change ${up?'up':'down'}">${up?'▲':'▼'} ${up?'+':''}${m.chg.toFixed(2)}%</div>
+            <div class="mkt-change ${!hasChg ? '' : up ? 'up' : 'down'}">${hasChg ? `${up?'▲':'▼'} ${up?'+':''}${m.chg.toFixed(2)}%` : '—'}</div>
           </div>
           <div id="spark-${idx}"></div>
         </div>
@@ -1630,10 +1636,15 @@ function renderMarketMonitor(){
   });
   document.getElementById('marketMonitorContainer').innerHTML = html;
   // inject sparklines dopo il render (serve il DOM per leggere i colori)
+  // Sparkline REALE: ultimi chiusure giornaliere (Yahoo Finance/Frankfurter) da /api/dxy-correlation.
+  // Prima era una serie sintetica disegnata in base al segno della variazione; senza dato reale non si disegna nulla.
   marketData.forEach((m,idx)=>{
-    const up = m.chg >= 0;
     const el = document.getElementById('spark-'+idx);
-    if(el) el.innerHTML = sparkSVG(genSeries(up), up ? '#34D399' : '#F0685E');
+    if(!el) return;
+    if(Array.isArray(m.spark) && m.spark.length >= 4){
+      const up = m.spark[m.spark.length-1] >= m.spark[0];
+      el.innerHTML = sparkSVG(m.spark, up ? '#34D399' : '#F0685E');
+    } else { el.innerHTML = ''; }
   });
 }
 function getComputedColor(){ return ''; } // helper inutilizzato, sicurezza
@@ -1802,7 +1813,7 @@ function renderMarketPricing(){
   const dxy = marketData.find(m=>m.name==='DXY');
   const extra = [
     {lbl:'VIX', display: vix ? vix.val : '—', detail:'Volatilità implicita attesa sull\'S&amp;P 500'},
-    {lbl:'Oro', display: gold ? `$${gold.val}` : '—', detail:'Premio geopolitico + hedge inflazione'},
+    {lbl:'Oro', display: gold && gold.val !== '—' ? `$${gold.val}` : '—', detail:'Premio geopolitico + hedge inflazione'},
     {lbl:'DXY', display: dxy ? dxy.val : '—', detail:'Differenziale tassi e domanda di dollari'},
   ];
   grid.innerHTML = pricingData.map(m=>`
@@ -2214,7 +2225,7 @@ function renderDecisionPanel(assetName){
     <div class="dp-footer">
       <div>COT · ${dp.cot.asOf ? dp.cot.asOf.split(' ')[0]+' '+(dp.cot.asOf.split(' ')[1]||'') : 'n.d.'}</div>
       <div>${dp.mkt ? `Prezzo/Momentum · live oggi` : 'Momentum · non disponibile per questo asset'}</div>
-      ${dp.mkt ? `<div class="dp-price">${dp.mkt.val} <span style="color:${parseFloat(dp.mkt.chg)>=0?'var(--green)':'var(--red)'};">${parseFloat(dp.mkt.chg)>=0?'▲':'▼'} ${dp.mkt.chg}%</span></div>` : ''}
+      ${dp.mkt ? `<div class="dp-price">${dp.mkt.val}${typeof dp.mkt.chg === 'number' ? ` <span style="color:${dp.mkt.chg>=0?'var(--green)':'var(--red)'};">${dp.mkt.chg>=0?'▲':'▼'} ${dp.mkt.chg}%</span>` : ''}</div>` : ''}
     </div>
 
     <div class="card" style="margin-top:14px;">
@@ -3234,19 +3245,27 @@ function corrLabel(v){
 function fmtCorr(v){
   return (v>=0?'+':'') + v.toFixed(2).replace('.', ',');
 }
-// Sovrascrive corr/corrLbl in marketData con la correlazione DXY reale a 30g calcolata
-// server-side su serie storiche (Yahoo Finance/Frankfurter/FMP), al posto delle stime scritte a mano.
+// Sovrascrive corr/corrLbl e volatilità 7g in marketData con i valori REALI calcolati server-side su serie
+// storiche (Yahoo Finance/Frankfurter/FMP): correlazione di Pearson a 30g con il DXY e volatilità realizzata
+// annualizzata a 7g (confrontata con la media a 30g), al posto delle stime scritte a mano.
 function applyLiveCorrToMonitor(live){
   if(!live) return false;
   let any = false;
-  const map = { sp500:'S&P 500', nasdaq:'Nasdaq 100', dow:'Dow Jones', gold:'Gold Futures', silver:'Silver Futures',
+  const map = { dxy:'DXY', sp500:'S&P 500', nasdaq:'Nasdaq 100', dow:'Dow Jones', gold:'Gold Futures', silver:'Silver Futures',
     wti:'WTI Crude Oil', vix:'VIX', eurusd:'EUR/USD', gbpusd:'GBP/USD', us10y:'US 10Y Yield' };
   Object.entries(map).forEach(([key, name])=>{
     const c = live[key];
-    if(!c || c.error){ if(c && c.error) console.warn(`Correlazione DXY — ${name}: ${c.error}`); return; }
-    if(c.corr === null || c.corr === undefined) return;
+    if(!c) return;
+    if(c.error) console.warn(`Correlazione DXY — ${name}: ${c.error}`);
     const asset = marketData.find(m=>m.name===name);
-    if(asset){
+    if(!asset) return;
+    if(Array.isArray(c.spark) && c.spark.length >= 4){ asset.spark = c.spark; any = true; }
+    if(c.vol7 != null){
+      asset.vol = `${c.vol7.toFixed(1).replace('.', ',')}%`;
+      asset.volLvl = c.volRatio == null ? 'realizzata' : c.volRatio < 0.75 ? 'sotto la media 30g' : c.volRatio > 1.25 ? 'sopra la media 30g' : 'in linea con la media 30g';
+      any = true;
+    }
+    if(c.corr !== null && c.corr !== undefined){
       asset.corr = fmtCorr(c.corr);
       asset.corrLbl = corrLabel(c.corr);
       any = true;
