@@ -3,7 +3,7 @@
 // Serverless Function (Vercel): dossier AI per il "Prossimo evento chiave" — aggiunge un
 // blocco di contesto generato da Gemini (perché conta oggi, note sui tempi, asset da
 // monitorare, cosa aspettarsi) SOPRA i dati dell'evento — che restano quelli del calendario
-// curato a mano già presente in index.html (keyEvents). Non sostituisce gli scenari
+// curato a mano già presente in dashboard.html (keyEvents). Non sostituisce gli scenari
 // "sopra/sotto le attese" già scritti a mano: quelli restano come sono, il dossier AI è un
 // livello aggiuntivo con la lettura più aggiornata basata sulle notizie di oggi.
 //

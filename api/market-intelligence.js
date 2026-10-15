@@ -2,7 +2,7 @@
 //
 // Serverless Function (Vercel): driver aggiornato via AI per ogni asset della sezione
 // "Mercati — Asset Monitor": prima i campi "driver" (il paragrafo "da cosa si muove e il
-// perché") e "bars" (i due fattori chiave) di marketData in index.html erano scritti a
+// perché") e "bars" (i due fattori chiave) di marketData in dashboard.html erano scritti a
 // mano una volta sola e restavano statici per sempre, anche quando il prezzo veniva
 // aggiornato live. Questa funzione li rigenera con Gemini a partire da notizie reali
 // (lib/news.js) e dai prezzi/variazioni ATTUALI passati dal client (stesso snapshot già

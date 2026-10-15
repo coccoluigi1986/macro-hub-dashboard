@@ -1,7 +1,7 @@
 // api/economic-calendar.js
 //
 // Serverless Function (Vercel): calendario economico REALE (non più testo scritto a mano in
-// index.html). Il fetch dell'endpoint TradingView e la normalizzazione stanno in lib/calendar.js
+// dashboard.html). Il fetch dell'endpoint TradingView e la normalizzazione stanno in lib/calendar.js
 // (condivisi con api/narrative.js).
 //
 // Query: ?from=<ISO>&to=<ISO>&countries=US,EU,GB,... (countries opzionale)
