@@ -93,8 +93,8 @@ h1{font-size:clamp(40px,6.2vw,76px); font-weight:700; margin:24px 0 22px;}
 .bar:nth-of-type(2){background:#8EC5FA; animation-delay:.15s;} .bar:nth-of-type(3){background:var(--gold); animation-delay:.3s;} .bar:nth-of-type(4){background:var(--dim2); animation-delay:.45s;}
 @keyframes grow{from{transform:scaleX(0);}}
 .spark{display:block; width:100%; margin-top:8px;}
-.spark path{stroke-dasharray:260; stroke-dashoffset:260; animation:draw 3.2s ease-out .4s forwards;}
-@keyframes draw{to{stroke-dashoffset:0;}}
+.spark path{stroke-dasharray:260; stroke-dashoffset:0; animation:draw 3.2s ease-out .4s both;}
+@keyframes draw{from{stroke-dashoffset:260;}}
 @media(max-width:940px){ .stage{height:430px; max-width:520px; margin:6px auto 0; width:100%;} }
 @media(max-width:480px){ .stage{height:380px;} .sc{padding:12px 14px;} .sc4{display:none;} .sc1{width:66%;} .sc2{width:56%; top:34%;} .sc3{width:62%;} }
 
@@ -105,7 +105,7 @@ h1{font-size:clamp(40px,6.2vw,76px); font-weight:700; margin:24px 0 22px;}
 .marquee span{padding:16px 26px; font:500 13px/1 'IBM Plex Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); white-space:nowrap;}
 .marquee span::after{content:"◆"; margin-left:52px; color:var(--accent); font-size:9px; vertical-align:2px;}
 @keyframes slide{to{transform:translateX(-50%);}}
-@media(prefers-reduced-motion:reduce){ .marquee .track, .sc, .needle, .bar, .pill i, .cal i.hot{animation:none;} .spark path{animation:none; stroke-dashoffset:0;} html{scroll-behavior:auto;} .rv{opacity:1!important; transform:none!important;} }
+@media(prefers-reduced-motion:reduce){ .marquee .track, .sc, .needle, .bar, .pill i, .cal i.hot{animation:none;} .spark path{animation:none;} html{scroll-behavior:auto;} }
 
 /* ===== SECTIONS ===== */
 section.blk{padding:108px 0 0;}
@@ -353,7 +353,7 @@ footer p{max-width:68ch;}
 <main>
 
 <section class="blk" id="problema">
-  <div class="wrap rv">
+  <div class="wrap">
     <div class="eyebrow">Il problema</div>
     <h2>Venti schede aperte. <span class="grad">Zero chiarezza.</span></h2>
     <p class="sec-lede">I mercati sono mossi da troppe cose insieme, e ognuna sta su un sito diverso. Macro Hub le mette in fila e te le racconta.</p>
@@ -368,7 +368,7 @@ footer p{max-width:68ch;}
 </section>
 
 <section class="blk" id="giornata">
-  <div class="wrap rv">
+  <div class="wrap">
     <div class="eyebrow">Come si usa</div>
     <h2>Una giornata con Macro Hub</h2>
     <p class="sec-lede">Dal primo sguardo del mattino alla sera: ogni momento ha la sua risposta.</p>
@@ -383,12 +383,12 @@ footer p{max-width:68ch;}
 
 <section class="blk" id="cosa-trovi">
   <div class="wrap">
-    <div class="rv">
+    <div>
       <div class="eyebrow">Cosa trovi dentro</div>
       <h2>Tutto ciò che serve per leggere il mercato</h2>
       <p class="sec-lede">Nove aree, un unico linguaggio. Ognuna risponde a una domanda che ti sei fatto almeno una volta.</p>
     </div>
-    <div class="bento rv">
+    <div class="bento">
       <article class="tile big gold">
         <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
         <h3>Il polso del giorno</h3>
@@ -653,11 +653,11 @@ footer p{max-width:68ch;}
 
 <section class="blk" id="per-chi">
   <div class="wrap">
-    <div class="rv center">
+    <div class="center">
       <div class="eyebrow">Per chi è</div>
       <h2>Se ti sei mai chiesto “ma perché si sta muovendo?”</h2>
     </div>
-    <div class="who rv">
+    <div class="who">
       <div class="person"><div class="q">Il trader</div><p>Vuoi il contesto prima di operare, non l’ennesimo segnale. Capire in che regime si muove il mercato cambia il modo in cui leggi ogni grafico.</p><span class="tag">Contesto prima del grafico</span></div>
       <div class="person"><div class="q">L’investitore</div><p>Vuoi capire dove siamo nel ciclo — inflazione, tassi, crescita — senza leggere venti report e senza il gergo da addetti ai lavori.</p><span class="tag">Il quadro d’insieme</span></div>
       <div class="person"><div class="q">Il curioso</div><p>Vuoi imparare come l’economia muove davvero i prezzi. Ogni sezione ti spiega cosa sta succedendo e perché, con parole semplici.</p><span class="tag">Imparare guardando</span></div>
@@ -667,11 +667,11 @@ footer p{max-width:68ch;}
 
 <section class="blk" id="perche">
   <div class="wrap">
-    <div class="rv">
+    <div>
       <div class="eyebrow">Perché Macro Hub</div>
       <h2>Meno rumore. <span class="grad">Più capacità di capire.</span></h2>
     </div>
-    <div class="why rv">
+    <div class="why">
       <div class="w"><div class="n">01</div><h3>Il quadro, non il rumore</h3><p>Sceglie cosa conta oggi e lo mette in ordine, invece di sommergerti di notizie e di numeri.</p></div>
       <div class="w"><div class="n">02</div><h3>Spiegato in italiano</h3><p>Ogni sezione non si limita a mostrarti qualcosa: ti dice cosa significa, con parole chiare.</p></div>
       <div class="w"><div class="n">03</div><h3>Sempre al passo</h3><p>Si aggiorna da sola ogni volta che la apri. Niente da cercare, niente da aggiornare.</p></div>
@@ -695,11 +695,11 @@ footer p{max-width:68ch;}
 
 <section class="blk" id="faq">
   <div class="wrap">
-    <div class="rv center">
+    <div class="center">
       <div class="eyebrow">Domande</div>
       <h2>Prima che tu lo chieda</h2>
     </div>
-    <div class="faq rv">
+    <div class="faq">
       <details><summary>Devo essere un esperto di macroeconomia?</summary><p>No. Le analisi sono scritte in italiano chiaro e ogni dato è accompagnato da una lettura di cosa significa. Si impara usandola.</p></details>
       <details><summary>Mi dirà cosa comprare o vendere?</summary><p>No. Macro Hub è uno strumento informativo: non dà consulenza né segnali operativi e non promette rendimenti. Ti aiuta a capire il contesto; le decisioni restano tue.</p></details>
       <details><summary>Quanto tempo serve per usarla?</summary><p>Pochi minuti al mattino bastano per avere il quadro. Se vuoi approfondire, ogni area ha il suo spazio.</p></details>
@@ -709,7 +709,7 @@ footer p{max-width:68ch;}
 </section>
 
 <div class="wrap" id="registrazione">
-  <div class="closing rv">
+  <div class="closing">
     <span class="pill"><i></i>Stiamo preparando l’accesso</span>
     <h2>Il tuo posto in prima fila sul mercato.</h2>
     <p>Presto potrai creare il tuo accesso a Macro Hub Trading. Intanto, dai un’occhiata a com’è fatta: poi capirai perché vorrai esserci.</p>
