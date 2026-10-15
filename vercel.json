@@ -3,11 +3,21 @@
   "redirects": [
     {
       "source": "/presentazione",
-      "destination": "/",
+      "destination": "/info",
       "permanent": false
     },
     {
       "source": "/presentazione.html",
+      "destination": "/info",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/dashboard.html",
       "destination": "/",
       "permanent": false
     }
