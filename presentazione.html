@@ -113,8 +113,6 @@ section.blk{padding:108px 0 0;}
 h2{font-size:clamp(32px,4.4vw,52px); font-weight:700; margin:16px 0 18px; max-width:17em;}
 .sec-lede{font-size:19px; color:var(--text2); max-width:38em; line-height:1.6;}
 .center{text-align:center;} .center h2, .center .sec-lede{margin-left:auto; margin-right:auto;}
-.rv{opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease;}
-.rv.in{opacity:1; transform:none;}
 
 /* problema → soluzione */
 .chaos{position:relative; margin-top:44px; display:grid; grid-template-columns:1fr auto 1fr; gap:28px; align-items:center;}
@@ -178,6 +176,102 @@ h2{font-size:clamp(32px,4.4vw,52px); font-weight:700; margin:16px 0 18px; max-wi
 .faq details[open] summary::after{transform:rotate(45deg);}
 .faq p{padding:0 4px 24px; color:var(--text2); font-size:16.5px; max-width:42em;}
 
+/* ===== SHOWCASE "Dentro la dashboard" ===== */
+.show{margin-top:40px;}
+.show-tabs{display:none; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+.js .show-tabs{display:flex;}
+.tabbtn{font:500 14px/1 'Inter',sans-serif; padding:12px 16px; border-radius:99px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; transition:all .15s;}
+.tabbtn:hover{border-color:var(--accent); color:var(--text);}
+.tabbtn[aria-selected="true"]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
+.panel{display:grid; grid-template-columns:1.05fr 1fr; gap:34px; align-items:center; margin-top:16px; padding:30px; border:1px solid var(--border); border-radius:20px; background:linear-gradient(165deg,var(--panel2),var(--panel));}
+.js .panel{display:none;}
+.js .panel.on{display:grid; animation:fadein .4s ease;}
+@keyframes fadein{from{opacity:0; transform:translateY(8px);}}
+.ptxt .kick{font:500 11.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--gold);}
+.ptxt h3{font-size:clamp(26px,3vw,34px); margin:12px 0 12px; font-weight:700;}
+.ptxt p{color:var(--text2); font-size:17px;}
+.ptxt ul{list-style:none; display:grid; gap:10px; margin-top:20px;}
+.ptxt li{position:relative; padding-left:26px; font-size:15.5px; color:var(--text2);}
+.ptxt li::before{content:""; position:absolute; left:2px; top:.5em; width:10px; height:6px; border-left:2px solid var(--accent); border-bottom:2px solid var(--accent); transform:rotate(-45deg);}
+.art{position:relative; min-height:300px; border-radius:16px; padding:24px; background:radial-gradient(90% 90% at 50% 0%, rgba(94,168,245,.12), transparent 70%), var(--bg); border:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; gap:14px; overflow:hidden;}
+.art::before{content:""; position:absolute; inset:0; opacity:.12; pointer-events:none; background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px); background-size:32px 32px;}
+.art > *{position:relative;}
+.chipx{display:inline-flex; align-items:center; gap:6px; font:600 11px/1 'IBM Plex Mono',monospace; letter-spacing:.07em; text-transform:uppercase; padding:6px 9px; border:1px solid var(--border); border-radius:6px; color:var(--text2); background:var(--panel); white-space:nowrap;}
+.chipx.g{color:var(--green); border-color:rgba(52,211,153,.4);} .chipx.r{color:var(--red); border-color:rgba(240,104,94,.4);} .chipx.y{color:var(--gold); border-color:rgba(224,169,77,.4);}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.mini{border:1px solid var(--border); border-radius:10px; background:rgba(17,23,41,.9); padding:12px 13px;}
+.mini h5{font:500 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-bottom:8px;}
+.mini .ln{height:6px; border-radius:3px; background:var(--border); margin-top:7px;}
+.lbl{font:500 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);}
+.cdl{display:flex; gap:6px; align-items:flex-start;}
+.cdl > div{flex:1; text-align:center;} .cdl b{display:block; height:40px; border-radius:8px; background:var(--panel2); border:1px solid var(--border); margin-bottom:6px;}
+.cdl em{width:3px; height:3px; border-radius:50%; background:var(--dim2); box-shadow:0 8px 0 var(--dim2); margin-top:16px;}
+.mrow2{display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:rgba(17,23,41,.9);}
+.cmp{display:grid; gap:5px; margin-top:9px;}
+.cmp .t{height:6px; border-radius:0 3px 3px 0; background:var(--dim2); width:var(--a);}
+.cmp .a{height:8px; border-radius:0 4px 4px 0; background:var(--accent); width:var(--b);}
+.key{display:flex; gap:16px; font-size:12px; color:var(--dim);} .key u{display:inline-block; width:10px; height:6px; border-radius:2px; margin-right:6px; text-decoration:none; vertical-align:1px;}
+.pb{display:grid; grid-template-columns:76px 1fr; gap:10px; align-items:center;}
+.pb .tr{position:relative; height:8px; border-radius:4px; background:var(--panel2);}
+.pb .tr i{position:absolute; left:0; top:0; height:100%; width:var(--w); border-radius:0 4px 4px 0; background:var(--accent);}
+.pb .tr::after{content:""; position:absolute; left:50%; top:-3px; width:1px; height:14px; background:var(--dim2);}
+.axisx{display:grid; grid-template-columns:76px 1fr; gap:10px; font-size:11px; color:var(--dim2);} .axisx div{display:flex; justify-content:space-between;}
+.meterx{display:flex; gap:3px; height:10px; position:relative; margin-top:8px;}
+.meterx i{flex:1; border-radius:5px; background:var(--panel2); border:1px solid var(--border);}
+.meterx i.on{background:var(--accent); border-color:var(--accent);}
+.meterx .pin{position:absolute; top:-7px; left:var(--p); width:3px; height:24px; margin-left:-1.5px; border-radius:2px; background:var(--text); box-shadow:0 0 0 2px var(--bg);}
+.mlab{display:flex; justify-content:space-between; font-size:11px; color:var(--dim2); margin-top:6px;}
+.stk{display:flex; gap:2px; height:12px; margin-top:8px;} .stk i{display:block; height:100%; border-radius:3px;}
+.globe{width:100%; max-width:230px; margin:0 auto; display:block;}
+.globe .d1,.globe .d2,.globe .d3{animation:blink 2s infinite;} .globe .d2{animation-delay:.6s;} .globe .d3{animation-delay:1.2s;}
+.trow{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:rgba(17,23,41,.9);}
+.trow .ln{height:6px; border-radius:3px; background:var(--border); flex:1; max-width:55%;}
+@media(max-width:900px){ .panel{grid-template-columns:1fr; padding:22px; gap:24px;} .art{min-height:260px;} }
+
+/* ===== PRIMA / CON MACRO HUB ===== */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:44px;}
+.ba .col{border-radius:var(--radius); padding:32px 30px; border:1px solid var(--border); background:var(--panel);}
+.ba .col.now{border-color:rgba(94,168,245,.45); background:linear-gradient(165deg,rgba(94,168,245,.13),var(--panel));}
+.ba h3{font-size:23px; margin-bottom:20px; font-weight:600;}
+.ba .old h3{color:var(--dim);}
+.ba ul{list-style:none; display:grid; gap:16px;}
+.ba li{position:relative; padding-left:34px; font-size:16.5px; color:var(--text2); line-height:1.5;}
+.ba .old li{color:var(--dim);}
+.ba li::before{position:absolute; left:0; top:1px; width:22px; height:22px; border-radius:50%; text-align:center; font:700 12px/22px 'Inter',sans-serif;}
+.ba .old li::before{content:"✕"; background:rgba(240,104,94,.14); color:var(--red);}
+.ba .now li::before{content:"✓"; background:rgba(52,211,153,.14); color:var(--green);}
+@media(max-width:800px){ .ba{grid-template-columns:1fr;} }
+
+/* ===== DOMANDE CHE TI INCURIOSISCONO ===== */
+.qs{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:44px;}
+.q{display:flex; flex-direction:column; justify-content:space-between; gap:22px; border:1px solid var(--border); border-radius:var(--radius); padding:26px 24px; background:var(--panel); text-decoration:none; transition:border-color .2s, transform .2s;}
+.q:hover{border-color:rgba(94,168,245,.55); transform:translateY(-3px);}
+.q b{font:600 21px/1.3 'Space Grotesk',sans-serif; letter-spacing:-.01em;}
+.q span{font-size:14px; color:var(--accent); font-weight:500;}
+@media(max-width:940px){ .qs{grid-template-columns:1fr 1fr;} } @media(max-width:580px){ .qs{grid-template-columns:1fr;} }
+
+/* ===== GLOSSARIO ===== */
+.gl{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:44px; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--border);}
+.gl > div{background:var(--panel); padding:24px 24px 26px;}
+.gl dt{font:600 19px/1.2 'Space Grotesk',sans-serif; margin-bottom:9px; color:var(--text);}
+.gl dd{font-size:15px; color:var(--text2); line-height:1.55;}
+@media(max-width:940px){ .gl{grid-template-columns:1fr 1fr;} } @media(max-width:580px){ .gl{grid-template-columns:1fr;} }
+
+/* ===== COME INIZIARE ===== */
+.go{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px;}
+.go .s{border:1px solid var(--border); border-radius:var(--radius); padding:30px 28px; background:var(--panel);}
+.go .s b{display:block; font:700 52px/1 'Space Grotesk',sans-serif; color:var(--accent); opacity:.9; margin-bottom:16px;}
+.go .s h3{font-size:22px; margin-bottom:9px; font-weight:600;} .go .s p{color:var(--text2); font-size:16px;}
+@media(max-width:900px){ .go{grid-template-columns:1fr;} }
+
+/* ===== FOOTER ESTESO ===== */
+.fgrid{display:grid; grid-template-columns:1.7fr 1fr 1fr; gap:40px; width:100%;}
+.fgrid h4{font:500 11.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-bottom:16px;}
+.fgrid a{display:block; color:var(--text2); text-decoration:none; font-size:14.5px; padding:5px 0;} .fgrid a:hover{color:var(--accent);}
+.fgrid .about b{display:block; font:700 18px/1 'Space Grotesk',sans-serif; color:var(--text); margin-bottom:12px; letter-spacing:.02em;}
+.legal{width:100%; margin-top:10px; padding-top:20px; border-top:1px solid var(--border); font-size:12.5px; color:var(--dim2); max-width:none!important;}
+@media(max-width:760px){ .fgrid{grid-template-columns:1fr 1fr;} .fgrid .about{grid-column:1/-1;} }
+
 /* chiusura */
 .closing{position:relative; margin-top:112px; border:1px solid rgba(94,168,245,.35); border-radius:22px; padding:72px 26px; text-align:center; overflow:hidden; background:radial-gradient(65% 130% at 50% 0%, rgba(94,168,245,.22), transparent 70%), radial-gradient(40% 80% at 100% 100%, rgba(224,169,77,.12), transparent 70%), var(--panel);}
 .closing h2{margin:18px auto 14px; max-width:14em;}
@@ -195,8 +289,9 @@ footer p{max-width:68ch;}
     <a class="brand" href="#top">MACRO HUB <span>TRADING</span></a>
     <div class="nav-links">
       <a href="#giornata">Una giornata</a>
-      <a href="#cosa-trovi">Cosa trovi</a>
+      <a href="#dentro">Dentro</a>
       <a href="#per-chi">Per chi è</a>
+      <a href="#glossario">Glossario</a>
       <a href="#faq">Domande</a>
     </div>
     <a class="btn btn-soon js-signup" href="#registrazione">Registrazione in arrivo</a>
@@ -343,6 +438,219 @@ footer p{max-width:68ch;}
   </div>
 </section>
 
+<section class="blk" id="dentro">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Dentro la dashboard</div>
+      <h2>Sei modi di guardare lo stesso mercato</h2>
+      <p class="sec-lede">Ogni area ha il suo punto di vista. Scegli quella che ti incuriosisce di più.</p>
+    </div>
+    <div class="show" id="show">
+      <div class="show-tabs" role="tablist" aria-label="Aree della dashboard"></div>
+
+      <article class="panel on" role="tabpanel" data-tab="Il polso del giorno">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 112" style="width:100%; max-width:300px; margin:0 auto; display:block;">
+            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gg)" stroke-width="14" stroke-linecap="round"/>
+            <line x1="100" y1="100" x2="100" y2="34" stroke="#EDF0F7" stroke-width="3" stroke-linecap="round" transform="rotate(24 100 100)"/>
+            <circle cx="100" cy="100" r="6" fill="#EDF0F7"/>
+          </svg>
+          <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;"><span class="chipx r">Risk-off</span><span class="chipx y">Neutrale</span><span class="chipx g">Risk-on</span></div>
+          <div class="row2">
+            <div class="mini"><h5>Bias geopolitico</h5><div class="ln" style="width:85%"></div><div class="ln" style="width:55%"></div></div>
+            <div class="mini"><h5>Bias macro</h5><div class="ln" style="width:70%"></div><div class="ln" style="width:48%"></div></div>
+          </div>
+        </div>
+        <div class="ptxt">
+          <div class="kick">Mattina</div>
+          <h3>Il polso del giorno</h3>
+          <p>Prima di guardare un solo grafico, capisci in che clima si muove il mercato.</p>
+          <ul>
+            <li>Un punteggio da risk-off a risk-on, sempre in vista</li>
+            <li>Il bias geopolitico e quello macro, spiegati in una riga</li>
+            <li>Le notizie che contano, senza scorrere dieci siti</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="panel" role="tabpanel" data-tab="Il prossimo evento">
+        <div class="art" aria-hidden="true">
+          <div class="lbl">Conto alla rovescia</div>
+          <div class="cdl"><div><b></b><span class="lbl">ore</span></div><em></em><div><b></b><span class="lbl">min</span></div><em></em><div><b></b><span class="lbl">sec</span></div></div>
+          <div class="row2">
+            <div class="mini"><h5>Se sopra le attese</h5><span class="chipx g">▲ Scenario</span><div class="ln" style="width:90%"></div><div class="ln" style="width:60%"></div></div>
+            <div class="mini"><h5>Se sotto le attese</h5><span class="chipx r">▼ Scenario</span><div class="ln" style="width:80%"></div><div class="ln" style="width:65%"></div></div>
+          </div>
+        </div>
+        <div class="ptxt">
+          <div class="kick">Prima del dato</div>
+          <h3>Il prossimo evento</h3>
+          <p>Conto alla rovescia verso l’appuntamento che può muovere tutto.</p>
+          <ul>
+            <li>Cosa ci si aspetta e cosa era successo la volta scorsa</li>
+            <li>Due scenari già pronti: se il dato sorprende al rialzo o al ribasso</li>
+            <li>Gli asset da tenere d’occhio in quel momento</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="panel" role="tabpanel" data-tab="Macro e attese">
+        <div class="art" aria-hidden="true">
+          <div class="key"><span><u style="background:var(--dim2)"></u>Atteso</span><span><u style="background:var(--accent)"></u>Uscito</span></div>
+          <div class="mrow2"><div><div class="lbl">Inflazione</div><div class="cmp" style="--a:62%; --b:80%"><div class="t"></div><div class="a"></div></div></div><span class="chipx r">▲ Sopra</span></div>
+          <div class="mrow2"><div><div class="lbl">Occupazione</div><div class="cmp" style="--a:78%; --b:46%"><div class="t"></div><div class="a"></div></div></div><span class="chipx g">▼ Sotto</span></div>
+          <div class="mrow2"><div><div class="lbl">Attività</div><div class="cmp" style="--a:66%; --b:66%"><div class="t"></div><div class="a"></div></div></div><span class="chipx">● In linea</span></div>
+        </div>
+        <div class="ptxt">
+          <div class="kick">Alla pubblicazione</div>
+          <h3>Macro e attese</h3>
+          <p>Un dato da solo non dice nulla: conta rispetto a ciò che il mercato si aspettava.</p>
+          <ul>
+            <li>Inflazione, lavoro e crescita, Stati Uniti ed Europa</li>
+            <li>La sorpresa evidenziata a colpo d’occhio</li>
+            <li>Una lettura d’insieme di cosa significa per le banche centrali</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="panel" role="tabpanel" data-tab="Il posizionamento dei grandi">
+        <div class="art" aria-hidden="true">
+          <div class="pb"><span class="lbl">Indici</span><span class="tr"><i style="--w:94%"></i></span></div>
+          <div class="pb"><span class="lbl">Valute</span><span class="tr"><i style="--w:78%"></i></span></div>
+          <div class="pb"><span class="lbl">Oro</span><span class="tr"><i style="--w:63%"></i></span></div>
+          <div class="pb"><span class="lbl">Petrolio</span><span class="tr"><i style="--w:34%"></i></span></div>
+          <div class="pb"><span class="lbl">Cripto</span><span class="tr"><i style="--w:16%"></i></span></div>
+          <div class="axisx"><span></span><div><span>minimo</span><span>medio</span><span>massimo</span></div></div>
+        </div>
+        <div class="ptxt">
+          <div class="kick">Sera</div>
+          <h3>Il posizionamento dei grandi</h3>
+          <p>Dietro i prezzi ci sono le scelte dei grandi operatori. Qui le vedi.</p>
+          <ul>
+            <li>Dove il posizionamento è affollato e dove è scoperto</li>
+            <li>Quanto è estremo rispetto all’ultimo anno</li>
+            <li>Una lettura per ogni asset, dall’oro agli indici</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="panel" role="tabpanel" data-tab="Il sentiment">
+        <div class="art" aria-hidden="true">
+          <div class="lbl">Paura o avidità?</div>
+          <div><div class="meterx" style="--p:30%"><i></i><i class="on"></i><i></i><i></i><i></i><span class="pin"></span></div>
+          <div class="mlab"><span>Paura estrema</span><span>Avidità estrema</span></div></div>
+          <div class="lbl" style="margin-top:8px">Investitori individuali</div>
+          <div><div class="stk"><i style="flex:4; background:var(--green)"></i><i style="flex:2; background:var(--dim2)"></i><i style="flex:4; background:var(--red)"></i></div>
+          <div class="mlab"><span>Bullish</span><span>Neutrale</span><span>Bearish</span></div></div>
+        </div>
+        <div class="ptxt">
+          <div class="kick">Il clima emotivo</div>
+          <h3>Il sentiment</h3>
+          <p>L’umore degli investitori è un indizio: qui lo leggi e lo confronti con i fatti.</p>
+          <ul>
+            <li>Paura e avidità in un unico indicatore</li>
+            <li>Il sondaggio sugli investitori individuali</li>
+            <li>Notizie e dati messi a confronto: si confermano o si contraddicono?</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="panel" role="tabpanel" data-tab="Geopolitica">
+        <div class="art" aria-hidden="true">
+          <svg class="globe" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="78" fill="none" stroke="#232B45" stroke-width="2"/>
+            <ellipse cx="100" cy="100" rx="78" ry="30" fill="none" stroke="#232B45" stroke-width="1.5"/>
+            <ellipse cx="100" cy="100" rx="30" ry="78" fill="none" stroke="#232B45" stroke-width="1.5"/>
+            <line x1="22" y1="100" x2="178" y2="100" stroke="#232B45" stroke-width="1.5"/><line x1="100" y1="22" x2="100" y2="178" stroke="#232B45" stroke-width="1.5"/>
+            <circle class="d1" cx="130" cy="72" r="6" fill="#F0685E"/><circle class="d2" cx="72" cy="118" r="6" fill="#E0A94D"/><circle class="d3" cx="112" cy="140" r="6" fill="#34D399"/>
+          </svg>
+          <div class="trow"><span class="chipx r">↗ Rischio in aumento</span><span class="ln"></span></div>
+          <div class="trow"><span class="chipx y">→ Stabile</span><span class="ln"></span></div>
+          <div class="trow"><span class="chipx g">↘ In calo</span><span class="ln"></span></div>
+        </div>
+        <div class="ptxt">
+          <div class="kick">Il quadro globale</div>
+          <h3>Geopolitica</h3>
+          <p>Le tensioni internazionali non restano mai fuori dai prezzi.</p>
+          <ul>
+            <li>I temi caldi e il canale con cui toccano i mercati</li>
+            <li>Se il rischio è in aumento, stabile o in calo</li>
+            <li>Cosa osservare per capire se la situazione cambia</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="blk" id="prima-dopo">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow">La differenza</div>
+      <h2>Cambia il modo in cui inizi la giornata</h2>
+    </div>
+    <div class="ba">
+      <div class="col old">
+        <h3>Prima</h3>
+        <ul>
+          <li>Dieci schede aperte, nessuna che dialoga con le altre</li>
+          <li>Notizie che si contraddicono e nessuno che le ordina per importanza</li>
+          <li>Un dato appena uscito e il dubbio: ha sorpreso o no?</li>
+          <li>La sensazione di arrivare sempre un po’ in ritardo sul quadro</li>
+        </ul>
+      </div>
+      <div class="col now">
+        <h3>Con Macro Hub</h3>
+        <ul>
+          <li>Un unico quadro, ordinato per ciò che conta oggi</li>
+          <li>Ogni notizia collegata al suo impatto sui mercati</li>
+          <li>Ogni dato accanto alle attese: la sorpresa si vede subito</li>
+          <li>Sai cosa aspettarti prima che succeda</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="blk" id="domande-chiave">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Curiosità</div>
+      <h2>Le domande che ti aiuta a sciogliere</h2>
+      <p class="sec-lede">Se almeno una di queste ti ha mai fatto restare a pensare, sei nel posto giusto.</p>
+    </div>
+    <div class="qs">
+      <a class="q js-dash" href="/"><b>Perché il dollaro tende a salire quando i mercati hanno paura?</b><span>Scopri come ragiona il mercato →</span></a>
+      <a class="q js-dash" href="/"><b>Cosa significa che la Fed è “hawkish”?</b><span>Dal gergo ai suoi effetti →</span></a>
+      <a class="q js-dash" href="/"><b>Perché l’oro a volte scende quando i tassi salgono?</b><span>Il legame con rendimenti e dollaro →</span></a>
+      <a class="q js-dash" href="/"><b>Cosa stanno facendo davvero i grandi fondi sui futures?</b><span>Guarda il posizionamento →</span></a>
+      <a class="q js-dash" href="/"><b>Un dato “in linea” può comunque muovere i mercati?</b><span>La sorpresa conta più del numero →</span></a>
+      <a class="q js-dash" href="/"><b>Come fa una tensione geopolitica a muovere il petrolio?</b><span>Dalle notizie ai prezzi →</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="blk" id="glossario">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Impari mentre usi</div>
+      <h2>Il linguaggio dei mercati, senza gergo</h2>
+      <p class="sec-lede">Le parole che sentirai ovunque, spiegate in una riga. Nella dashboard le ritrovi nel loro contesto.</p>
+    </div>
+    <dl class="gl">
+      <div><dt>Hawkish</dt><dd>Una banca centrale “falco”: incline ad alzare o mantenere alti i tassi per frenare l’inflazione.</dd></div>
+      <div><dt>Dovish</dt><dd>Una banca centrale “colomba”: incline a tassi più bassi per sostenere crescita e occupazione.</dd></div>
+      <div><dt>Risk-on / Risk-off</dt><dd>Risk-on: si cerca rendimento e si comprano asset rischiosi. Risk-off: si cerca protezione, ad esempio in dollaro, oro e titoli di stato.</dd></div>
+      <div><dt>Sorpresa</dt><dd>Quanto un dato si discosta dal valore atteso dal consensus. Spesso muove i prezzi più del dato in sé.</dd></div>
+      <div><dt>COT</dt><dd>Il rapporto settimanale della CFTC che mostra come sono posizionati i grandi operatori sui futures.</dd></div>
+      <div><dt>Curva dei rendimenti</dt><dd>Il confronto tra i rendimenti dei titoli di stato a scadenze diverse: quando si inverte, spesso racconta timori di rallentamento.</dd></div>
+      <div><dt>Breakeven d’inflazione</dt><dd>L’inflazione media che il mercato sta scontando nei prezzi dei titoli di stato.</dd></div>
+      <div><dt>VIX</dt><dd>L’“indice della paura”: misura la volatilità attesa sull’S&amp;P 500.</dd></div>
+      <div><dt>DXY</dt><dd>L’indice del dollaro: misura la forza del dollaro contro un paniere di valute.</dd></div>
+    </dl>
+  </div>
+</section>
+
 <section class="blk" id="per-chi">
   <div class="wrap">
     <div class="rv center">
@@ -367,6 +675,20 @@ footer p{max-width:68ch;}
       <div class="w"><div class="n">01</div><h3>Il quadro, non il rumore</h3><p>Sceglie cosa conta oggi e lo mette in ordine, invece di sommergerti di notizie e di numeri.</p></div>
       <div class="w"><div class="n">02</div><h3>Spiegato in italiano</h3><p>Ogni sezione non si limita a mostrarti qualcosa: ti dice cosa significa, con parole chiare.</p></div>
       <div class="w"><div class="n">03</div><h3>Sempre al passo</h3><p>Si aggiorna da sola ogni volta che la apri. Niente da cercare, niente da aggiornare.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="blk" id="inizia">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow">Come iniziare</div>
+      <h2>Tre passi, nessuna configurazione</h2>
+    </div>
+    <div class="go">
+      <div class="s"><b>1</b><h3>Apri la dashboard</h3><p>Si apre dal browser e si aggiorna da sola. Non c’è niente da installare né da collegare.</p></div>
+      <div class="s"><b>2</b><h3>Guarda il polso del giorno</h3><p>In pochi secondi hai il clima del mercato e le notizie che lo spiegano.</p></div>
+      <div class="s"><b>3</b><h3>Approfondisci ciò che ti interessa</h3><p>Dal calendario al posizionamento, dalla Fed alla geopolitica: scendi nel dettaglio solo dove serve.</p></div>
     </div>
   </div>
 </section>
@@ -402,8 +724,26 @@ footer p{max-width:68ch;}
 
 <footer>
   <div class="wrap">
-    <p><b>Macro Hub Trading</b> — anteprima del progetto, non ancora pubblico. Strumento a scopo informativo: non costituisce consulenza finanziaria, raccomandazione di investimento o sollecitazione al pubblico risparmio. I mercati comportano rischi di perdita.</p>
-    <p><a href="#top" style="color:var(--accent);">Torna su ↑</a></p>
+    <div class="fgrid">
+      <div class="about">
+        <b>MACRO HUB TRADING</b>
+        <p>Il quadro macro completo, ordinato e spiegato in italiano. Presto con registrazione.</p>
+      </div>
+      <div>
+        <h4>Esplora</h4>
+        <a href="#giornata">Una giornata con Macro Hub</a>
+        <a href="#dentro">Dentro la dashboard</a>
+        <a href="#glossario">Il glossario</a>
+        <a href="#faq">Domande</a>
+      </div>
+      <div>
+        <h4>Il progetto</h4>
+        <a class="js-dash" href="/">Dashboard</a>
+        <a class="js-signup" href="#registrazione">Registrazione in arrivo</a>
+        <a href="#top">Torna su ↑</a>
+      </div>
+    </div>
+    <p class="legal"><b>Macro Hub Trading</b> — anteprima del progetto, non ancora pubblico. Strumento a scopo informativo: non costituisce consulenza finanziaria, raccomandazione di investimento o sollecitazione al pubblico risparmio. I mercati comportano rischi di perdita.</p>
   </div>
 </footer>
 
@@ -419,12 +759,29 @@ if(SIGNUP_URL){
   document.querySelectorAll('.js-signup').forEach(a=>{ a.href = SIGNUP_URL; a.textContent = 'Registrati ora'; a.classList.remove('btn-soon'); a.classList.add('btn-primary'); });
 }
 
-/* ---------- Comparsa progressiva delle sezioni (visibili subito se JS o IntersectionObserver non disponibili) ---------- */
+/* ---------- Schede "Dentro la dashboard" ----------
+   Senza JavaScript le sei schede sono tutte visibili una sotto l'altra; con JavaScript diventano a linguette,
+   con rotazione lenta finché non scegli tu. Il contenuto non dipende mai da un effetto di comparsa. */
 (function(){
-  const els = document.querySelectorAll('.rv');
-  if(!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches){ els.forEach(e=>e.classList.add('in')); return; }
-  const io = new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {threshold:.12, rootMargin:'0px 0px -6% 0px'});
-  els.forEach(e=>io.observe(e));
+  const panels = [...document.querySelectorAll('#show .panel')], bar = document.querySelector('.show-tabs');
+  if(!panels.length || !bar) return;
+  let cur = 0, touched = false;
+  panels.forEach((p, i)=>{
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tabbtn'; b.setAttribute('role', 'tab'); b.textContent = p.dataset.tab;
+    b.addEventListener('click', ()=>{ touched = true; select(i); });
+    bar.appendChild(b);
+  });
+  function select(i){
+    cur = i;
+    panels.forEach((p, k)=>p.classList.toggle('on', k === i));
+    [...bar.children].forEach((b, k)=>b.setAttribute('aria-selected', k === i ? 'true' : 'false'));
+  }
+  select(0);
+  document.documentElement.classList.add('js');
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(()=>{ if(!touched && !document.hidden) select((cur + 1) % panels.length); }, 7000);
+  }
 })();
 </script>
 </body>
