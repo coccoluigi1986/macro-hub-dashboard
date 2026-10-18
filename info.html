@@ -11,6 +11,10 @@
 <!-- ANTEPRIMA: la pagina non è ancora pubblica. Al lancio pubblico rimuovere il tag "robots" qui sotto. -->
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0A0E1A">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Macro Hub">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0E1A'/%3E%3Cpath d='M7 22V10l9 8 9-8v12' fill='none' stroke='%235EA8F5' stroke-width='3' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
@@ -703,6 +707,7 @@ footer p{max-width:68ch;}
       <details><summary>Devo essere un esperto di macroeconomia?</summary><p>No. Le analisi sono scritte in italiano chiaro e ogni dato è accompagnato da una lettura di cosa significa. Si impara usandola.</p></details>
       <details><summary>Mi dirà cosa comprare o vendere?</summary><p>No. Macro Hub è uno strumento informativo: non dà consulenza né segnali operativi e non promette rendimenti. Ti aiuta a capire il contesto; le decisioni restano tue.</p></details>
       <details><summary>Quanto tempo serve per usarla?</summary><p>Pochi minuti al mattino bastano per avere il quadro. Se vuoi approfondire, ogni area ha il suo spazio.</p></details>
+      <details><summary>Posso usarla come app sul telefono o sul computer?</summary><p>Sì. La dashboard si può installare come un’app: da Chrome o Edge (computer e Android) trovi il comando “Installa app”, da Safari su iPhone e iPad usi “Aggiungi alla schermata Home”. Si apre a schermo intero, con la sua icona, senza barra del browser.</p></details>
       <details><summary>Quando potrò registrarmi?</summary><p>Stiamo preparando l’accesso con registrazione. Nel frattempo puoi dare un’occhiata alla dashboard per vedere com’è fatta.</p></details>
     </div>
   </div>
@@ -783,6 +788,9 @@ if(SIGNUP_URL){
     setInterval(()=>{ if(!touched && !document.hidden) select((cur + 1) % panels.length); }, 7000);
   }
 })();
+
+// Service worker: rende installabile l'app (la pagina funziona identica anche se non viene registrato)
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
 </script>
 </body>
 </html>

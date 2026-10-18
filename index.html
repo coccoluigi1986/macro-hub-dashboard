@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Macro Hub Trading — Dashboard</title>
+<meta name="description" content="Dashboard macro-geopolitica-monetaria: prezzi, dati ufficiali, calendario economico, COT e analisi AI su fonti reali.">
+<meta name="theme-color" content="#0A0E1A">
+<!-- App installabile (PWA): manifest, icone e meta per iPhone/iPad -->
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Macro Hub">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -319,7 +329,29 @@ nav.rail a{
 }
 nav.rail a:hover{color:var(--text); background:var(--panel2);}
 nav.rail .navlabel{font-size:9.3px; text-transform:uppercase; letter-spacing:1px; color:var(--dim2); padding:10px 7px 3px;}
-main{padding:17px 20px 29px; max-width:1200px;}
+main{padding:17px 20px 29px; max-width:1200px; min-width:0;}   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */
+
+/* ===== SCHERMI PICCOLI / APP SU SMARTPHONE ===== */
+/* Sotto gli 860px il menu laterale fisso (210px) toglierebbe metà schermo al contenuto: diventa una barra di
+   voci scorrevole in orizzontale sopra le sezioni. Le altre sezioni hanno già le loro regole per colonne e griglie. */
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr;}
+  nav.rail{position:static; height:auto; display:flex; gap:6px; overflow-x:auto; overflow-y:hidden; padding:9px 12px; border-right:0; border-bottom:1px solid var(--border); scrollbar-width:none; -webkit-overflow-scrolling:touch;}
+  nav.rail::-webkit-scrollbar{display:none;}
+  nav.rail .navlabel{display:none;}
+  nav.rail a{flex:none; white-space:nowrap; margin:0; padding:7px 12px; border:1px solid var(--border); border-radius:99px; font-size:12px;}
+  main{padding:12px 12px 24px;}
+  header{padding:12px 14px 10px; align-items:flex-start;}
+  header h1{font-size:18px;}
+  .subtitle{font-size:11px;}
+  .refresh-box{text-align:left; width:100%;}
+  .refresh-box #dataStatusLine{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  #installHint{margin-left:0 !important;}
+  section{scroll-margin-top:62px;}
+}
+@media(max-width:560px){
+  .grid-4,.grid-3,.grid-2,.sn-grid,.mini-grid,.mkt-grid{grid-template-columns:1fr;}   /* una colonna: le schede a due colonne sarebbero larghe ~170px */
+}
 
 section{margin-bottom:27px; scroll-margin-top:66px;}
 .sec-head{display:flex; align-items:baseline; gap:7px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:7px;}
@@ -834,6 +866,8 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
     Ora locale: <span id="liveClock" class="mono">--:--:--</span><br>
     <span id="dataStatusLine">Verifica stato dati live in corso...</span><br>
     <button class="refresh-btn" onclick="refreshLive()">↻ Ricarica vista</button>
+    <button class="refresh-btn" id="installBtn" style="display:none; margin-left:6px;" onclick="installApp()" title="Installa la dashboard come app">⬇ Installa app</button>
+    <div id="installHint" style="display:none; font-size:10.5px; color:var(--gold); margin-top:6px; max-width:280px; margin-left:auto; line-height:1.4;"></div>
     <div id="refreshNote" style="font-size:10.5px; color:var(--accent); margin-top:6px; min-height:14px;"></div>
   </div>
 </header>
@@ -3601,6 +3635,35 @@ function refreshLive(){
 
 // Tenta il collegamento ai dati live appena la pagina carica (silenzioso, nessun errore se non disponibili)
 initLiveData();
+</script>
+<script>
+// ---------- APP INSTALLABILE (PWA) ----------
+// Chrome, Edge e Android offrono l'installazione con un evento: il pulsante compare solo quando è davvero possibile
+// installare. Su iPhone/iPad (Safari) non esiste l'evento: il pulsante mostra come fare ("Aggiungi alla schermata Home").
+// Se l'app è già installata (o aperta come app) il pulsante non si vede.
+let deferredInstallPrompt = null;
+const isStandaloneApp = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function showInstallBtn(){ const b = document.getElementById('installBtn'); if(b && !isStandaloneApp) b.style.display = ''; }
+function hideInstallBtn(){ const b = document.getElementById('installBtn'), h = document.getElementById('installHint'); if(b) b.style.display = 'none'; if(h) h.style.display = 'none'; }
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredInstallPrompt = e; showInstallBtn(); });
+window.addEventListener('appinstalled', ()=>{ deferredInstallPrompt = null; hideInstallBtn(); });
+async function installApp(){
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    try{ await deferredInstallPrompt.userChoice; }catch(e){}
+    deferredInstallPrompt = null; hideInstallBtn();
+    return;
+  }
+  const h = document.getElementById('installHint'); if(!h) return;
+  const safari = /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios|opios/i.test(navigator.userAgent);
+  h.textContent = safari
+    ? 'Su iPhone/iPad: tocca Condividi (il quadrato con la freccia) e poi “Aggiungi alla schermata Home”.'
+    : 'Su iPhone/iPad apri questa pagina in Safari, tocca Condividi e poi “Aggiungi alla schermata Home”.';
+  h.style.display = h.style.display === 'none' ? '' : 'none';
+}
+if(isIOSDevice) showInstallBtn();
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
 </script>
 </body>
 </html>
