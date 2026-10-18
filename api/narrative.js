@@ -227,14 +227,14 @@ const SECTIONS = {
     }),
   },
   assets: {
-    maxTokens: 3000,
-    task: 'Produci il CRUSCOTTO ASSET: per ciascuno dei 5 asset indicati, bias direzionale e lettura. Usa i prezzi e le variazioni di oggi forniti.',
+    maxTokens: 3600,
+    task: 'Produci il CRUSCOTTO ASSET: per ciascuno dei 6 asset indicati, bias direzionale e lettura. Usa i prezzi e le variazioni di oggi forniti.',
     schema: '{\n'
-      + '  "assets": [ 5 oggetti, uno per ciascuna chiave esattamente in quest\'ordine: eurusd, usdjpy, gold, oil, equity (equity = S&P 500 / Nasdaq),\n'
+      + '  "assets": [ 6 oggetti, uno per ciascuna chiave esattamente in quest\'ordine: eurusd, usdjpy, gold, silver, oil, equity (equity = S&P 500 / Nasdaq),\n'
       + '    {"key":"eurusd","bias":"bull|bear|neutral","bias_label":"etichetta maiuscola breve, max 36 caratteri","sentiment":"max 90 caratteri","outlook":"scenari qualitativi con percentuali che sommano 100, es. 50% rialzo / 35% laterale / 15% ribasso, max 90 caratteri","text":"3-4 frasi, max 520 caratteri, con driver concreti tratti da notizie e dati"} ]\n'
       + '}\nLe percentuali di "outlook" sono scenari indicativi e qualitativi, non probabilità statistiche.',
     normalize: (d) => ({
-      assets: objs(d.assets, 5).map(a => ({
+      assets: objs(d.assets, 6).map(a => ({
         key: str(a.key), bias: ['bull', 'bear', 'neutral'].includes(a.bias) ? a.bias : 'neutral',
         biasLabel: str(a.bias_label), sentiment: str(a.sentiment), outlook: str(a.outlook), text: str(a.text),
       })),
