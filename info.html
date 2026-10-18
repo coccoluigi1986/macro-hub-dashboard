@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Macro Hub Trading — Il quadro macro completo, prima del caffè</title>
+<title>Macro Hub Trading — Il quadro macro completo, in un solo sguardo</title>
 <meta name="description" content="Inflazione, banche centrali, petrolio, geopolitica, sentiment: tutto ciò che muove i mercati, ordinato e spiegato in italiano. Macro Hub Trading, presto con registrazione.">
-<meta property="og:title" content="Macro Hub Trading — Il quadro macro completo, prima del caffè">
+<meta property="og:title" content="Macro Hub Trading — Il quadro macro completo, in un solo sguardo">
 <meta property="og:description" content="Tutto ciò che muove i mercati, ordinato e spiegato in italiano. Presto con registrazione.">
 <meta property="og:type" content="website">
 <!-- ANTEPRIMA: la pagina non è ancora pubblica. Al lancio pubblico rimuovere il tag "robots" qui sotto. -->
@@ -40,8 +40,9 @@ a{color:inherit;}
 /* ===== NAV ===== */
 .nav{position:sticky; top:0; z-index:50; background:rgba(10,14,26,.8); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid rgba(35,43,69,.7);}
 .nav .wrap{display:flex; align-items:center; gap:24px; height:64px;}
-.brand{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:.02em; text-decoration:none; white-space:nowrap;}
-.brand span{color:var(--accent);}
+.brand{display:inline-flex; align-items:center; gap:11px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:.03em; text-decoration:none; white-space:nowrap;}
+.brand img{display:block; width:36px; height:36px; border-radius:9px; flex:none;}
+.brand .bt > span{color:var(--accent);}
 .nav-links{display:flex; gap:24px; margin-left:auto;}
 .nav-links a{font-size:14px; color:var(--dim); text-decoration:none; transition:color .15s;}
 .nav-links a:hover{color:var(--text);}
@@ -54,7 +55,7 @@ a{color:inherit;}
 .btn-soon:hover{background:rgba(224,169,77,.2);}
 .nav .btn{padding:10px 16px; font-size:13px;}
 @media(max-width:860px){ .nav-links{display:none;} .nav .btn{margin-left:auto;} }
-@media(max-width:420px){ .brand{font-size:15px;} .nav .wrap{gap:12px;} .nav .btn{padding:9px 12px; font-size:12.5px;} }
+@media(max-width:480px){ .brand{font-size:15px; gap:9px;} .brand img{width:30px; height:30px;} .nav .wrap{gap:12px;} .nav .btn{display:none;} }   /* il pulsante resta nel titolo e in chiusura: nel menu non c'è posto accanto al logo */
 
 /* ===== HERO ===== */
 .hero{position:relative; padding:76px 0 40px; overflow:hidden;}
@@ -67,6 +68,16 @@ a{color:inherit;}
 .pill{display:inline-flex; align-items:center; gap:10px; font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); padding:8px 13px; border:1px dashed rgba(224,169,77,.5); border-radius:99px; background:var(--gold-soft);}
 .pill i{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:blink 1.6s infinite;}
 @keyframes blink{50%{opacity:.25;}}
+/* logo in evidenza (sopra il titolo) */
+.lockup{display:flex; align-items:center; gap:22px; margin-bottom:30px;}
+.lockup .logo{position:relative; flex:none; width:112px; height:112px;}
+.lockup .logo::before{content:""; position:absolute; inset:-30px; z-index:0; background:radial-gradient(closest-side, rgba(94,168,245,.5), rgba(224,169,77,.14) 62%, transparent 78%); filter:blur(10px);}
+.lockup .logo img{position:relative; z-index:1; display:block; width:100%; height:100%; border-radius:25px; box-shadow:0 22px 50px -16px rgba(94,168,245,.6), 0 0 0 1px rgba(94,168,245,.28);}
+.lockup .wm{display:grid; gap:10px;}
+.lockup .wm b{font:700 clamp(24px,3.2vw,34px)/1 'Space Grotesk',sans-serif; letter-spacing:.04em;}
+.lockup .wm b span{color:var(--accent);}
+.lockup .wm i{font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); font-style:normal;}
+@media(max-width:560px){ .lockup{gap:16px;} .lockup .logo{width:80px; height:80px;} .lockup .logo img{border-radius:18px;} .lockup .wm i{font-size:10.5px; letter-spacing:.08em;} }
 h1{font-size:clamp(40px,6.2vw,76px); font-weight:700; margin:24px 0 22px;}
 .lede{font-size:clamp(18px,1.9vw,21px); color:var(--text2); max-width:34em; line-height:1.55;}
 .cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:34px;}
@@ -146,14 +157,14 @@ h2{font-size:clamp(32px,4.4vw,52px); font-weight:700; margin:16px 0 18px; max-wi
 .tile::before{content:""; position:absolute; inset:0; background:radial-gradient(80% 90% at 0% 0%, rgba(94,168,245,.12), transparent 60%); opacity:0; transition:opacity .25s; pointer-events:none;}
 .tile:hover{border-color:rgba(94,168,245,.5); transform:translateY(-3px);}
 .tile:hover::before{opacity:1;}
-.tile.big{grid-column:span 2;}
+.tile .num{position:absolute; top:24px; right:24px; font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; color:var(--dim2);}
 .ico{width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:var(--accent-soft); border:1px solid rgba(94,168,245,.3); color:var(--accent);}
 .ico svg{width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
 .tile.gold .ico{background:var(--gold-soft); border-color:rgba(224,169,77,.35); color:var(--gold);}
 .tile h3{font-size:22px; margin:20px 0 9px; font-weight:600;}
 .tile p{font-size:15.5px; color:var(--text2);}
-@media(max-width:980px){ .bento{grid-template-columns:1fr 1fr;} .tile.big{grid-column:span 2;} }
-@media(max-width:620px){ .bento{grid-template-columns:1fr;} .tile.big{grid-column:auto;} }
+@media(max-width:980px){ .bento{grid-template-columns:1fr 1fr;} }
+@media(max-width:620px){ .bento{grid-template-columns:1fr;} }
 
 /* per chi */
 .who{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:46px;}
@@ -272,7 +283,8 @@ h2{font-size:clamp(32px,4.4vw,52px); font-weight:700; margin:16px 0 18px; max-wi
 .fgrid{display:grid; grid-template-columns:1.7fr 1fr 1fr; gap:40px; width:100%;}
 .fgrid h4{font:500 11.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-bottom:16px;}
 .fgrid a{display:block; color:var(--text2); text-decoration:none; font-size:14.5px; padding:5px 0;} .fgrid a:hover{color:var(--accent);}
-.fgrid .about b{display:block; font:700 18px/1 'Space Grotesk',sans-serif; color:var(--text); margin-bottom:12px; letter-spacing:.02em;}
+.fgrid .about b{display:flex; align-items:center; gap:11px; font:700 18px/1 'Space Grotesk',sans-serif; color:var(--text); margin-bottom:14px; letter-spacing:.03em;}
+.fgrid .about b img{display:block; width:34px; height:34px; border-radius:9px;}
 .legal{width:100%; margin-top:10px; padding-top:20px; border-top:1px solid var(--border); font-size:12.5px; color:var(--dim2); max-width:none!important;}
 @media(max-width:760px){ .fgrid{grid-template-columns:1fr 1fr;} .fgrid .about{grid-column:1/-1;} }
 
@@ -290,7 +302,7 @@ footer p{max-width:68ch;}
 
 <nav class="nav" aria-label="Navigazione principale">
   <div class="wrap">
-    <a class="brand" href="#top">MACRO HUB <span>TRADING</span></a>
+    <a class="brand" href="#top"><img src="/icons/icon-192.png?v=2" width="36" height="36" alt=""><span class="bt">MACRO HUB <span>TRADING</span></span></a>
     <div class="nav-links">
       <a href="#giornata">Una giornata</a>
       <a href="#dentro">Dentro</a>
@@ -305,8 +317,12 @@ footer p{max-width:68ch;}
 <header class="hero" id="top">
   <div class="wrap">
     <div>
+      <div class="lockup">
+        <div class="logo"><img src="/icons/icon-512.png?v=2" width="112" height="112" alt="Logo di Macro Hub Trading: un globo con una linea di crescita"></div>
+        <div class="wm"><b>MACRO HUB <span>TRADING</span></b><i>Macro · Geopolitica · Mercati</i></div>
+      </div>
       <span class="pill"><i></i>Presto con registrazione</span>
-      <h1>Il quadro macro completo. <span class="grad">Prima del caffè.</span></h1>
+      <h1>Il quadro macro completo. <span class="grad">In un solo sguardo.</span></h1>
       <p class="lede">Inflazione, banche centrali, petrolio, geopolitica, sentiment. Tutto ciò che muove i mercati, ordinato e spiegato in italiano — così capisci cosa sta succedendo, e perché, in pochi minuti.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#cosa-trovi">Scopri cosa c’è dentro →</a>
@@ -393,50 +409,59 @@ footer p{max-width:68ch;}
       <p class="sec-lede">Nove aree, un unico linguaggio. Ognuna risponde a una domanda che ti sei fatto almeno una volta.</p>
     </div>
     <div class="bento">
-      <article class="tile big gold">
+      <article class="tile gold">
+        <span class="num">01</span>
         <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
-        <h3>Il polso del giorno</h3>
-        <p>Un punteggio chiaro che dice se oggi il mercato ha voglia di rischiare o di difendersi, con le notizie che lo spiegano. È la prima cosa che guardi, e a volte l’unica che ti serve.</p>
+        <h3>Il quadro di oggi</h3>
+        <p>Il bias del giorno da risk-off a risk-on con le notizie che lo spiegano, i driver, il prossimo evento chiave con conto alla rovescia e scenari. È la prima cosa che guardi, e a volte l’unica che ti serve.</p>
       </article>
       <article class="tile">
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-        <h3>Prossimo evento chiave</h3>
-        <p>Sai cosa sta per succedere, quando, e cosa cambierebbe se il dato sorprende.</p>
-      </article>
-      <article class="tile">
+        <span class="num">02</span>
         <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 4 8-9"/><path d="M15 6h5v5"/></svg></div>
         <h3>Mercati</h3>
-        <p>Dollaro, indici, oro, petrolio, rendimenti: cosa si muove oggi e, soprattutto, perché.</p>
+        <p>Dollaro, indici, oro, argento, petrolio, rendimenti: prezzo, volatilità e correlazione con il dollaro, e cosa sta scontando il mercato.</p>
       </article>
       <article class="tile">
+        <span class="num">03</span>
         <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
-        <h3>Macro USA ed Europa</h3>
+        <h3>Macro: USA, Europa, lavoro</h3>
         <p>Inflazione, lavoro, crescita: ogni dato accanto alle attese, per capire subito se ha sorpreso.</p>
       </article>
       <article class="tile">
+        <span class="num">04</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 7 2 8 0M9 9h.01M15 9h.01"/></svg></div>
+        <h3>Sentiment</h3>
+        <p>Paura o avidità? L’umore di investitori e notizie, confrontato con ciò che dicono i fatti.</p>
+      </article>
+      <article class="tile">
+        <span class="num">05</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
+        <h3>Geopolitica e notizie</h3>
+        <p>Conflitti e tensioni che muovono energia, valute e rischio, e come le diverse fonti raccontano i fatti.</p>
+      </article>
+      <article class="tile">
+        <span class="num">06</span>
         <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></svg></div>
-        <h3>Banche centrali</h3>
+        <h3>Banche centrali e tassi</h3>
         <p>La Fed senza gergo: cosa può fare e cosa significherebbe per dollaro, oro e rendimenti.</p>
       </article>
       <article class="tile">
+        <span class="num">07</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+        <h3>Calendario e volatilità</h3>
+        <p>Tutti gli appuntamenti della settimana, in italiano, e i giorni in cui aspettarsi movimenti ampi.</p>
+      </article>
+      <article class="tile">
+        <span class="num">08</span>
         <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/></svg></div>
-        <h3>Posizionamento dei grandi</h3>
+        <h3>Posizionamento e rischio</h3>
         <p>Cosa stanno facendo davvero i grandi operatori sui futures: dove sono affollati, dove sono scoperti.</p>
       </article>
       <article class="tile">
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 7 2 8 0M9 9h.01M15 9h.01"/></svg></div>
-        <h3>Sentiment</h3>
-        <p>Paura o avidità? L’umore degli investitori, confrontato con ciò che dicono i fatti.</p>
-      </article>
-      <article class="tile">
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
-        <h3>Geopolitica</h3>
-        <p>Conflitti e tensioni che muovono energia, valute e rischio, tradotti in impatto sui mercati.</p>
-      </article>
-      <article class="tile">
-        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
-        <h3>Calendario economico</h3>
-        <p>Tutti gli appuntamenti della settimana, in italiano, filtrabili per importanza e valuta.</p>
+        <span class="num">09</span>
+        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <h3>Sintesi operativa</h3>
+        <p>Un cruscotto per asset — valute, oro, argento, petrolio, indici — con scenari qualitativi: contesto, non segnali.</p>
       </article>
     </div>
   </div>
@@ -731,7 +756,7 @@ footer p{max-width:68ch;}
   <div class="wrap">
     <div class="fgrid">
       <div class="about">
-        <b>MACRO HUB TRADING</b>
+        <b><img src="/icons/icon-192.png?v=2" width="34" height="34" alt="">MACRO HUB TRADING</b>
         <p>Il quadro macro completo, ordinato e spiegato in italiano. Presto con registrazione.</p>
       </div>
       <div>
