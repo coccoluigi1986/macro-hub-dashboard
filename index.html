@@ -63,59 +63,10 @@ a{color:inherit;}
 @media(max-width:900px){ .bias-ticker .bt-headline, .bias-ticker .bt-sub{display:none;} }
 
 /* ===== BIAS GIORNALIERO (pannello AI geopolitico-macro) ===== */
-.bias-panel{background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:27px;}
-.bias-panel.risk-on{border-color:rgba(52,211,153,.4);}
-.bias-panel.risk-off{border-color:rgba(240,104,94,.4);}
-.bias-panel-head{display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:4px;}
-.bias-panel-head .bp-eyebrow{font-size:10.2px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent);}
-.bias-panel-head .bp-time{font-size:10.2px; color:var(--dim2); font-family:'IBM Plex Mono',monospace;}
-.bias-panel-body{padding:14px 16px; display:grid; grid-template-columns:1.15fr 1fr; gap:17px;}
-@media(max-width:900px){.bias-panel-body{grid-template-columns:1fr;}}
-.bp-label-row{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;}
-.bp-label{font-family:'Space Grotesk',sans-serif; font-size:29.8px; font-weight:700;}
-.bp-label.risk-on{color:var(--green);} .bp-label.risk-off{color:var(--red);} .bp-label.neutrale{color:var(--gold);}
-.bp-score{font-size:12.1px; color:var(--dim); font-family:'IBM Plex Mono',monospace;}
-.bp-bar{height:8px; background:var(--panel2); border-radius:4px; overflow:hidden; margin:7px 0 3px;}
-.bp-bar-fill{height:100%; border-radius:4px; transition:width .5s;}
-.bp-bar-labels{display:flex; justify-content:space-between; font-size:9.5px; color:var(--dim2); text-transform:uppercase; letter-spacing:.5px;}
-.bp-headline{font-size:12.6px; color:var(--text); line-height:1.55; margin:10px 0;}
-.bp-subgrid{display:grid; grid-template-columns:1fr 1fr; gap:9px;}
-@media(max-width:600px){.bp-subgrid{grid-template-columns:1fr;}}
-.bp-subcard{background:var(--panel2); border-radius:8px; padding:9px 10px;}
-.bp-subcard-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;}
-.bp-subcard .bps-title{font-size:9.8px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2);}
-.bp-subcard .bps-bias{font-size:9.8px; font-weight:700; text-transform:uppercase;}
-.bp-subcard .bps-bar{height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin-bottom:6px;}
-.bp-subcard .bps-bar-fill{height:100%; border-radius:2px;}
-.bp-subcard .bps-note{font-size:10.7px; color:var(--dim); line-height:1.5;}
-.bp-drivers{margin-bottom:12px;}
-.bp-drivers .bpd-title, .bp-assets .bpa-title{font-size:9.8px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2); margin-bottom:7px;}
-.bp-driver{padding-left:7px; border-left:2px solid var(--border); margin-bottom:7px;}
-.bp-driver.positive{border-color:var(--green);} .bp-driver.negative{border-color:var(--red);}
-.bp-driver .bpd-label{font-size:11.6px; font-weight:600; color:var(--text);}
-.bp-driver .bpd-detail{font-size:10.7px; color:var(--dim); line-height:1.5;}
-.bp-asset-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
-@media(max-width:500px){.bp-asset-grid{grid-template-columns:1fr 1fr;}}
-.bp-asset{background:var(--panel2); border-radius:6px; padding:6px 7px;}
-.bp-asset-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;}
-.bp-asset .bpa-name{font-size:11.2px; font-weight:600;}
-.bp-asset .bpa-dir{font-size:9.5px; font-weight:700; padding:3px 5px; border-radius:10px; text-transform:uppercase;}
-.bp-asset .bpa-dir.bull{background:var(--green-soft); color:var(--green);}
-.bp-asset .bpa-dir.bear{background:var(--red-soft); color:var(--red);}
-.bp-asset .bpa-dir.neutral{background:var(--panel); color:var(--dim);}
-.bp-asset .bpa-prob{font-size:9.3px; color:var(--dim2); font-family:'IBM Plex Mono',monospace;}
 
 /* ===== DOSSIER AI SU EVENTO CHIAVE (blocco aggiuntivo, non sostituisce gli scenari curati) ===== */
-.ec-ai-dossier{background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:4px; padding:9px 10px; margin-top:10px;}
-.ec-ai-dossier .ec-ai-label{font-size:9.3px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; gap:6px;}
-.ec-ai-dossier .ec-ai-meta{color:var(--dim2); font-weight:500; text-transform:none; letter-spacing:0;}
-.ec-ai-dossier p{font-size:11.6px; color:var(--dim); line-height:1.55; margin-bottom:6px;}
-.ec-ai-dossier p:last-child{margin-bottom:0;}
 
 /* ===== SENTIMENT — pulsante rigenera + meta ===== */
-.sn-regen{background:none; border:1px solid var(--border); color:var(--dim); border-radius:4px; padding:3px 6px; font-size:9.8px; cursor:pointer; font-family:'IBM Plex Mono',monospace;}
-.sn-regen:hover{color:var(--accent); border-color:var(--accent);}
-.sn-regen:disabled{opacity:.5; cursor:default;}
 
 /* ===== INDICE VOLATILITÀ GIORNALIERA PER ASSET (tabella live, da calendario economico reale) ===== */
 .vd-table-wrap{overflow-x:auto; background:var(--panel); border:1px solid var(--border); border-radius:10px;}
@@ -137,168 +88,21 @@ a{color:inherit;}
 .vd-empty{padding:16px; text-align:center; color:var(--dim2); font-size:12px; font-style:italic;}
 
 /* ===== MARKET MONITOR (stile screenshot: card con sparkline, volatilità, corr DXY) ===== */
-.mkt-status-bar{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:12px;}
-.mkt-status-text{font-size:10.7px; color:var(--dim2); flex:1; min-width:120px;}
-.mkt-cat-label{font-size:9.8px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--dim2); margin:16px 0 7px;}
-.mkt-cat-label:first-child{margin-top:0;}
-.mkt-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:4px;}
-@media(max-width:1000px){.mkt-grid{grid-template-columns:1fr 1fr;}}
-.mkt-card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px 13px; cursor:pointer;}
-.mkt-card-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:3px;}
-.mkt-card .mkt-name{font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--text);}
-.mkt-card .mkt-ticker{font-size:9.3px; color:var(--dim2); font-family:'IBM Plex Mono',monospace; margin-top:3px;}
-.mkt-card .mkt-badge{font-size:9.3px; font-weight:700; padding:3px 6px; border-radius:20px; white-space:nowrap;}
-.mkt-card .mkt-badge.bull{background:var(--green-soft); color:var(--green);}
-.mkt-card .mkt-badge.bear{background:var(--red-soft); color:var(--red);}
-.mkt-body{display:flex; justify-content:space-between; align-items:flex-end; margin:9px 0 10px;}
-.mkt-card .mkt-value{font-family:'Space Grotesk',sans-serif; font-size:20.5px; font-weight:700; color:var(--text);}
-.mkt-card .mkt-change{font-size:11.2px; font-weight:600; margin-top:3px;}
-.mkt-card .mkt-change.up{color:var(--green);} .mkt-card .mkt-change.down{color:var(--red);}
-.mkt-spark{width:90px; height:34px; flex-shrink:0;}
-.mkt-stats{display:grid; grid-template-columns:1fr 1fr; gap:7px; padding-top:9px; border-top:1px solid var(--border);}
-.mkt-stats .ms-lbl{font-size:9.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--dim2); margin-bottom:3px;}
-.mkt-stats .ms-val{font-size:11.2px; font-weight:600; color:var(--text);}
-.mkt-expand{display:flex; align-items:center; gap:4px; font-size:10.7px; color:var(--accent); font-weight:600; margin-top:9px;}
-.mkt-expand svg{width:10px; height:10px; transition:transform .2s;}
-.mkt-card.open .mkt-expand svg{transform:rotate(180deg);}
-.mkt-detail{max-height:0; overflow:hidden; transition:max-height .3s ease;}
-.mkt-card.open .mkt-detail{max-height:560px; margin-top:9px;}
-.mkt-detail-inner{font-size:11.2px; color:var(--dim); line-height:1.6; padding-top:7px; border-top:1px solid var(--border);}
-.mkt-detail-inner .mdi-label{font-size:9.3px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--accent); margin-bottom:4px;}
-.mkt-detail-inner b{color:var(--text);}
 
 /* ===== PROSSIMO EVENTO CHIAVE ===== */
-.event-card{background:var(--panel); border:1px solid var(--border); border-top:3px solid var(--gold); border-radius:12px; padding:14px 16px;}
-.ec-top{display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
-.ec-stars{color:var(--gold); font-size:12.1px; letter-spacing:2px; margin-bottom:3px;}
-.ec-title{font-family:'Space Grotesk',sans-serif; font-size:17.7px; font-weight:700; color:var(--text);}
-.ec-date{font-size:11.2px; color:var(--dim); white-space:nowrap;}
-.ec-countdown{font-family:'IBM Plex Mono',monospace; font-size:31.6px; font-weight:700; color:var(--gold); letter-spacing:1px; margin-bottom:12px;}
-.ec-pills{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:13px;}
-.ec-pill{background:var(--panel2); border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:9.8px; color:var(--dim2); letter-spacing:.4px;}
-.ec-pill b{display:block; color:var(--text); font-size:13px; font-family:'IBM Plex Mono',monospace; margin-top:3px; font-weight:600;}
-.ec-scenarios{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;}
-@media(max-width:700px){.ec-scenarios{grid-template-columns:1fr;}}
-.ec-scenario{border-radius:8px; padding:10px 12px; border:1px solid;}
-.ec-scenario.bad{background:rgba(240,104,94,.07); border-color:rgba(240,104,94,.35);}
-.ec-scenario.good{background:rgba(52,211,153,.07); border-color:rgba(52,211,153,.35);}
-.ec-sc-label{font-size:10.2px; font-weight:700; letter-spacing:.5px; margin-bottom:6px;}
-.ec-scenario.bad .ec-sc-label{color:var(--red);} .ec-scenario.good .ec-sc-label{color:var(--green);}
-.ec-sc-text{font-size:11.6px; color:var(--text); line-height:1.5;}
-.ec-note{background:rgba(224,169,77,.07); border-left:3px solid var(--gold); border-radius:4px; padding:8px 10px; font-size:11.2px; color:var(--dim); line-height:1.55; margin-bottom:9px;}
-.ec-hist{font-size:11.2px; color:var(--accent); line-height:1.55;}
-.ec-infobox-grid{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:10px;}
-@media(max-width:700px){.ec-infobox-grid{grid-template-columns:1fr;}}
-.ec-infobox{background:var(--panel2); border-left:3px solid var(--accent); border-radius:6px; padding:8px 10px;}
-.ec-infobox-lbl{font-size:9.3px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--accent); margin-bottom:4px;}
-.ec-infobox-text{font-size:11.6px; color:var(--text); line-height:1.5;}
 
 /* ===== LAYOUT PROSSIMO EVENTO + CALENDARIO 7 GIORNI (affiancati) ===== */
-.next-event-layout{display:grid; grid-template-columns:1.4fr 1fr; gap:12px; align-items:start;}
-@media(max-width:1000px){.next-event-layout{grid-template-columns:1fr;}}
-.week-card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:13px 14px;}
-.week-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:3px; gap:7px;}
-.week-title{font-family:'Space Grotesk',sans-serif; font-size:12.1px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--accent);}
-.week-badge{background:var(--panel2); border:1px solid var(--border); border-radius:20px; padding:3px 9px; font-size:10.2px; font-weight:600; color:var(--text); white-space:nowrap;}
-.week-sub{font-size:10.7px; color:var(--dim); margin-bottom:10px;}
-.week-list{display:flex; flex-direction:column; gap:3px;}
-.week-item{display:grid; grid-template-columns:58px 1fr 44px; gap:7px; align-items:start; padding:7px 0; border-top:1px solid var(--border);}
-.week-item:first-child{border-top:none;}
-.week-item .wi-date{font-family:'IBM Plex Mono',monospace; font-size:10.2px; color:var(--accent); line-height:1.4;}
-.week-item .wi-title{font-size:11.2px; color:var(--text); line-height:1.4;}
-.week-item .wi-title small{display:block; color:var(--dim2); font-size:9.8px; margin-top:3px;}
-.week-item .wi-stars{font-size:10.2px; color:var(--gold); text-align:right; white-space:nowrap;}
-.week-empty{font-size:11.6px; color:var(--dim); line-height:1.6; padding:7px 0;}
-.ec-why-title{font-family:'Space Grotesk',sans-serif; font-size:14.9px; font-weight:700; color:var(--text); margin-bottom:9px;}
-.ec-why-desc{font-size:11.6px; color:var(--dim); line-height:1.6; margin-bottom:13px;}
-.ec-bar-row{margin-bottom:12px;}
-.ec-bar-row:last-child{margin-bottom:0;}
-.ec-bar-lbl{font-size:11.2px; font-weight:600; color:var(--text); margin-bottom:4px;}
-.ec-bar{height:6px; background:var(--panel2); border-radius:3px; overflow:hidden; margin-bottom:5px;}
-.ec-bar-fill{height:100%; border-radius:3px;}
-.ec-bar-note{font-size:10.7px; color:var(--dim); line-height:1.5;}
 
 /* ===== SENTIMENT NEWS PER CATEGORIA ===== */
-.sn-header{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:6px;}
-.sn-header .sn-title{display:flex; align-items:center; gap:6px; font-size:12.6px; font-weight:700; color:var(--text);}
-.sn-header .sn-meta{font-size:10.2px; color:var(--dim2);}
-.sn-header .sn-meta b{color:var(--text);}
-.sn-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:10px;}
-@media(max-width:1000px){.sn-grid{grid-template-columns:1fr 1fr;}}
-.sn-card{background:var(--panel); border-left:3px solid var(--dim2); border-radius:8px; padding:10px 12px; border-top:1px solid var(--border); border-right:1px solid var(--border); border-bottom:1px solid var(--border);}
-.sn-card.trend-bear{border-left-color:var(--red);}
-.sn-card.trend-bull{border-left-color:var(--green);}
-.sn-card.trend-neutral{border-left-color:var(--dim2);}
-.sn-card-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
-.sn-card .sn-cat{font-size:9.8px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--text);}
-.sn-card .sn-trend{font-size:9.8px; font-weight:700;}
-.sn-card .sn-trend.bear{color:var(--red);} .sn-card .sn-trend.bull{color:var(--green);} .sn-card .sn-trend.neutral{color:var(--dim2);}
-.sn-card .sn-desc{font-size:11.2px; color:var(--dim); line-height:1.55; margin-bottom:7px; min-height:64px;}
-.sn-card .sn-sources{font-size:9.8px; color:var(--dim2);}
-.sn-card .sn-sources span{color:var(--accent);}
-.sn-risks{background:rgba(240,104,94,.06); border:1px solid rgba(240,104,94,.35); border-radius:8px; padding:10px 12px;}
-.sn-risks .sr-label{display:flex; align-items:center; gap:4px; font-size:10.7px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--red); margin-bottom:7px;}
-.sn-risks ul{list-style:none;}
-.sn-risks li{position:relative; padding-left:12px; font-size:11.6px; color:var(--dim); line-height:1.6; margin-bottom:4px;}
-.sn-risks li::before{content:'·'; position:absolute; left:2px; color:var(--red); font-weight:900; font-size:14.9px; line-height:1;}
 
 /* ===== VALIDAZIONE INCROCIATA (News vs COT/OI/Macro) ===== */
-.xv-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:10px 0;}
-@media(max-width:1000px){.xv-grid{grid-template-columns:1fr;}}
-.xv-card{background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
-.xv-card.aligned{border-color:rgba(52,211,153,.35); background:rgba(52,211,153,.05);}
-.xv-card.conflict{border-color:rgba(240,104,94,.35); background:rgba(240,104,94,.05);}
-.xv-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
-.xv-title{font-size:9.8px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--text);}
-.xv-status{font-size:9.3px; font-weight:700; letter-spacing:.4px; text-transform:uppercase;}
-.xv-status.aligned{color:var(--green);} .xv-status.conflict{color:var(--red);}
-.xv-text{font-size:11.2px; color:var(--dim); line-height:1.55;}
-.xv-text b{color:var(--text);}
-.xv-bias{background:var(--gold-soft); border:1px solid rgba(224,169,77,.4); border-radius:8px; padding:10px 12px; margin-top:4px;}
-.xv-bias .xvb-label{display:flex; align-items:center; gap:4px; font-size:10.7px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;}
-.xv-bias .xvb-text{font-size:11.6px; color:var(--text); line-height:1.6;}
 
 /* ===== EYEBROW / SECTION INTRO (stile screenshot) ===== */
-.eyebrow{display:flex; align-items:center; gap:6px; color:var(--accent); font-size:10.7px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; margin-bottom:7px;}
-.page-title{font-family:'Space Grotesk',sans-serif; font-size:24.2px; font-weight:700; color:var(--text); margin-bottom:4px; letter-spacing:-.2px;}
 .page-subtitle{color:var(--dim); font-size:12.1px; margin-bottom:13px;}
 
 /* ===== NEWS CARD (headline + mini-grid + bullets) ===== */
-.news-card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
-.news-card-top{display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--border); margin-bottom:12px; flex-wrap:wrap;}
-.news-card-top .ntag{font-size:9.8px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--dim2);}
-.news-card-top .nheadline{font-size:13px; font-weight:600; color:var(--text); margin-left:7px;}
-.news-card-top .ntime{font-size:10.2px; color:var(--dim2); white-space:nowrap;}
-.mini-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:13px;}
-@media(max-width:1000px){.mini-grid{grid-template-columns:1fr 1fr;}}
-.mini-card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; position:relative;}
-.mini-card .mc-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;}
-.mini-card .mc-title{font-size:11.6px; font-weight:600; color:var(--text);}
-.mini-card .mc-dot{width:7px; height:7px; border-radius:50%; margin-top:3px; flex-shrink:0;}
-.mini-card .mc-desc{font-size:10.7px; color:var(--dim); line-height:1.55; margin-bottom:7px; min-height:48px;}
-.mini-card .mc-tag{font-size:9.3px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;}
-.reveal-block{border-top:1px solid var(--border); padding-top:12px;}
-.reveal-block .rb-label{font-size:9.8px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--dim2); margin-bottom:7px;}
-.reveal-block ul{list-style:none;}
-.reveal-block li{position:relative; padding-left:12px; font-size:11.6px; color:var(--dim); line-height:1.6; margin-bottom:6px;}
-.reveal-block li::before{content:'·'; position:absolute; left:2px; color:var(--accent); font-weight:900; font-size:14.9px; line-height:1;}
 
 /* ===== STAT CARDS (Ultimi dati ufficiali — con Apri dettagli) ===== */
-.stat-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:9px;}
-@media(max-width:1100px){.stat-grid{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:700px){.stat-grid{grid-template-columns:1fr 1fr;}}
-.stat-card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px; cursor:pointer;}
-.stat-card .stc-label{font-size:10.2px; color:var(--dim); margin-bottom:6px;}
-.stat-card .stc-value{font-family:'Space Grotesk',sans-serif; font-size:22.3px; font-weight:700; color:var(--text);}
-.stat-card .stc-unit{font-size:12.1px; color:var(--dim); font-weight:500; margin-left:3px;}
-.stat-card .stc-date{font-size:9.8px; color:var(--dim2); margin:4px 0 9px;}
-.stat-card .stc-expand{display:flex; align-items:center; gap:4px; font-size:10.7px; color:var(--accent); font-weight:600; border-top:1px solid var(--border); padding-top:7px;}
-.stat-card .stc-expand svg{width:11px; height:11px; transition:transform .2s;}
-.stat-card.open .stc-expand svg{transform:rotate(180deg);}
-.stat-card .stc-detail{max-height:0; overflow:hidden; transition:max-height .25s ease;}
-.stat-card.open .stc-detail{max-height:200px; margin-top:9px;}
-.stat-card .stc-detail-inner{font-size:10.7px; color:var(--dim); line-height:1.6; padding-top:3px;}
-.stat-card .stc-detail-inner b{color:var(--text);}
 
 /* ===== HEADER ===== */
 header{
@@ -349,9 +153,6 @@ main{padding:17px 20px 29px; max-width:1200px; min-width:0;}   /* min-width:0: u
   #installHint{margin-left:0 !important;}
   section{scroll-margin-top:62px;}
 }
-@media(max-width:560px){
-  .grid-4,.grid-3,.grid-2,.sn-grid,.mini-grid,.mkt-grid{grid-template-columns:1fr;}   /* una colonna: le schede a due colonne sarebbero larghe ~170px */
-}
 
 section{margin-bottom:27px; scroll-margin-top:66px;}
 .sec-head{display:flex; align-items:baseline; gap:7px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:7px;}
@@ -359,11 +160,6 @@ section{margin-bottom:27px; scroll-margin-top:66px;}
 .sec-head h2{font-size:16.7px; font-weight:600;}
 .sec-desc{color:var(--dim); font-size:11.2px; margin-left:auto; text-align:right; max-width:340px;}
 
-.grid{display:grid; gap:9px;}
-.grid-4{grid-template-columns:repeat(4,1fr);}
-.grid-3{grid-template-columns:repeat(3,1fr);}
-.grid-2{grid-template-columns:repeat(2,1fr);}
-@media(max-width:1000px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr 1fr;}}
 
 .card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
 .card .lbl{font-size:9.8px; text-transform:uppercase; letter-spacing:.7px; color:var(--dim2); margin-bottom:4px;}
@@ -378,16 +174,6 @@ section{margin-bottom:27px; scroll-margin-top:66px;}
 .live-flash{animation:liveFlash 2s ease-out 1;}
 
 /* BANNER "APPENA USCITO" — sintesi automatica il giorno del rilascio di un dato */
-.release-banner{background:linear-gradient(180deg, rgba(240,104,94,.10), rgba(240,104,94,.03)); border:1px solid var(--red); border-radius:10px; padding:12px 14px; margin-bottom:12px;}
-.release-banner-top{display:flex; align-items:center; gap:6px; margin-bottom:7px;}
-.release-banner-top .rb-dot{width:8px; height:8px; border-radius:50%; background:var(--red); animation:pulse 1.6s infinite;}
-.release-banner-top b{font-size:11.2px; letter-spacing:.6px; text-transform:uppercase; color:var(--red);}
-.release-item{padding:6px 0; border-top:1px solid rgba(240,104,94,.2);}
-.release-item:first-of-type{border-top:none;}
-.release-item .ri-title{font-size:13px; font-weight:700; color:var(--text); margin-bottom:3px;}
-.release-item .ri-vals{font-family:'IBM Plex Mono',monospace; font-size:11.6px; color:var(--dim); margin-bottom:3px;}
-.release-item .ri-vals b{color:var(--text);}
-.release-item .ri-read{font-size:11.6px; color:var(--dim); line-height:1.5;}
 
 /* ===== QUADRO DECISIONALE PER ASSET ===== */
 .dp-master{border-radius:12px; padding:14px 16px; position:relative; overflow:hidden;}
@@ -430,17 +216,6 @@ section{margin-bottom:27px; scroll-margin-top:66px;}
 }
 
 /* MACRO CARD ESPANDIBILE — sorpresa vs attese */
-.card.expandable{cursor:pointer;}
-.card .card-expand{display:flex; align-items:center; gap:4px; font-size:9.8px; color:var(--accent); font-weight:600; margin-top:7px;}
-.card .card-expand svg{width:9px; height:9px; transition:transform .2s;}
-.card.open .card-expand svg{transform:rotate(180deg);}
-.card .card-detail{max-height:0; overflow:hidden; transition:max-height .3s ease;}
-.card.open .card-detail{max-height:160px; margin-top:7px;}
-.card .card-detail-inner{padding-top:7px; border-top:1px solid var(--border);}
-.surprise-lbl{font-size:10.2px; font-weight:700; color:var(--text); margin-bottom:4px;}
-.surprise-bar{height:6px; background:var(--panel2); border-radius:3px; overflow:hidden; margin-bottom:5px;}
-.surprise-bar-fill{height:100%; border-radius:3px;}
-.surprise-note{font-size:10.2px; color:var(--dim); line-height:1.5;}
 
 /* ===== BAROMETRO DETTAGLIATO — dati usciti raggruppati per categoria ===== */
 .hd-quote{border-left:3px solid var(--gold); background:rgba(224,169,77,.06); border-radius:4px; padding:9px 12px; font-size:12.1px; color:var(--text); line-height:1.55; margin:9px 0 14px;}
@@ -471,10 +246,8 @@ section{margin-bottom:27px; scroll-margin-top:66px;}
   border:1px solid var(--red); background:linear-gradient(180deg, rgba(198,86,74,.09), rgba(198,86,74,.02));
   border-radius:10px; padding:13px 14px;
 }
-.priority-top{display:flex; align-items:center; gap:7px; margin-bottom:9px;}
 .dot{width:8px; height:8px; border-radius:50%; background:var(--red); animation:pulse 1.6s infinite;}
 @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.25;}}
-.priority-top b{font-size:12.1px; letter-spacing:.5px; color:var(--red); text-transform:uppercase;}
 .pevent{display:flex; gap:10px; padding:7px 0; border-top:1px solid rgba(198,86,74,.2);}
 .pevent:first-of-type{border-top:none;}
 .pevent .impact{font-family:'IBM Plex Mono',monospace; font-size:9.3px; padding:3px 5px; border-radius:4px; background:var(--red); color:var(--bg); font-weight:700; height:fit-content; white-space:nowrap;}
@@ -511,59 +284,10 @@ tr:hover td{background:var(--panel2);}
 .rg-scale{display:flex; justify-content:space-between; font-size:9.5px; color:var(--dim2); text-transform:uppercase; letter-spacing:.4px; padding:0 7px; max-width:190px; margin:3px auto 0;}
 .rg-sub{font-size:10.2px; color:var(--dim); margin-top:4px;}
 
-.rt-card{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px 13px; margin-bottom:14px;}
-.rt-title{font-size:9.8px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--dim2); margin-bottom:9px; display:flex; justify-content:space-between; align-items:baseline;}
-.rt-title .rt-note{font-size:9.3px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--dim2); font-style:italic;}
 /* Riga riassuntiva: nome asset + singola barra direzionale + badge Bullish/Bearish/Cauto */
-.rt-sum-row{display:grid; grid-template-columns:76px 1fr 92px; gap:10px; align-items:center; padding:6px 0;}
-.rt-sum-row .rt-name{font-size:11.6px; font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace;}
-.rt-sum-bar{height:8px; border-radius:4px; overflow:hidden; background:var(--panel2); display:flex;}
-.rt-sum-bar .rt-sum-fill{height:100%;}
-.rt-sum-bar .rt-sum-fill.green{background:var(--green);}
-.rt-sum-bar .rt-sum-fill.red{background:var(--red);}
-.rt-sum-bar .rt-sum-fill.gold{background:var(--gold);}
-.rt-split{font-size:10.2px; font-family:'IBM Plex Mono',monospace; text-align:right; white-space:nowrap;}
-.rt-split .up{color:var(--green); font-weight:600;} .rt-split .down{color:var(--red); font-weight:600;}
 /* Tabella di dettaglio: asset, retail bullish/bearish, fonte/metodo, lettura contrarian */
-.rt-table-wrap{overflow-x:auto; margin-top:12px; border-top:1px solid var(--border); padding-top:10px;}
-.rt-table{width:100%; min-width:820px; table-layout:fixed; border-collapse:collapse; font-size:10.7px;}
-.rt-table col.c-asset{width:11%;} .rt-table col.c-bull{width:11%;} .rt-table col.c-bear{width:11%;}
-.rt-table col.c-chg{width:11%;} .rt-table col.c-read2{width:56%;}
-.rt-table th{text-align:left; font-size:9.5px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); padding:0 7px 6px; line-height:1.3;}
-.rt-table td{padding:6px 7px; border-top:1px solid var(--border); vertical-align:top;}
-.rt-table td.rt-num{font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
-.rt-table td.rt-num.up{color:var(--green); font-weight:600;}
-.rt-table td.rt-num.down{color:var(--red); font-weight:600;}
-.rt-table td.rt-asset{font-weight:600; color:var(--text); font-family:'IBM Plex Mono',monospace; white-space:nowrap;}
-.rt-table td.rt-read{color:var(--dim); line-height:1.4;}
-.sn-eyebrow{font-size:10.2px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:16px 0 9px;}
-.sn-eyebrow:first-child{margin-top:0;}
 
 /* ===== COSA PREZZA IL MERCATO ===== */
-.pricing-card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:13px 14px; margin-bottom:12px;}
-.pricing-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:9px; flex-wrap:wrap;}
-.pricing-head .ph-title{display:flex; align-items:center; gap:6px; font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:var(--text);}
-.pricing-head .ph-sub{font-size:10.7px; color:var(--dim); margin-top:3px;}
-.pricing-badge{font-size:9.3px; font-weight:700; letter-spacing:.5px; padding:3px 7px; border-radius:20px; background:var(--accent-soft); color:var(--accent); white-space:nowrap;}
-.pricing-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin-bottom:10px;}
-@media(max-width:1100px){.pricing-grid{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:700px){.pricing-grid{grid-template-columns:1fr 1fr;}}
-.pm-card{background:var(--panel2); border-radius:8px; padding:8px 9px;}
-.pm-card .pm-lbl{font-size:9.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--dim2); margin-bottom:4px;}
-.pm-card .pm-val{font-family:'IBM Plex Mono',monospace; font-size:14.9px; font-weight:700; color:var(--text);}
-.pm-card .pm-detail{font-size:9.3px; color:var(--dim2); margin-top:3px; line-height:1.4;}
-.pricing-lists{display:grid; grid-template-columns:1fr 1fr; gap:9px;}
-@media(max-width:700px){.pricing-lists{grid-template-columns:1fr;}}
-.pl-box{border-radius:8px; padding:9px 10px;}
-.pl-box.priced{border:1px solid rgba(52,211,153,.35); background:rgba(52,211,153,.05);}
-.pl-box.risk{border:1px solid rgba(240,104,94,.35); background:rgba(240,104,94,.05);}
-.pl-box .pl-label{font-size:9.8px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:4px;}
-.pl-box.priced .pl-label{color:var(--green);} .pl-box.risk .pl-label{color:var(--red);}
-.pl-box ul{list-style:none;}
-.pl-box li{font-size:11.2px; color:var(--text); line-height:1.5; margin-bottom:6px;}
-.pl-box li:last-child{margin-bottom:0;}
-.pl-box li b{display:block; font-size:11.6px; margin-bottom:3px;}
-.pl-box li span{color:var(--dim); font-size:10.7px;}
 
 /* SENTIMENT CARDS */
 .sent-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px;}
@@ -738,7 +462,7 @@ section.collapsed{margin-bottom:10px;}
 section.collapsed .sec-head{margin-bottom:0; padding-bottom:7px;}
 section.collapsed > *:not(.sec-head){display:none;}
 
-/* ===== HUB 06-10: card raggruppate per tema (prefisso h-) ===== */
+/* ===== HUB 05-09: card raggruppate per tema (prefisso h-) ===== */
 :root{--text2:#B4BBD0;}
 .h-grid{display:grid; grid-template-columns:repeat(12,1fr); gap:14px;}
 .h-c3{grid-column:span 3;} .h-c4{grid-column:span 4;} .h-c5{grid-column:span 5;} .h-c6{grid-column:span 6;} .h-c7{grid-column:span 7;} .h-c8{grid-column:span 8;} .h-c12{grid-column:span 12;}
@@ -789,7 +513,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 .h-kpi b{font:600 19px/1.25 'IBM Plex Mono',monospace; white-space:nowrap;}
 .h-kpi .d{font:500 12px/1.3 'IBM Plex Mono',monospace; color:var(--dim);} .h-kpi .d.h-up{color:var(--green);} .h-kpi .d.h-down{color:var(--red);}
 @media(max-width:900px){ .h-kpis.wide{grid-template-columns:repeat(2,1fr);} .h-kpis.wide .h-kpi{border-bottom:1px solid var(--border);} }
-/* hub 07 */
+/* hub 06 */
 .h-split{display:flex; gap:2px; height:11px; margin-top:6px;} .h-split i{display:block; height:100%;} .h-split .h{background:var(--red); border-radius:4px 0 0 4px;} .h-split .d{background:var(--green); border-radius:0 4px 4px 0;}
 .h-splitl{display:flex; justify-content:space-between; font-size:12px; color:var(--dim);}
 .h-two{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:4px;} .h-two h5{font-size:12.5px; margin-bottom:8px; color:var(--text); font-family:'Space Grotesk',sans-serif;}
@@ -797,7 +521,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 .h-rows .r{display:flex; justify-content:space-between; gap:14px; padding:8px 0; border-top:1px solid var(--border); font-size:13px; color:var(--text2);} .h-rows .r:first-child{border-top:0;} .h-rows .r b{text-align:right; color:var(--text);}
 .h-catrow{display:grid; grid-template-columns:92px 1fr; gap:3px 12px; align-items:center; padding:10px 0; border-top:1px solid var(--border);} .h-catrow:first-child{border-top:0;}
 .h-catrow .sub{grid-column:2; color:var(--dim); font-size:12.5px; margin-top:-2px;} .h-catrow b{font-size:13.5px;}
-/* hub 08 */
+/* hub 07 */
 .h-evs{display:grid;} .h-ev{display:grid; grid-template-columns:74px 38px 1fr auto; gap:12px; align-items:center; padding:9px 0; border-top:1px solid var(--border); font-size:13px;} .h-ev:first-child{border-top:0;}
 .h-ev .when{font-size:12px; color:var(--dim); line-height:1.35;} .h-ev .when b{color:var(--text); font-family:'IBM Plex Mono',monospace; font-weight:600;}
 .h-ev .cur{font:600 11px/1 'IBM Plex Mono',monospace; color:var(--accent); background:var(--accent-soft); border-radius:5px; padding:5px 0; text-align:center;}
@@ -815,7 +539,7 @@ details.h-more > summary::after{content:"▾"; color:var(--accent); font-size:15
 details.h-more[open] > summary::after{transform:rotate(180deg);}
 details.h-more > summary:hover{background:var(--panel2);}
 details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--border);}
-/* hub 09 */
+/* hub 08 */
 .h-gauge{display:block; width:100%; max-width:230px; margin:0 auto;} .h-card.h-center{align-items:stretch;}
 .h-bars{display:grid; gap:2px;} .h-brow{display:grid; grid-template-columns:104px 1fr 38px; gap:10px; align-items:center; padding:4px 0;}
 .h-brow .nm{font-size:12.5px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
@@ -828,7 +552,7 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 .h-ml{display:flex; justify-content:space-between; font-size:11px; color:var(--dim2);}
 .h-stack{display:flex; gap:2px; height:12px; margin:8px 0 6px;} .h-stack i{display:block; height:100%; border-radius:3px;}
 .h-legend{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:12px; color:var(--text2);} .h-legend b{font-family:'IBM Plex Mono',monospace;}
-/* hub 10 */
+/* hub 09 */
 .h-filters-in{display:none;}
 #hub-sintesi input[type=radio]{display:none;}
 .h-filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
@@ -840,6 +564,74 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 .h-cmp{display:grid;} .h-cmprow{display:grid; grid-template-columns:120px 1fr; gap:14px; padding:11px 0; border-top:1px solid var(--border);} .h-cmprow:first-child{border-top:0;}
 .h-cmprow .src{font:600 11px/1.4 'IBM Plex Mono',monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--accent);}
 @media(max-width:600px){ .h-cmprow{grid-template-columns:1fr; gap:4px;} }
+/* ===== HUB 01-04: la parte alta della pagina usa lo stesso sistema di card ===== */
+.h-cell{display:flex; min-width:0;} .h-cell > .h-card{flex:1; min-width:0;} .h-cell:empty{display:none;}
+.h-bar{display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; margin:0 0 12px;}
+.h-bar .meta{flex:1; min-width:150px; font-size:12px; color:var(--dim2);} .h-bar .meta b{color:var(--text);}
+.h-btn{background:none; border:1px solid var(--border); color:var(--dim); border-radius:8px; padding:6px 11px; font:500 12px 'IBM Plex Mono',monospace; cursor:pointer; transition:all .15s;}
+.h-btn:hover{color:var(--accent); border-color:var(--accent);} .h-btn:disabled{opacity:.5; cursor:default;}
+.h-subhd{grid-column:1/-1; font:600 11px/1.2 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-top:10px;} .h-subhd:first-child{margin-top:0;}
+.h-card.h-warn{border-color:rgba(240,104,94,.4); background:linear-gradient(165deg,rgba(240,104,94,.09),var(--panel) 60%);}
+.h-gold{color:var(--gold);}
+details.h-det{border-top:1px solid var(--border); padding-top:9px;}
+details.h-det > summary{list-style:none; cursor:pointer; color:var(--accent); font-size:12.5px; font-weight:500;}
+details.h-det > summary::-webkit-details-marker{display:none;}
+details.h-det > summary::after{content:" ▾";} details.h-det[open] > summary::after{content:" ▴";}
+details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
+.h-kpis.big{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));}
+/* 01 · il quadro di oggi */
+.h-bias{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+.h-bias b{font:700 30px/1.1 'Space Grotesk',sans-serif;} .h-bias small{font:500 13px 'IBM Plex Mono',monospace; color:var(--dim);}
+.h-bias .risk-on{color:var(--green);} .h-bias .risk-off{color:var(--red);} .h-bias .neutrale{color:var(--gold);}
+.h-gradbar{position:relative; height:8px; border-radius:4px; background:linear-gradient(90deg,var(--red),var(--gold),var(--green)); margin:2px 0 0;}
+.h-gradbar .pin{position:absolute; top:-6px; width:3px; height:20px; margin-left:-1.5px; background:var(--text); border-radius:2px; box-shadow:0 0 0 2px var(--panel);}
+.h-gradl{display:flex; justify-content:space-between; font-size:11px; color:var(--dim2); margin-top:-4px;}
+.h-quad{display:grid; grid-template-columns:1fr 1fr; gap:16px 22px;}
+@media(max-width:700px){ .h-quad{grid-template-columns:1fr;} }
+.h-qb{display:grid; gap:7px; align-content:start; min-width:0;} .h-qt{display:flex; align-items:center; justify-content:space-between; gap:8px;} .h-qt b{font:600 14px 'Space Grotesk',sans-serif;}
+.h-drvs{display:grid; gap:12px;}
+.h-drv{display:grid; gap:2px; padding-left:12px; border-left:3px solid var(--gold);} .h-drv.negative{border-color:var(--red);} .h-drv.positive{border-color:var(--green);}
+.h-drv b{font-size:13.5px; font-weight:600;} .h-drv span{font-size:13px; color:var(--text2); line-height:1.5;}
+.h-stn{display:grid; grid-template-columns:1fr auto 44px; gap:10px; align-items:center; padding:9px 0; border-top:1px solid var(--border); font-size:13.5px;} .h-stn:first-child{border-top:0;}
+.h-stn .p{font:500 12px 'IBM Plex Mono',monospace; color:var(--dim); text-align:right;}
+.h-cd{font:700 32px/1 'IBM Plex Mono',monospace; letter-spacing:.04em; color:var(--gold);}
+.h-scn{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+@media(max-width:700px){ .h-scn{grid-template-columns:1fr;} }
+.h-sc{border:1px solid; border-radius:10px; padding:10px 12px; display:grid; gap:5px; align-content:start;}
+.h-sc.bad{background:rgba(240,104,94,.07); border-color:rgba(240,104,94,.35);} .h-sc.good{background:rgba(52,211,153,.07); border-color:rgba(52,211,153,.35);}
+.h-sc .l{font:600 10.5px/1.3 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase;} .h-sc.bad .l{color:var(--red);} .h-sc.good .l{color:var(--green);}
+.h-sc p{font-size:13px; color:var(--text2); line-height:1.5;}
+.h-doss{display:grid; gap:8px; padding-top:10px; border-top:1px solid var(--border);}
+.h-chips{display:flex; flex-wrap:wrap; gap:6px;}
+.h-rel{display:grid; gap:3px; padding:9px 0; border-top:1px solid rgba(240,104,94,.25);} .h-rel:first-child{border-top:0; padding-top:0;}
+.h-rel b{font-size:14px;} .h-rel .vals{font:400 12.5px/1.5 'IBM Plex Mono',monospace; color:var(--dim);} .h-rel .vals b{color:var(--text); font-size:inherit;} .h-rel .read{font-size:13px; color:var(--text2);}
+/* 02 · mercati */
+.h-spark{width:96px; height:36px; flex:none; margin-left:auto;}
+.h-mb{display:grid; gap:5px;} .h-mbl{display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--text2);} .h-mbl b{font:500 12px 'IBM Plex Mono',monospace; color:var(--text);}
+.h-mb .h-tr::after{display:none;}
+/* titoli delle sezioni su schermi stretti: la descrizione va a capo sotto il titolo invece di schiacciarlo */
+@media(max-width:700px){ .sec-head{flex-wrap:wrap; row-gap:3px;} .sec-head h2{flex:1; min-width:0;} .sec-head .sec-chevron{order:2;} .sec-desc{order:3; flex-basis:100%; margin-left:0; text-align:left; max-width:none;} }
+/* 03 · macro */
+#macro input[type=radio]{display:none;}
+#hmf-all:checked ~ .h-filters label[for=hmf-all], #hmf-us:checked ~ .h-filters label[for=hmf-us], #hmf-eu:checked ~ .h-filters label[for=hmf-eu], #hmf-jobs:checked ~ .h-filters label[for=hmf-jobs]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
+#hmf-us:checked ~ #hMacroGrid > :not(.g-us), #hmf-eu:checked ~ #hMacroGrid > :not(.g-eu), #hmf-jobs:checked ~ #hMacroGrid > :not(.g-jobs){display:none;}
+.h-inds{display:grid; grid-template-columns:repeat(auto-fill,minmax(172px,1fr)); gap:10px;}
+@media(max-width:560px){ .h-inds{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;} .h-ind{padding:10px;} .h-ind .v{font-size:19px;} }
+.h-ind{display:flex; flex-direction:column; gap:4px; min-width:0; padding:11px 12px; border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:10px; background:var(--panel2); cursor:pointer;}
+.h-ind.green{border-left-color:var(--green);} .h-ind.red{border-left-color:var(--red);}
+.h-ind input{display:none;}
+.h-ind .v{font:600 21px/1.2 'IBM Plex Mono',monospace; color:var(--gold);} .h-ind.green .v{color:var(--green);} .h-ind.red .v{color:var(--red);}
+.h-ind .h-lbl{line-height:1.35;}
+.h-ind .d{font:400 11.5px/1.4 'IBM Plex Mono',monospace; color:var(--dim);} .h-ind .h-note{font-size:12px;}
+.h-ind .x{display:none; font-size:12.5px; color:var(--text2); line-height:1.5; padding-top:6px; border-top:1px solid var(--border);}
+.h-ind input:checked ~ .x{display:block;}
+.h-ind .h-tog::after{content:"Cosa significa ▾";} .h-ind input:checked ~ .h-tog::after{content:"Chiudi ▴";}
+/* 04 · sentiment */
+.h-rrow{display:grid; grid-template-columns:96px 1fr 104px 72px 62px; gap:12px; align-items:center; padding:9px 0; border-top:1px solid var(--border); font-size:13px;}
+.h-rrow.hh{border-top:0; padding:0 0 6px; font:500 10.5px/1.2 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--dim);}
+.h-rrow .nm{font-weight:600;} .h-rrow .sp, .h-rrow .ch, .h-rrow .co{font:500 12px 'IBM Plex Mono',monospace; text-align:right; white-space:nowrap;} .h-rrow .co{color:var(--dim);}
+.h-rbar{display:flex; gap:2px; height:9px;} .h-rbar i{display:block; height:100%;} .h-rbar i.g{background:var(--green); border-radius:4px 0 0 4px;} .h-rbar i.r{background:var(--red); border-radius:0 4px 4px 0;}
+@media(max-width:640px){ .h-rrow{grid-template-columns:70px 1fr 92px 62px;} .h-rrow .co, .h-rrow.hh .co{display:none;} .h-rbar, .h-rrow.hh .bar{display:none;} .h-rrow{grid-template-columns:70px 1fr 62px;} .h-rrow .sp{text-align:left;} }
 </style>
 </head>
 <body>
@@ -874,16 +666,13 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 
 <div class="layout">
 <nav class="rail">
-  <div class="navlabel">Priorità</div>
-  <a href="javascript:void(0)" onclick="goToSection('priority')">🔴 Alto impatto oggi</a>
-  <a href="javascript:void(0)" onclick="goToSection('marketmon')">📊 Mercati — Asset Monitor</a>
-  <div class="navlabel">Macro</div>
-  <a href="javascript:void(0)" onclick="goToSection('macro')">Inflazione &amp; PMI</a>
-  <a href="javascript:void(0)" onclick="goToSection('macroeu')">🇪🇺 Europa</a>
-  <a href="javascript:void(0)" onclick="goToSection('jobs')">Lavoro &amp; disoccupazione</a>
-  <div class="navlabel">Sentiment</div>
+  <div class="navlabel">Oggi e mercati</div>
+  <a href="javascript:void(0)" onclick="goToSection('priority')">🔴 Il quadro di oggi</a>
+  <a href="javascript:void(0)" onclick="goToSection('marketmon')">📊 Mercati e prezzi</a>
+  <div class="navlabel">Macro e sentiment</div>
+  <a href="javascript:void(0)" onclick="goToSection('macro')">🏛 Macro: USA, Europa, lavoro</a>
   <a href="javascript:void(0)" onclick="goToSection('sentiment')">🎯 Sentiment di mercato</a>
-  <div class="navlabel">Hub tematici</div>
+  <div class="navlabel">Approfondimenti</div>
   <a href="javascript:void(0)" onclick="goToSection('hub-geo')">🌍 Geopolitica e notizie</a>
   <a href="javascript:void(0)" onclick="goToSection('hub-bc')">🏦 Banche centrali e tassi</a>
   <a href="javascript:void(0)" onclick="goToSection('hub-cal')">📅 Calendario e volatilità</a>
@@ -893,193 +682,67 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 
 <main>
 
-<!-- ============ BIAS GIORNALIERO (AI) ============ -->
-<div class="bias-panel neutrale" id="biasPanel">
-  <div class="bias-panel-head">
-    <span class="bp-eyebrow">⦿ Bias giornaliero · geopolitico-macro</span>
-    <span class="bp-time" id="bpTime">—</span>
-  </div>
-  <div class="bias-panel-body">
-    <div>
-      <div class="bp-label-row">
-        <span class="bp-label neutrale" id="bpLabel">—</span>
-        <span class="bp-score">score <b id="bpScore">50</b>/100</span>
-      </div>
-      <div class="bp-bar"><div class="bp-bar-fill" id="bpBarFill" style="width:50%; background:var(--gold);"></div></div>
-      <div class="bp-bar-labels"><span>Risk-off</span><span>Neutro</span><span>Risk-on</span></div>
-      <div class="bp-headline" id="bpHeadline">Verifica bias AI in corso...</div>
-      <div class="bp-subgrid">
-        <div class="bp-subcard">
-          <div class="bp-subcard-top"><span class="bps-title">🌍 Geopolitica</span><span class="bps-bias" id="bpGeoBias">—</span></div>
-          <div class="bps-bar"><div class="bps-bar-fill" id="bpGeoBar" style="width:50%; background:var(--gold);"></div></div>
-          <div class="bps-note" id="bpGeoNote">Nessun aggiornamento AI disponibile.</div>
-        </div>
-        <div class="bp-subcard">
-          <div class="bp-subcard-top"><span class="bps-title">📟 Macro / Policy</span><span class="bps-bias" id="bpMacroBias">—</span></div>
-          <div class="bps-bar"><div class="bps-bar-fill" id="bpMacroBar" style="width:50%; background:var(--gold);"></div></div>
-          <div class="bps-note" id="bpMacroNote">Nessun aggiornamento AI disponibile.</div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="bp-drivers">
-        <div class="bpd-title">Driver del giorno</div>
-        <div id="bpDriverList"></div>
-      </div>
-      <div class="bp-assets">
-        <div class="bpa-title">Stance per asset</div>
-        <div class="bp-asset-grid" id="bpAssetGrid"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ PRIORITY ============ -->
+<!-- ============ 01 IL QUADRO DI OGGI ============ -->
 <section id="priority">
-  <div class="eyebrow">🏛 MACRO &amp; GEOPOLITICA</div>
-  <div class="page-title">Dati pubblicati e notizie rilevanti</div>
-  <div class="page-subtitle">Headline verificate, agenda e ultimi indicatori ufficiali in un'unica lettura.</div>
-  <div id="todaysReleaseBanner"></div>
-  <div class="news-card">
-    <div class="news-card-top">
-      <div><span class="ntag">NEWS · GEOPOLITICA</span> <span class="nheadline" id="newsHeadline"></span></div>
-      <div class="ntime" id="newsTimestamp">verifica in corso...</div>
-    </div>
-    <div class="mini-grid" id="miniGrid"></div>
-    <div class="reveal-block">
-      <div class="rb-label">Cosa può ribaltare il quadro</div>
-      <ul id="revealList"></ul>
-    </div>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Il quadro di oggi</h2><span class="sec-desc">Bias del giorno, notizie chiave, prossimo evento e dati appena usciti — analisi AI su fonti reali</span></div>
+  <div class="h-grid">
+    <div class="h-cell h-c5" id="hOggiBias"></div>
+    <div class="h-cell h-c7" id="hOggiCats"></div>
+    <div class="h-cell h-c7" id="hOggiDrivers"></div>
+    <div class="h-cell h-c5" id="hOggiAssets"></div>
+    <div class="h-cell h-c7" id="nextEventContainer"></div>
+    <div class="h-cell h-c5" id="hOggiRisks"></div>
+    <div class="h-cell h-c12" id="todaysReleaseBanner"></div>
   </div>
-
-  <div class="eyebrow" style="margin-top:28px;">⏱ PROSSIMO EVENTO CHIAVE</div>
-  <div class="next-event-layout">
-    <div id="nextEventContainer"></div>
-    <div class="week-card">
-      <div class="week-top">
-        <div class="week-title">Calendario · Oggi e prossimi 7 giorni</div>
-        <div class="week-badge" id="weekBadge">— disponibili</div>
-      </div>
-      <div class="week-sub">Include anche i dati già pubblicati nella giornata corrente.</div>
-      <div class="week-list" id="weekList"></div>
-    </div>
-  </div>
-
-  <div class="eyebrow" style="margin-top:28px;">📐 COSA PREZZA IL MERCATO</div>
-  <div class="pricing-card">
-    <div class="pricing-head">
-      <div>
-        <div class="ph-title">📐 Cosa prezza il mercato</div>
-        <div class="ph-sub">Aspettative implicite in curva dei tassi, breakeven inflazione e volatilità</div>
-      </div>
-      <span class="pricing-badge" id="pricingBadge">SNAPSHOT</span>
-    </div>
-    <div class="pricing-grid" id="pricingGrid"></div>
-    <div class="pricing-lists">
-      <div class="pl-box priced">
-        <div class="pl-label">✓ Già prezzato</div>
-        <ul id="pricingPricedList"></ul>
-      </div>
-      <div class="pl-box risk">
-        <div class="pl-label">⚠ Non prezzato · rischio</div>
-        <ul id="pricingRiskList"></ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="eyebrow" style="margin-top:28px;">📊 QUADRO MACRO — ULTIMO DATO PER INDICATORE</div>
-  <div class="stat-grid" id="statGrid"></div>
 </section>
 
-<!-- ============ MARKET MONITOR ============ -->
+<!-- ============ 02 MERCATI ============ -->
 <section id="marketmon">
-  <div class="sec-head"><span class="sec-num">01</span><h2>Mercati — Asset Monitor &amp; Volatilità</h2><span class="sec-desc">Prezzi, variazione giornaliera, volatilità realizzata a 7g e correlazione con il DXY</span></div>
-  <div class="mkt-status-bar">
-    <span class="pricing-badge" id="mktBadge">SNAPSHOT</span>
-    <span class="mkt-status-text" id="mktStatusText">Prezzi e driver AI in caricamento…</span>
-    <button class="sn-regen" id="mktRegenBtn" onclick="regenerateMarketIntelligence()" title="Rigenera driver AI ora">↻ Rigenera driver AI</button>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Mercati — prezzi, volatilità e attese</h2><span class="sec-desc">Asset monitor con volatilità a 7g e correlazione con il DXY · cosa prezza il mercato</span></div>
+  <div class="h-bar">
+    <span class="h-bd off" id="mktBadge">In caricamento</span>
+    <span class="meta" id="mktStatusText">Prezzi e driver AI in caricamento…</span>
+    <button class="h-btn" id="mktRegenBtn" onclick="regenerateMarketIntelligence()" title="Rigenera driver AI ora">↻ Rigenera driver AI</button>
   </div>
-  <div id="marketMonitorContainer"></div>
+  <div class="h-grid" id="marketMonitorContainer"></div>
+  <div class="h-grid" id="hMktPricing" style="margin-top:14px;"></div>
+  <div class="source-tag" id="hMktMeta"></div>
 </section>
 
+<!-- ============ 03 MACRO ============ -->
 <section id="macro">
-  <div class="sec-head"><span class="sec-num">02</span><h2>Macro — Inflazione, PMI, PIL</h2><span class="sec-desc">Ogni dato: precedente → attuale, con atteso dal consensus</span></div>
-  <div class="grid grid-4" id="macroGrid"></div>
-  <div class="section-note" id="macroNote">Lettura AI in caricamento…</div>
-  <div class="source-tag" id="macroMeta">Dati: calendario economico reale (TradingView) — ultimo valore uscito per indicatore, con atteso dal consensus e precedente.</div>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Macro — USA, Europa e lavoro</h2><span class="sec-desc">Ultimo dato uscito per indicatore: attuale, atteso dal consensus e precedente</span></div>
+  <input type="radio" name="hmf" id="hmf-all" checked><input type="radio" name="hmf" id="hmf-us"><input type="radio" name="hmf" id="hmf-eu"><input type="radio" name="hmf" id="hmf-jobs">
+  <div class="h-filters"><label for="hmf-all">Tutto</label><label for="hmf-us">USA</label><label for="hmf-eu">Europa</label><label for="hmf-jobs">Lavoro</label></div>
+  <div class="h-grid" id="hMacroGrid"></div>
+  <div class="source-tag" id="hMacroMeta"></div>
 </section>
 
-<!-- ============ MACRO EUROPA ============ -->
-<section id="macroeu">
-  <div class="sec-head"><span class="sec-num">03</span><h2>Europa — Eurozona, BCE</h2><span class="sec-desc">Dati Eurostat/BCE dal calendario economico reale · separato dal quadro USA</span></div>
-  <div class="grid grid-4" id="macroEuGrid"></div>
-  <div class="section-note" id="macroEuNote">Lettura AI in caricamento…</div>
-  <div class="source-tag" id="macroEuMeta">Dati: calendario economico reale (TradingView) — Eurostat/BCE, con atteso dal consensus e precedente.</div>
-</section>
-
-<section id="jobs">
-  <div class="sec-head"><span class="sec-num">04</span><h2>Lavoro &amp; Disoccupazione</h2><span class="sec-desc">NFP, tasso disoccupazione, sussidi</span></div>
-  <div class="grid grid-4" id="jobsGrid"></div>
-  <div class="section-note" id="jobsNote">Lettura AI in caricamento…</div>
-  <div class="source-tag" id="jobsMeta">Dati: calendario economico reale (TradingView) — BLS/DOL, con atteso dal consensus e precedente.</div>
-</section>
-
+<!-- ============ 04 SENTIMENT ============ -->
 <section id="sentiment">
-  <div class="sec-head"><span class="sec-num">05</span><h2>Sentiment di Mercato — News per Categoria</h2><span class="sec-desc">Sentiment per categoria · validazione incrociata · posizionamento retail</span></div>
-
-  <div class="rt-card">
-    <div class="rt-title"><span>📶 Correlazioni e Sentiment Asset</span><span class="rt-note">Live — posizionamento retail (Dukascopy SWFX) e variazione % di oggi</span></div>
-    <div id="rtSummary"></div>
-    <div class="rt-table-wrap">
-      <table class="rt-table">
-        <colgroup><col class="c-asset"><col class="c-bull"><col class="c-bear"><col class="c-chg"><col class="c-read2"></colgroup>
-        <thead><tr>
-          <th>Asset</th><th>Retail Long</th><th>Retail Short</th><th>Var. % oggi</th><th>Lettura</th>
-        </tr></thead>
-        <tbody id="rtTableBody"></tbody>
-      </table>
-    </div>
-    <div class="section-note" id="rtOpNote" style="margin-top:14px; margin-bottom:0;"></div>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Sentiment di mercato</h2><span class="sec-desc">News per categoria · posizionamento retail · validazione incrociata con COT e dati</span></div>
+  <div class="h-bar">
+    <span class="meta" id="snMeta">verifica in corso...</span>
+    <button class="h-btn" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
   </div>
-
-  <div class="sn-eyebrow">🎯 Sentiment news per categoria (AI)</div>
-  <div class="sn-header">
-    <div class="sn-title">🎯 Sentiment news per categoria</div>
-    <div style="display:flex; align-items:center; gap:10px;">
-      <div class="sn-meta" id="snMeta">verifica in corso...</div>
-      <button class="sn-regen" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
-    </div>
-  </div>
-  <div class="sn-grid" id="snGrid"></div>
-  <div class="sn-risks">
-    <div class="sr-label">⚠ Rischi chiave</div>
-    <ul id="snRisks"></ul>
-  </div>
-
-  <div class="sn-eyebrow">🔬 Validazione incrociata — News vs Dati Reali</div>
-  <div class="page-subtitle" style="margin-bottom:0;">Confronto tra la narrativa dominante nelle news e ciò che mostrano davvero posizionamento COT, open interest e quadro macro.</div>
-  <div class="xv-grid" id="xvGrid"></div>
-  <div class="xv-bias">
-    <div class="xvb-label">🎯 Bias risultante</div>
-    <div class="xvb-text" id="xvBiasText"></div>
-  </div>
-
+  <div class="h-grid" id="hSentGrid"></div>
+  <div class="source-tag" id="hSentMeta"></div>
 </section>
 
 <section id="hub-geo">
-  <div class="sec-head"><span class="sec-num">06</span><h2>Geopolitica e notizie</h2><span class="sec-desc">Driver del rischio globale e come le fonti raccontano i fatti — analisi AI live</span></div>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Geopolitica e notizie</h2><span class="sec-desc">Driver del rischio globale e come le fonti raccontano i fatti — analisi AI live</span></div>
   <div class="h-grid" id="hGeoGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
   <div class="source-tag" id="hGeoMeta"></div>
 </section>
 
 <section id="hub-bc">
-  <div class="sec-head"><span class="sec-num">07</span><h2>Banche centrali e tassi</h2><span class="sec-desc">Fed, aspettative e rendimenti — dati ufficiali FRED + analisi AI live</span></div>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Banche centrali e tassi</h2><span class="sec-desc">Fed, aspettative e rendimenti — dati ufficiali FRED + analisi AI live</span></div>
   <div class="h-grid" id="hBcGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
   <div class="source-tag" id="hBcMeta"></div>
 </section>
 
 <section id="hub-cal">
-  <div class="sec-head"><span class="sec-num">08</span><h2>Calendario e volatilità</h2><span class="sec-desc">Prossimi eventi e quando aspettarsi movimenti ampi — dal calendario economico reale</span></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Calendario e volatilità</h2><span class="sec-desc">Prossimi eventi e quando aspettarsi movimenti ampi — dal calendario economico reale</span></div>
   <div class="h-grid" id="hCalGrid"><article class="h-card h-c12"><p class="h-note">Caricamento del calendario…</p></article></div>
   <details class="h-more" id="calendar">
     <summary><span>Apri tutto il calendario, con tutti i filtri</span><span class="sec-desc" id="icRange"></span></summary>
@@ -1139,7 +802,7 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 </section>
 
 <section id="hub-pos">
-  <div class="sec-head"><span class="sec-num">09</span><h2>Posizionamento e rischio</h2><span class="sec-desc" id="cotSecDesc">Caricamento dell'ultimo report CFTC…</span></div>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Posizionamento e rischio</h2><span class="sec-desc" id="cotSecDesc">Caricamento dell'ultimo report CFTC…</span></div>
   <div class="h-grid" id="hPosGrid"><article class="h-card h-c12"><p class="h-note">Caricamento…</p></article></div>
   <div class="source-tag" id="hPosMeta"></div>
   <details class="h-more" id="decisione">
@@ -1175,7 +838,7 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 </section>
 
 <section id="hub-sintesi">
-  <div class="sec-head"><span class="sec-num">10</span><h2>Sintesi operativa</h2><span class="sec-desc">Cruscotto asset e indici azionari — analisi AI live</span></div>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Sintesi operativa</h2><span class="sec-desc">Cruscotto asset e indici azionari — analisi AI live</span></div>
   <input type="radio" name="hfe" id="hfe-all" checked><input type="radio" name="hfe" id="hfe-val"><input type="radio" name="hfe" id="hfe-mat"><input type="radio" name="hfe" id="hfe-azi">
   <div class="h-filters"><label for="hfe-all">Tutti</label><label for="hfe-val">Valute</label><label for="hfe-mat">Materie prime</label><label for="hfe-azi">Azionario</label></div>
   <div class="h-grid" id="hSintGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
@@ -1237,7 +900,7 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 // ---------- NAV: scroll interno senza toccare l'URL (evita il dialogo "link esterno") ----------
 function goToSection(id){
   // vecchi indirizzi (/#fed, /#riskonoff...) → hub che oggi contiene quella sezione
-  const ALIAS = {geo:'hub-geo', news:'hub-geo', fed:'hub-bc', hawkdove:'hub-bc', rates:'hub-bc', riskonoff:'hub-pos', assets:'hub-sintesi', indices:'hub-sintesi'};
+  const ALIAS = {geo:'hub-geo', news:'hub-geo', fed:'hub-bc', hawkdove:'hub-bc', rates:'hub-bc', riskonoff:'hub-pos', assets:'hub-sintesi', indices:'hub-sintesi', macroeu:'macro', jobs:'macro'};
   const el = document.getElementById(ALIAS[id] || id);
   if(!el) return;
   const sec = el.closest('section') || el;
@@ -1247,8 +910,7 @@ function goToSection(id){
 }
 
 // ---------- SEZIONI COMPRIMIBILI ----------
-// Ogni sezione principale (01-16, non la "priority" in cima che non ha un .sec-head numerato)
-// diventa comprimibile cliccando sull'intestazione — utile per non dover scorrere tutta la
+// Ogni sezione principale (hub 01-09) diventa comprimibile cliccando sull'intestazione — utile per non dover scorrere tutta la
 // dashboard ogni volta. Le sezioni meno consultate quotidianamente partono chiuse; lo stato
 // scelto dall'utente viene ricordato tra una visita e l'altra (localStorage).
 const SEC_COLLAPSE_STORAGE_KEY = 'mhub_collapsed_sections_v2';   // v2: i vecchi id (calendar, cot, assets...) non esistono più come sezioni
@@ -1298,10 +960,59 @@ function tickClock(){
 }
 setInterval(tickClock, 1000); tickClock();
 
-// ---------- STATO CONDIVISO DEGLI HUB 06-10 ----------
+// ---------- STATO CONDIVISO DEGLI HUB 01-09 ----------
 // Ogni hub si ridisegna da questo stato ogni volta che arriva un dato (prezzi, FRED, COT, calendario, analisi AI):
 // le card mostrano ciò che c'è e "in caricamento" per il resto, senza dipendere dall'ordine di arrivo.
-const HUB = { fred:null, mq:null, pos:null, cot:null, bias:null, cards:null, volEvents:null, narr:{}, res:{}, fail:{} };
+const HUB = { fred:null, mq:null, pos:null, cot:null, bias:null, cards:null, volEvents:null, sent:null, rt:null, narr:{}, res:{}, fail:{} };
+
+// ============ Card degli hub 01-09: helper condivisi ============
+// Ogni hub legge lo stato condiviso HUB e si ridisegna da zero: ciò che manca mostra "in caricamento" (o "non
+// disponibile" se la fonte ha risposto con un errore). Testi lunghi chiusi di default ("Leggi tutto").
+const H_ICON = {
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  bank:'<path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  layers:'<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',
+  trend:'<path d="M3 17l5-6 4 4 8-9"/><path d="M15 6h5v5"/>',
+  pulse:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+  news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2V5zM17 8h3v9a2 2 0 0 1-2 2M8 9h5M8 13h5"/>',
+  scale:'<path d="M12 4v16M5 20h14M6 8l-3 6a3 3 0 0 0 6 0L6 8zM18 8l-3 6a3 3 0 0 0 6 0l-3-6zM6 8h12"/>',
+  smile:'<circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 7 2 8 0M9 9h.01M15 9h.01"/>',
+  bolt:'<path d="M13 3L5 14h6l-1 7 8-11h-6l1-7z"/>',
+  bars:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+};
+const H_BD = {live:['live','Live'], ai:['ai','AI'], off:['off','Ufficiale']};
+const hIco = k => `<span class="h-ico"><svg viewBox="0 0 24 24">${H_ICON[k] || ''}</svg></span>`;
+const hPlain = s => String(s == null ? '' : s).replace(/<[^>]+>/g, '');
+const hFirst = s => { const p = hPlain(s).trim(); const m = p.match(/^[\s\S]*?[.!?](\s|$)/); return (m ? m[0] : p).trim(); };
+const hRest = s => { const t = String(s == null ? '' : s).trim(); const m = t.match(/^[\s\S]*?[.!?](\s|$)/); return m ? t.slice(m[0].length).trim() : ''; };
+const hNf = (n, d = 2) => Number(n).toLocaleString('it-IT', {minimumFractionDigits:d, maximumFractionDigits:d, useGrouping:'always'});   // 'always': i numeri a 4 cifre (4.181,10) hanno il punto delle migliaia
+const hSg = (n, d = 2) => (n >= 0 ? '+' : '−') + hNf(Math.abs(n), d);
+const hDir = n => (n >= 0 ? 'h-up' : 'h-down');
+// testo lungo: poche righe visibili + "Leggi tutto" (solo CSS); se è breve, nessun comando inutile
+const hExp = (text, lines = 3) => {
+  const t = String(text == null ? '' : text);
+  if(!t.trim()) return '';
+  return hPlain(t).length <= lines * 78
+    ? `<div class="h-plain">${safeHtml(t)}</div>`
+    : `<label class="h-exp" style="--l:${lines}"><input type="checkbox"><div class="h-clamp">${safeHtml(t)}</div><span class="h-tog"></span></label>`;
+};
+const hExpRest = (t, l = 3) => (hRest(t) ? hExp(hRest(t), l) : '');
+const hList = (items, n = 3) => `<label class="h-list"><input type="checkbox"><ul>${(items||[]).map((t, i) => `<li class="${i >= n ? 'h-more-li' : ''}">${safeHtml(t)}</li>`).join('')}</ul>${(items||[]).length > n ? '<span class="h-tog"></span>' : ''}</label>`;
+const hCard = ({span = 6, icon, title, bd = [], body, foot = '', cls = ''}) =>
+  `<article class="h-card ${span ? 'h-c' + span : ''} ${cls}"><div class="h-hd">${icon ? hIco(icon) : ''}<h4>${escHtml(title)}</h4><span class="h-bds">${bd.map(b => `<span class="h-bd ${H_BD[b][0]}">${H_BD[b][1]}</span>`).join('')}</span></div>${body}${foot ? `<div class="h-ft">${foot}</div>` : ''}</article>`;
+const hLoading = (title, icon, span, state, cls = '') => hCard({span, icon, title, cls, bd:['ai'], body:`<p class="h-note">${HUB.fail[state] ? NARRATIVE_UNAVAILABLE : 'Analisi in caricamento…'}</p>`});
+const hKpi = (l, v, d, dc = '') => `<div class="h-kpi"><span class="l">${escHtml(l)}</span><b>${v}</b>${d ? `<span class="d ${dc}">${d}</span>` : ''}</div>`;
+const hQ = k => { const x = HUB.mq && HUB.mq[k]; return x && !x.error && x.price != null ? x : null; };
+const hVal = (k, d, pre = '') => { const x = hQ(k); return x ? pre + hNf(x.price, d) : '—'; };
+const hChg = k => { const x = hQ(k); return x && x.changePercent != null ? {t:`${x.changePercent >= 0 ? '▲' : '▼'} ${hSg(x.changePercent)}%`, c:hDir(x.changePercent)} : {t:'', c:''}; };
+const hMeta = (id, section, what = 'Analisi') => { const el = document.getElementById(id); const r = HUB.res[section]; if(el && r) el.textContent = metaLine(r, what); };
+const hTone = label => { const c = biasToneClass(label); return c === 'risk-on' ? 'g' : c === 'risk-off' ? 'r' : 'y'; };
+const hTime = iso => (iso ? new Date(iso).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', hour12:false}) : '—');
+const hCell = (id, card) => { const el = document.getElementById(id); if(el) el.innerHTML = card; };
+// categorie di sentiment (news): chip colorato + etichetta
+const SN_TREND = {BULLISH:['g', '↗ Bullish'], BEARISH:['r', '↘ Bearish'], NEUTRAL:['y', '→ Neutral']};
 
 // ---------- PROSSIMO EVENTO CHIAVE (live, dal calendario economico reale) ----------
 // Prima era un elenco di eventi scritti a mano con attese e scenari fissi, che si esauriva da solo
@@ -1345,9 +1056,8 @@ async function loadKeyEvents(){
     keyEventsState = 'ready';
   }catch(err){ keyEventsState = 'error'; }
   refreshKeyEvent(true);
-  renderWeekCalendar();
   if(typeof renderHubBC === 'function') renderHubBC();    // prossimo FOMC dal calendario
-  if(typeof renderHubCal === 'function') renderHubCal();   // elenco eventi dell'hub 08
+  if(typeof renderHubCal === 'function') renderHubCal();   // elenco eventi dell'hub 07
 }
 
 function pickNextKeyEvent(){
@@ -1360,44 +1070,27 @@ function pickNextKeyEvent(){
 
 function renderKeyEvent(ev){
   const container = document.getElementById('nextEventContainer');
+  if(!container) return;
   if(!ev){
     const msg = keyEventsState==='loading' ? 'Caricamento del calendario economico in corso…'
       : keyEventsState==='error' ? 'Calendario economico non raggiungibile in questo momento — riprova tra poco.'
       : 'Nessun evento ad alto impatto nei prossimi 45 giorni nel calendario.';
-    container.innerHTML = `<div class="event-card"><div class="ec-why-desc">${msg}</div></div>`;
+    container.innerHTML = hCard({span:0, icon:'cal', title:'Prossimo evento chiave', bd:['live'], body:`<p class="h-note">${msg}</p>`});
     return;
   }
   const d = new Date(ev.utc);
   const dateStr = d.toLocaleDateString('it-IT', {weekday:'long', day:'2-digit', month:'long', timeZone:'Europe/Rome'});
   const timeStr = d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'});
-  const stars = '★'.repeat(ev.stars) + '☆'.repeat(3-ev.stars);
-  container.innerHTML = `
-  <div class="event-card">
-    <div class="ec-top">
-      <div>
-        <div class="ec-stars">${stars}</div>
-        <div class="ec-title">${escHtml(ev.title)}</div>
-      </div>
-      <div class="ec-date">${dateStr} · ore ${timeStr} (Italia)</div>
+  container.innerHTML = hCard({span:0, icon:'cal', title:'Prossimo evento chiave', bd:['live', 'ai'], body:`
+    <p class="h-hl">${escHtml(ev.title)}</p>
+    <p class="h-note"><span class="h-chip y">Alto impatto</span>&nbsp; ${escHtml(dateStr)} · ore ${timeStr} (Italia)</p>
+    <div><div class="h-cd" id="ecCountdown">--:--:--:--</div><p class="h-note" style="margin-top:5px;">giorni : ore : minuti : secondi</p></div>
+    <div class="h-kpis">${hKpi('Attese', escHtml(ev.attese))}${hKpi('Precedente', escHtml(ev.precedente))}${hKpi('Actual', ev.actual != null ? escHtml(ev.actual) : '—')}</div>
+    <div class="h-scn">
+      <div class="h-sc bad"><span class="l">Se esce sopra le attese</span><p id="ecIfAbove">Analisi AI in caricamento…</p></div>
+      <div class="h-sc good"><span class="l">Se esce sotto le attese</span><p id="ecIfBelow">Analisi AI in caricamento…</p></div>
     </div>
-    <div class="ec-countdown" id="ecCountdown">--:--:--:--</div>
-    <div class="ec-pills">
-      <div class="ec-pill">ATTESE <b>${escHtml(ev.attese)}</b></div>
-      <div class="ec-pill">PRECEDENTE <b>${escHtml(ev.precedente)}</b></div>
-      <div class="ec-pill">ACTUAL <b>${ev.actual!=null ? escHtml(ev.actual) : '—'}</b></div>
-    </div>
-    <div class="ec-scenarios">
-      <div class="ec-scenario bad">
-        <div class="ec-sc-label">SE ESCE SOPRA LE ATTESE</div>
-        <div class="ec-sc-text" id="ecIfAbove">Analisi AI in caricamento…</div>
-      </div>
-      <div class="ec-scenario good">
-        <div class="ec-sc-label">SE ESCE SOTTO LE ATTESE</div>
-        <div class="ec-sc-text" id="ecIfBelow">Analisi AI in caricamento…</div>
-      </div>
-    </div>
-    <div id="ecAiDossier"></div>
-  </div>`;
+    <div id="ecAiDossier"></div>`, foot:'Attese e precedente: consensus del calendario economico · scenari e dossier: analisi AI'});
   loadEventDossier(ev);
 }
 
@@ -1425,54 +1118,8 @@ function tickCountdown(){
 refreshKeyEvent(true);
 setInterval(tickCountdown, 1000); tickCountdown();
 
-// ---------- CALENDARIO · OGGI E PROSSIMI 7 GIORNI (finestra mobile, si ricalcola da sola) ----------
-function renderWeekCalendar(){
-  const now = new Date();
-  const startOfToday = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()); // include dati già usciti oggi
-  const sevenDaysAhead = Date.now() + 7*86400000;
-  const upcoming = keyEvents
-    .filter(e => e.utc >= startOfToday && e.utc <= sevenDaysAhead)
-    .sort((a,b) => a.utc - b.utc || b.priority - a.priority);
-
-  if(keyEventsState === 'loading'){
-    document.getElementById('weekBadge').textContent = '…';
-    document.getElementById('weekList').innerHTML = '<div class="week-empty">Caricamento del calendario economico in corso…</div>';
-    return;
-  }
-  document.getElementById('weekBadge').textContent = `${upcoming.length} disponibil${upcoming.length===1?'e':'i'}`;
-
-  if(upcoming.length === 0){
-    document.getElementById('weekList').innerHTML = `<div class="week-empty">${keyEventsState==='error' ? 'Calendario economico non raggiungibile in questo momento — riprova tra poco.' : 'Nessun evento ad alto impatto nei prossimi sette giorni.'}</div>`;
-    return;
-  }
-
-  document.getElementById('weekList').innerHTML = upcoming.map(e=>{
-    const d = new Date(e.utc);
-    const dateStr = d.toLocaleDateString('it-IT', {day:'2-digit', month:'short', timeZone:'Europe/Rome'});
-    const timeStr = d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'});
-    const stars = '★'.repeat(e.stars) + '☆'.repeat(3-e.stars);
-    return `<div class="week-item">
-      <div class="wi-date">${dateStr}<br>${timeStr}</div>
-      <div class="wi-title">${escHtml(e.title)}</div>
-      <div class="wi-stars">${stars}</div>
-    </div>`;
-  }).join('');
-}
-renderWeekCalendar();
+// L'elenco "oggi e prossimi 7 giorni" vive nell'hub 07 (Calendario e volatilità); qui resta solo il caricamento degli eventi.
 loadKeyEvents();
-
-// ---------- STATO "IN ATTESA" (nessun testo curato a mano) ----------
-// Tutte le sezioni di analisi arrivano ora da dati reali o da analisi AI generate su notizie reali:
-// finché la card in alto non riceve l'analisi live, mostra un segnaposto invece di una data che invecchia.
-function renderContentTimestamps(opts){
-  const priorityLive = opts && opts.priorityLive;
-  if(!priorityLive){
-    const newsEl = document.getElementById('newsTimestamp');
-    if(newsEl) newsEl.innerHTML = '<span style="color:var(--dim2);">in attesa dell\'analisi live…</span>';
-  }
-}
-renderContentTimestamps();
-setInterval(renderWeekCalendar, 60000); // ricalcola ogni minuto, così la finestra mobile resta sempre aggiornata
 
 // ---------- TICKER TAPE (100% live: costruito da buildLiveTicker() quando arrivano i dati) ----------
 // Prima conteneva prezzi scritti a mano che restavano accanto a quelli live e li contraddicevano
@@ -1487,39 +1134,8 @@ function renderTicker(){
 }
 renderTicker();
 
-// ---------- PRIORITY / NEWS CARD ----------
-// Headline, 4 mini-card e "cosa può ribaltare il quadro" arrivano dalle analisi AI live (applyPriorityNewsLive);
-// finché non rispondono c'è solo un segnaposto, mai testo vecchio scritto a mano.
-document.getElementById('newsHeadline').textContent = 'Analisi live in caricamento…';
-document.getElementById('miniGrid').innerHTML = '<div class="mini-card"><div class="mc-desc">Analisi live in caricamento…</div></div>';
-document.getElementById('revealList').innerHTML = '<li>Analisi live in caricamento…</li>';
-
-// Quadro macro: ultimo dato per indicatore, dalle stesse card live del calendario economico reale
-// (vedi loadMacroCards) — prima erano cinque valori scritti a mano fermi a luglio.
-const STAT_IDS = [['us_cpi_yoy','CPI'], ['us_core_yoy','Core CPI'], ['us_ppi_yoy','PPI'], ['us_nfp','NFP'], ['us_unemp','Disoccupazione USA']];
-function renderStatGrid(j){
-  const byId = {};
-  [...(j.us||[]), ...(j.jobs||[])].forEach(c=>{ if(c.available) byId[c.id] = c; });
-  const stats = STAT_IDS.map(([id, lbl])=>{
-    const c = byId[id]; if(!c) return null;
-    const m = String(c.cur).match(/^(-?[\d.,]+)\s*(.*)$/);
-    return {lbl, val: m ? m[1] : c.cur, unit: m ? m[2] : '',
-      date: `${c.releasedLabel}${c.period ? ` · rif. ${c.period}` : ''}`,
-      detail: `Atteso: ${c.fore} · Precedente: ${c.prev}. ${c.note.charAt(0).toUpperCase() + c.note.slice(1)}.`};
-  }).filter(Boolean);
-  document.getElementById('statGrid').innerHTML = stats.map((s,idx)=>`
-    <div class="stat-card" id="stat-${idx}" onclick="toggleStat(${idx})">
-      <div class="stc-label">${s.lbl}</div>
-      <div><span class="stc-value">${s.val}</span><span class="stc-unit">${s.unit}</span></div>
-      <div class="stc-date">${s.date}</div>
-      <div class="stc-expand">Apri dettagli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
-      <div class="stc-detail"><div class="stc-detail-inner">${s.detail}</div></div>
-    </div>`).join('');
-}
-document.getElementById('statGrid').innerHTML = '<div class="stat-card"><div class="stc-label">Dati dal calendario in caricamento…</div></div>';
-function toggleStat(idx){
-  document.getElementById('stat-'+idx).classList.toggle('open');
-}
+// Il quadro di oggi (hub 01) e il quadro macro (hub 03) si disegnano dallo stato condiviso HUB: renderHubOggi / renderHubMacro.
+// Finché i dati live non arrivano le card mostrano "in caricamento", mai testo scritto a mano.
 
 // ---------- MARKET MONITOR ----------
 function sparkSVG(points, color){
@@ -1532,7 +1148,7 @@ function sparkSVG(points, color){
   points.forEach((p,i)=>{ if(i>0) d+=` L${(i*step).toFixed(1)},${norm(p).toFixed(1)}`; });
   const areaD = d + ` L${w},${h} L0,${h} Z`;
   const gradId = 'grad'+Math.random().toString(36).slice(2,8);
-  return `<svg class="mkt-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+  return `<svg class="h-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
     <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="${color}" stop-opacity="0.35"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/>
     </linearGradient></defs>
@@ -1629,66 +1245,28 @@ marketData.forEach(m=>{ m.vol = '—'; m.volLvl = 'in attesa'; if(m.name !== 'DX
 // Anche prezzo e variazione partono vuoti: i valori scritti a mano (es. DXY 100,21) non devono mai comparire come fossero attuali.
 marketData.forEach(m=>{ m.val = '—'; m.chg = null; });
 
+// Una card per asset (hub 02): prezzo e variazione di oggi, sparkline reale, volatilità a 7g e correlazione DXY;
+// driver e fattori chiave dell'analisi AI stanno in un riquadro a scomparsa che resta aperto tra un aggiornamento e l'altro.
+const MKT_ICON = {DXY:'target', FOREX:'globe', ENERGIA:'bolt', METALLI:'layers', INDICI:'bars', RATES:'trend', VOLATILITY:'pulse'};
 function renderMarketMonitor(){
-  const cats = [...new Set(marketData.map(m=>m.cat))];
-  let html = '';
-  cats.forEach(cat=>{
-    html += `<div class="mkt-cat-label">${cat}</div><div class="mkt-grid">`;
-    marketData.filter(m=>m.cat===cat).forEach((m,i)=>{
-      const idx = marketData.indexOf(m);
-      const hasChg = typeof m.chg === 'number';   // senza dato live non si mostra né un segno né un badge inventati
-      const up = hasChg && m.chg >= 0;
-      html += `
-      <div class="mkt-card" id="mkt-${idx}" onclick="toggleMkt(${idx})">
-        <div class="mkt-card-top">
-          <div><div class="mkt-name">${m.name}</div><div class="mkt-ticker">${m.ticker}</div></div>
-          <div class="mkt-badge ${!hasChg ? '' : up ? 'bull' : 'bear'}">${!hasChg ? '—' : up ? 'Bullish' : 'Bearish'}</div>
-        </div>
-        <div class="mkt-body">
-          <div>
-            <div class="mkt-value">${m.val}</div>
-            <div class="mkt-change ${!hasChg ? '' : up ? 'up' : 'down'}">${hasChg ? `${up?'▲':'▼'} ${up?'+':''}${m.chg.toFixed(2)}%` : '—'}</div>
-          </div>
-          <div id="spark-${idx}"></div>
-        </div>
-        <div class="mkt-stats">
-          <div><div class="ms-lbl">Volatilità 7g</div><div class="ms-val">${m.vol} · ${m.volLvl}</div></div>
-          <div><div class="ms-lbl">Correlazione DXY</div><div class="ms-val">${m.corr}</div></div>
-        </div>
-        <div class="mkt-expand">Apri dettagli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
-        <div class="mkt-detail"><div class="mkt-detail-inner">
-          <div class="mdi-label" style="display:flex; justify-content:space-between; align-items:baseline;">
-            <span>Da cosa si muove e il perché</span>
-            <span style="font-size:10px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--dim2);">${m.aiUpdatedAt ? `🤖 aggiornato alle ${m.aiUpdatedAt}` : 'in attesa dell\'analisi AI'}</span>
-          </div>
-          ${m.driver}
-          ${(m.bars||[]).map(b=>`
-          <div class="ec-bar-row" style="margin-top:14px;">
-            <div class="ec-bar-lbl" style="font-size:11.5px;">${b.lbl}</div>
-            <div class="ec-bar"><div class="ec-bar-fill" style="width:${b.pct}%; background:${b.color};"></div></div>
-            <div class="ec-bar-note" style="font-size:11px;">${b.note}</div>
-          </div>`).join('')}
-        </div></div>
-      </div>`;
-    });
-    html += `</div>`;
-  });
-  document.getElementById('marketMonitorContainer').innerHTML = html;
-  // inject sparklines dopo il render (serve il DOM per leggere i colori)
-  // Sparkline REALE: ultimi chiusure giornaliere (Yahoo Finance/Frankfurter) da /api/dxy-correlation.
-  // Prima era una serie sintetica disegnata in base al segno della variazione; senza dato reale non si disegna nulla.
-  marketData.forEach((m,idx)=>{
-    const el = document.getElementById('spark-'+idx);
-    if(!el) return;
-    if(Array.isArray(m.spark) && m.spark.length >= 4){
-      const up = m.spark[m.spark.length-1] >= m.spark[0];
-      el.innerHTML = sparkSVG(m.spark, up ? '#34D399' : '#F0685E');
-    } else { el.innerHTML = ''; }
-  });
-}
-function getComputedColor(){ return ''; } // helper inutilizzato, sicurezza
-function toggleMkt(idx){
-  document.getElementById('mkt-'+idx).classList.toggle('open');
+  const el = document.getElementById('marketMonitorContainer');
+  if(!el) return;
+  el.innerHTML = marketData.map((m, idx)=>{
+    const hasChg = typeof m.chg === 'number';   // senza dato live non si mostra né un segno né un colore inventati
+    const up = hasChg && m.chg >= 0;
+    // Sparkline REALE: ultime chiusure giornaliere (Yahoo Finance/Frankfurter) da /api/dxy-correlation; senza dato non si disegna nulla.
+    const spark = Array.isArray(m.spark) && m.spark.length >= 4 ? sparkSVG(m.spark, m.spark[m.spark.length-1] >= m.spark[0] ? '#34D399' : '#F0685E') : '';
+    const bars = (m.bars||[]).map(b=>{
+      const pct = Math.max(0, Math.min(100, Number(b.pct) || 0));
+      return `<div class="h-mb"><div class="h-mbl"><span>${escHtml(b.lbl)}</span><b>${pct}%</b></div><div class="h-tr"><i style="width:${pct}%;background:${b.color}"></i></div><p class="h-note">${escHtml(b.note)}</p></div>`;
+    }).join('');
+    const hasAi = Boolean(m.aiUpdatedAt);
+    return hCard({span:4, icon:MKT_ICON[m.cat] || 'trend', title:m.name, bd:hasAi ? ['live', 'ai'] : ['live'],
+      body:`<div class="h-px"><b>${m.val}</b><span class="d ${hasChg ? hDir(m.chg) : ''}">${hasChg ? `${up ? '▲' : '▼'} ${hSg(m.chg)}%` : '—'}</span>${spark}</div>
+        <div class="h-kpis">${hKpi('Volatilità 7g', escHtml(m.vol), escHtml(m.volLvl))}${hKpi('Correlazione DXY', escHtml(m.corr), escHtml(m.corrLbl))}</div>
+        <details class="h-det"${m.open ? ' open' : ''} ontoggle="marketData[${idx}].open=this.open"><summary>Da cosa si muove e perché</summary><div class="h-det-body"><div class="h-plain">${safeHtml(m.driver)}</div>${bars}</div></details>`,
+      foot:`${escHtml(m.ticker)} · ${hasAi ? `analisi AI alle ${escHtml(m.aiUpdatedAt)}` : 'in attesa dell\'analisi AI'}`});
+  }).join('');
 }
 renderMarketMonitor();
 
@@ -1714,54 +1292,23 @@ function surpriseInfo(lbl, cur, fore){
   const forza = diff >= 0.5 ? 'forte' : 'moderata';
   return {pct, color, text:`${lbl} ${direction} le attese (${cur} vs attese ${fore}) → sorpresa ${forza} ${favor}: attese ${attese}, dollaro ${dollaro}.`};
 }
-function renderMacroCards(data, containerId, idPrefix){
-  document.getElementById(containerId).innerHTML = data.map((m,idx)=>{
-    const sp = surpriseInfo(m.lbl, m.cur, m.fore);
-    const hasExpand = !!sp;
-    return `
-    <div class="card ${hasExpand?'expandable':''}" id="${idPrefix}-${idx}" ${hasExpand?`onclick="toggleMacroCard('${idPrefix}',${idx})"`:''}>
-      <div class="lbl">${m.lbl}</div>
-      <div class="val" style="color:var(--${m.color});">${m.cur}</div>
-      <div class="sub">Prec: ${m.prev} · Atteso: ${m.fore}<br>${m.note}</div>
-      ${hasExpand ? `
-      <div class="card-expand">Apri dettagli <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></div>
-      <div class="card-detail"><div class="card-detail-inner">
-        <div class="surprise-lbl">${m.lbl}</div>
-        <div class="surprise-bar"><div class="surprise-bar-fill" style="width:${sp.pct}%; background:${sp.color};"></div></div>
-        <div class="surprise-note">${sp.text}</div>
-      </div></div>` : ''}
-    </div>`;
-  }).join('');
-}
-function toggleMacroCard(prefix, idx){
-  document.getElementById(prefix+'-'+idx).classList.toggle('open');
-}
-
 // ---------- MACRO USA / EUROPA / LAVORO — card live dal calendario economico reale ----------
-// Prima erano valori scritti a mano (CPI di luglio, NFP di luglio...). Ora ogni card è l'ultimo dato già
+// Prima erano valori scritti a mano (CPI di luglio, NFP di luglio...). Ora ogni tessera è l'ultimo dato già
 // uscito per quell'indicatore — attuale, atteso dal consensus, precedente — da /api/economic-calendar?view=macro.
-let macroData = [], macroEuData = [], jobsData = [];
-function setMacroGridsMessage(msg){
-  ['macroGrid','macroEuGrid','jobsGrid'].forEach(id=>{ document.getElementById(id).innerHTML = `<div class="card"><div class="sub">${msg}</div></div>`; });
-}
-setMacroGridsMessage('Dati dal calendario economico in caricamento…');
-
+// Le card finiscono nello stato HUB.cards: le leggono l'hub 03 (renderHubMacro) e l'hub 06 (renderHubBC).
 async function loadMacroCards(){
   try{
     const res = await fetch('/api/economic-calendar?view=macro');
     if(!res.ok) throw new Error('HTTP '+res.status);
     const j = await res.json();
-    const ok = c => c && c.available;
-    macroData = (j.us||[]).filter(ok); macroEuData = (j.eu||[]).filter(ok); jobsData = (j.jobs||[]).filter(ok);
-    renderMacroCards(macroData, 'macroGrid', 'mc');
-    renderMacroCards(macroEuData, 'macroEuGrid', 'mce');
-    renderMacroCards(jobsData, 'jobsGrid', 'mj');
-    renderStatGrid(j);
-    buildHdCategories(j);
+    HUB.cards = j; delete HUB.fail.cards;
+    renderHubMacro();
+    renderHubBC();
     return j;
   }catch(e){
     console.warn('Card macro dal calendario non disponibili:', e.message);
-    setMacroGridsMessage('Calendario economico non raggiungibile in questo momento — riprova tra poco.');
+    HUB.fail.cards = true;
+    renderHubMacro();
     return null;
   }
 }
@@ -1781,11 +1328,7 @@ const HD_SPECS = [
   {title:'Attività e crescita', ids:{us_ism_mfg:1, us_ism_svc:1, us_gdp:1}},
   {title:'Europa (BCE)', ids:{eu_cpi_yoy:1, eu_core_yoy:1, eu_gdp:1, eu_retail:1, eu_unemp:-1}},
 ];
-// Barometro: i dati usciti (card dal calendario) alimentano la card "Dati usciti" dell'hub 07 Banche centrali e tassi.
-function buildHdCategories(j){
-  HUB.cards = j;
-  renderHubBC();
-}
+
 // I numeri FRED usano il punto decimale (stile USA) — la dashboard mostra tutto in stile italiano (virgola).
 function toItNum(s){ return s==null ? s : String(s).replace('.', ','); }
 
@@ -1808,9 +1351,10 @@ function fmtPricingVal(v, unit){
   return `${v>=0?'+':''}${String(s).replace('.', ',')}${unit==='%'?'%':' pb'}`;
 }
 
+// "Già prezzato" e "Non prezzato · rischio" sono generate dall'AI su dati reali (narrative?section=macro).
 function renderMarketPricing(){
-  const grid = document.getElementById('pricingGrid');
-  if(!grid) return;
+  const el = document.getElementById('hMktPricing');
+  if(!el) return;
   const vix = marketData.find(m=>m.name==='VIX');
   const gold = marketData.find(m=>m.name==='Gold Futures');
   const dxy = marketData.find(m=>m.name==='DXY');
@@ -1819,17 +1363,18 @@ function renderMarketPricing(){
     {lbl:'Oro', display: gold && gold.val !== '—' ? `$${gold.val}` : '—', detail:'Premio geopolitico + hedge inflazione'},
     {lbl:'DXY', display: dxy ? dxy.val : '—', detail:'Differenziale tassi e domanda di dollari'},
   ];
-  grid.innerHTML = pricingData.map(m=>`
-    <div class="pm-card"><div class="pm-lbl">${m.lbl}</div><div class="pm-val">${fmtPricingVal(m.val, m.unit)}</div><div class="pm-detail">${m.detail}</div></div>
-  `).join('') + extra.map(m=>`
-    <div class="pm-card"><div class="pm-lbl">${m.lbl}</div><div class="pm-val">${m.display}</div><div class="pm-detail">${m.detail}</div></div>
-  `).join('');
+  const kpis = pricingData.map(m=>hKpi(m.lbl, fmtPricingVal(m.val, m.unit), m.detail)).join('') + extra.map(m=>hKpi(m.lbl, m.display, m.detail)).join('');
+  const N = HUB.narr.macro;
+  const item = p => `<b>${p.label}</b> — ${p.detail}`;
+  const list = (items, title, icon, cls)=> !N ? hLoading(title, icon, 6, 'macro', cls)
+    : hCard({span:6, icon, title, bd:['ai'], cls, body:(items||[]).length ? hList(items.map(item), 3) : `<p class="h-note">${NARRATIVE_UNAVAILABLE}</p>`});
+  el.innerHTML = hCard({span:12, icon:'scale', title:'Cosa prezza il mercato', bd:['off', 'live'],
+      body:`<p class="h-note">Aspettative implicite in curva dei tassi, breakeven di inflazione e volatilità.</p><div class="h-kpis big">${kpis}</div>`,
+      foot:'Serie ufficiali FRED e prezzi live da Yahoo Finance'})
+    + list(N && N.priced, 'Già prezzato', 'target', '')
+    + list(N && N.risks, 'Non prezzato · rischio', 'bolt', 'h-warn');
+  hMeta('hMktMeta', 'macro', 'Lettura AI');
 }
-
-// "Già prezzato" e "Non prezzato · rischio": generate dall'AI su dati reali (narrative?section=macro).
-document.getElementById('pricingPricedList').innerHTML = '<li><span>Analisi AI in caricamento…</span></li>';
-document.getElementById('pricingRiskList').innerHTML = '<li><span>Analisi AI in caricamento…</span></li>';
-renderMarketPricing();
 
 // ---------- CALENDARIO ECONOMICO — dati REALI live (TradingView Economic Calendar via api/economic-calendar.js) ----------
 // Sostituisce il vecchio elenco di eventi scritti a mano: ogni riga (titolo, valuta, impatto,
@@ -2359,7 +1904,7 @@ async function renderVolatilityTable(){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     const events = (data.events||[]).filter(e=>e.importance==='alto' || e.importance==='medio');
-    HUB.volEvents = events; HUB.volRange = [monday, friday]; HUB.volFail = false; renderHubCal();   // mappa della volatilità dell'hub 08
+    HUB.volEvents = events; HUB.volRange = [monday, friday]; HUB.volFail = false; renderHubCal();   // mappa della volatilità dell'hub 07
 
     let rows = '';
     for(let dayMs=monday; dayMs<=friday; dayMs+=86400000){
@@ -2390,42 +1935,14 @@ async function renderVolatilityTable(){
 renderVolatilityTable();
 
 // ---------- SENTIMENT NEWS PER CATEGORIA ----------
-// Segnaposto finché /api/sentiment-categories non risponde (nessuna analisi scritta a mano di una data passata)
-const snData = [
-  {cat:'Analisi in caricamento…', trend:'neutral', desc:'Il sentiment per categoria viene generato dall\'AI su notizie reali.', sources:[]},
-];
-function renderSentimentGrid(categories){
-  document.getElementById('snGrid').innerHTML = categories.map(s=>{
-    const trendLbl = s.trend==='bear'?'↘ Bearish':s.trend==='bull'?'↗ Bullish':'→ Neutral';
-    return `<div class="sn-card trend-${s.trend}">
-      <div class="sn-card-top"><div class="sn-cat">${s.cat}</div><div class="sn-trend ${s.trend}">${trendLbl}</div></div>
-      <div class="sn-desc">${s.desc}</div>
-      <div class="sn-sources">Fonti: ${(s.sources||[]).map(x=>`<span>[${x}]</span>`).join(' ')}</div>
-    </div>`;
-  }).join('');
-}
-function renderSentimentRisks(risks){
-  document.getElementById('snRisks').innerHTML = risks.map(r=>`<li>${r}</li>`).join('');
-}
-renderSentimentGrid(snData);
-
-const snRisks = ['Rischi chiave in caricamento…'];
-renderSentimentRisks(snRisks);
-
-// Sovrascrive la griglia sentiment con l'analisi AI reale (sentiment-categories.js), se disponibile.
-// snData/snRisks restano lo snapshot statico di fallback finché la funzione live non risponde.
+// Le categorie e i rischi chiave arrivano da /api/sentiment-categories (analisi AI su notizie reali) e finiscono nello
+// stato HUB.sent: li leggono l'hub 04 (tutte le categorie) e l'hub 01 (sintesi delle prime quattro + rischi chiave).
 function applySentimentLive(data){
   if(!data || !data.categories || !data.categories.length) return false;
-  const BIAS_TO_TREND = {BULLISH:'bull', BEARISH:'bear', NEUTRAL:'neutral'};
-  renderSentimentGrid(data.categories.map(c=>({
-    cat: c.label, trend: BIAS_TO_TREND[c.bias] || 'neutral', desc: c.narrative, sources: c.sources,
-  })));
-  if(data.keyRisks && data.keyRisks.length) renderSentimentRisks(data.keyRisks);
+  HUB.sent = data; delete HUB.fail.sent;
   const metaEl = document.getElementById('snMeta');
-  if(metaEl){
-    const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
-    metaEl.innerHTML = `generata alle <b>${time}</b> · ${data.newsCount||0} news${data.ai===false?' · fallback':''} · si rigenera da sola oltre le 6h di età`;
-  }
+  if(metaEl) metaEl.innerHTML = `generata alle <b>${hTime(data.generatedAt)}</b> · ${data.newsCount||0} news${data.ai===false?' · fallback':''} · si rigenera da sola oltre le 6h di età`;
+  renderHubSent(); renderOggiCats(); renderOggiRisks();
   return true;
 }
 async function regenerateSentiment(){
@@ -2439,89 +1956,13 @@ async function regenerateSentiment(){
   }
 }
 
-// Rende live la card "Dati pubblicati e notizie rilevanti" (headline + 4 mini-card + "Cosa può
-// ribaltare il quadro") riusando bias-daily (headline) e sentiment-categories (narrative per
-// categoria + rischi chiave) — entrambi già scaricati da initLiveData() per altre sezioni, quindi
-// nessuna chiamata AI aggiuntiva. Se uno dei due non risponde, resta il testo statico di fallback
-// già presente nell'HTML per quella parte.
-const PRIORITY_CATS = [
-  { key: 'geopolitics', title: 'Geopolitica' },
-  { key: 'fed_rates', title: 'Fed e tassi' },
-  { key: 'macro', title: 'Macro' },
-  { key: 'dxy', title: 'Dollaro / DXY' },
-];
-const PRIORITY_BIAS_DOT = { BULLISH: 'green', BEARISH: 'red', NEUTRAL: 'gold' };
-const PRIORITY_BIAS_COLOR = { BULLISH: 'var(--green)', BEARISH: 'var(--red)', NEUTRAL: 'var(--gold)' };
-function applyPriorityNewsLive(biasData, sentimentData){
-  let updated = false;
-
-  if(biasData && biasData.headline){
-    const el = document.getElementById('newsHeadline');
-    if(el){ el.textContent = biasData.headline; updated = true; }
-  }
-
-  if(sentimentData && sentimentData.categories && sentimentData.categories.length){
-    const byKey = {};
-    sentimentData.categories.forEach(c=>{ if(c && c.key) byKey[c.key] = c; });
-    const cards = PRIORITY_CATS.map(pc=>{
-      const c = byKey[pc.key];
-      if(!c || !c.narrative) return null;
-      return {
-        title: pc.title,
-        dot: PRIORITY_BIAS_DOT[c.bias] || 'gold',
-        desc: c.narrative,
-        tag: c.bias || 'NEUTRAL',
-        tagColor: PRIORITY_BIAS_COLOR[c.bias] || 'var(--gold)',
-      };
-    }).filter(Boolean);
-    if(cards.length){
-      const grid = document.getElementById('miniGrid');
-      if(grid){
-        grid.innerHTML = cards.map(m=>`
-          <div class="mini-card">
-            <div class="mc-top"><div class="mc-title">${m.title}</div><div class="mc-dot" style="background:var(--${m.dot});"></div></div>
-            <div class="mc-desc">${m.desc}</div>
-            <div class="mc-tag" style="color:${m.tagColor};">${m.tag}</div>
-          </div>`).join('');
-        updated = true;
-      }
-    }
-    if(sentimentData.keyRisks && sentimentData.keyRisks.length){
-      const list = document.getElementById('revealList');
-      if(list){ list.innerHTML = sentimentData.keyRisks.map(r=>`<li>${r}</li>`).join(''); updated = true; }
-    }
-  }
-
-  if(updated){
-    const timeEl = document.getElementById('newsTimestamp');
-    if(timeEl){
-      const src = (sentimentData && sentimentData.generatedAt) || (biasData && biasData.generatedAt);
-      const time = src ? new Date(src).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—';
-      const anyAi = (biasData ? biasData.ai !== false : true) && (sentimentData ? sentimentData.ai !== false : true);
-      timeEl.innerHTML = `generata alle <b>${time}</b>${anyAi ? '' : ' · fallback'}`;
-    }
-  }
-
-  return updated;
-}
-
-// ---------- VALIDAZIONE INCROCIATA: NEWS VS COT / OPEN INTEREST / MACRO (focus Oro) — AI live ----------
-// Generata da /api/narrative?section=sentiment, con COT reale (percentili CFTC), dati macro appena usciti e
-// notizie vere; prima erano tre paragrafi scritti a mano su un COT di agosto.
-function renderXval(items, bias){
-  document.getElementById('xvGrid').innerHTML = (items||[]).map(x=>`
-  <div class="xv-card ${x.status}">
-    <div class="xv-top"><div class="xv-title">${escHtml(x.title)}</div><div class="xv-status ${x.status}">${x.status==='aligned'?'Allineato':'In conflitto'}</div></div>
-    <div class="xv-text">${safeHtml(x.text)}</div>
-  </div>`).join('');
-  document.getElementById('xvBiasText').innerHTML = safeHtml(bias);
-}
-document.getElementById('xvGrid').innerHTML = '<div class="xv-card"><div class="xv-text">Analisi AI in caricamento…</div></div>';
-document.getElementById('xvBiasText').textContent = 'Analisi AI in caricamento…';
+// ---------- VALIDAZIONE INCROCIATA: NEWS VS COT / OPEN INTEREST / MACRO — AI live ----------
+// Generata da /api/narrative?section=sentiment (COT reale, dati macro appena usciti, notizie vere) e mostrata nell'hub 04
+// da renderHubSent: prima erano tre paragrafi scritti a mano su un COT di agosto.
 
 // ---------- INDICATORI DI POSIZIONAMENTO: Fear&Greed · AAII (live) ----------
 // Fear&Greed (CNN) e AAII arrivano da /api/market-data (campo "positioning") e vengono mostrati nella card
-// "Umore degli investitori" dell'hub 09. NAAIM e CBOE Put/Call non hanno oggi una fonte gratuita aggiornata
+// "Umore degli investitori" dell'hub 08. NAAIM e CBOE Put/Call non hanno oggi una fonte gratuita aggiornata
 // (NAAIM: dato corrente solo in abbonamento; CBOE: CSV pubblico fermo al 2019) → non vengono mostrati.
 function renderSentimentIndicators(pos){
   HUB.pos = pos || null;
@@ -2529,30 +1970,6 @@ function renderSentimentIndicators(pos){
   return Boolean(pos && (pos.fearGreed || pos.aaii));
 }
 
-// ---------- GAUGE SEMICIRCOLARI (Risk-On/Risk-Off · Fear & Greed) ----------
-// value 0..100. Ago: -90° (estremo sinistro, rosso) .. 0° (verticale, oro) .. +90° (estremo destro, verde).
-let gaugeIdSeq = 0;
-function gaugeSVG(value){
-  const v = Math.max(0, Math.min(100, value));
-  const angle = -90 + (v/100)*180;
-  const gid = 'gaugeGrad' + (gaugeIdSeq++);
-  return `<svg viewBox="0 0 200 112" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#F0685E"/><stop offset="50%" stop-color="#E0A94D"/><stop offset="100%" stop-color="#34D399"/>
-    </linearGradient></defs>
-    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#${gid})" stroke-width="14" stroke-linecap="round"/>
-    <line x1="100" y1="100" x2="100" y2="32" stroke="#EDF0F7" stroke-width="3" stroke-linecap="round" transform="rotate(${angle} 100 100)"/>
-    <circle cx="100" cy="100" r="5" fill="#EDF0F7"/>
-  </svg>`;
-}
-function renderGauge(elId, value){
-  const el = document.getElementById(elId);
-  if(el) el.innerHTML = gaugeSVG(value);
-}
-function gaugeColor(value){
-  return value < 34 ? 'var(--red)' : value < 67 ? 'var(--gold)' : 'var(--green)';
-}
-// Risk-On/Risk-Off: ago e valore arrivano dal bias AI live (applyBiasDaily → hub 09).
 
 // ---------- CORRELAZIONI E SENTIMENT ASSET (live) ----------
 // Il posizionamento retail (long/short %) arriva ora dal Dukascopy SWFX Sentiment Index — un
@@ -2580,16 +1997,7 @@ function chgToSplit(chg){
   return { green, red: 100 - green };
 }
 
-function renderSentimentAssetsPending(){
-  document.getElementById('rtSummary').innerHTML = SENTIMENT_ASSETS.map(a=>`
-    <div class="rt-sum-row">
-      <div class="rt-name">${a.name}</div>
-      <div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:100%;"></div></div>
-      <span class="rt-split">In attesa</span>
-    </div>`).join('');
-  document.getElementById('rtTableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--dim2); font-style:italic; padding:16px;">Caricamento dati live in corso…</td></tr>`;
-}
-renderSentimentAssetsPending();
+
 
 function sentimentReading(r){
   const parts = [];
@@ -2623,37 +2031,12 @@ function applySentimentAssetsLive(market, dxyCorr){
     const short = (c && c.short != null) ? c.short : null;
     return {...a, chg, corr, long, short};
   });
-  if(!rows.some(r=>r.long != null || r.chg != null)) return false;
-
-  document.getElementById('rtSummary').innerHTML = rows.map(r=>{
-    let green, red;
-    if(r.long != null){ green = Math.round(r.long); red = Math.round(r.short); }
-    else if(r.chg != null){ const s = chgToSplit(r.chg); green = s.green; red = s.red; }
-    else return `<div class="rt-sum-row"><div class="rt-name">${r.name}</div><div class="rt-sum-bar"><div class="rt-sum-fill gold" style="width:100%;"></div></div><span class="rt-split">N/D</span></div>`;
-    return `<div class="rt-sum-row">
-      <div class="rt-name">${r.name}</div>
-      <div class="rt-sum-bar"><div class="rt-sum-fill green" style="width:${green}%;"></div><div class="rt-sum-fill red" style="width:${red}%;"></div></div>
-      <span class="rt-split"><span class="up">${green}%</span> / <span class="down">${red}%</span></span>
-    </div>`;
-  }).join('');
-
-  document.getElementById('rtTableBody').innerHTML = rows.map(r=>{
-    const longTxt = r.long != null ? `${r.long}%` : 'N/D';
-    const shortTxt = r.short != null ? `${r.short}%` : 'N/D';
-    const chgTxt = r.chg != null ? `${r.chg>=0?'+':''}${r.chg.toFixed(2)}%` : 'N/D';
-    const chgCls = r.chg == null ? '' : (r.chg>=0?'up':'down');
-    return `<tr>
-      <td class="rt-asset">${r.name}</td>
-      <td class="rt-num up">${longTxt}</td>
-      <td class="rt-num down">${shortTxt}</td>
-      <td class="rt-num ${chgCls}">${chgTxt}</td>
-      <td class="rt-read">${sentimentReading(r)}</td>
-    </tr>`;
-  }).join('');
+  if(!rows.some(r=>r.long != null || r.chg != null)){ HUB.rtFail = true; renderHubSent(); return false; }
+  HUB.rt = rows; HUB.rtFail = false;
+  renderHubSent();   // la card "Retail vs prezzo" dell'hub 04 si ridisegna da HUB.rt
   return true;
 }
 
-document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. Il posizionamento retail (Dukascopy SWFX) va letto spesso in chiave contrarian quando molto sbilanciato (oltre il 65-70% da un lato); dove non disponibile, lo split riflette semplicemente l\'ampiezza della variazione di oggi. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni.';
 
 // ---------- ANALISI NARRATIVE AI LIVE (Geopolitica, Fed, Hawkish/Dovish, Cruscotto Asset, Indici) ----------
 // Prima erano testi scritti a mano (CPI di agosto, FOMC del 16 settembre, "7 settimane di massimi del DXY"...)
@@ -2662,9 +2045,9 @@ document.getElementById('rtOpNote').innerHTML = '<b>Regola operativa:</b> se DXY
 // non presenti in quei dati). Le sezioni chiuse si caricano alla prima apertura.
 const NARRATIVE_SECTIONS = ['geo','fed','hawkdove','assets','indices','macro','sentiment','newscmp'];
 // Ogni analisi può alimentare più sezioni della pagina (es. "macro" riempie le note di Macro, Europa, Lavoro e Tassi):
-// si carica se almeno una di quelle sezioni è aperta. "priority" non è comprimibile, quindi macro parte sempre.
+// si carica se almeno una di quelle sezioni è aperta.
 const NARRATIVE_DOM = {geo:['hub-geo'], newscmp:['hub-geo'], fed:['hub-bc'], hawkdove:['hub-bc'], assets:['hub-sintesi'], indices:['hub-sintesi'],
-  macro:['macro','macroeu','jobs','priority','hub-bc'], sentiment:['sentiment','hub-pos']};
+  macro:['macro','marketmon','hub-bc'], sentiment:['sentiment','hub-pos']};
 const NARRATIVE_STATE = {};              // sezione -> 'loading' | 'done'
 let lastMarketQuotes = null;             // ultimo payload di /api/market-data (per nomi+prezzi degli indici)
 let lastPositioning = null;              // Fear&Greed + AAII dall'ultimo /api/market-data
@@ -2688,8 +2071,8 @@ function setNarrativeMeta(id, res){
   el.textContent = `Analisi generata alle ${time} da notizie reali, prezzi di mercato, dati FRED e calendario economico (Gemini) — si rigenera da sola ogni 3 ore.`;
 }
 
-// Le analisi AI delle sezioni 06-10 non scrivono più in elementi sparsi: vengono messe nello stato condiviso HUB
-// e l'hub corrispondente si ridisegna (renderHubGeo / renderHubBC / renderHubSint / renderHubPos).
+// Le analisi AI degli hub non scrivono più in elementi sparsi: vengono messe nello stato condiviso HUB
+// e l'hub corrispondente si ridisegna (renderHubGeo / renderHubBC / renderHubSint / renderHubPos / renderHubMacro / renderHubSent).
 function hubStore(section, d, res){ HUB.narr[section] = d; HUB.res[section] = res; delete HUB.fail[section]; }
 function renderNarrativeGeo(d, res){ hubStore('geo', d, res); renderHubGeo(); }
 function renderNarrativeFed(d, res){ hubStore('fed', d, res); renderHubBC(); }
@@ -2703,27 +2086,17 @@ function metaLine(res, what){
   const time = res.generatedAt ? new Date(res.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '';
   return `${what} generata alle ${time} da Gemini su dati reali — si rigenera da sola ogni 3 ore.`;
 }
-// Nota con prefisso in grassetto; se l'AI ha restituito un testo vuoto, messaggio onesto invece di un'etichetta senza contenuto.
-function noteHtml(prefix, text){ return text ? `${prefix ? `<b>${prefix}</b> ` : ''}${safeHtml(text)}` : NARRATIVE_UNAVAILABLE; }
-
 function renderNarrativeMacro(d, res){
   hubStore('macro', d, res);
-  setHtml('macroNote',   noteHtml('Lettura d\'insieme:', d.usNote));
-  setHtml('macroEuNote', noteHtml('Lettura d\'insieme:', d.euNote));
-  setHtml('jobsNote',    noteHtml('Perché conta:', d.jobsNote));
-  const src = {macroMeta:'calendario economico reale (TradingView)', macroEuMeta:'calendario economico reale (TradingView)',
-    jobsMeta:'calendario economico reale (TradingView)'};
-  Object.entries(src).forEach(([id, s])=>{ const el = document.getElementById(id); if(el) el.textContent = `Dati: ${s}. ${metaLine(res, 'Lettura AI')}`; });
-  const li = p => `<li><b>${escHtml(p.label)}</b><span>${safeHtml(p.detail)}</span></li>`;
-  setHtml('pricingPricedList', (d.priced||[]).map(li).join('') || `<li><span>${NARRATIVE_UNAVAILABLE}</span></li>`);
-  setHtml('pricingRiskList', (d.risks||[]).map(li).join('') || `<li><span>${NARRATIVE_UNAVAILABLE}</span></li>`);
-  renderHubBC();   // la lettura di rendimenti/VIX/dollaro sta nell'hub 07
+  renderHubMacro();        // letture d'insieme USA / Europa / lavoro nell'hub 03
+  renderMarketPricing();   // "già prezzato" e "non prezzato" nell'hub 02
+  renderHubBC();           // la lettura di rendimenti/VIX/dollaro sta nell'hub 06
 }
 
 function renderNarrativeSentiment(d, res){
   hubStore('sentiment', d, res);
-  renderXval(d.xval, d.xvBias);   // la validazione incrociata resta nella sezione 05
-  renderHubPos();                 // note su rischio, COT e umore degli investitori nell'hub 09
+  renderHubSent();   // la validazione incrociata sta nell'hub 04
+  renderHubPos();    // note su rischio, COT e umore degli investitori nell'hub 08
 }
 
 function renderNarrativeNewsCmp(d, res){ hubStore('newscmp', d, res); renderHubGeo(); }
@@ -2732,21 +2105,16 @@ const NARRATIVE_RENDERERS = {geo:renderNarrativeGeo, fed:renderNarrativeFed, haw
   macro:renderNarrativeMacro, sentiment:renderNarrativeSentiment, newscmp:renderNarrativeNewsCmp};
 const NARRATIVE_UNAVAILABLE = 'Analisi AI non disponibile in questo ciclo — riprova tra qualche minuto.';
 function showNarrativeUnavailable(section){
-  const msg = NARRATIVE_UNAVAILABLE;
   HUB.fail[section] = true;   // le card mostrano "non disponibile" invece di "in caricamento"
   switch(section){
     case 'geo': case 'newscmp': renderHubGeo(); break;
     case 'fed': case 'hawkdove': renderHubBC(); break;
     case 'assets': case 'indices': renderHubSint(); break;
     case 'macro':
-      ['macroNote','macroEuNote','jobsNote'].forEach(id=>setHtml(id, msg));
-      setHtml('pricingPricedList', `<li><span>${msg}</span></li>`); setHtml('pricingRiskList', `<li><span>${msg}</span></li>`);
-      renderHubBC();
+      renderHubMacro(); renderMarketPricing(); renderHubBC();
       break;
     case 'sentiment':
-      setHtml('xvBiasText', msg);
-      setHtml('xvGrid', `<div class="xv-card"><div class="xv-text">${msg}</div></div>`);
-      renderHubPos();
+      renderHubSent(); renderHubPos();
       break;
   }
 }
@@ -2780,56 +2148,14 @@ function ensureNarrativesForSection(domId){
 // Richieste scaglionate: l'apertura della pagina lancia già diverse chiamate AI in parallelo (bias, sentiment, mercati...)
 NARRATIVE_SECTIONS.forEach((s, i)=>setTimeout(()=>ensureNarrative(s), i * 700));
 
-// Dati FRED (target range, CPI...) per l'hub 07: la prossima decisione Fed si legge dal calendario in renderHubBC.
+// Dati FRED (target range, CPI...) per l'hub 06: la prossima decisione Fed si legge dal calendario in renderHubBC.
 function applyFedCards(macro){
   HUB.fred = macro || null;
   renderHubBC();
   return Boolean(macro);
 }
 
-// ============ HUB 06-10: card raggruppate per tema ============
-// Ogni hub legge lo stato condiviso HUB e si ridisegna da zero: ciò che manca mostra "in caricamento" (o "non
-// disponibile" se la fonte ha risposto con un errore). Testi lunghi chiusi di default ("Leggi tutto").
-const H_ICON = {
-  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
-  bank:'<path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/>',
-  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  layers:'<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>',
-  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',
-  trend:'<path d="M3 17l5-6 4 4 8-9"/><path d="M15 6h5v5"/>',
-  pulse:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
-  news:'<path d="M4 5h13v14H6a2 2 0 0 1-2-2V5zM17 8h3v9a2 2 0 0 1-2 2M8 9h5M8 13h5"/>',
-  scale:'<path d="M12 4v16M5 20h14M6 8l-3 6a3 3 0 0 0 6 0L6 8zM18 8l-3 6a3 3 0 0 0 6 0l-3-6zM6 8h12"/>',
-  smile:'<circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 7 2 8 0M9 9h.01M15 9h.01"/>',
-  bolt:'<path d="M13 3L5 14h6l-1 7 8-11h-6l1-7z"/>',
-  bars:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
-};
-const H_BD = {live:['live','Live'], ai:['ai','AI'], off:['off','Ufficiale']};
-const hIco = k => `<span class="h-ico"><svg viewBox="0 0 24 24">${H_ICON[k] || ''}</svg></span>`;
-const hPlain = s => String(s == null ? '' : s).replace(/<[^>]+>/g, '');
-const hFirst = s => { const p = hPlain(s).trim(); const m = p.match(/^[\s\S]*?[.!?](\s|$)/); return (m ? m[0] : p).trim(); };
-const hRest = s => { const t = String(s == null ? '' : s).trim(); const m = t.match(/^[\s\S]*?[.!?](\s|$)/); return m ? t.slice(m[0].length).trim() : ''; };
-const hNf = (n, d = 2) => Number(n).toLocaleString('it-IT', {minimumFractionDigits:d, maximumFractionDigits:d});
-const hSg = (n, d = 2) => (n >= 0 ? '+' : '−') + hNf(Math.abs(n), d);
-const hDir = n => (n >= 0 ? 'h-up' : 'h-down');
-// testo lungo: poche righe visibili + "Leggi tutto" (solo CSS); se è breve, nessun comando inutile
-const hExp = (text, lines = 3) => {
-  const t = String(text == null ? '' : text);
-  if(!t.trim()) return '';
-  return hPlain(t).length <= lines * 78
-    ? `<div class="h-plain">${safeHtml(t)}</div>`
-    : `<label class="h-exp" style="--l:${lines}"><input type="checkbox"><div class="h-clamp">${safeHtml(t)}</div><span class="h-tog"></span></label>`;
-};
-const hExpRest = (t, l = 3) => (hRest(t) ? hExp(hRest(t), l) : '');
-const hList = (items, n = 3) => `<label class="h-list"><input type="checkbox"><ul>${(items||[]).map((t, i) => `<li class="${i >= n ? 'h-more-li' : ''}">${safeHtml(t)}</li>`).join('')}</ul>${(items||[]).length > n ? '<span class="h-tog"></span>' : ''}</label>`;
-const hCard = ({span = 6, icon, title, bd = [], body, foot = '', cls = ''}) =>
-  `<article class="h-card h-c${span} ${cls}"><div class="h-hd">${icon ? hIco(icon) : ''}<h4>${escHtml(title)}</h4><span class="h-bds">${bd.map(b => `<span class="h-bd ${H_BD[b][0]}">${H_BD[b][1]}</span>`).join('')}</span></div>${body}${foot ? `<div class="h-ft">${foot}</div>` : ''}</article>`;
-const hLoading = (title, icon, span, state) => hCard({span, icon, title, body:`<p class="h-note">${HUB.fail[state] ? NARRATIVE_UNAVAILABLE : 'Analisi in caricamento…'}</p>`});
-const hKpi = (l, v, d, dc = '') => `<div class="h-kpi"><span class="l">${escHtml(l)}</span><b>${v}</b>${d ? `<span class="d ${dc}">${d}</span>` : ''}</div>`;
-const hQ = k => { const x = HUB.mq && HUB.mq[k]; return x && !x.error && x.price != null ? x : null; };
-const hVal = (k, d, pre = '') => { const x = hQ(k); return x ? pre + hNf(x.price, d) : '—'; };
-const hChg = k => { const x = hQ(k); return x && x.changePercent != null ? {t:`${x.changePercent >= 0 ? '▲' : '▼'} ${hSg(x.changePercent)}%`, c:hDir(x.changePercent)} : {t:'', c:''}; };
-const hMeta = (id, section, what = 'Analisi') => { const el = document.getElementById(id); const r = HUB.res[section]; if(el && r) el.textContent = metaLine(r, what); };
+
 
 // ---- 06 Geopolitica e notizie
 function renderHubGeo(){
@@ -2955,7 +2281,7 @@ function renderHubPos(){
     const rep = HUB.cot.latestReportDate ? fmtItDate(HUB.cot.latestReportDate) : '';
     html += hCard({span:8, icon:'layers', title:'COT — dove sono gli estremi', bd:['off','live'], body:`${S && S.cotNote ? `<p class="h-hl">${escHtml(hFirst(S.cotNote))}</p>` : ''}<div class="h-bars">${rows.map(r => `<div class="h-brow"><span class="nm">${escHtml(r.n)}</span><span class="h-tr"><i style="width:${Math.max(r.p, 1)}%"></i></span><span class="v">${r.p}°</span></div>`).join('')}</div><div class="h-axis"><span>0° minimo</span><span>50°</span><span>100° massimo</span></div>${S && S.cotNote ? hExpRest(S.cotNote, 2) : ''}`, foot:`Percentile del posizionamento netto sulle ultime 52 settimane${rep ? ` · report CFTC del ${escHtml(rep)}` : ''} · <button type="button" class="h-link" onclick="goToSection('cot')">tutti i contratti →</button>`});
   } else html += hCard({span:8, icon:'layers', title:'COT — dove sono gli estremi', bd:['off','live'], body:'<p class="h-note">Report CFTC in caricamento…</p>'});
-  // Umore degli investitori (ex indicatori della sezione 05)
+  // Umore degli investitori (ex sezione Sentiment)
   const fg = P && P.fearGreed, aa = P && P.aaii;
   let mood = '';
   if(fg){
@@ -3002,6 +2328,134 @@ function renderHubSint(){
   } else html += hLoading('Indici azionari', 'bars', 12, 'indices');
   el.innerHTML = html;
   hMeta('hSintMeta', 'assets');
+}
+
+// ============ Hub 01-04: la parte alta della pagina ============
+// ---- 01 Il quadro di oggi (bias, notizie chiave, driver, stance per asset, rischi). L'evento chiave e i dati
+// usciti oggi hanno un loro renderer (renderKeyEvent, renderTodaysReleases) perché si aggiornano con tempi diversi.
+const OGGI_CATS = [['geopolitics', 'Geopolitica'], ['fed_rates', 'Fed e tassi'], ['macro', 'Macro'], ['dxy', 'Dollaro / DXY']];
+const hWait = (state, ok) => (HUB.fail[state] ? NARRATIVE_UNAVAILABLE : ok);
+
+function renderOggiBias(){
+  const b = HUB.bias;
+  if(!b){ hCell('hOggiBias', hCard({span:0, icon:'pulse', title:'Bias giornaliero', bd:['ai'], cls:'h-accent', body:`<p class="h-note">${hWait('bias', 'Bias in caricamento…')}</p>`})); return; }
+  const cls = biasToneClass(b.label), score = typeof b.score === 'number' ? b.score : 50;
+  const sub = (title, x) => x ? `<div class="h-catrow"><span class="h-chip ${hTone(x.bias)}">${escHtml(x.bias || '—')}</span><b>${title}</b><span class="sub">${escHtml(x.note || '')}</span></div>` : '';
+  hCell('hOggiBias', hCard({span:0, icon:'pulse', title:'Bias giornaliero · geopolitico-macro', bd:['ai'], cls:'h-accent',
+    body:`<div class="h-bias"><b class="${cls}">${escHtml(b.label || '—')}</b><small>${score}/100</small></div><div class="h-gradbar" role="img" aria-label="Bias ${score} su 100"><span class="pin" style="left:${score}%"></span></div><div class="h-gradl"><span>Risk-off</span><span>Neutro</span><span>Risk-on</span></div><p class="h-hl">${escHtml(b.headline || '')}</p><div class="h-cats">${sub('Geopolitica', b.geo)}${sub('Macro / Policy', b.macro)}</div>`,
+    foot:`Aggiornato alle ${hTime(b.generatedAt)}${b.ai === false ? ' · analisi di riserva' : ''}`}));
+}
+
+function renderOggiCats(){
+  const S = HUB.sent;
+  if(!S || !S.categories || !S.categories.length){ hCell('hOggiCats', hCard({span:0, icon:'news', title:'Cosa muove i mercati oggi', bd:['ai'], body:`<p class="h-note">${hWait('sent', 'Analisi live in caricamento…')}</p>`})); return; }
+  const by = {}; S.categories.forEach(c => { if(c && c.key) by[c.key] = c; });
+  const blocks = OGGI_CATS.map(([k, t]) => {
+    const c = by[k]; if(!c || !c.narrative) return '';
+    const tr = SN_TREND[c.bias] || SN_TREND.NEUTRAL;
+    return `<div class="h-qb"><div class="h-qt"><b>${t}</b><span class="h-chip ${tr[0]}">${tr[1]}</span></div>${hExp(c.narrative, 4)}</div>`;
+  }).join('');
+  hCell('hOggiCats', hCard({span:0, icon:'news', title:'Cosa muove i mercati oggi', bd:['ai'], body:`<div class="h-quad">${blocks || '<p class="h-note">Nessuna categoria disponibile.</p>'}</div>`,
+    foot:`Sintesi di ${S.newsCount || 0} notizie · tutte le categorie nella sezione 04 · <button type="button" class="h-link" onclick="goToSection('sentiment')">Apri →</button>`}));
+}
+
+function renderOggiDrivers(){
+  const b = HUB.bias;
+  if(!b){ hCell('hOggiDrivers', hCard({span:0, icon:'bolt', title:'Driver del giorno', bd:['ai'], body:`<p class="h-note">${hWait('bias', 'Driver in caricamento…')}</p>`})); return; }
+  const TONE = {negative:'negative', positive:'positive'};
+  const rows = (b.drivers || []).map(d => `<div class="h-drv ${TONE[d.tone] || 'neutral'}"><b>${escHtml(d.label || '')}</b><span>${escHtml(d.detail || '')}</span></div>`).join('');
+  hCell('hOggiDrivers', hCard({span:0, icon:'bolt', title:'Driver del giorno', bd:['ai'], body:`<div class="h-drvs">${rows || '<p class="h-note">Nessun driver disponibile.</p>'}</div>`, foot:'Rosso = pesa sul rischio · verde = lo sostiene · giallo = neutro'}));
+}
+
+function renderOggiAssets(){
+  const b = HUB.bias;
+  if(!b){ hCell('hOggiAssets', hCard({span:0, icon:'target', title:'Stance per asset', bd:['ai'], body:`<p class="h-note">${hWait('bias', 'Stance in caricamento…')}</p>`})); return; }
+  const rows = (b.assets || []).map(a => { const dc = assetDirClass(a.direction); return `<div class="h-stn"><span>${escHtml(a.asset || '')}</span><span class="h-chip ${dc === 'bull' ? 'g' : dc === 'bear' ? 'r' : 'y'}">${escHtml(a.direction || '')}</span><span class="p">${Number(a.probability) || 0}%</span></div>`; }).join('');
+  hCell('hOggiAssets', hCard({span:0, icon:'target', title:'Stance per asset', bd:['ai'], body:rows || '<p class="h-note">Nessuna stance disponibile.</p>', foot:'La percentuale indica la convinzione dell\'analisi, non una probabilità statistica'}));
+}
+
+function renderOggiRisks(){
+  const S = HUB.sent;
+  if(!S || !S.keyRisks || !S.keyRisks.length){ hCell('hOggiRisks', hCard({span:0, icon:'scale', title:'Cosa può ribaltare il quadro', bd:['ai'], cls:'h-warn', body:`<p class="h-note">${hWait('sent', 'Analisi live in caricamento…')}</p>`})); return; }
+  hCell('hOggiRisks', hCard({span:0, icon:'scale', title:'Cosa può ribaltare il quadro', bd:['ai'], cls:'h-warn', body:hList(S.keyRisks, 2), foot:'Rischi chiave emersi dalle notizie di oggi'}));
+}
+
+function renderHubOggi(){ renderOggiBias(); renderOggiCats(); renderOggiDrivers(); renderOggiAssets(); renderOggiRisks(); }
+
+// ---- 03 Macro: USA, Europa, lavoro
+const MAC_STATS = [['us_cpi_yoy', 'CPI'], ['us_core_yoy', 'Core CPI'], ['us_ppi_yoy', 'PPI'], ['us_nfp', 'NFP'], ['us_unemp', 'Disoccupazione USA']];
+const MAC_GROUPS = [
+  {g:'us',   icon:'trend', title:'USA — inflazione, PMI e PIL', note:'usNote',   noteTitle:'Lettura d\'insieme'},
+  {g:'eu',   icon:'globe', title:'Europa — Eurozona e BCE',     note:'euNote',   noteTitle:'Lettura d\'insieme'},
+  {g:'jobs', icon:'bars',  title:'Lavoro e disoccupazione',     note:'jobsNote', noteTitle:'Perché conta'},
+];
+// tessera di un indicatore: valore colorato rispetto alle attese, atteso/precedente e — se c'è una sorpresa — la lettura per l'oro
+const hInd = c => {
+  const sp = surpriseInfo(c.lbl, c.cur, c.fore);
+  const col = {green:'green', red:'red', gold:'gold'}[c.color] || 'gold';
+  const note = String(c.note || '').trim();
+  return `<label class="h-ind ${col}"><input type="checkbox"><span class="h-lbl">${escHtml(c.lbl)}</span><b class="v">${escHtml(c.cur)}</b><span class="d">atteso ${escHtml(c.fore)} · prec. ${escHtml(c.prev)}</span>${note ? `<span class="h-note">${escHtml(note.charAt(0).toUpperCase() + note.slice(1))}</span>` : ''}${sp ? `<span class="x">${escHtml(sp.text)}</span><span class="h-tog"></span>` : ''}</label>`;
+};
+function renderHubMacro(){
+  const el = document.getElementById('hMacroGrid'); if(!el) return;
+  const C = HUB.cards, N = HUB.narr.macro;
+  if(!C){
+    el.innerHTML = hCard({span:12, icon:'trend', title:'Dati macro', bd:['off', 'live'], body:`<p class="h-note">${HUB.fail.cards ? 'Calendario economico non raggiungibile in questo momento — riprova tra poco.' : 'Dati dal calendario economico in caricamento…'}</p>`});
+    return;
+  }
+  const ok = c => c && c.available;
+  const byId = {};
+  [...(C.us || []), ...(C.jobs || [])].filter(ok).forEach(c => { byId[c.id] = c; });
+  const GC = {green:'h-grn', red:'h-red', gold:'h-gold'};
+  const strip = MAC_STATS.map(([id, l]) => { const c = byId[id]; return c ? hKpi(l, `<span class="${GC[c.color] || ''}">${escHtml(c.cur)}</span>`, `att. ${escHtml(c.fore)} · prec. ${escHtml(c.prev)}`) : hKpi(l, '—', 'dal calendario'); }).join('');
+  let html = `<div class="h-c12 g-us g-jobs"><div class="h-kpis wide">${strip}</div></div>`;
+  MAC_GROUPS.forEach(G => {
+    const list = (C[G.g] || []).filter(ok);
+    html += hCard({span:8, icon:G.icon, title:G.title, bd:['off', 'live'], cls:`g-${G.g}`, body:list.length ? `<div class="h-inds">${list.map(hInd).join('')}</div>` : '<p class="h-note">Nessun dato disponibile.</p>', foot:'Ultimo valore uscito per indicatore · calendario economico (TradingView) · tocca una tessera per la lettura'});
+    html += !N ? hLoading(G.noteTitle, 'target', 4, 'macro', `g-${G.g}`)
+      : N[G.note] ? hCard({span:4, icon:'target', title:G.noteTitle, bd:['ai'], cls:`g-${G.g}`, body:hExp(N[G.note], 8)})
+      : hCard({span:4, icon:'target', title:G.noteTitle, bd:['ai'], cls:`g-${G.g}`, body:`<p class="h-note">${NARRATIVE_UNAVAILABLE}</p>`});
+  });
+  el.innerHTML = html;
+  hMeta('hMacroMeta', 'macro', 'Lettura AI');
+}
+
+// ---- 04 Sentiment: notizie per categoria, retail, validazione incrociata
+const RT_OP_TEXT = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. Il posizionamento retail (Dukascopy SWFX) va letto spesso in chiave contrarian quando molto sbilanciato (oltre il 65-70% da un lato); dove non disponibile, lo split riflette semplicemente l\'ampiezza della variazione di oggi. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni.';
+function hRetail(){
+  const R = HUB.rt;
+  if(!R) return hCard({span:12, icon:'layers', title:'Retail vs prezzo — correlazioni e sentiment asset', bd:['live'], body:`<p class="h-note">${HUB.rtFail ? 'Dati retail non raggiungibili in questo momento — riprova tra poco.' : 'Dati live in caricamento…'}</p>`});
+  const rows = R.map(r => {
+    let green = null, red = null;
+    if(r.long != null){ green = Math.round(r.long); red = Math.round(r.short); }
+    else if(r.chg != null){ const s = chgToSplit(r.chg); green = s.green; red = s.red; }
+    const bar = green == null ? '<div class="h-rbar"></div>' : `<div class="h-rbar" role="img" aria-label="${green}% long, ${red}% short"><i class="g" style="flex:${green}"></i><i class="r" style="flex:${red}"></i></div>`;
+    const split = green == null ? 'N/D' : `<span class="h-up">${green}%</span> / <span class="h-down">${red}%</span>`;
+    return `<div class="h-rrow"><span class="nm">${escHtml(r.name)}</span>${bar}<span class="sp">${split}</span><span class="ch">${r.chg == null ? 'N/D' : `<span class="${hDir(r.chg)}">${hSg(r.chg)}%</span>`}</span><span class="co">${r.corr == null ? '—' : fmtCorr(r.corr)}</span></div>`;
+  }).join('');
+  const readings = R.map(r => `<p class="h-plain"><b>${escHtml(r.name)}</b> — ${escHtml(sentimentReading(r))}</p>`).join('');
+  return hCard({span:12, icon:'layers', title:'Retail vs prezzo — correlazioni e sentiment asset', bd:['live'],
+    body:`<div><div class="h-rrow hh"><span>Asset</span><span class="bar">Retail long / short</span><span class="sp"></span><span class="ch">Var. oggi</span><span class="co">Corr. DXY</span></div>${rows}</div><details class="h-det"><summary>Lettura per asset</summary><div class="h-det-body">${readings}</div></details>${hExp(RT_OP_TEXT, 3)}`,
+    foot:'Posizionamento retail: Dukascopy SWFX Sentiment Index, ogni 30 minuti · correlazione DXY a 30 giorni sui rendimenti giornalieri'});
+}
+function renderHubSent(){
+  const el = document.getElementById('hSentGrid'); if(!el) return;
+  const S = HUB.sent, X = HUB.narr.sentiment;
+  let html = '<div class="h-subhd">Sentiment news per categoria</div>';
+  if(S && S.categories && S.categories.length){
+    html += S.categories.map(c => {
+      const tr = SN_TREND[c.bias] || SN_TREND.NEUTRAL, src = (c.sources || []).filter(Boolean);
+      return hCard({span:4, icon:'news', title:c.label, bd:['ai'], cls:'h-tile', body:`<span class="h-chip ${tr[0]}">${tr[1]}</span>${hExp(c.narrative, 5)}`, foot:src.length ? `Fonti: ${escHtml(src.join(', '))}` : ''});
+    }).join('');
+  } else html += hLoading('Sentiment per categoria', 'news', 12, 'sent');
+  html += '<div class="h-subhd">Posizionamento retail e correlazioni</div>' + hRetail();
+  html += '<div class="h-subhd">Validazione incrociata — news vs dati reali</div>';
+  if(X && X.xval && X.xval.length){
+    html += X.xval.map(x => hCard({span:4, icon:'layers', title:x.title, bd:['ai'], cls:'h-tile', body:`<span class="h-chip ${x.status === 'aligned' ? 'g' : 'r'}">${x.status === 'aligned' ? 'Allineato' : 'In conflitto'}</span>${hExp(x.text, 5)}`})).join('');
+    if(X.xvBias) html += hCard({span:12, icon:'scale', title:'Bias risultante', bd:['ai'], cls:'h-accent', body:hExp(X.xvBias, 3), foot:'Confronto tra la narrativa delle news e ciò che mostrano COT, open interest e quadro macro'});
+  } else html += hLoading('Validazione incrociata', 'layers', 12, 'sentiment');
+  el.innerHTML = html;
+  hMeta('hSentMeta', 'sentiment', 'Validazione incrociata');
 }
 
 // ---------- LIVE DATA via Serverless Functions (Vercel) (con fallback allo snapshot statico) ----------
@@ -3097,13 +2551,12 @@ async function fetchEventDossier(ev){
   }catch(e){ return null; }
 }
 
-// Applica il bias giornaliero AI sia alla barra ticker sticky sia al pannello esteso.
+// Applica il bias giornaliero AI alla barra sticky in alto e alle card dell'hub 01 (e al gauge Risk-On/Off dell'hub 08).
 function applyBiasDaily(data){
-  if(!data) return false;
-  HUB.bias = data; renderHubPos();   // card Risk-On/Risk-Off dell'hub 09
+  if(!data){ HUB.fail.bias = true; renderOggiBias(); renderOggiDrivers(); renderOggiAssets(); return false; }
+  delete HUB.fail.bias;
+  HUB.bias = data; renderHubPos();
   const cls = biasToneClass(data.label);
-  const color = biasToneColor(cls);
-  const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
 
   const btLabel = document.getElementById('btLabel');
   if(btLabel){ btLabel.textContent = data.label || '—'; btLabel.className = `bt-label ${cls}`; }
@@ -3112,76 +2565,29 @@ function applyBiasDaily(data){
   const btGeo = document.getElementById('btGeo'); if(btGeo) btGeo.textContent = `GEO ${data.geo?.bias || '—'}`;
   const btMacro = document.getElementById('btMacro'); if(btMacro) btMacro.textContent = `MACRO ${data.macro?.bias || '—'}`;
 
-  // Gauge "Risk-On/Risk-Off" nel Barometro Sentiment & Risk — stesso score del bias AI.
-  if(typeof data.score === 'number'){
-    renderGauge('rgGaugeRisk', data.score);
-    const rgValueRisk = document.getElementById('rgValueRisk');
-    if(rgValueRisk){ rgValueRisk.textContent = data.score; rgValueRisk.style.color = color; }
-    const rgSubRisk = document.getElementById('rgSubRisk');
-    if(rgSubRisk) rgSubRisk.textContent = `Barometro geo-macro AI · aggiornato alle ${time}${data.ai===false?' (fallback)':''}`;
-  }
-
-  const panel = document.getElementById('biasPanel');
-  if(panel) panel.className = `bias-panel ${cls}`;
-  const bpTime = document.getElementById('bpTime'); if(bpTime) bpTime.textContent = `${time}${data.ai===false?' · fallback':''}`;
-  const bpLabel = document.getElementById('bpLabel'); if(bpLabel){ bpLabel.textContent = data.label || '—'; bpLabel.className = `bp-label ${cls}`; }
-  const bpScore = document.getElementById('bpScore'); if(bpScore) bpScore.textContent = data.score ?? 50;
-  const bpBarFill = document.getElementById('bpBarFill'); if(bpBarFill){ bpBarFill.style.width = `${data.score ?? 50}%`; bpBarFill.style.background = color; }
-  const bpHeadline = document.getElementById('bpHeadline'); if(bpHeadline) bpHeadline.textContent = data.headline || '—';
-
-  const geoCls = biasToneClass(data.geo?.bias);
-  const bpGeoBias = document.getElementById('bpGeoBias'); if(bpGeoBias){ bpGeoBias.textContent = data.geo?.bias || '—'; bpGeoBias.style.color = biasToneColor(geoCls); }
-  const bpGeoBar = document.getElementById('bpGeoBar'); if(bpGeoBar){ bpGeoBar.style.width = `${data.geo?.score ?? 50}%`; bpGeoBar.style.background = biasToneColor(geoCls); }
-  const bpGeoNote = document.getElementById('bpGeoNote'); if(bpGeoNote) bpGeoNote.textContent = data.geo?.note || '—';
-
-  const macroCls = biasToneClass(data.macro?.bias);
-  const bpMacroBias = document.getElementById('bpMacroBias'); if(bpMacroBias){ bpMacroBias.textContent = data.macro?.bias || '—'; bpMacroBias.style.color = biasToneColor(macroCls); }
-  const bpMacroBar = document.getElementById('bpMacroBar'); if(bpMacroBar){ bpMacroBar.style.width = `${data.macro?.score ?? 50}%`; bpMacroBar.style.background = biasToneColor(macroCls); }
-  const bpMacroNote = document.getElementById('bpMacroNote'); if(bpMacroNote) bpMacroNote.textContent = data.macro?.note || '—';
-
-  const driverList = document.getElementById('bpDriverList');
-  if(driverList){
-    driverList.innerHTML = (data.drivers||[]).map(d=>`
-      <div class="bp-driver ${d.tone||''}">
-        <div class="bpd-label">${d.label||''}</div>
-        <div class="bpd-detail">${d.detail||''}</div>
-      </div>`).join('') || '<div class="bpd-detail">Nessun driver disponibile.</div>';
-  }
-  const assetGrid = document.getElementById('bpAssetGrid');
-  if(assetGrid){
-    assetGrid.innerHTML = (data.assets||[]).map(a=>{
-      const dc = assetDirClass(a.direction);
-      return `<div class="bp-asset">
-        <div class="bp-asset-top"><span class="bpa-name">${a.asset}</span><span class="bpa-dir ${dc}">${a.direction}</span></div>
-        <span class="bpa-prob">${a.probability}%</span>
-      </div>`;
-    }).join('');
-  }
+  renderOggiBias(); renderOggiDrivers(); renderOggiAssets();
   return true;
 }
 
-// Riempie il card dell'evento chiave corrente con il dossier AI: scenari "sopra/sotto le attese" e blocco
+// Riempie la card dell'evento chiave corrente con il dossier AI: scenari "sopra/sotto le attese" e blocco
 // di contesto (perché conta oggi, cosa aspettarsi, asset da monitorare).
 async function loadEventDossier(ev){
   if(!ev) return;
   const data = await fetchEventDossier(ev);
-  const container = document.getElementById('ecAiDossier'); // ri-verifica: l'evento potrebbe essere cambiato nel frattempo
-  if(ev !== currentKeyEvent) return;
+  if(ev !== currentKeyEvent) return;   // l'evento potrebbe essere cambiato nel frattempo
+  const container = document.getElementById('ecAiDossier');
   const ifAbove = document.getElementById('ecIfAbove'), ifBelow = document.getElementById('ecIfBelow');
-  const dosForScenarios = data && data.dossier;
-  if(ifAbove) ifAbove.textContent = (dosForScenarios && dosForScenarios.ifAbove) || 'Scenario AI non disponibile in questo ciclo.';
-  if(ifBelow) ifBelow.textContent = (dosForScenarios && dosForScenarios.ifBelow) || 'Scenario AI non disponibile in questo ciclo.';
-  if(!container || !data || !data.dossier) return;
-  const dos = data.dossier;
-  const time = data.generatedAt ? new Date(data.generatedAt).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}) : '';
-  container.innerHTML = `
-    <div class="ec-ai-dossier">
-      <div class="ec-ai-label"><span>🤖 Dossier AI</span><span class="ec-ai-meta">${time}${dos.ai===false?' · fallback':''}</span></div>
-      ${dos.context ? `<p>${dos.context}</p>` : ''}
-      ${dos.timingNote ? `<p>${dos.timingNote}</p>` : ''}
-      ${dos.whatToExpect ? `<p><b>Cosa aspettarsi:</b> ${dos.whatToExpect}</p>` : ''}
-      ${dos.assetsToWatch && dos.assetsToWatch.length ? `<p><b>Asset da monitorare:</b> ${dos.assetsToWatch.join(' · ')}</p>` : ''}
-    </div>`;
+  const dos = data && data.dossier;
+  if(ifAbove) ifAbove.textContent = (dos && dos.ifAbove) || 'Scenario AI non disponibile in questo ciclo.';
+  if(ifBelow) ifBelow.textContent = (dos && dos.ifBelow) || 'Scenario AI non disponibile in questo ciclo.';
+  if(!container || !dos) return;
+  const watch = (dos.assetsToWatch || []).filter(Boolean);
+  container.innerHTML = `<div class="h-doss"><span class="h-lbl">🤖 Dossier AI · ${hTime(data.generatedAt)}${dos.ai === false ? ' · di riserva' : ''}</span>`
+    + (dos.context ? hExp(dos.context, 3) : '')
+    + (dos.timingNote ? hExp(dos.timingNote, 2) : '')
+    + (dos.whatToExpect ? hExp(`<b>Cosa aspettarsi:</b> ${dos.whatToExpect}`, 3) : '')
+    + (watch.length ? `<div class="h-chips">${watch.map(a => `<span class="h-chip">${escHtml(a)}</span>`).join('')}</div>` : '')
+    + '</div>';
 }
 
 function fmtItDate(iso){
@@ -3209,14 +2615,14 @@ function applyLiveMarketToMonitor(live){
     if(q.price === null || q.price === undefined) return;
     const asset = marketData.find(m=>m.name===cfg.name);
     if(asset){
-      asset.val = q.price.toLocaleString('it-IT', {minimumFractionDigits:cfg.dec, maximumFractionDigits:cfg.dec});
+      asset.val = q.price.toLocaleString('it-IT', {minimumFractionDigits:cfg.dec, maximumFractionDigits:cfg.dec, useGrouping:'always'});
       if(q.changePercent !== null && q.changePercent !== undefined) asset.chg = q.changePercent;
       any = true;
     }
   });
-  // Prezzi e variazioni di oggi alimentano le card degli hub 07 (tassi, dollaro, VIX), 09 (rischio) e 10 (sintesi operativa)
+  // Prezzi e variazioni di oggi alimentano le card degli hub 02 (prezzi), 06 (tassi, dollaro, VIX), 08 (rischio) e 09 (sintesi operativa)
   HUB.mq = live;
-  renderHubBC(); renderHubPos(); renderHubSint();
+  renderHubBC(); renderHubPos(); renderHubSint(); renderMarketPricing();
   if(any) renderMarketMonitor();
   return any;
 }
@@ -3344,7 +2750,7 @@ function applyMarketIntelligence(data){
   const statusText = document.getElementById('mktStatusText');
   if(badge && statusText){
     if(any){
-      badge.textContent = 'AI + LIVE'; badge.style.background='var(--green-soft)'; badge.style.color='var(--green)';
+      badge.textContent = 'AI + Live'; badge.className = 'h-bd live';
       statusText.textContent = `Prezzi live dove disponibili · driver rigenerati via AI alle ${time} (${data.newsCount||0} news)`;
     } else {
       statusText.textContent = data.ai===false ? 'Driver AI non disponibili in questo ciclo — riprova con "Rigenera driver AI"' : statusText.textContent;
@@ -3422,7 +2828,7 @@ function cotRead(def, d){
 
 function applyLiveCOTToReport(payload){
   if(!payload || !payload.data) return false;
-  if(!payload.requestedDate){ HUB.cot = payload; renderHubPos(); }   // ultimo report: card "COT — dove sono gli estremi" dell'hub 09
+  if(!payload.requestedDate){ HUB.cot = payload; renderHubPos(); }   // ultimo report: card "COT — dove sono gli estremi" dell'hub 08
   const live = payload.data;
   let any = false;
   cotData.forEach(c=>{
@@ -3521,14 +2927,9 @@ function renderTodaysReleases(live){
   const el = document.getElementById('todaysReleaseBanner');
   if(!el) return;
   if(releases.length === 0){ el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="release-banner">
-    <div class="release-banner-top"><div class="rb-dot"></div><b>Dati macro pubblicati oggi</b></div>
-    ${releases.map(r=>`<div class="release-item">
-      <div class="ri-title">${r.title}</div>
-      <div class="ri-vals">${r.vals}</div>
-      <div class="ri-read">${r.read}</div>
-    </div>`).join('')}
-  </div>`;
+  el.innerHTML = hCard({span:0, icon:'bolt', title:'Dati macro pubblicati oggi', bd:['off', 'live'], cls:'h-warn',
+    body:releases.map(r=>`<div class="h-rel"><b>${r.title}</b><span class="vals">${r.vals}</span><span class="read">${r.read}</span></div>`).join(''),
+    foot:'Confronto con le attese di consensus del calendario economico'});
 }
 
 
@@ -3549,14 +2950,6 @@ function applyLiveMarketPricing(live){
     if(m){ m.val = val; any = true; }
   });
   renderMarketPricing(); // ricalcola sempre, così VIX/Oro/DXY restano in sync col resto della dashboard
-  if(any){
-    const badge = document.getElementById('pricingBadge');
-    if(badge){ badge.textContent = 'FRED + LIVE'; badge.style.background='var(--green-soft)'; badge.style.color='var(--green)'; }
-  }
-  if(live.curve10y2yBps !== null && live.curve10y2yBps !== undefined){
-    const spreadEl = document.getElementById('rateSpreadVal');
-    if(spreadEl) spreadEl.textContent = `${live.curve10y2yBps>=0?'+':''}${Math.round(live.curve10y2yBps)} pb`;
-  }
   return any;
 }
 
@@ -3585,12 +2978,11 @@ async function initLiveData(){
     // messaggio onesto invece di lasciare "verifica in corso..." per sempre.
     const snEl = document.getElementById('snMeta');
     if(snEl) snEl.textContent = 'Analisi AI non raggiungibile in questo momento — riprova con "Rigenera".';
+    HUB.fail.sent = true; renderHubSent(); renderOggiCats(); renderOggiRisks();
   }
-  // Riusa bias/sentiment già scaricati sopra per rendere live anche la card headline "Dati pubblicati
-  // e notizie rilevanti" (nessun testo scritto a mano).
-  const priorityUpdated = applyPriorityNewsLive(bias, sentiment);
+  // Bias e sentiment già scaricati sopra alimentano anche le card dell'hub 01 (applyBiasDaily / applySentimentLive).
+  const priorityUpdated = biasUpdated || sentimentUpdated;
   if(currentKeyEvent) loadEventDossier(currentKeyEvent); // dossier AI sull'evento chiave già selezionato
-  renderContentTimestamps({ priorityLive: priorityUpdated });
   const dpSel = document.getElementById('dpAssetSelect');
   if(dpSel && dpSel.value) renderDecisionPanel(dpSel.value);
   const note = document.getElementById('refreshNote');
@@ -3633,6 +3025,8 @@ function refreshLive(){
   loadKeyEvents();
 }
 
+// Stato iniziale delle card della parte alta ("in caricamento"): poi arrivano i dati live
+renderHubOggi(); renderMarketPricing(); renderHubMacro(); renderHubSent();
 // Tenta il collegamento ai dati live appena la pagina carica (silenzioso, nessun errore se non disponibili)
 initLiveData();
 </script>
