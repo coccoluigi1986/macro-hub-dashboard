@@ -129,27 +129,41 @@ header h1 span{color:var(--accent);}
 .hd-note{flex-basis:100%; text-align:right; font-size:12px; color:var(--accent); line-height:1.4;} .hd-note:empty{display:none;} .hd-note.warn{color:var(--gold);}
 
 /* ===== LAYOUT ===== */
-main{padding:17px 20px 29px; max-width:1200px; margin:0; min-width:0;}   /* allineato a sinistra, come con la colonna laterale */   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */
+main{padding:17px 20px 29px; max-width:1200px; min-width:0;}   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */
 
-/* ===== MENU DELLE SEZIONI: tendina a sinistra sotto l'intestazione, resta in vista mentre si scorre ===== */
-.menubar{position:sticky; top:62px; z-index:99; background:rgba(10,14,26,.94); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--border);}
-.mb-in{position:relative; max-width:1200px; margin:0; padding:9px 20px; display:flex; align-items:center; gap:14px;}
-.mb-btn{flex:none; display:inline-flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:9px 13px; font:600 13px/1 'Space Grotesk',sans-serif; letter-spacing:.02em; cursor:pointer; transition:all .15s;}
+/* ===== MENU DELLE SEZIONI ===== */
+/* Computer: colonna a sinistra con la linea di bordo (come la vecchia barra laterale), fissa sotto i ticker; il menu a tendina
+   si apre DENTRO la colonna, accanto al bordo, senza coprire i contenuti. Telefono: barra fissa in alto con tendina a tutta larghezza. */
+.layout{display:grid; grid-template-columns:230px 1fr; align-items:start;}
+.menubar{position:sticky; top:62px; align-self:start; height:calc(100vh - 62px); overflow-y:auto; padding:14px 12px; border-right:1px solid var(--border);}
+.mb-in{display:grid; gap:10px;}
+.mb-btn{display:inline-flex; align-items:center; gap:10px; width:100%; background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 13px; font:600 13px/1 'Space Grotesk',sans-serif; letter-spacing:.02em; cursor:pointer; transition:all .15s;}
 .mb-btn:hover, .mb-btn[aria-expanded="true"]{border-color:var(--accent); background:var(--accent-soft); color:var(--accent);}
 .mb-btn svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
-.mb-btn .chev{width:14px; height:14px; transition:transform .2s;} .mb-btn[aria-expanded="true"] .chev{transform:rotate(180deg);}
-.mb-cur{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.05em; color:var(--dim);} .mb-cur b{color:var(--accent); font-weight:600; margin-right:9px;}
-.mb-panel{position:absolute; left:20px; top:calc(100% + 8px); z-index:2; width:min(800px, calc(100vw - 40px)); max-height:calc(100vh - 150px); overflow-y:auto; background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 26px 60px -12px rgba(0,0,0,.75); padding:12px 14px 14px; display:grid; grid-template-columns:1fr 1fr; gap:9px;}
+.mb-btn .chev{width:14px; height:14px; margin-left:auto; transition:transform .2s;} .mb-btn[aria-expanded="true"] .chev{transform:rotate(180deg);}
+.mb-cur{font:500 11.5px/1.45 'IBM Plex Mono',monospace; letter-spacing:.04em; color:var(--dim); padding:0 3px;} .mb-cur b{color:var(--accent); font-weight:600; margin-right:8px;}
+.mb-panel{display:grid; grid-template-columns:1fr; gap:6px; padding-top:2px;}
 .mb-panel[hidden]{display:none;}
-.mn-grp{grid-column:1/-1; font:600 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim2); padding:8px 2px 0;} .mn-grp:first-child{padding-top:2px;}
-.mn-item{display:grid; gap:9px; align-content:start; background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:5px; transition:border-color .15s, background .15s;}
+.mn-grp{font:600 10px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim2); padding:10px 3px 0;} .mn-grp:first-child{padding-top:2px;}
+.mn-item{display:grid; gap:4px; align-content:start; background:var(--panel2); border:1px solid var(--border); border-radius:11px; padding:3px; transition:border-color .15s, background .15s;}
 .mn-item:hover{border-color:#34406A;} .mn-item.on{border-color:var(--accent); background:linear-gradient(165deg,rgba(94,168,245,.12),var(--panel2) 70%);}
-.mn-main{display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:none; border:0; color:var(--text); cursor:pointer; padding:7px; border-radius:8px; font:inherit;}
-.mn-t{display:grid; gap:3px; min-width:0;} .mn-t b{font:600 14px/1.25 'Space Grotesk',sans-serif;} .mn-t b i{font:500 11px/1 'IBM Plex Mono',monospace; color:var(--accent); font-style:normal; margin-right:8px;}
-.mn-t small{font-size:12px; color:var(--dim); line-height:1.4;}
-.mn-subs{display:flex; flex-wrap:wrap; gap:6px; padding:0 8px 7px 54px;}
-.mn-sub{font:500 11.5px/1 'Inter',sans-serif; color:var(--text2); background:var(--panel); border:1px solid var(--border); border-radius:99px; padding:6px 10px; cursor:pointer; transition:all .15s;} .mn-sub:hover{color:var(--accent); border-color:var(--accent);}
-@media(max-width:860px){ .mb-in{padding:8px 12px;} .mb-panel{left:12px; width:calc(100vw - 24px);} }
+.mn-main{display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:none; border:0; color:var(--text); cursor:pointer; padding:6px; border-radius:8px; font:inherit;}
+.mn-main .h-ico{width:26px; height:26px; border-radius:8px;} .mn-main .h-ico svg{width:15px; height:15px;}
+.mn-t{display:grid; gap:3px; min-width:0;} .mn-t b{font:600 13px/1.25 'Space Grotesk',sans-serif;} .mn-t b i{font:500 10.5px/1 'IBM Plex Mono',monospace; color:var(--accent); font-style:normal; margin-right:7px;}
+.mn-t small{display:none; font-size:12px; color:var(--dim); line-height:1.4;}
+.mn-subs{display:flex; flex-wrap:wrap; gap:5px; padding:0 6px 6px 42px;}
+.mn-sub{font:500 11px/1 'Inter',sans-serif; color:var(--text2); background:var(--panel); border:1px solid var(--border); border-radius:99px; padding:5px 9px; cursor:pointer; transition:all .15s;} .mn-sub:hover{color:var(--accent); border-color:var(--accent);}
+@media(max-width:860px){
+  .layout{display:block;}
+  .menubar{top:62px; height:auto; overflow:visible; z-index:99; padding:0; border-right:0; border-bottom:1px solid var(--border); background:rgba(10,14,26,.94); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);}
+  .mb-in{position:relative; display:flex; align-items:center; gap:14px; padding:8px 12px;}
+  .mb-btn{flex:none; width:auto;} .mb-btn .chev{margin-left:0;}
+  .mb-cur{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; line-height:1;}
+  .mb-panel{position:absolute; left:12px; top:calc(100% + 8px); z-index:2; width:calc(100vw - 24px); max-height:calc(100vh - 150px); overflow-y:auto; background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 26px 60px -12px rgba(0,0,0,.75); padding:12px 14px 14px; grid-template-columns:1fr 1fr; gap:9px;}
+  .mn-grp{grid-column:1/-1;}
+  .mn-item{gap:9px; padding:5px;} .mn-main{gap:12px; padding:7px;} .mn-main .h-ico{width:30px; height:30px; border-radius:9px;} .mn-main .h-ico svg{width:17px; height:17px;}
+  .mn-t b{font-size:14px;} .mn-t small{display:block;} .mn-subs{padding:0 8px 7px 54px; gap:6px;} .mn-sub{font-size:11.5px; padding:6px 10px;}
+}
 @media(max-width:640px){ .mb-panel{grid-template-columns:1fr;} .mb-btn{padding:9px 12px;} }
 
 /* ===== SCHERMI PICCOLI / APP SU SMARTPHONE ===== */
@@ -163,8 +177,9 @@ main{padding:17px 20px 29px; max-width:1200px; margin:0; min-width:0;}   /* alli
   .hd-note{text-align:left;}
 }
 
-section{margin-bottom:27px; scroll-margin-top:122px;}
-details.h-more{scroll-margin-top:122px;}
+section{margin-bottom:27px; scroll-margin-top:66px;}
+details.h-more{scroll-margin-top:66px;}
+@media(max-width:860px){ section, details.h-more{scroll-margin-top:122px;} }
 .sec-head{display:flex; align-items:baseline; gap:7px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:7px;}
 .sec-num{font-family:'IBM Plex Mono',monospace; color:var(--accent); font-size:11.2px;}
 .sec-head h2{font-size:16.7px; font-weight:600;}
@@ -674,7 +689,8 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
   </div>
 </header>
 
-<div class="menubar" id="menubar">
+<div class="layout">
+<aside class="menubar" id="menubar">
   <div class="mb-in">
     <button type="button" class="mb-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel" aria-haspopup="true" onclick="toggleMenu()">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Sezioni<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
@@ -682,9 +698,8 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
     <span class="mb-cur" id="menuCur"></span>
     <nav class="mb-panel" id="menuPanel" aria-label="Sezioni della dashboard" hidden></nav>
   </div>
-</div>
+</aside>
 
-<div class="layout">
 <main>
 
 <!-- ============ 01 IL QUADRO DI OGGI ============ -->
