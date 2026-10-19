@@ -129,11 +129,11 @@ header h1 span{color:var(--accent);}
 .hd-note{flex-basis:100%; text-align:right; font-size:12px; color:var(--accent); line-height:1.4;} .hd-note:empty{display:none;} .hd-note.warn{color:var(--gold);}
 
 /* ===== LAYOUT ===== */
-main{padding:17px 20px 29px; max-width:1200px; margin:0 auto; min-width:0;}   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */
+main{padding:17px 20px 29px; max-width:1200px; margin:0; min-width:0;}   /* allineato a sinistra, come con la colonna laterale */   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */
 
 /* ===== MENU DELLE SEZIONI: tendina a sinistra sotto l'intestazione, resta in vista mentre si scorre ===== */
 .menubar{position:sticky; top:62px; z-index:99; background:rgba(10,14,26,.94); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--border);}
-.mb-in{position:relative; max-width:1200px; margin:0 auto; padding:9px 20px; display:flex; align-items:center; gap:14px;}
+.mb-in{position:relative; max-width:1200px; margin:0; padding:9px 20px; display:flex; align-items:center; gap:14px;}
 .mb-btn{flex:none; display:inline-flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:9px 13px; font:600 13px/1 'Space Grotesk',sans-serif; letter-spacing:.02em; cursor:pointer; transition:all .15s;}
 .mb-btn:hover, .mb-btn[aria-expanded="true"]{border-color:var(--accent); background:var(--accent-soft); color:var(--accent);}
 .mb-btn svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
