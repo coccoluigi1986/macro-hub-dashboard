@@ -2579,7 +2579,8 @@ function assetDirClass(dir){
 
 async function fetchBiasDaily(){
   try{
-    const res = await fetch('/api/bias-daily');
+    // "v=2": le risposte sono tenute in cache dal browser per 3 ore; cambiando il numero si forza una volta sola il nuovo formato (8 asset)
+    const res = await fetch('/api/bias-daily?v=2');
     if(!res.ok) return null;
     return await res.json();
   }catch(e){ return null; }
