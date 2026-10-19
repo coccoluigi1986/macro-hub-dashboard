@@ -190,6 +190,19 @@ h2{font-size:clamp(32px,4.4vw,52px); font-weight:700; margin:16px 0 18px; max-wi
 .faq summary::after{content:"+"; font:400 28px/1 'Inter',sans-serif; color:var(--accent); transition:transform .2s;}
 .faq details[open] summary::after{transform:rotate(45deg);}
 .faq p{padding:0 4px 24px; color:var(--text2); font-size:16.5px; max-width:42em;}
+/* come installare l'app */
+.faq .how-lede{padding-bottom:18px;}
+.how{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:0 4px 18px;}
+.how-card{border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); padding:18px 18px 16px;}
+.how-hd{display:grid; gap:6px; margin-bottom:14px;}
+.how-tag{font:600 17px/1.2 'Space Grotesk',sans-serif; color:var(--text);}
+.how-br{font:500 11px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--accent);}
+.how-card ol{list-style:none; counter-reset:s; display:grid; gap:11px;}
+.how-card li{counter-increment:s; position:relative; padding-left:32px; font-size:14.5px; color:var(--text2); line-height:1.5;}
+.how-card li::before{content:counter(s); position:absolute; left:0; top:0; width:22px; height:22px; border-radius:50%; background:var(--accent-soft); border:1px solid rgba(94,168,245,.35); color:var(--accent); font:600 11.5px/20px 'IBM Plex Mono',monospace; text-align:center;}
+.how-card li b{color:var(--text); font-weight:600;}
+.faq .how-note{padding:0 4px 24px; font-size:14.5px; color:var(--dim);}
+@media(max-width:860px){ .how{grid-template-columns:1fr;} }
 
 /* ===== SHOWCASE "Dentro la dashboard" ===== */
 .show{margin-top:40px;}
@@ -732,7 +745,38 @@ footer p{max-width:68ch;}
       <details><summary>Devo essere un esperto di macroeconomia?</summary><p>No. Le analisi sono scritte in italiano chiaro e ogni dato è accompagnato da una lettura di cosa significa. Si impara usandola.</p></details>
       <details><summary>Mi dirà cosa comprare o vendere?</summary><p>No. Macro Hub è uno strumento informativo: non dà consulenza né segnali operativi e non promette rendimenti. Ti aiuta a capire il contesto; le decisioni restano tue.</p></details>
       <details><summary>Quanto tempo serve per usarla?</summary><p>Pochi minuti al mattino bastano per avere il quadro. Se vuoi approfondire, ogni area ha il suo spazio.</p></details>
-      <details><summary>Posso usarla come app sul telefono o sul computer?</summary><p>Sì. La dashboard si può installare come un’app: da Chrome o Edge (computer e Android) trovi il comando “Installa app”, da Safari su iPhone e iPad usi “Aggiungi alla schermata Home”. Si apre a schermo intero, con la sua icona, senza barra del browser.</p></details>
+      <details id="installa"><summary>Posso usarla come app sul telefono o sul computer?</summary>
+        <p class="how-lede">Sì. La dashboard si installa come un’app: si apre a schermo intero, con la sua icona e senza barra del browser, e si aggiorna da sola. Ecco come fare, in pochi tocchi.</p>
+        <div class="how">
+          <div class="how-card">
+            <div class="how-hd"><span class="how-tag">iPhone e iPad</span><span class="how-br">Con Safari</span></div>
+            <ol>
+              <li>Apri la <a class="js-dash" href="/">dashboard</a> in <b>Safari</b>.</li>
+              <li>Tocca <b>Condividi</b>, il quadrato con la freccia in su in basso.</li>
+              <li>Scegli <b>“Aggiungi alla schermata Home”</b>.</li>
+              <li>Tocca <b>Aggiungi</b> in alto a destra.</li>
+            </ol>
+          </div>
+          <div class="how-card">
+            <div class="how-hd"><span class="how-tag">Android</span><span class="how-br">Con Chrome</span></div>
+            <ol>
+              <li>Apri la <a class="js-dash" href="/">dashboard</a> in <b>Chrome</b>.</li>
+              <li>Tocca <b>“Installa app”</b> in alto nella pagina: compare quando l’installazione è possibile.</li>
+              <li>Se non lo vedi, tocca i <b>tre puntini ⋮</b> e scegli <b>“Installa app”</b> o <b>“Aggiungi a schermata Home”</b>.</li>
+              <li>Conferma con <b>Installa</b>.</li>
+            </ol>
+          </div>
+          <div class="how-card">
+            <div class="how-hd"><span class="how-tag">Computer</span><span class="how-br">Chrome o Edge</span></div>
+            <ol>
+              <li>Apri la <a class="js-dash" href="/">dashboard</a> in Chrome o Edge.</li>
+              <li>Clicca <b>“Installa app”</b> nella pagina, oppure l’icona di installazione a destra nella barra degli indirizzi.</li>
+              <li>Conferma: l’app si apre in una finestra tutta sua.</li>
+            </ol>
+          </div>
+        </div>
+        <p class="how-note">Senza internet l’app si apre lo stesso, ma senza dati: prezzi e analisi arrivano quando c’è connessione. Per rimuoverla, su telefono tieni premuta l’icona e scegli Rimuovi; su computer usa il menu dell’app.</p>
+      </details>
       <details><summary>Quando potrò registrarmi?</summary><p>Stiamo preparando l’accesso con registrazione. Nel frattempo puoi dare un’occhiata alla dashboard per vedere com’è fatta.</p></details>
     </div>
   </div>
@@ -769,6 +813,7 @@ footer p{max-width:68ch;}
       <div>
         <h4>Il progetto</h4>
         <a class="js-dash" href="/">Dashboard</a>
+        <a href="#installa">Installala come app</a>
         <a class="js-signup" href="#registrazione">Registrazione in arrivo</a>
         <a href="#top">Torna su ↑</a>
       </div>
@@ -813,6 +858,14 @@ if(SIGNUP_URL){
     setInterval(()=>{ if(!touched && !document.hidden) select((cur + 1) % panels.length); }, 7000);
   }
 })();
+
+// Il collegamento #installa (anche dal piè di pagina o da un indirizzo diretto) apre la domanda con le istruzioni
+function openInstallFaq(){
+  if(location.hash !== '#installa') return;
+  const d = document.getElementById('installa');
+  if(d){ d.open = true; setTimeout(()=>d.scrollIntoView({block:'start'}), 60); }
+}
+window.addEventListener('hashchange', openInstallFaq); openInstallFaq();
 
 // Service worker: rende installabile l'app (la pagina funziona identica anche se non viene registrato)
 if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
