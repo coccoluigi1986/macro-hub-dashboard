@@ -23,7 +23,8 @@ const BIAS_SYS = 'Sei un analista macro-geopolitico senior. Rispondi SEMPRE in i
   + 'Sintetizzi il quadro giornaliero in una lettura di bias operativo. '
   + 'Restituisci ESCLUSIVAMENTE JSON valido.';
 
-const BIAS_ASSETS = ['Gold', 'DXY', 'EUR/USD', 'Nasdaq', 'US10Y', 'Oil'];
+// Gli asset più osservati dal desk: Indici = S&P 500 e Nasdaq 100 insieme; per il VIX la direzione è quella della volatilità.
+const BIAS_ASSETS = ['Gold', 'Silver', 'DXY', 'EUR/USD', 'GBP/USD', 'Oil', 'Indici', 'VIX'];
 
 function newsBlock(items, limit = 24) {
   return items.slice(0, limit).map((n, i) => `${i + 1}. [${n.source} ${n.published.slice(11, 16)}] ${n.title} — ${n.summary.slice(0, 180)}`).join('\n');
@@ -62,6 +63,8 @@ async function handleEvent(event) {
           + '  "drivers": [{"label":"max 32 caratteri","detail":"max 130 caratteri","tone":"positive|negative|neutral"}],\n'
           + `  "assets": [{"asset":"${BIAS_ASSETS.join('|')}","direction":"Bullish|Bearish|Neutrale","probability":55..90}]\n`
           + '}\n'
+          + 'Per "Indici" intendi S&P 500 e Nasdaq 100 insieme; per "VIX" la direzione indica la volatilità (Bullish = volatilità in aumento, Bearish = in calo). '
+          + 'Basa la direzione di ogni asset solo sulle notizie sopra.\n'
           + `Includi 4 driver e tutti e ${BIAS_ASSETS.length} gli asset. Solo JSON.`;
 
         const data = await llmJSON({ system: BIAS_SYS, prompt, maxTokens: 2500 });
@@ -74,7 +77,7 @@ async function handleEvent(event) {
           geo: data.geo || {},
           macro: data.macro || {},
           drivers: (data.drivers || []).slice(0, 4),
-          assets: (data.assets || []).slice(0, 6),
+          assets: (data.assets || []).slice(0, BIAS_ASSETS.length),
           newsCount: items.length,
         };
       } catch (e) {

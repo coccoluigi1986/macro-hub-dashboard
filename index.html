@@ -617,8 +617,21 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 .h-drvs{display:grid; gap:12px;}
 .h-drv{display:grid; gap:2px; padding-left:12px; border-left:3px solid var(--gold);} .h-drv.negative{border-color:var(--red);} .h-drv.positive{border-color:var(--green);}
 .h-drv b{font-size:13.5px; font-weight:600;} .h-drv span{font-size:13px; color:var(--text2); line-height:1.5;}
-.h-stn{display:grid; grid-template-columns:1fr auto 44px; gap:10px; align-items:center; padding:9px 0; border-top:1px solid var(--border); font-size:13.5px;} .h-stn:first-child{border-top:0;}
-.h-stn .p{font:500 12px 'IBM Plex Mono',monospace; color:var(--dim); text-align:right;}
+/* stance per asset: una tessera per ogni asset osservato (prezzo live + direzione + convinzione) */
+.h-stg{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+@media(max-width:1000px){ .h-stg{grid-template-columns:1fr 1fr;} }
+@media(max-width:480px){ .h-stg{gap:8px;} .h-stt{padding:11px 11px 12px; gap:10px;} .h-stt .nm{font-size:14.5px;} .h-stt .px b{font-size:16px;} }
+.h-stt{display:grid; gap:12px; align-content:start; min-width:0; padding:14px 15px; border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:12px; background:var(--panel2);}
+.h-stt.bull{border-left-color:var(--green);} .h-stt.bear{border-left-color:var(--red);} .h-stt.none{border-left-color:var(--border);}
+.h-stt .top{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+.h-stt .nm{font:700 16px/1.2 'Space Grotesk',sans-serif;}
+.h-stt .pxs{display:grid; gap:5px;}
+.h-stt .px{display:flex; align-items:baseline; flex-wrap:wrap; gap:2px 9px;} .h-stt .px b{font:600 18px/1.2 'IBM Plex Mono',monospace;}
+.h-stt .px .l{flex-basis:100%; font:500 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--dim);}
+.h-stt .px .d{font:500 12px 'IBM Plex Mono',monospace; color:var(--dim);} .h-stt .px .d.h-up{color:var(--green);} .h-stt .px .d.h-down{color:var(--red);}
+.h-stt .cv{display:flex; align-items:center; gap:9px;} .h-stt .cv .bar{flex:1; height:6px; border-radius:3px; background:var(--bg); overflow:hidden;}
+.h-stt .cv i{display:block; height:100%; border-radius:3px; background:var(--gold);} .h-stt.bull .cv i{background:var(--green);} .h-stt.bear .cv i{background:var(--red);}
+.h-stt .cv b{font:500 12px 'IBM Plex Mono',monospace; color:var(--dim);}
 .h-cd{font:700 32px/1 'IBM Plex Mono',monospace; letter-spacing:.04em; color:var(--gold);}
 .h-scn{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
 @media(max-width:700px){ .h-scn{grid-template-columns:1fr;} }
@@ -708,10 +721,10 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
   <div class="h-grid">
     <div class="h-cell h-c5" id="hOggiBias"></div>
     <div class="h-cell h-c7" id="hOggiCats"></div>
+    <div class="h-cell h-c12" id="hOggiAssets"></div>
     <div class="h-cell h-c7" id="hOggiDrivers"></div>
-    <div class="h-cell h-c5" id="hOggiAssets"></div>
-    <div class="h-cell h-c7" id="nextEventContainer"></div>
     <div class="h-cell h-c5" id="hOggiRisks"></div>
+    <div class="h-cell h-c12" id="nextEventContainer"></div>
     <div class="h-cell h-c12" id="todaysReleaseBanner"></div>
   </div>
 </section>
@@ -2387,11 +2400,36 @@ function renderOggiDrivers(){
   hCell('hOggiDrivers', hCard({span:0, icon:'bolt', title:'Driver del giorno', bd:['ai'], body:`<div class="h-drvs">${rows || '<p class="h-note">Nessun driver disponibile.</p>'}</div>`, foot:'Rosso = pesa sul rischio · verde = lo sostiene · giallo = neutro'}));
 }
 
+// Gli asset più osservati, nell'ordine in cui si leggono. "px" = prezzi live da mostrare (etichetta, chiave di HUB.mq, decimali);
+// "vol" = il VIX: la direzione è quella della volatilità, quindi i colori sono invertiti (volatilità in aumento = rischio).
+const STANCE_ASSETS = [
+  {name:'Gold',       re:/^(gold|oro)$/i,                                       px:[['', 'gold', 2]]},
+  {name:'Silver',     re:/^(silver|argento)$/i,                                 px:[['', 'silver', 2]]},
+  {name:'DXY',        re:/^(dxy|dollar index|dollaro)$/i,                       px:[['', 'dxy', 2]]},
+  {name:'EUR/USD',    re:/^eur\/?usd$/i,                                        px:[['', 'eurusd', 4]]},
+  {name:'GBP/USD',    re:/^gbp\/?usd$/i,                                        px:[['', 'gbpusd', 4]]},
+  {name:'Oil (WTI)',  re:/^(oil|wti|petrolio)$/i,                               px:[['', 'wti', 2]]},
+  {name:'Indici USA', re:/^(indici|indices|indexes|index|equity|azionario)$/i,  px:[['S&amp;P 500', 'sp500', 0], ['Nasdaq 100', 'nasdaq', 0]]},
+  {name:'VIX',        re:/^vix$/i,                                              px:[['', 'vix', 2]], vol:true},
+];
+function hStance(def, a){
+  const dc = a ? assetDirClass(a.direction) : 'none';            // bull | bear | neutral | none
+  const up = dc === 'bull', down = dc === 'bear';
+  let chip = up ? 'g' : down ? 'r' : 'y', label = a ? String(a.direction || '') : 'In attesa', tone = a ? dc : 'none';
+  if(def.vol && a){ chip = up ? 'r' : down ? 'g' : 'y'; tone = up ? 'bear' : down ? 'bull' : 'neutral'; label = up ? 'Volatilità ↑' : down ? 'Volatilità ↓' : 'Neutrale'; }
+  const px = def.px.map(([lbl, key, dec]) => { const c = hChg(key); return `<div class="px">${lbl ? `<span class="l">${lbl}</span>` : ''}<b>${hVal(key, dec)}</b><span class="d ${c.c}">${c.t}</span></div>`; }).join('');
+  const prob = a ? Math.max(0, Math.min(100, Number(a.probability) || 0)) : 0;
+  return `<div class="h-stt ${tone}"><div class="top"><span class="nm">${escHtml(def.name)}</span><span class="h-chip ${chip}">${escHtml(label)}</span></div>${px ? `<div class="pxs">${px}</div>` : ''}${a ? `<div class="cv" title="Convinzione dell'analisi"><span class="bar"><i style="width:${prob}%"></i></span><b>${prob}%</b></div>` : ''}</div>`;
+}
 function renderOggiAssets(){
-  const b = HUB.bias;
-  if(!b){ hCell('hOggiAssets', hCard({span:0, icon:'target', title:'Stance per asset', bd:['ai'], body:`<p class="h-note">${hWait('bias', 'Stance in caricamento…')}</p>`})); return; }
-  const rows = (b.assets || []).map(a => { const dc = assetDirClass(a.direction); return `<div class="h-stn"><span>${escHtml(a.asset || '')}</span><span class="h-chip ${dc === 'bull' ? 'g' : dc === 'bear' ? 'r' : 'y'}">${escHtml(a.direction || '')}</span><span class="p">${Number(a.probability) || 0}%</span></div>`; }).join('');
-  hCell('hOggiAssets', hCard({span:0, icon:'target', title:'Stance per asset', bd:['ai'], body:rows || '<p class="h-note">Nessuna stance disponibile.</p>', foot:'La percentuale indica la convinzione dell\'analisi, non una probabilità statistica'}));
+  const b = HUB.bias, title = 'Stance per asset';
+  if(!b){ hCell('hOggiAssets', hCard({span:0, icon:'target', title, bd:['ai'], cls:'h-accent', body:`<p class="h-note">${hWait('bias', 'Stance in caricamento…')}</p>`})); return; }
+  const list = (b.assets || []).filter(Boolean), used = new Set();
+  const tiles = STANCE_ASSETS.map(def => { const a = list.find(x => def.re.test(String(x.asset || '').trim())); if(a) used.add(a); return hStance(def, a); });
+  const extra = list.filter(a => !used.has(a)).map(a => hStance({name:String(a.asset || ''), px:[]}, a));   // eventuali altri asset non previsti
+  hCell('hOggiAssets', hCard({span:0, icon:'target', title, bd:['ai', 'live'], cls:'h-accent',
+    body:`<p class="h-note">Gli asset più osservati: oro, argento, dollaro, cambi, petrolio, indici e VIX.</p><div class="h-stg">${tiles.join('')}${extra.join('')}</div>`,
+    foot:'La barra indica la convinzione dell\'analisi, non una probabilità statistica · prezzi live da Yahoo Finance'}));
 }
 
 function renderOggiRisks(){
@@ -2642,7 +2680,7 @@ function applyLiveMarketToMonitor(live){
   });
   // Prezzi e variazioni di oggi alimentano le card degli hub 02 (prezzi), 06 (tassi, dollaro, VIX), 08 (rischio) e 09 (sintesi operativa)
   HUB.mq = live;
-  renderHubBC(); renderHubPos(); renderHubSint(); renderMarketPricing();
+  renderHubBC(); renderHubPos(); renderHubSint(); renderMarketPricing(); renderOggiAssets();
   if(any) renderMarketMonitor();
   return any;
 }
