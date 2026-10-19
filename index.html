@@ -129,38 +129,42 @@ header h1 span{color:var(--accent);}
 .hd-note{flex-basis:100%; text-align:right; font-size:12px; color:var(--accent); line-height:1.4;} .hd-note:empty{display:none;} .hd-note.warn{color:var(--gold);}
 
 /* ===== LAYOUT ===== */
-.layout{display:grid; grid-template-columns:210px 1fr; gap:0; align-items:start;}
-nav.rail{
-  position:sticky; top:62px; align-self:start; padding:13px 7px; border-right:1px solid var(--border);
-  height:calc(100vh - 62px); overflow-y:auto;
-}
-nav.rail a{
-  display:block; font-size:11.2px; color:var(--dim); padding:5px 7px; border-radius:4px; margin-bottom:3px;
-  text-decoration:none; border-left:2px solid transparent;
-}
-nav.rail a:hover{color:var(--text); background:var(--panel2);}
-nav.rail .navlabel{font-size:9.3px; text-transform:uppercase; letter-spacing:1px; color:var(--dim2); padding:10px 7px 3px;}
-main{padding:17px 20px 29px; max-width:1200px; min-width:0;}   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */
+main{padding:17px 20px 29px; max-width:1200px; margin:0 auto; min-width:0;}   /* min-width:0: una tabella larga scorre nel suo contenitore, non allarga tutta la colonna */
+
+/* ===== MENU DELLE SEZIONI: tendina a sinistra sotto l'intestazione, resta in vista mentre si scorre ===== */
+.menubar{position:sticky; top:62px; z-index:99; background:rgba(10,14,26,.94); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--border);}
+.mb-in{position:relative; max-width:1200px; margin:0 auto; padding:9px 20px; display:flex; align-items:center; gap:14px;}
+.mb-btn{flex:none; display:inline-flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:9px 13px; font:600 13px/1 'Space Grotesk',sans-serif; letter-spacing:.02em; cursor:pointer; transition:all .15s;}
+.mb-btn:hover, .mb-btn[aria-expanded="true"]{border-color:var(--accent); background:var(--accent-soft); color:var(--accent);}
+.mb-btn svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+.mb-btn .chev{width:14px; height:14px; transition:transform .2s;} .mb-btn[aria-expanded="true"] .chev{transform:rotate(180deg);}
+.mb-cur{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.05em; color:var(--dim);} .mb-cur b{color:var(--accent); font-weight:600; margin-right:9px;}
+.mb-panel{position:absolute; left:20px; top:calc(100% + 8px); z-index:2; width:min(800px, calc(100vw - 40px)); max-height:calc(100vh - 150px); overflow-y:auto; background:var(--panel); border:1px solid var(--border); border-radius:14px; box-shadow:0 26px 60px -12px rgba(0,0,0,.75); padding:12px 14px 14px; display:grid; grid-template-columns:1fr 1fr; gap:9px;}
+.mb-panel[hidden]{display:none;}
+.mn-grp{grid-column:1/-1; font:600 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim2); padding:8px 2px 0;} .mn-grp:first-child{padding-top:2px;}
+.mn-item{display:grid; gap:9px; align-content:start; background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:5px; transition:border-color .15s, background .15s;}
+.mn-item:hover{border-color:#34406A;} .mn-item.on{border-color:var(--accent); background:linear-gradient(165deg,rgba(94,168,245,.12),var(--panel2) 70%);}
+.mn-main{display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:none; border:0; color:var(--text); cursor:pointer; padding:7px; border-radius:8px; font:inherit;}
+.mn-t{display:grid; gap:3px; min-width:0;} .mn-t b{font:600 14px/1.25 'Space Grotesk',sans-serif;} .mn-t b i{font:500 11px/1 'IBM Plex Mono',monospace; color:var(--accent); font-style:normal; margin-right:8px;}
+.mn-t small{font-size:12px; color:var(--dim); line-height:1.4;}
+.mn-subs{display:flex; flex-wrap:wrap; gap:6px; padding:0 8px 7px 54px;}
+.mn-sub{font:500 11.5px/1 'Inter',sans-serif; color:var(--text2); background:var(--panel); border:1px solid var(--border); border-radius:99px; padding:6px 10px; cursor:pointer; transition:all .15s;} .mn-sub:hover{color:var(--accent); border-color:var(--accent);}
+@media(max-width:860px){ .mb-in{padding:8px 12px;} .mb-panel{left:12px; width:calc(100vw - 24px);} }
+@media(max-width:640px){ .mb-panel{grid-template-columns:1fr;} .mb-btn{padding:9px 12px;} }
 
 /* ===== SCHERMI PICCOLI / APP SU SMARTPHONE ===== */
-/* Sotto gli 860px il menu laterale fisso (210px) toglierebbe metà schermo al contenuto: diventa una barra di
-   voci scorrevole in orizzontale sopra le sezioni. Le altre sezioni hanno già le loro regole per colonne e griglie. */
+/* Le sezioni hanno già le loro regole per colonne e griglie: sotto gli 860px restano da stringere i margini. */
 @media(max-width:860px){
-  .layout{grid-template-columns:1fr;}
-  nav.rail{position:static; height:auto; display:flex; gap:6px; overflow-x:auto; overflow-y:hidden; padding:9px 12px; border-right:0; border-bottom:1px solid var(--border); scrollbar-width:none; -webkit-overflow-scrolling:touch;}
-  nav.rail::-webkit-scrollbar{display:none;}
-  nav.rail .navlabel{display:none;}
-  nav.rail a{flex:none; white-space:nowrap; margin:0; padding:7px 12px; border:1px solid var(--border); border-radius:99px; font-size:12px;}
   main{padding:12px 12px 24px;}
   header{padding:12px 14px; align-items:flex-start;}
   header h1{font-size:18px;}
   .hd-logo{width:36px; height:36px; border-radius:9px;}
   .hd-side{justify-content:flex-start; width:100%;}
   .hd-note{text-align:left;}
-  section{scroll-margin-top:62px;}
 }
 
-section{margin-bottom:27px; scroll-margin-top:66px;}
+section{margin-bottom:27px; scroll-margin-top:122px;}
+details.h-more{scroll-margin-top:122px;}
 .sec-head{display:flex; align-items:baseline; gap:7px; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:7px;}
 .sec-num{font-family:'IBM Plex Mono',monospace; color:var(--accent); font-size:11.2px;}
 .sec-head h2{font-size:16.7px; font-weight:600;}
@@ -670,22 +674,17 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
   </div>
 </header>
 
-<div class="layout">
-<nav class="rail">
-  <div class="navlabel">Oggi e mercati</div>
-  <a href="javascript:void(0)" onclick="goToSection('priority')">🔴 Il quadro di oggi</a>
-  <a href="javascript:void(0)" onclick="goToSection('marketmon')">📊 Mercati e prezzi</a>
-  <div class="navlabel">Macro e sentiment</div>
-  <a href="javascript:void(0)" onclick="goToSection('macro')">🏛 Macro: USA, Europa, lavoro</a>
-  <a href="javascript:void(0)" onclick="goToSection('sentiment')">🎯 Sentiment di mercato</a>
-  <div class="navlabel">Approfondimenti</div>
-  <a href="javascript:void(0)" onclick="goToSection('hub-geo')">🌍 Geopolitica e notizie</a>
-  <a href="javascript:void(0)" onclick="goToSection('hub-bc')">🏦 Banche centrali e tassi</a>
-  <a href="javascript:void(0)" onclick="goToSection('hub-cal')">📅 Calendario e volatilità</a>
-  <a href="javascript:void(0)" onclick="goToSection('hub-pos')">📊 Posizionamento e rischio</a>
-  <a href="javascript:void(0)" onclick="goToSection('hub-sintesi')">🎯 Sintesi operativa</a>
-</nav>
+<div class="menubar" id="menubar">
+  <div class="mb-in">
+    <button type="button" class="mb-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel" aria-haspopup="true" onclick="toggleMenu()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Sezioni<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <span class="mb-cur" id="menuCur"></span>
+    <nav class="mb-panel" id="menuPanel" aria-label="Sezioni della dashboard" hidden></nav>
+  </div>
+</div>
 
+<div class="layout">
 <main>
 
 <!-- ============ 01 IL QUADRO DI OGGI ============ -->
@@ -3031,6 +3030,53 @@ function refreshLive(){
   renderVolatilityTable();
   loadKeyEvents();
 }
+
+// ---------- MENU DELLE SEZIONI ----------
+// Tendina sempre raggiungibile (barra fissa sotto i ticker): elenco numerato come nei titoli delle sezioni, con una riga
+// di descrizione e i collegamenti ai blocchi di dettaglio; la sezione che si sta guardando è evidenziata.
+const MENU = [
+  {grp:'Oggi e mercati', items:[
+    {id:'priority',  n:'01', t:'Il quadro di oggi',          d:'Bias del giorno, notizie chiave, prossimo evento', i:'pulse'},
+    {id:'marketmon', n:'02', t:'Mercati e prezzi',            d:'Prezzi, volatilità e cosa prezza il mercato', i:'trend'}]},
+  {grp:'Macro e sentiment', items:[
+    {id:'macro',     n:'03', t:'Macro: USA, Europa, lavoro',  d:'Ogni dato accanto alle attese', i:'bars'},
+    {id:'sentiment', n:'04', t:'Sentiment di mercato',        d:'Notizie, retail e validazione incrociata', i:'smile'}]},
+  {grp:'Approfondimenti', items:[
+    {id:'hub-geo',     n:'05', t:'Geopolitica e notizie',     d:'Rischio globale e notizie a confronto', i:'globe'},
+    {id:'hub-bc',      n:'06', t:'Banche centrali e tassi',   d:'Fed, aspettative e rendimenti', i:'bank'},
+    {id:'hub-cal',     n:'07', t:'Calendario e volatilità',   d:'Eventi in arrivo e giorni a rischio', i:'cal', subs:[['calendar', 'Calendario completo'], ['vol', 'Volatilità per asset']]},
+    {id:'hub-pos',     n:'08', t:'Posizionamento e rischio',  d:'Risk-on/off, COT e umore degli investitori', i:'layers', subs:[['decisione', 'Quadro decisionale'], ['cot', 'COT in dettaglio']]},
+    {id:'hub-sintesi', n:'09', t:'Sintesi operativa',         d:'Cruscotto per asset e indici azionari', i:'target'}]},
+];
+function buildMenu(){
+  const p = document.getElementById('menuPanel'); if(!p) return;
+  p.innerHTML = MENU.map(g => `<div class="mn-grp">${g.grp}</div>` + g.items.map(it =>
+    `<div class="mn-item" data-sec="${it.id}"><button type="button" class="mn-main" onclick="menuGo('${it.id}')">${hIco(it.i)}<span class="mn-t"><b><i>${it.n}</i>${it.t}</b><small>${it.d}</small></span></button>`
+    + (it.subs ? `<div class="mn-subs">${it.subs.map(s => `<button type="button" class="mn-sub" onclick="menuGo('${s[0]}')">${s[1]}</button>`).join('')}</div>` : '') + '</div>').join('')).join('');
+  menuSpy();
+}
+function toggleMenu(force){
+  const p = document.getElementById('menuPanel'), b = document.getElementById('menuBtn'); if(!p || !b) return;
+  const open = typeof force === 'boolean' ? force : p.hidden;
+  p.hidden = !open; b.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function menuGo(id){ toggleMenu(false); goToSection(id); }
+document.addEventListener('click', e => { const bar = document.getElementById('menubar'); if(bar && !bar.contains(e.target)) toggleMenu(false); });
+document.addEventListener('keydown', e => { const p = document.getElementById('menuPanel'); if(e.key === 'Escape' && p && !p.hidden){ toggleMenu(false); const b = document.getElementById('menuBtn'); if(b) b.focus(); } });
+// sezione corrente: l'ultima il cui titolo ha già superato le barre fisse
+let menuTick = false;
+function menuSpy(){
+  menuTick = false;
+  const secs = [...document.querySelectorAll('main > section[id]')]; if(!secs.length) return;
+  let cur = secs[0];
+  secs.forEach(s => { if(s.getBoundingClientRect().top <= 160) cur = s; });
+  const info = MENU.flatMap(g => g.items).find(it => it.id === cur.id);
+  const el = document.getElementById('menuCur');
+  if(el && info) el.innerHTML = `<b>${info.n}</b>${info.t}`;
+  document.querySelectorAll('.mn-item').forEach(x => x.classList.toggle('on', x.dataset.sec === cur.id));
+}
+window.addEventListener('scroll', () => { if(!menuTick){ menuTick = true; requestAnimationFrame(menuSpy); } }, {passive:true});
+buildMenu();
 
 // Stato iniziale delle card della parte alta ("in caricamento"): poi arrivano i dati live
 renderHubOggi(); renderMarketPricing(); renderHubMacro(); renderHubSent();
