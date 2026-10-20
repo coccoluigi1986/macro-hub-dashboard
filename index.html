@@ -487,7 +487,7 @@ section.collapsed{margin-bottom:10px;}
 section.collapsed .sec-head{margin-bottom:0; padding-bottom:7px;}
 section.collapsed > *:not(.sec-head){display:none;}
 
-/* ===== HUB 05-09: card raggruppate per tema (prefisso h-) ===== */
+/* ===== HUB: card raggruppate per tema (prefisso h-) ===== */
 :root{--text2:#B4BBD0;}
 .h-grid{display:grid; grid-template-columns:repeat(12,1fr); gap:14px;}
 .h-c3{grid-column:span 3;} .h-c4{grid-column:span 4;} .h-c5{grid-column:span 5;} .h-c6{grid-column:span 6;} .h-c7{grid-column:span 7;} .h-c8{grid-column:span 8;} .h-c12{grid-column:span 12;}
@@ -538,7 +538,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 .h-kpi b{font:600 19px/1.25 'IBM Plex Mono',monospace; white-space:nowrap;}
 .h-kpi .d{font:500 12px/1.3 'IBM Plex Mono',monospace; color:var(--dim);} .h-kpi .d.h-up{color:var(--green);} .h-kpi .d.h-down{color:var(--red);}
 @media(max-width:900px){ .h-kpis.wide{grid-template-columns:repeat(2,1fr);} .h-kpis.wide .h-kpi{border-bottom:1px solid var(--border);} }
-/* hub 06 */
+/* hub Banche centrali */
 .h-split{display:flex; gap:2px; height:11px; margin-top:6px;} .h-split i{display:block; height:100%;} .h-split .h{background:var(--red); border-radius:4px 0 0 4px;} .h-split .d{background:var(--green); border-radius:0 4px 4px 0;}
 .h-splitl{display:flex; justify-content:space-between; font-size:12px; color:var(--dim);}
 .h-two{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:4px;} .h-two h5{font-size:12.5px; margin-bottom:8px; color:var(--text); font-family:'Space Grotesk',sans-serif;}
@@ -546,7 +546,7 @@ section.collapsed > *:not(.sec-head){display:none;}
 .h-rows .r{display:flex; justify-content:space-between; gap:14px; padding:8px 0; border-top:1px solid var(--border); font-size:13px; color:var(--text2);} .h-rows .r:first-child{border-top:0;} .h-rows .r b{text-align:right; color:var(--text);}
 .h-catrow{display:grid; grid-template-columns:92px 1fr; gap:3px 12px; align-items:center; padding:10px 0; border-top:1px solid var(--border);} .h-catrow:first-child{border-top:0;}
 .h-catrow .sub{grid-column:2; color:var(--dim); font-size:12.5px; margin-top:-2px;} .h-catrow b{font-size:13.5px;}
-/* hub 07 */
+/* hub Calendario */
 .h-evs{display:grid;} .h-ev{display:grid; grid-template-columns:74px 38px 1fr auto; gap:12px; align-items:center; padding:9px 0; border-top:1px solid var(--border); font-size:13px;} .h-ev:first-child{border-top:0;}
 .h-ev .when{font-size:12px; color:var(--dim); line-height:1.35;} .h-ev .when b{color:var(--text); font-family:'IBM Plex Mono',monospace; font-weight:600;}
 .h-ev .cur{font:600 11px/1 'IBM Plex Mono',monospace; color:var(--accent); background:var(--accent-soft); border-radius:5px; padding:5px 0; text-align:center;}
@@ -564,7 +564,7 @@ details.h-more > summary::after{content:"▾"; color:var(--accent); font-size:15
 details.h-more[open] > summary::after{transform:rotate(180deg);}
 details.h-more > summary:hover{background:var(--panel2);}
 details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--border);}
-/* hub 08 */
+/* hub Posizionamento */
 .h-gauge{display:block; width:100%; max-width:230px; margin:0 auto;} .h-card.h-center{align-items:stretch;}
 .h-bars{display:grid; gap:2px;} .h-brow{display:grid; grid-template-columns:104px 1fr 38px; gap:10px; align-items:center; padding:4px 0;}
 .h-brow .nm{font-size:12.5px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
@@ -577,7 +577,7 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 .h-ml{display:flex; justify-content:space-between; font-size:11px; color:var(--dim2);}
 .h-stack{display:flex; gap:2px; height:12px; margin:8px 0 6px;} .h-stack i{display:block; height:100%; border-radius:3px;}
 .h-legend{display:flex; flex-wrap:wrap; gap:4px 14px; font-size:12px; color:var(--text2);} .h-legend b{font-family:'IBM Plex Mono',monospace;}
-/* hub 09 */
+/* hub Sintesi operativa */
 .h-filters-in{display:none;}
 #hub-sintesi input[type=radio]{display:none;}
 .h-filters{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
@@ -589,7 +589,7 @@ details.h-more > .h-more-body{padding:4px 18px 18px; border-top:1px solid var(--
 .h-cmp{display:grid;} .h-cmprow{display:grid; grid-template-columns:120px 1fr; gap:14px; padding:11px 0; border-top:1px solid var(--border);} .h-cmprow:first-child{border-top:0;}
 .h-cmprow .src{font:600 11px/1.4 'IBM Plex Mono',monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--accent);}
 @media(max-width:600px){ .h-cmprow{grid-template-columns:1fr; gap:4px;} }
-/* ===== HUB 01-04: la parte alta della pagina usa lo stesso sistema di card ===== */
+/* ===== HUB Il quadro di oggi / Mercati / Macro / Sentiment: stesso sistema di card ===== */
 .h-cell{display:flex; min-width:0;} .h-cell > .h-card{flex:1; min-width:0;} .h-cell:empty{display:none;}
 .h-bar{display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; margin:0 0 12px;}
 .h-bar .meta{flex:1; min-width:150px; font-size:12px; color:var(--dim2);} .h-bar .meta b{color:var(--text);}
@@ -604,7 +604,7 @@ details.h-det > summary::-webkit-details-marker{display:none;}
 details.h-det > summary::after{content:" ▾";} details.h-det[open] > summary::after{content:" ▴";}
 details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 .h-kpis.big{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));}
-/* 01 · il quadro di oggi */
+/* il quadro di oggi */
 .h-bias{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
 .h-bias b{font:700 30px/1.1 'Space Grotesk',sans-serif;} .h-bias small{font:500 13px 'IBM Plex Mono',monospace; color:var(--dim);}
 .h-bias .risk-on{color:var(--green);} .h-bias .risk-off{color:var(--red);} .h-bias .neutrale{color:var(--gold);}
@@ -643,13 +643,13 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 .h-chips{display:flex; flex-wrap:wrap; gap:6px;}
 .h-rel{display:grid; gap:3px; padding:9px 0; border-top:1px solid rgba(240,104,94,.25);} .h-rel:first-child{border-top:0; padding-top:0;}
 .h-rel b{font-size:14px;} .h-rel .vals{font:400 12.5px/1.5 'IBM Plex Mono',monospace; color:var(--dim);} .h-rel .vals b{color:var(--text); font-size:inherit;} .h-rel .read{font-size:13px; color:var(--text2);}
-/* 02 · mercati */
+/* mercati */
 .h-spark{width:96px; height:36px; flex:none; margin-left:auto;}
 .h-mb{display:grid; gap:5px;} .h-mbl{display:flex; justify-content:space-between; gap:10px; font-size:12.5px; color:var(--text2);} .h-mbl b{font:500 12px 'IBM Plex Mono',monospace; color:var(--text);}
 .h-mb .h-tr::after{display:none;}
 /* titoli delle sezioni su schermi stretti: la descrizione va a capo sotto il titolo invece di schiacciarlo */
 @media(max-width:700px){ .sec-head{flex-wrap:wrap; row-gap:3px;} .sec-head h2{flex:1; min-width:0;} .sec-head .sec-chevron{order:2;} .sec-desc{order:3; flex-basis:100%; margin-left:0; text-align:left; max-width:none;} }
-/* 03 · macro */
+/* macro */
 #macro input[type=radio]{display:none;}
 #hmf-all:checked ~ .h-filters label[for=hmf-all], #hmf-us:checked ~ .h-filters label[for=hmf-us], #hmf-eu:checked ~ .h-filters label[for=hmf-eu], #hmf-jobs:checked ~ .h-filters label[for=hmf-jobs]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
 #hmf-us:checked ~ #hMacroGrid > :not(.g-us), #hmf-eu:checked ~ #hMacroGrid > :not(.g-eu), #hmf-jobs:checked ~ #hMacroGrid > :not(.g-jobs){display:none;}
@@ -664,7 +664,7 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 .h-ind .x{display:none; font-size:12.5px; color:var(--text2); line-height:1.5; padding-top:6px; border-top:1px solid var(--border);}
 .h-ind input:checked ~ .x{display:block;}
 .h-ind .h-tog::after{content:"Cosa significa ▾";} .h-ind input:checked ~ .h-tog::after{content:"Chiudi ▴";}
-/* 04 · sentiment */
+/* sentiment */
 .h-rrow{display:grid; grid-template-columns:96px 1fr 104px 72px 62px; gap:12px; align-items:center; padding:9px 0; border-top:1px solid var(--border); font-size:13px;}
 .h-rrow.hh{border-top:0; padding:0 0 6px; font:500 10.5px/1.2 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--dim);}
 .h-rrow .nm{font-weight:600;} .h-rrow .sp, .h-rrow .ch, .h-rrow .co{font:500 12px 'IBM Plex Mono',monospace; text-align:right; white-space:nowrap;} .h-rrow .co{color:var(--dim);}
@@ -742,40 +742,9 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
   <div class="source-tag" id="hMktMeta"></div>
 </section>
 
-<!-- ============ 03 MACRO ============ -->
-<section id="macro">
-  <div class="sec-head"><span class="sec-num">03</span><h2>Macro — USA, Europa e lavoro</h2><span class="sec-desc">Ultimo dato uscito per indicatore: attuale, atteso dal consensus e precedente</span></div>
-  <input type="radio" name="hmf" id="hmf-all" checked><input type="radio" name="hmf" id="hmf-us"><input type="radio" name="hmf" id="hmf-eu"><input type="radio" name="hmf" id="hmf-jobs">
-  <div class="h-filters"><label for="hmf-all">Tutto</label><label for="hmf-us">USA</label><label for="hmf-eu">Europa</label><label for="hmf-jobs">Lavoro</label></div>
-  <div class="h-grid" id="hMacroGrid"></div>
-  <div class="source-tag" id="hMacroMeta"></div>
-</section>
-
-<!-- ============ 04 SENTIMENT ============ -->
-<section id="sentiment">
-  <div class="sec-head"><span class="sec-num">04</span><h2>Sentiment di mercato</h2><span class="sec-desc">News per categoria · posizionamento retail · validazione incrociata con COT e dati</span></div>
-  <div class="h-bar">
-    <span class="meta" id="snMeta">verifica in corso...</span>
-    <button class="h-btn" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
-  </div>
-  <div class="h-grid" id="hSentGrid"></div>
-  <div class="source-tag" id="hSentMeta"></div>
-</section>
-
-<section id="hub-geo">
-  <div class="sec-head"><span class="sec-num">05</span><h2>Geopolitica e notizie</h2><span class="sec-desc">Driver del rischio globale e come le fonti raccontano i fatti — analisi AI live</span></div>
-  <div class="h-grid" id="hGeoGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
-  <div class="source-tag" id="hGeoMeta"></div>
-</section>
-
-<section id="hub-bc">
-  <div class="sec-head"><span class="sec-num">06</span><h2>Banche centrali e tassi</h2><span class="sec-desc">Fed, aspettative e rendimenti — dati ufficiali FRED + analisi AI live</span></div>
-  <div class="h-grid" id="hBcGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
-  <div class="source-tag" id="hBcMeta"></div>
-</section>
-
+<!-- ============ 03 CALENDARIO E VOLATILITÀ ============ -->
 <section id="hub-cal">
-  <div class="sec-head"><span class="sec-num">07</span><h2>Calendario e volatilità</h2><span class="sec-desc">Prossimi eventi e quando aspettarsi movimenti ampi — dal calendario economico reale</span></div>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Calendario e volatilità</h2><span class="sec-desc">Prossimi eventi e quando aspettarsi movimenti ampi — dal calendario economico reale</span></div>
   <div class="h-grid" id="hCalGrid"><article class="h-card h-c12"><p class="h-note">Caricamento del calendario…</p></article></div>
   <details class="h-more" id="calendar">
     <summary><span>Apri tutto il calendario, con tutti i filtri</span><span class="sec-desc" id="icRange"></span></summary>
@@ -834,8 +803,29 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
   </details>
 </section>
 
+<!-- ============ 04 SINTESI OPERATIVA ============ -->
+<section id="hub-sintesi">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Sintesi operativa</h2><span class="sec-desc">Cruscotto asset e indici azionari — analisi AI live</span></div>
+  <input type="radio" name="hfe" id="hfe-all" checked><input type="radio" name="hfe" id="hfe-val"><input type="radio" name="hfe" id="hfe-mat"><input type="radio" name="hfe" id="hfe-azi">
+  <div class="h-filters"><label for="hfe-all">Tutti</label><label for="hfe-val">Valute</label><label for="hfe-mat">Materie prime</label><label for="hfe-azi">Azionario</label></div>
+  <div class="h-grid" id="hSintGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
+  <div class="source-tag" id="hSintMeta"></div>
+</section>
+
+<!-- ============ 05 SENTIMENT ============ -->
+<section id="sentiment">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Sentiment di mercato</h2><span class="sec-desc">News per categoria · posizionamento retail · validazione incrociata con COT e dati</span></div>
+  <div class="h-bar">
+    <span class="meta" id="snMeta">verifica in corso...</span>
+    <button class="h-btn" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
+  </div>
+  <div class="h-grid" id="hSentGrid"></div>
+  <div class="source-tag" id="hSentMeta"></div>
+</section>
+
+<!-- ============ 06 POSIZIONAMENTO E RISCHIO ============ -->
 <section id="hub-pos">
-  <div class="sec-head"><span class="sec-num">08</span><h2>Posizionamento e rischio</h2><span class="sec-desc" id="cotSecDesc">Caricamento dell'ultimo report CFTC…</span></div>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Posizionamento e rischio</h2><span class="sec-desc" id="cotSecDesc">Caricamento dell'ultimo report CFTC…</span></div>
   <div class="h-grid" id="hPosGrid"><article class="h-card h-c12"><p class="h-note">Caricamento…</p></article></div>
   <div class="source-tag" id="hPosMeta"></div>
   <details class="h-more" id="decisione">
@@ -870,64 +860,35 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
   </details>
 </section>
 
-<section id="hub-sintesi">
-  <div class="sec-head"><span class="sec-num">09</span><h2>Sintesi operativa</h2><span class="sec-desc">Cruscotto asset e indici azionari — analisi AI live</span></div>
-  <input type="radio" name="hfe" id="hfe-all" checked><input type="radio" name="hfe" id="hfe-val"><input type="radio" name="hfe" id="hfe-mat"><input type="radio" name="hfe" id="hfe-azi">
-  <div class="h-filters"><label for="hfe-all">Tutti</label><label for="hfe-val">Valute</label><label for="hfe-mat">Materie prime</label><label for="hfe-azi">Azionario</label></div>
-  <div class="h-grid" id="hSintGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
-  <div class="source-tag" id="hSintMeta"></div>
+<!-- ============ 07 MACRO ============ -->
+<section id="macro">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Macro — USA, Europa e lavoro</h2><span class="sec-desc">Ultimo dato uscito per indicatore: attuale, atteso dal consensus e precedente</span></div>
+  <input type="radio" name="hmf" id="hmf-all" checked><input type="radio" name="hmf" id="hmf-us"><input type="radio" name="hmf" id="hmf-eu"><input type="radio" name="hmf" id="hmf-jobs">
+  <div class="h-filters"><label for="hmf-all">Tutto</label><label for="hmf-us">USA</label><label for="hmf-eu">Europa</label><label for="hmf-jobs">Lavoro</label></div>
+  <div class="h-grid" id="hMacroGrid"></div>
+  <div class="source-tag" id="hMacroMeta"></div>
 </section>
 
-<!-- ============ MACRO ============ -->
-
-
-<!-- ============ JOBS ============ -->
-
-
-<!-- ============ GEO ============ -->
-
-
-<!-- ============ FED ============ -->
-
-
-<!-- ============ HAWK/DOVE ============ -->
-
-
-<!-- ============ RISK ON/OFF ============ -->
-
-
-<!-- ============ RATES/VIX/DXY ============ -->
-
-
-<!-- ============ CALENDAR ============ -->
-
-
-<!-- ============ COT ============ -->
-
-  </div>
+<!-- ============ 08 BANCHE CENTRALI E TASSI ============ -->
+<section id="hub-bc">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Banche centrali e tassi</h2><span class="sec-desc">Fed, aspettative e rendimenti — dati ufficiali FRED + analisi AI live</span></div>
+  <div class="h-grid" id="hBcGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
+  <div class="source-tag" id="hBcMeta"></div>
 </section>
 
-<!-- ============ NEWS ============ -->
+<!-- ============ 09 GEOPOLITICA E NOTIZIE ============ -->
+<section id="hub-geo">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Geopolitica e notizie</h2><span class="sec-desc">Driver del rischio globale e come le fonti raccontano i fatti — analisi AI live</span></div>
+  <div class="h-grid" id="hGeoGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
+  <div class="source-tag" id="hGeoMeta"></div>
+</section>
 
-
-<!-- ============ VOLATILITY ============ -->
-
-
-<!-- ============ SENTIMENT ============ -->
-
-
-<!-- ============ ASSET DASHBOARD ============ -->
-
-
-<!-- ============ INDICES ============ -->
-
+</main>
+</div>
 
 <footer>
   <span id="footerTimestamp">Tutti i dati si aggiornano da soli.</span> Prezzi (Yahoo Finance), card Macro USA/Europa/Lavoro (calendario economico TradingView), dati ufficiali (FRED), COT (CFTC, con percentili a 52 settimane), Fear &amp; Greed (CNN) e AAII sono letti dal vivo ad ogni apertura della pagina o click su "Ricarica vista". Le analisi narrative (Geopolitica, Fed, Barometro Hawkish/Dovish, Macro, Sentiment, COT, Risk-On/Off, Notizie a confronto, Cruscotto Asset, Indici, Bias giornaliero) sono generate dall'AI (Gemini) a partire da notizie, prezzi e dati ufficiali reali e si rigenerano da sole. NAAIM e CBOE Put/Call non sono mostrati perché non esiste una fonte gratuita aggiornata. Nessuna parte di questo strumento costituisce consulenza finanziaria. <a href="/info" style="color:var(--accent);">Presentazione del progetto →</a>
 </footer>
-
-</main>
-</div>
 
 <script>
 // ---------- NAV: scroll interno senza toccare l'URL (evita il dialogo "link esterno") ----------
@@ -940,10 +901,23 @@ function goToSection(id){
   if(sec.classList.contains('collapsed')) toggleSection(sec.id);   // niente senso scrollare a un titolo chiuso
   if(el.tagName === 'DETAILS') el.open = true;                      // calendario completo, volatilità, COT in dettaglio
   el.scrollIntoView({behavior:'smooth', block:'start'});
+  settleScroll(el);
+}
+// Aprendo una sezione chiusa i suoi contenuti (e quelli sopra) possono ancora caricarsi mentre la pagina scorre, e il titolo
+// resterebbe fuori posto: se l'utente non ha toccato nulla nel frattempo, si riallinea a caricamento avvenuto.
+let userScrolled = false;
+['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(ev => window.addEventListener(ev, ()=>{ userScrolled = true; }, {passive:true}));
+function settleScroll(el){
+  userScrolled = false;
+  [1400, 3600].forEach(ms => setTimeout(()=>{
+    if(userScrolled) return;
+    const want = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    if(Math.abs(el.getBoundingClientRect().top - want) > 30) el.scrollIntoView({block:'start'});
+  }, ms));
 }
 
 // ---------- SEZIONI COMPRIMIBILI ----------
-// Ogni sezione principale (hub 01-09) diventa comprimibile cliccando sull'intestazione — utile per non dover scorrere tutta la
+// Ogni sezione principale (tutti gli hub) diventa comprimibile cliccando sull'intestazione — utile per non dover scorrere tutta la
 // dashboard ogni volta. Le sezioni meno consultate quotidianamente partono chiuse; lo stato
 // scelto dall'utente viene ricordato tra una visita e l'altra (localStorage).
 const SEC_COLLAPSE_STORAGE_KEY = 'mhub_collapsed_sections_v2';   // v2: i vecchi id (calendar, cot, assets...) non esistono più come sezioni
@@ -993,12 +967,12 @@ function tickClock(){
 }
 setInterval(tickClock, 1000); tickClock();
 
-// ---------- STATO CONDIVISO DEGLI HUB 01-09 ----------
+// ---------- STATO CONDIVISO DEGLI HUB ----------
 // Ogni hub si ridisegna da questo stato ogni volta che arriva un dato (prezzi, FRED, COT, calendario, analisi AI):
 // le card mostrano ciò che c'è e "in caricamento" per il resto, senza dipendere dall'ordine di arrivo.
 const HUB = { fred:null, mq:null, pos:null, cot:null, bias:null, cards:null, volEvents:null, sent:null, rt:null, narr:{}, res:{}, fail:{} };
 
-// ============ Card degli hub 01-09: helper condivisi ============
+// ============ Card degli hub: helper condivisi ============
 // Ogni hub legge lo stato condiviso HUB e si ridisegna da zero: ciò che manca mostra "in caricamento" (o "non
 // disponibile" se la fonte ha risposto con un errore). Testi lunghi chiusi di default ("Leggi tutto").
 const H_ICON = {
@@ -1090,7 +1064,7 @@ async function loadKeyEvents(){
   }catch(err){ keyEventsState = 'error'; }
   refreshKeyEvent(true);
   if(typeof renderHubBC === 'function') renderHubBC();    // prossimo FOMC dal calendario
-  if(typeof renderHubCal === 'function') renderHubCal();   // elenco eventi dell'hub 07
+  if(typeof renderHubCal === 'function') renderHubCal();   // elenco eventi dell'hub Calendario
 }
 
 function pickNextKeyEvent(){
@@ -1151,7 +1125,7 @@ function tickCountdown(){
 refreshKeyEvent(true);
 setInterval(tickCountdown, 1000); tickCountdown();
 
-// L'elenco "oggi e prossimi 7 giorni" vive nell'hub 07 (Calendario e volatilità); qui resta solo il caricamento degli eventi.
+// L'elenco "oggi e prossimi 7 giorni" vive nell'hub Calendario e volatilità; qui resta solo il caricamento degli eventi.
 loadKeyEvents();
 
 // ---------- TICKER TAPE (100% live: costruito da buildLiveTicker() quando arrivano i dati) ----------
@@ -1167,7 +1141,7 @@ function renderTicker(){
 }
 renderTicker();
 
-// Il quadro di oggi (hub 01) e il quadro macro (hub 03) si disegnano dallo stato condiviso HUB: renderHubOggi / renderHubMacro.
+// Il quadro di oggi e il quadro macro si disegnano dallo stato condiviso HUB: renderHubOggi / renderHubMacro.
 // Finché i dati live non arrivano le card mostrano "in caricamento", mai testo scritto a mano.
 
 // ---------- MARKET MONITOR ----------
@@ -1278,7 +1252,7 @@ marketData.forEach(m=>{ m.vol = '—'; m.volLvl = 'in attesa'; if(m.name !== 'DX
 // Anche prezzo e variazione partono vuoti: i valori scritti a mano (es. DXY 100,21) non devono mai comparire come fossero attuali.
 marketData.forEach(m=>{ m.val = '—'; m.chg = null; });
 
-// Una card per asset (hub 02): prezzo e variazione di oggi, sparkline reale, volatilità a 7g e correlazione DXY;
+// Una card per asset (hub Mercati): prezzo e variazione di oggi, sparkline reale, volatilità a 7g e correlazione DXY;
 // driver e fattori chiave dell'analisi AI stanno in un riquadro a scomparsa che resta aperto tra un aggiornamento e l'altro.
 const MKT_ICON = {DXY:'target', FOREX:'globe', ENERGIA:'bolt', METALLI:'layers', INDICI:'bars', RATES:'trend', VOLATILITY:'pulse'};
 function renderMarketMonitor(){
@@ -1328,7 +1302,7 @@ function surpriseInfo(lbl, cur, fore){
 // ---------- MACRO USA / EUROPA / LAVORO — card live dal calendario economico reale ----------
 // Prima erano valori scritti a mano (CPI di luglio, NFP di luglio...). Ora ogni tessera è l'ultimo dato già
 // uscito per quell'indicatore — attuale, atteso dal consensus, precedente — da /api/economic-calendar?view=macro.
-// Le card finiscono nello stato HUB.cards: le leggono l'hub 03 (renderHubMacro) e l'hub 06 (renderHubBC).
+// Le card finiscono nello stato HUB.cards: le leggono l'hub Macro (renderHubMacro) e l'hub Banche centrali (renderHubBC).
 async function loadMacroCards(){
   try{
     const res = await fetch('/api/economic-calendar?view=macro');
@@ -1937,7 +1911,7 @@ async function renderVolatilityTable(){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     const events = (data.events||[]).filter(e=>e.importance==='alto' || e.importance==='medio');
-    HUB.volEvents = events; HUB.volRange = [monday, friday]; HUB.volFail = false; renderHubCal();   // mappa della volatilità dell'hub 07
+    HUB.volEvents = events; HUB.volRange = [monday, friday]; HUB.volFail = false; renderHubCal();   // mappa della volatilità dell'hub Calendario
 
     let rows = '';
     for(let dayMs=monday; dayMs<=friday; dayMs+=86400000){
@@ -1969,7 +1943,7 @@ renderVolatilityTable();
 
 // ---------- SENTIMENT NEWS PER CATEGORIA ----------
 // Le categorie e i rischi chiave arrivano da /api/sentiment-categories (analisi AI su notizie reali) e finiscono nello
-// stato HUB.sent: li leggono l'hub 04 (tutte le categorie) e l'hub 01 (sintesi delle prime quattro + rischi chiave).
+// stato HUB.sent: li leggono l'hub Sentiment (tutte le categorie) e l'hub Il quadro di oggi (sintesi delle prime quattro + rischi chiave).
 function applySentimentLive(data){
   if(!data || !data.categories || !data.categories.length) return false;
   HUB.sent = data; delete HUB.fail.sent;
@@ -1990,12 +1964,12 @@ async function regenerateSentiment(){
 }
 
 // ---------- VALIDAZIONE INCROCIATA: NEWS VS COT / OPEN INTEREST / MACRO — AI live ----------
-// Generata da /api/narrative?section=sentiment (COT reale, dati macro appena usciti, notizie vere) e mostrata nell'hub 04
+// Generata da /api/narrative?section=sentiment (COT reale, dati macro appena usciti, notizie vere) e mostrata nell'hub Sentiment
 // da renderHubSent: prima erano tre paragrafi scritti a mano su un COT di agosto.
 
 // ---------- INDICATORI DI POSIZIONAMENTO: Fear&Greed · AAII (live) ----------
 // Fear&Greed (CNN) e AAII arrivano da /api/market-data (campo "positioning") e vengono mostrati nella card
-// "Umore degli investitori" dell'hub 08. NAAIM e CBOE Put/Call non hanno oggi una fonte gratuita aggiornata
+// "Umore degli investitori" dell'hub Posizionamento. NAAIM e CBOE Put/Call non hanno oggi una fonte gratuita aggiornata
 // (NAAIM: dato corrente solo in abbonamento; CBOE: CSV pubblico fermo al 2019) → non vengono mostrati.
 function renderSentimentIndicators(pos){
   HUB.pos = pos || null;
@@ -2066,7 +2040,7 @@ function applySentimentAssetsLive(market, dxyCorr){
   });
   if(!rows.some(r=>r.long != null || r.chg != null)){ HUB.rtFail = true; renderHubSent(); return false; }
   HUB.rt = rows; HUB.rtFail = false;
-  renderHubSent();   // la card "Retail vs prezzo" dell'hub 04 si ridisegna da HUB.rt
+  renderHubSent();   // la card "Retail vs prezzo" dell'hub Sentiment si ridisegna da HUB.rt
   return true;
 }
 
@@ -2121,15 +2095,15 @@ function metaLine(res, what){
 }
 function renderNarrativeMacro(d, res){
   hubStore('macro', d, res);
-  renderHubMacro();        // letture d'insieme USA / Europa / lavoro nell'hub 03
-  renderMarketPricing();   // "già prezzato" e "non prezzato" nell'hub 02
-  renderHubBC();           // la lettura di rendimenti/VIX/dollaro sta nell'hub 06
+  renderHubMacro();        // letture d'insieme USA / Europa / lavoro nell'hub Macro
+  renderMarketPricing();   // "già prezzato" e "non prezzato" nell'hub Mercati
+  renderHubBC();           // la lettura di rendimenti/VIX/dollaro sta nell'hub Banche centrali
 }
 
 function renderNarrativeSentiment(d, res){
   hubStore('sentiment', d, res);
-  renderHubSent();   // la validazione incrociata sta nell'hub 04
-  renderHubPos();    // note su rischio, COT e umore degli investitori nell'hub 08
+  renderHubSent();   // la validazione incrociata sta nell'hub Sentiment
+  renderHubPos();    // note su rischio, COT e umore degli investitori nell'hub Posizionamento
 }
 
 function renderNarrativeNewsCmp(d, res){ hubStore('newscmp', d, res); renderHubGeo(); }
@@ -2181,7 +2155,7 @@ function ensureNarrativesForSection(domId){
 // Richieste scaglionate: l'apertura della pagina lancia già diverse chiamate AI in parallelo (bias, sentiment, mercati...)
 NARRATIVE_SECTIONS.forEach((s, i)=>setTimeout(()=>ensureNarrative(s), i * 700));
 
-// Dati FRED (target range, CPI...) per l'hub 06: la prossima decisione Fed si legge dal calendario in renderHubBC.
+// Dati FRED (target range, CPI...) per l'hub Banche centrali: la prossima decisione Fed si legge dal calendario in renderHubBC.
 function applyFedCards(macro){
   HUB.fred = macro || null;
   renderHubBC();
@@ -2363,7 +2337,7 @@ function renderHubSint(){
   hMeta('hSintMeta', 'assets');
 }
 
-// ============ Hub 01-04: la parte alta della pagina ============
+// ============ Hub Il quadro di oggi / Macro / Sentiment ============
 // ---- 01 Il quadro di oggi (bias, notizie chiave, driver, stance per asset, rischi). L'evento chiave e i dati
 // usciti oggi hanno un loro renderer (renderKeyEvent, renderTodaysReleases) perché si aggiornano con tempi diversi.
 const OGGI_CATS = [['geopolitics', 'Geopolitica'], ['fed_rates', 'Fed e tassi'], ['macro', 'Macro'], ['dxy', 'Dollaro / DXY']];
@@ -2389,7 +2363,7 @@ function renderOggiCats(){
     return `<div class="h-qb"><div class="h-qt"><b>${t}</b><span class="h-chip ${tr[0]}">${tr[1]}</span></div>${hExp(c.narrative, 4)}</div>`;
   }).join('');
   hCell('hOggiCats', hCard({span:0, icon:'news', title:'Cosa muove i mercati oggi', bd:['ai'], body:`<div class="h-quad">${blocks || '<p class="h-note">Nessuna categoria disponibile.</p>'}</div>`,
-    foot:`Sintesi di ${S.newsCount || 0} notizie · tutte le categorie nella sezione 04 · <button type="button" class="h-link" onclick="goToSection('sentiment')">Apri →</button>`}));
+    foot:`Sintesi di ${S.newsCount || 0} notizie · tutte le categorie in "Sentiment di mercato" · <button type="button" class="h-link" onclick="goToSection('sentiment')">Apri →</button>`}));
 }
 
 function renderOggiDrivers(){
@@ -2610,7 +2584,7 @@ async function fetchEventDossier(ev){
   }catch(e){ return null; }
 }
 
-// Applica il bias giornaliero AI alla barra sticky in alto e alle card dell'hub 01 (e al gauge Risk-On/Off dell'hub 08).
+// Applica il bias giornaliero AI alla barra sticky in alto e alle card dell'hub Il quadro di oggi (e al gauge Risk-On/Off dell'hub Posizionamento).
 function applyBiasDaily(data){
   if(!data){ HUB.fail.bias = true; renderOggiBias(); renderOggiDrivers(); renderOggiAssets(); return false; }
   delete HUB.fail.bias;
@@ -2679,7 +2653,7 @@ function applyLiveMarketToMonitor(live){
       any = true;
     }
   });
-  // Prezzi e variazioni di oggi alimentano le card degli hub 02 (prezzi), 06 (tassi, dollaro, VIX), 08 (rischio) e 09 (sintesi operativa)
+  // Prezzi e variazioni di oggi alimentano le card degli hub Mercati (prezzi), Banche centrali (tassi, dollaro, VIX), Posizionamento (rischio) e Sintesi operativa
   HUB.mq = live;
   renderHubBC(); renderHubPos(); renderHubSint(); renderMarketPricing(); renderOggiAssets();
   if(any) renderMarketMonitor();
@@ -2887,7 +2861,7 @@ function cotRead(def, d){
 
 function applyLiveCOTToReport(payload){
   if(!payload || !payload.data) return false;
-  if(!payload.requestedDate){ HUB.cot = payload; renderHubPos(); }   // ultimo report: card "COT — dove sono gli estremi" dell'hub 08
+  if(!payload.requestedDate){ HUB.cot = payload; renderHubPos(); }   // ultimo report: card "COT — dove sono gli estremi" dell'hub Posizionamento
   const live = payload.data;
   let any = false;
   cotData.forEach(c=>{
@@ -3039,7 +3013,7 @@ async function initLiveData(manual = false){
     if(snEl) snEl.textContent = 'Analisi AI non raggiungibile in questo momento — riprova con "Rigenera".';
     HUB.fail.sent = true; renderHubSent(); renderOggiCats(); renderOggiRisks();
   }
-  // Bias e sentiment già scaricati sopra alimentano anche le card dell'hub 01 (applyBiasDaily / applySentimentLive).
+  // Bias e sentiment già scaricati sopra alimentano anche le card dell'hub Il quadro di oggi (applyBiasDaily / applySentimentLive).
   const priorityUpdated = biasUpdated || sentimentUpdated;
   if(currentKeyEvent) loadEventDossier(currentKeyEvent); // dossier AI sull'evento chiave già selezionato
   const dpSel = document.getElementById('dpAssetSelect');
@@ -3090,17 +3064,17 @@ function refreshLive(){
 // di descrizione e i collegamenti ai blocchi di dettaglio; la sezione che si sta guardando è evidenziata.
 const MENU = [
   {grp:'Oggi e mercati', items:[
-    {id:'priority',  n:'01', t:'Il quadro di oggi',          d:'Bias del giorno, notizie chiave, prossimo evento', i:'pulse'},
-    {id:'marketmon', n:'02', t:'Mercati e prezzi',            d:'Prezzi, volatilità e cosa prezza il mercato', i:'trend'}]},
+    {id:'priority',    n:'01', t:'Il quadro di oggi',         d:'Bias del giorno, notizie chiave, prossimo evento', i:'pulse'},
+    {id:'marketmon',   n:'02', t:'Mercati e prezzi',           d:'Prezzi, volatilità e cosa prezza il mercato', i:'trend'},
+    {id:'hub-cal',     n:'03', t:'Calendario e volatilità',    d:'Eventi in arrivo e giorni a rischio', i:'cal', subs:[['calendar', 'Calendario completo'], ['vol', 'Volatilità per asset']]},
+    {id:'hub-sintesi', n:'04', t:'Sintesi operativa',          d:'Cruscotto per asset e indici azionari', i:'target'}]},
   {grp:'Macro e sentiment', items:[
-    {id:'macro',     n:'03', t:'Macro: USA, Europa, lavoro',  d:'Ogni dato accanto alle attese', i:'bars'},
-    {id:'sentiment', n:'04', t:'Sentiment di mercato',        d:'Notizie, retail e validazione incrociata', i:'smile'}]},
-  {grp:'Approfondimenti', items:[
-    {id:'hub-geo',     n:'05', t:'Geopolitica e notizie',     d:'Rischio globale e notizie a confronto', i:'globe'},
-    {id:'hub-bc',      n:'06', t:'Banche centrali e tassi',   d:'Fed, aspettative e rendimenti', i:'bank'},
-    {id:'hub-cal',     n:'07', t:'Calendario e volatilità',   d:'Eventi in arrivo e giorni a rischio', i:'cal', subs:[['calendar', 'Calendario completo'], ['vol', 'Volatilità per asset']]},
-    {id:'hub-pos',     n:'08', t:'Posizionamento e rischio',  d:'Risk-on/off, COT e umore degli investitori', i:'layers', subs:[['decisione', 'Quadro decisionale'], ['cot', 'COT in dettaglio']]},
-    {id:'hub-sintesi', n:'09', t:'Sintesi operativa',         d:'Cruscotto per asset e indici azionari', i:'target'}]},
+    {id:'sentiment',   n:'05', t:'Sentiment di mercato',       d:'Notizie, retail e validazione incrociata', i:'smile'},
+    {id:'hub-pos',     n:'06', t:'Posizionamento e rischio',   d:'Risk-on/off, COT e umore degli investitori', i:'layers', subs:[['decisione', 'Quadro decisionale'], ['cot', 'COT in dettaglio']]},
+    {id:'macro',       n:'07', t:'Macro: USA, Europa, lavoro', d:'Ogni dato accanto alle attese', i:'bars'}]},
+  {grp:'Approfondimenti macro', items:[
+    {id:'hub-bc',      n:'08', t:'Banche centrali e tassi',    d:'Fed, aspettative e rendimenti', i:'bank'},
+    {id:'hub-geo',     n:'09', t:'Geopolitica e notizie',      d:'Rischio globale e notizie a confronto', i:'globe'}]},
 ];
 function buildMenu(){
   const p = document.getElementById('menuPanel'); if(!p) return;
@@ -3129,7 +3103,7 @@ function menuSpy(){
   if(el && info) el.innerHTML = `<b>${info.n}</b>${info.t}`;
   document.querySelectorAll('.mn-item').forEach(x => x.classList.toggle('on', x.dataset.sec === cur.id));
 }
-window.addEventListener('scroll', () => { if(!menuTick){ menuTick = true; requestAnimationFrame(menuSpy); } }, {passive:true});
+window.addEventListener('scroll', () => { if(!menuTick){ menuTick = true; setTimeout(menuSpy, 90); } }, {passive:true});
 buildMenu();
 
 // Stato iniziale delle card della parte alta ("in caricamento"): poi arrivano i dati live
