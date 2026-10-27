@@ -9,17 +9,33 @@
 // 1. Registrati gratis su https://fred.stlouisfed.org/docs/api/api_key.html
 // 2. Su Vercel: Project settings → Environment Variables → aggiungi FRED_API_KEY con la tua chiave
 // 3. Questa funzione sarà raggiungibile su: https://tuosito.vercel.app/api/fred-data
+//
+// ?view=fedwatch → probabilità di taglio / invariato / rialzo dei tassi Fed ricavate dai future Fed Funds (lib/fedwatch.js).
+// Sta qui perché il piano gratuito di Vercel consente al massimo 12 funzioni e sono tutte usate.
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchFredSnapshot } = require('../lib/fred');
+const { getFedWatch } = require('../lib/fedwatch');
 
-async function handleEvent() {
+async function handleEvent(event) {
   const apiKey = process.env.FRED_API_KEY;
   if (!apiKey) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'FRED_API_KEY non configurata nelle Environment Variables di Vercel' }),
     };
+  }
+
+  const params = (event && event.queryStringParameters) || {};
+  if (params.view === 'fedwatch') {
+    try {
+      const fw = await getFedWatch(apiKey);
+      // 5 minuti: i future si muovono durante la giornata, ma non servono aggiornamenti al secondo
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' }, body: JSON.stringify(fw) };
+    } catch (err) {
+      // errore: cache brevissima, così un problema transitorio non resta "congelato"
+      return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }, body: JSON.stringify({ error: err.message }) };
+    }
   }
 
   try {

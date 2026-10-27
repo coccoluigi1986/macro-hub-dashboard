@@ -207,8 +207,8 @@ const SECTIONS = {
     schema: '{\n'
       + '  "regime_title": "etichetta breve del regime attuale, max 60 caratteri",\n'
       + '  "regime_quote": "2-3 frasi che riassumono il regime, max 380 caratteri, con <b>..</b> sulla conclusione",\n'
-      + '  "hawk": [ 4-6 spinte hawkish brevi, max 110 caratteri ciascuna ],\n'
-      + '  "dove": [ 4-6 spinte dovish brevi, max 110 caratteri ciascuna ],\n'
+      + '  "hawk": [ ESATTAMENTE 4 spinte hawkish brevi, max 110 caratteri ciascuna ],\n'
+      + '  "dove": [ ESATTAMENTE 4 spinte dovish brevi, max 110 caratteri ciascuna ],\n'
       + '  "note": "nota di lettura e prossimi dati/eventi da monitorare (dal calendario), max 380 caratteri",\n'
       + '  "conflicts": [ 2 segnali contrastanti nei dati, max 200 caratteri ciascuno ],\n'
       + '  "fomc": {"headline":"stato del prossimo FOMC (data dal calendario) e cosa prezza il mercato, max 260 caratteri, con <b>..</b>","rows":[ 3 oggetti {"label":"max 70 caratteri","value":"max 90 caratteri","tone":"hawk|dove|neutral"} ],"note":"max 300 caratteri; se le probabilità puntuali non sono nei dati, dillo esplicitamente senza stimarle"},\n'
@@ -216,7 +216,7 @@ const SECTIONS = {
       + '}',
     normalize: (d) => ({
       regimeTitle: str(d.regime_title), regimeQuote: str(d.regime_quote),
-      hawk: arr(d.hawk, 6).map(str), dove: arr(d.dove, 6).map(str), note: str(d.note),
+      hawk: arr(d.hawk, 4).map(str), dove: arr(d.dove, 4).map(str), note: str(d.note),
       conflicts: arr(d.conflicts, 3).map(str),
       fomc: {
         headline: str(d.fomc && d.fomc.headline),

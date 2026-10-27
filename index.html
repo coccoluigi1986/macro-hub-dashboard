@@ -670,6 +670,31 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 .h-rrow .nm{font-weight:600;} .h-rrow .sp, .h-rrow .ch, .h-rrow .co{font:500 12px 'IBM Plex Mono',monospace; text-align:right; white-space:nowrap;} .h-rrow .co{color:var(--dim);}
 .h-rbar{display:flex; gap:2px; height:9px;} .h-rbar i{display:block; height:100%;} .h-rbar i.g{background:var(--green); border-radius:4px 0 0 4px;} .h-rbar i.r{background:var(--red); border-radius:0 4px 4px 0;}
 @media(max-width:640px){ .h-rrow{grid-template-columns:70px 1fr 92px 62px;} .h-rrow .co, .h-rrow.hh .co{display:none;} .h-rbar, .h-rrow.hh .bar{display:none;} .h-rrow{grid-template-columns:70px 1fr 62px;} .h-rrow .sp{text-align:left;} }
+/* ===== regime attuale con probabilità sui tassi ===== */
+.h-fwg{display:grid; grid-template-columns:1.12fr 1fr; gap:26px; align-items:start;}
+@media(max-width:900px){ .h-fwg{grid-template-columns:1fr; gap:18px;} }
+.h-fwh{display:flex; justify-content:space-between; align-items:baseline; gap:6px 14px; flex-wrap:wrap;}
+.h-fwh b{font:600 13px/1.3 'IBM Plex Mono',monospace; color:var(--text);}
+.h-fwc{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px;}
+.h-fwcol{display:grid; gap:8px; justify-items:center; align-content:end;}
+.h-fwcol .p{font:700 28px/1 'IBM Plex Mono',monospace;}
+.h-fwcol.cut .p{color:var(--green);} .h-fwcol.hold .p{color:var(--gold);} .h-fwcol.hike .p{color:var(--red);}
+.h-fwcol .bar{width:100%; height:116px; background:var(--panel2); border:1px solid var(--border); border-radius:9px; display:flex; align-items:flex-end; overflow:hidden;}
+.h-fwcol .bar i{display:block; width:100%; min-height:2px; border-radius:6px 6px 0 0;}
+.h-fwcol.cut .bar i{background:var(--green);} .h-fwcol.hold .bar i{background:var(--gold);} .h-fwcol.hike .bar i{background:var(--red);}
+.h-fwcol.now .bar{border-color:rgba(224,169,77,.55);}
+.h-fwcol .lb{text-align:center; display:grid; gap:2px;} .h-fwcol .lb b{font:600 13px 'Space Grotesk',sans-serif;} .h-fwcol .lb small{font:500 11px 'IBM Plex Mono',monospace; color:var(--dim);}
+.h-fwt{width:100%; border-collapse:collapse; margin-top:14px; font-size:12.5px;}
+.h-fwt th{font:500 10px/1.2 'IBM Plex Mono',monospace; letter-spacing:.09em; text-transform:uppercase; color:var(--dim); text-align:left; padding:0 6px 7px 0;}
+.h-fwt td{padding:8px 6px 8px 0; border-top:1px solid var(--border); font:500 12.5px 'IBM Plex Mono',monospace; color:var(--text2);}
+.h-fwt td:first-child{font:500 12.5px 'Inter',sans-serif; color:var(--text);} .h-fwt td b{color:var(--text);}
+.h-fwt .c{color:var(--green);} .h-fwt .h{color:var(--gold);} .h-fwt .r{color:var(--red);}
+.h-fwq{display:grid; gap:7px; padding:13px 15px; border:1px solid var(--border); border-radius:11px; background:var(--panel2);} .h-fwq p{font-size:13.5px; line-height:1.55; color:var(--text2);} .h-fwq b{color:var(--text);}
+.h-push{display:grid; grid-template-columns:1fr 1fr; gap:18px 28px; padding-top:14px; border-top:1px solid var(--border);}
+@media(max-width:700px){ .h-push{grid-template-columns:1fr;} }
+.h-push h5{font:600 12px/1.3 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; margin-bottom:9px;} .h-push .hk h5{color:var(--red);} .h-push .dv h5{color:var(--green);}
+.h-push ul{list-style:none; display:grid; gap:9px;} .h-push li{position:relative; padding-left:15px; font-size:13px; line-height:1.5; color:var(--text2);}
+.h-push li::before{content:""; position:absolute; left:0; top:.62em; width:6px; height:6px; border-radius:2px;} .h-push .hk li::before{background:var(--red);} .h-push .dv li::before{background:var(--green);}
 </style>
 </head>
 <body>
@@ -970,7 +995,7 @@ setInterval(tickClock, 1000); tickClock();
 // ---------- STATO CONDIVISO DEGLI HUB ----------
 // Ogni hub si ridisegna da questo stato ogni volta che arriva un dato (prezzi, FRED, COT, calendario, analisi AI):
 // le card mostrano ciò che c'è e "in caricamento" per il resto, senza dipendere dall'ordine di arrivo.
-const HUB = { fred:null, mq:null, pos:null, cot:null, bias:null, cards:null, volEvents:null, sent:null, rt:null, narr:{}, res:{}, fail:{} };
+const HUB = { fred:null, mq:null, pos:null, cot:null, bias:null, cards:null, volEvents:null, sent:null, rt:null, fw:null, fwFail:false, narr:{}, res:{}, fail:{} };
 
 // ============ Card degli hub: helper condivisi ============
 // Ogni hub legge lo stato condiviso HUB e si ridisegna da zero: ciò che manca mostra "in caricamento" (o "non
@@ -2162,6 +2187,21 @@ function applyFedCards(macro){
   return Boolean(macro);
 }
 
+// Probabilità di taglio / invariato / rialzo dei tassi Fed, stimate dai future Fed Funds (api/fred-data?view=fedwatch).
+async function fetchFedWatch(){
+  try{
+    const res = await fetch('/api/fred-data?view=fedwatch');
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ return null; }
+}
+function applyFedWatch(d){
+  HUB.fw = d && Array.isArray(d.meetings) && d.meetings.length ? d : null;
+  HUB.fwFail = !HUB.fw;     // la card mostra "non disponibile" invece di "in caricamento"
+  renderHubBC();
+  return Boolean(HUB.fw);
+}
+
 
 
 // ---- 06 Geopolitica e notizie
@@ -2184,6 +2224,36 @@ function renderHubGeo(){
 }
 
 // ---- 07 Banche centrali e tassi
+// Regime attuale: probabilità di taglio / invariato / rialzo (dai future Fed Funds) + le 4 spinte hawkish e le 4 dovish.
+function regimeCard(H, fomc){
+  const P = HUB.fw, FW = P && P.meetings, lo = P && P.lower, up = P && P.upper;
+  const pct = p => (p > 0 && p < 0.005) ? '<1%' : Math.round(p * 100) + '%';
+  const dIt = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'UTC'});
+  const dShort = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'short', timeZone:'UTC'}).replace('.', '');
+  const rng = (a, b) => hNf(a) + '–' + hNf(b) + '%';
+  const hawk = (H.hawk || []).slice(0, 4), dove = (H.dove || []).slice(0, 4);
+  let prob = '<p class="h-note">' + (HUB.fwFail ? 'Probabilità non disponibili in questo momento (future Fed Funds non raggiungibili).' : 'Probabilità in caricamento…') + '</p>', quick = '';
+  const m = FW && FW[0];   // la prima riunione ancora da svolgere
+  if(m){
+    const hhmm = fomc ? new Date(fomc.utc).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'}) : '';
+    const col = (cls, p, name, a, b, now) => '<div class="h-fwcol ' + cls + (now ? ' now' : '') + '"><span class="p">' + pct(p) + '</span><div class="bar" role="img" aria-label="' + name + ' ' + pct(p) + '"><i style="height:' + Math.max(0, Math.min(100, p * 100)) + '%"></i></div><div class="lb"><b>' + name + '</b><small>' + rng(a, b) + (now ? ' · attuale' : '') + '</small></div></div>';
+    const rows = FW.map((x, i) => '<tr><td><b>' + dShort(x.date) + '</b> · ' + (i === 0 ? 'decisione' : 'cumulato da oggi') + '</td><td class="c">' + pct(x.pCut) + '</td><td class="h">' + pct(x.pHold) + '</td><td class="r">' + pct(x.pHike) + '</td><td><b>' + hNf(x.rPost) + '%</b> <span style="color:var(--dim)">(' + (x.cumBp >= 0 ? '+' : '−') + hNf(Math.abs(x.cumBp), 1) + ' pb)</span></td></tr>').join('');
+    prob = '<div class="h-fwh"><span class="h-lbl">Probabilità sui tassi · riunione FOMC</span><b>' + dIt(m.date) + (hhmm ? ' · ore ' + hhmm + ' (Italia)' : '') + '</b></div>'
+      + '<div class="h-fwc">' + col('cut', m.pCut, 'Taglio', lo - 0.25, up - 0.25, false) + col('hold', m.pHold, 'Invariato', lo, up, true) + col('hike', m.pHike, 'Rialzo', lo + 0.25, up + 0.25, false) + '</div>'
+      + '<table class="h-fwt"><thead><tr><th>Riunione</th><th>Taglio</th><th>Invariato</th><th>Rialzo</th><th>Tasso implicito dopo</th></tr></thead><tbody>' + rows + '</tbody></table>'
+      + '<p class="h-note" style="margin-top:8px;">Oggi il tasso effettivo è ' + hNf(P.effr) + '% (target ' + rng(lo, up) + '). Ogni passo vale 25 punti base.</p>';
+    const l = FW[FW.length - 1], n = Math.round(l.cumBp / 25);
+    const first = m.pHold >= 0.5 ? 'tassi <b>invariati</b> (' + pct(m.pHold) + ')' : m.pHike >= 0.5 ? 'un <b>rialzo</b> (' + pct(m.pHike) + ')' : 'un <b>taglio</b> (' + pct(m.pCut) + ')';
+    const later = n === 0 ? 'nessuna variazione' : n > 0 ? 'circa <b>' + (n === 1 ? 'un rialzo' : n + ' rialzi') + ' da 25 pb</b>' : 'circa <b>' + (n === -1 ? 'un taglio' : Math.abs(n) + ' tagli') + ' da 25 pb</b>';
+    quick = '<div class="h-fwq"><span class="h-lbl">Lettura rapida</span><p>Il mercato prezza ' + first + ' il ' + dIt(m.date) + (FW.length > 1 ? '; entro il ' + dIt(l.date) + ' sconta ' + later + ' rispetto a oggi' : '') + '.</p></div>';
+  }
+  const lst = arr => '<ul>' + arr.map(x => '<li>' + safeHtml(x) + '</li>').join('') + '</ul>';
+  const right = '<p class="h-big">' + escHtml(H.regimeTitle) + '</p>' + hExp(H.regimeQuote, 4)
+    + '<div class="h-split" role="img" aria-label="' + hawk.length + ' spinte hawkish, ' + dove.length + ' dovish"><i class="h" style="flex:' + (hawk.length || 1) + '"></i><i class="d" style="flex:' + (dove.length || 1) + '"></i></div><div class="h-splitl"><span>' + hawk.length + ' spinte hawkish</span><span>' + dove.length + ' dovish</span></div>' + quick;
+  const push = '<div class="h-push"><div class="hk"><h5>▲ ' + hawk.length + ' spinte hawkish</h5>' + lst(hawk) + '</div><div class="dv"><h5>▼ ' + dove.length + ' spinte dovish</h5>' + lst(dove) + '</div></div>';
+  return hCard({span:12, icon:'scale', title:'Regime attuale', bd:['live', 'ai'], cls:'h-accent', body:'<div class="h-fwg"><div>' + prob + '</div><div style="display:grid; gap:11px; align-content:start;">' + right + '</div></div>' + push,
+    foot:'Probabilità: stima dai future Fed Funds CME (via Yahoo Finance) con metodo semplificato — può differire di qualche punto dal dato ufficiale CME FedWatch · Spinte: analisi AI su dati reali'});
+}
 function renderHubBC(){
   const el = document.getElementById('hBcGrid'); if(!el) return;
   const FR = HUB.fred, H = HUB.narr.hawkdove, F = HUB.narr.fed, M = HUB.narr.macro;
@@ -2203,11 +2273,9 @@ function renderHubBC(){
   ].join('');
   let html = `<div class="h-c12"><div class="h-kpis wide">${kpis}</div></div>`;
 
-  // regime (barometro) + cosa può fare la Fed
-  if(H){
-    const hawkN = (H.hawk||[]).length, doveN = (H.dove||[]).length;
-    html += hCard({span:5, icon:'scale', title:'Regime attuale', bd:['ai'], cls:'h-accent', body:`<p class="h-big">${escHtml(H.regimeTitle)}</p>${hExp(H.regimeQuote, 3)}<div class="h-split" role="img" aria-label="${hawkN} spinte hawkish, ${doveN} dovish"><i class="h" style="flex:${hawkN || 1}"></i><i class="d" style="flex:${doveN || 1}"></i></div><div class="h-splitl"><span>${hawkN} spinte hawkish</span><span>${doveN} dovish</span></div>`, foot:'Conteggio delle spinte elencate, non un punteggio'});
-  } else html += hLoading('Regime attuale', 'scale', 5, 'hawkdove');
+  // regime attuale (probabilità sui tassi + spinte) e cosa può fare la Fed
+  if(H) html += regimeCard(H, fomc);
+  else html += hLoading('Regime attuale', 'scale', 12, 'hawkdove');
   if(F){
     html += hCard({span:7, icon:'bank', title:'Cosa può fare la Fed', bd:['off','ai'], body:`<p class="h-hl">${escHtml(F.decision.headline)}</p>${hExp(F.decision.text, 3)}<div class="h-two"><div><h5>Perché potrebbe restare dura</h5>${hList(F.whyUp, 2)}</div><div><h5>Perché potrebbe fermarsi</h5>${hList(F.whyPause, 2)}</div></div>`});
   } else html += hLoading('Cosa può fare la Fed', 'bank', 7, 'fed');
@@ -2230,10 +2298,10 @@ function renderHubBC(){
   } else html += hCard({span:7, icon:'bars', title:'Dati usciti: che spinta danno alla Fed?', bd:['live'], body:'<p class="h-note">Dati dal calendario economico in caricamento…</p>'});
 
   // lettura dei tassi + sintesi operativa
-  if(M && M.ratesNote) html += hCard({span:6, icon:'trend', title:'Rendimenti, VIX e dollaro', bd:['live','ai'], body:hExp(M.ratesNote, 4), foot:'Valori live da Yahoo Finance e FRED'});
-  else html += hLoading('Rendimenti, VIX e dollaro', 'trend', 6, 'macro');
-  if(F && F.synthesis) html += hCard({span:6, icon:'target', title:'Sintesi operativa — come adeguarsi', bd:['ai'], cls:'h-accent', body:hExp(F.synthesis, 4)});
-  else html += hLoading('Sintesi operativa', 'target', 6, 'fed');
+  if(M && M.ratesNote) html += hCard({span:5, icon:'trend', title:'Rendimenti, VIX e dollaro', bd:['live','ai'], body:hExp(M.ratesNote, 4), foot:'Valori live da Yahoo Finance e FRED'});
+  else html += hLoading('Rendimenti, VIX e dollaro', 'trend', 5, 'macro');
+  if(F && F.synthesis) html += hCard({span:12, icon:'target', title:'Sintesi operativa — come adeguarsi', bd:['ai'], cls:'h-accent', body:hExp(F.synthesis, 4)});
+  else html += hLoading('Sintesi operativa', 'target', 12, 'fed');
   el.innerHTML = html;
   hMeta('hBcMeta', 'hawkdove');
 }
@@ -2987,10 +3055,11 @@ function applyLiveMarketPricing(live){
 }
 
 async function initLiveData(manual = false){
-  const [macro, market, cot, dxyCorr, bias, sentiment, macroCards] = await Promise.all([
+  const [macro, market, cot, dxyCorr, bias, sentiment, macroCards, fedwatch] = await Promise.all([
     fetchLiveMacro(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
     fetchBiasDaily(), fetchSentimentLive(false),
     loadMacroCards(),   // card Macro USA / Europa / Lavoro, quadro macro e barometro, dal calendario reale
+    fetchFedWatch(),    // probabilità sui tassi Fed dai future Fed Funds
   ]);
   renderTodaysReleases(macro);
   const marketUpdated = applyLiveMarketToMonitor(market);
@@ -2998,6 +3067,7 @@ async function initLiveData(manual = false){
   const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
   const positioningUpdated = renderSentimentIndicators(lastPositioning);   // Fear&Greed (CNN) + AAII
   applyFedCards(macro);
+  const fedwatchUpdated = applyFedWatch(fedwatch);
   try{ buildLiveTicker({market, macro, cot}); }catch(e){ console.warn('Ticker live non aggiornato:', e.message); }
   const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
@@ -3029,6 +3099,7 @@ async function initLiveData(manual = false){
   if(positioningUpdated) parts.push('Fear & Greed e AAII');
   if(sentimentAssetsUpdated) parts.push('correlazioni e sentiment asset (live)');
   if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
+  if(fedwatchUpdated) parts.push('probabilità sui tassi Fed (future Fed Funds)');
   if(biasUpdated) parts.push('bias geo-macro AI');
   if(sentimentUpdated) parts.push('sentiment per categoria AI');
   if(priorityUpdated) parts.push('headline e rischi chiave (AI)');
