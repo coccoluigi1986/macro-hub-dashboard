@@ -11,11 +11,13 @@
 // 3. Questa funzione sarà raggiungibile su: https://tuosito.vercel.app/api/fred-data
 //
 // ?view=fedwatch → probabilità di taglio / invariato / rialzo dei tassi Fed ricavate dai future Fed Funds (lib/fedwatch.js).
-// Sta qui perché il piano gratuito di Vercel consente al massimo 12 funzioni e sono tutte usate.
+// ?view=sahm → Sahm Rule (segnale di recessione USA dalla disoccupazione, lib/sahm.js).
+// Stanno qui perché il piano gratuito di Vercel consente al massimo 12 funzioni e sono tutte usate.
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchFredSnapshot } = require('../lib/fred');
 const { getFedWatch } = require('../lib/fedwatch');
+const { getSahm } = require('../lib/sahm');
 
 async function handleEvent(event) {
   const apiKey = process.env.FRED_API_KEY;
@@ -34,6 +36,16 @@ async function handleEvent(event) {
       return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' }, body: JSON.stringify(fw) };
     } catch (err) {
       // errore: cache brevissima, così un problema transitorio non resta "congelato"
+      return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }, body: JSON.stringify({ error: err.message }) };
+    }
+  }
+
+  if (params.view === 'sahm') {
+    try {
+      const sahm = await getSahm(apiKey);
+      // 1 ora: la disoccupazione esce una volta al mese
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' }, body: JSON.stringify(sahm) };
+    } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }, body: JSON.stringify({ error: err.message }) };
     }
   }

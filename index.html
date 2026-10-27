@@ -695,6 +695,21 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 .h-push h5{font:600 12px/1.3 'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase; margin-bottom:9px;} .h-push .hk h5{color:var(--red);} .h-push .dv h5{color:var(--green);}
 .h-push ul{list-style:none; display:grid; gap:9px;} .h-push li{position:relative; padding-left:15px; font-size:13px; line-height:1.5; color:var(--text2);}
 .h-push li::before{content:""; position:absolute; left:0; top:.62em; width:6px; height:6px; border-radius:2px;} .h-push .hk li::before{background:var(--red);} .h-push .dv li::before{background:var(--green);}
+/* ===== Sahm Rule (gruppo Lavoro) ===== */
+.h-smg{display:grid; grid-template-columns:1.05fr 1fr; gap:26px; align-items:start;}
+@media(max-width:900px){ .h-smg{grid-template-columns:1fr; gap:20px;} }
+.h-smhead{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap;}
+.h-smval{font:700 40px/1 'IBM Plex Mono',monospace;} .h-smval small{font:500 14px 'IBM Plex Mono',monospace; color:var(--dim); margin-left:6px;}
+.h-smmeter{position:relative; height:12px; border-radius:6px; margin:16px 0 4px; background:linear-gradient(90deg, rgba(52,211,153,.5) 0 30%, rgba(224,169,77,.6) 30% 50%, rgba(240,104,94,.65) 50% 100%);}
+.h-smmeter .pin{position:absolute; top:-6px; width:3px; height:24px; margin-left:-1.5px; background:var(--text); border-radius:2px; box-shadow:0 0 0 2px var(--panel);}
+.h-smticks{position:relative; height:16px; font:500 10.5px 'IBM Plex Mono',monospace; color:var(--dim2);} .h-smticks span{position:absolute; transform:translateX(-50%); white-space:nowrap;}
+.h-smspark{display:block; width:100%; max-width:460px; height:auto; margin-top:2px;}
+.h-smform{font-size:12px; color:var(--dim); line-height:1.5;} .h-smform b{color:var(--text2);}
+.h-smrow{display:grid; grid-template-columns:150px 112px 1fr; gap:12px; align-items:start; padding:10px 0; border-top:1px solid var(--border); font-size:13px;} .h-smrow:first-child{border-top:0;}
+.h-smrow .nm{font-weight:600; color:var(--text); line-height:1.35;} .h-smrow .why{color:var(--text2); line-height:1.45;}
+.h-arr{display:inline-flex; align-items:center; gap:5px; font:600 11px/1 'IBM Plex Mono',monospace; letter-spacing:.04em; text-transform:uppercase; padding:6px 8px; border-radius:6px; border:1px solid var(--border); background:var(--panel2); white-space:nowrap;}
+.h-arr.up{color:var(--green); border-color:rgba(52,211,153,.4);} .h-arr.dn{color:var(--red); border-color:rgba(240,104,94,.4);} .h-arr.mx{color:var(--gold); border-color:rgba(224,169,77,.4);}
+@media(max-width:640px){ .h-smrow{grid-template-columns:1fr; gap:6px;} }
 </style>
 </head>
 <body>
@@ -995,7 +1010,7 @@ setInterval(tickClock, 1000); tickClock();
 // ---------- STATO CONDIVISO DEGLI HUB ----------
 // Ogni hub si ridisegna da questo stato ogni volta che arriva un dato (prezzi, FRED, COT, calendario, analisi AI):
 // le card mostrano ciò che c'è e "in caricamento" per il resto, senza dipendere dall'ordine di arrivo.
-const HUB = { fred:null, mq:null, pos:null, cot:null, bias:null, cards:null, volEvents:null, sent:null, rt:null, fw:null, fwFail:false, narr:{}, res:{}, fail:{} };
+const HUB = { fred:null, mq:null, pos:null, cot:null, bias:null, cards:null, volEvents:null, sent:null, rt:null, fw:null, fwFail:false, sahm:null, sahmFail:false, narr:{}, res:{}, fail:{} };
 
 // ============ Card degli hub: helper condivisi ============
 // Ogni hub legge lo stato condiviso HUB e si ridisegna da zero: ciò che manca mostra "in caricamento" (o "non
@@ -1090,6 +1105,7 @@ async function loadKeyEvents(){
   refreshKeyEvent(true);
   if(typeof renderHubBC === 'function') renderHubBC();    // prossimo FOMC dal calendario
   if(typeof renderHubCal === 'function') renderHubCal();   // elenco eventi dell'hub Calendario
+  if(typeof renderHubMacro === 'function') renderHubMacro();   // data del prossimo rapporto sul lavoro (Sahm Rule)
 }
 
 function pickNextKeyEvent(){
@@ -2187,6 +2203,80 @@ function applyFedCards(macro){
   return Boolean(macro);
 }
 
+// ---- Sahm Rule: segnale di recessione USA dalla disoccupazione (dati ufficiali FRED, api/fred-data?view=sahm) ----
+// Sono tendenze storiche di come i mercati reagiscono quando il segnale peggiora o scatta, non previsioni.
+const SAHM_MARKETS = [
+  ['Rendimenti Treasury', 'dn', 'In calo', 'Si scommette sui tagli della Fed e si cerca sicurezza: i rendimenti scendono, i prezzi delle obbligazioni salgono.'],
+  ['Azionario · S&amp;P 500, Nasdaq', 'dn', 'In calo', 'Utili a rischio: soffrono per primi i settori ciclici e le small cap (Russell 2000).'],
+  ['Dollaro · DXY', 'mx', 'Misto', 'Rifugio nel breve, ma i tagli Fed attesi lo indeboliscono: dipende da quale forza prevale.'],
+  ['Oro e argento', 'up', 'In rialzo', 'Calano i rendimenti reali e cresce la domanda di protezione.'],
+  ['Petrolio · WTI', 'dn', 'In calo', 'Si prevede meno domanda di energia con un’economia che rallenta.'],
+  ['Volatilità · VIX', 'up', 'In rialzo', 'Più incertezza sul futuro: la “paura” sale.'],
+  ['Valute rifugio e rischiose', 'mx', 'Divergono', 'Yen e franco svizzero tendono a salire; dollaro australiano e canadese a scendere.'],
+];
+async function fetchSahm(){
+  try{
+    const res = await fetch('/api/fred-data?view=sahm');
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){ return null; }
+}
+function applySahm(d){
+  HUB.sahm = d && typeof d.value === 'number' ? d : null;
+  HUB.sahmFail = !HUB.sahm;     // la card mostra "non disponibile" invece di "in caricamento"
+  renderHubMacro();
+  return Boolean(HUB.sahm);
+}
+function sahmSpark(hist, th){
+  const W = 400, H = 112, L = 6, R = 38, T = 12, B = 22;
+  const vs = hist.map(h => h.v), lo = Math.min(-0.2, ...vs), hi = Math.max(th + 0.12, ...vs);
+  const x = i => L + (W - L - R) * (hist.length > 1 ? i / (hist.length - 1) : 0), y = v => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
+  const pts = hist.map((h, i) => x(i).toFixed(1) + ',' + y(h.v).toFixed(1)).join(' ');
+  const mon = m => new Date(m + '-15T12:00:00Z').toLocaleDateString('it-IT', {month:'short', year:'2-digit', timeZone:'UTC'}).replace('.', '');
+  const last = hist[hist.length - 1], tx = 'font-size="10.5" font-family="IBM Plex Mono,monospace"';
+  return '<svg class="h-smspark" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Andamento della Sahm Rule negli ultimi ' + hist.length + ' mesi">'
+    + '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(0).toFixed(1) + '" y2="' + y(0).toFixed(1) + '" style="stroke:var(--border)" stroke-width="1"/>'
+    + '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(th).toFixed(1) + '" y2="' + y(th).toFixed(1) + '" style="stroke:var(--red)" stroke-width="1.2" stroke-dasharray="4 4"/>'
+    + '<text x="' + (W - R + 5) + '" y="' + (y(th) + 4).toFixed(1) + '" ' + tx + ' style="fill:var(--red)">0,50</text><text x="' + (W - R + 5) + '" y="' + (y(0) + 4).toFixed(1) + '" ' + tx + ' style="fill:var(--dim)">0</text>'
+    + '<polyline points="' + pts + '" fill="none" style="stroke:var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>'
+    + '<circle cx="' + x(hist.length - 1).toFixed(1) + '" cy="' + y(last.v).toFixed(1) + '" r="3.8" style="fill:var(--accent)"/>'
+    + '<text x="' + L + '" y="' + (H - 5) + '" ' + tx + ' style="fill:var(--dim2)">' + mon(hist[0].m) + '</text><text x="' + (W - R) + '" y="' + (H - 5) + '" text-anchor="end" ' + tx + ' style="fill:var(--dim2)">' + mon(last.m) + '</text></svg>';
+}
+function sahmCard(){
+  const title = 'Sahm Rule — segnale di recessione USA', S = HUB.sahm;
+  if(!S) return hCard({span:12, icon:'pulse', title, bd:['off'], cls:'g-jobs', body:'<p class="h-note">' + (HUB.sahmFail ? 'Dati della Sahm Rule non raggiungibili in questo momento — riprova tra poco.' : 'Dati FRED in caricamento…') + '</p>'});
+  const pp = (n, d = 2) => (n < -0.004 ? '−' : '') + hNf(Math.abs(n), d);
+  const mName = (m, o) => new Date(m + '-15T12:00:00Z').toLocaleDateString('it-IT', {...o, timeZone:'UTC'});
+  const ST = {none:['g', 'Nessun segnale'], watch:['y', 'Zona di attenzione'], triggered:['r', 'Segnale scattato']}[S.state] || ['y', '—'];
+  const col = {g:'var(--green)', y:'var(--gold)', r:'var(--red)'}[ST[0]];
+  const gap = Math.max(0, S.threshold - S.value);
+  const rel = Math.abs(S.value) < 0.005 ? 'pari al' : S.value > 0 ? '<b>' + pp(S.value) + ' pp sopra</b> il' : '<b>' + pp(Math.abs(S.value)) + ' pp sotto</b> il';
+  const read = S.state === 'triggered'
+    ? 'La media a 3 mesi della disoccupazione è ' + rel + ' minimo dell’ultimo anno: la soglia di ' + pp(S.threshold) + ' pp è stata raggiunta. Storicamente indica l’inizio di una recessione: i mercati tendono a reagire come nella tabella a fianco.'
+    : S.state === 'watch'
+      ? 'La media a 3 mesi della disoccupazione è ' + rel + ' minimo dell’ultimo anno: siamo in zona di attenzione, mancano ' + pp(gap) + ' pp alla soglia di ' + pp(S.threshold) + '. Se sale ancora, i mercati inizieranno a prezzare il rischio di recessione.'
+      : 'La media a 3 mesi della disoccupazione è ' + rel + ' minimo dell’ultimo anno: lontana dalla soglia di ' + pp(S.threshold) + ' pp (mancano ' + pp(gap) + ' pp). Finché resta sotto ' + pp(S.watch) + ' pp l’indicatore pesa poco sui prezzi.';
+  const ms = S.ma3Months || [], span = ms.length ? mName(ms[0].m, {month:'short'}).replace('.', '') + '–' + mName(ms[ms.length - 1].m, {month:'short', year:'numeric'}).replace('.', '') : '';
+  const kpis = '<div class="h-kpis">'
+    + hKpi('Media 3 mesi' + (span ? ' (' + span + ')' : ''), hNf(S.ma3) + '%', ms.map(m => m.v == null ? 'n.d.' : hNf(m.v, 1)).join(' · '))
+    + hKpi('Minimo delle medie (12 mesi prec.)', hNf(S.minMa3) + '%', 'a ' + mName(S.minMonth, {month:'long', year:'numeric'}))
+    + hKpi('Differenza', '<span style="color:' + col + '">' + pp(S.value) + ' pp</span>', 'soglia ' + pp(S.threshold) + ' pp') + '</div>';
+  const pin = Math.max(0, Math.min(1, S.value)) * 100;
+  const meter = '<div class="h-smmeter" role="img" aria-label="Sahm Rule ' + pp(S.value) + ' punti percentuali, soglia ' + pp(S.threshold) + '"><span class="pin" style="left:' + pin + '%"></span></div><div class="h-smticks"><span style="left:0%">0</span><span style="left:30%">0,30</span><span style="left:50%">0,50</span><span style="left:100%">1,00</span></div>';
+  const rows = SAHM_MARKETS.map(r => '<div class="h-smrow"><span class="nm">' + r[0] + '</span><span class="h-arr ' + r[1] + '">' + (r[1] === 'up' ? '▲ ' : r[1] === 'dn' ? '▼ ' : '◆ ') + r[2] + '</span><span class="why">' + r[3] + '</span></div>').join('');
+  const nfp = typeof keyEvents !== 'undefined' ? keyEvents.find(e => e.currency === 'USD' && /non.?farm|payrolls/i.test(e.rawTitle) && e.utc > Date.now()) : null;
+  const next = nfp ? ' · prossimo aggiornamento con il rapporto sul lavoro del ' + new Date(nfp.utc).toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'Europe/Rome'}) : ' · si aggiorna a ogni rapporto sul lavoro';
+  const fr = S.fredRealtime, same = fr && Math.abs(fr.value - S.value) < 0.015;
+  const check = fr ? '<p class="h-note" style="margin-top:2px;">' + (same ? '✓ Coincide con il valore ufficiale FRED in tempo reale (' + pp(fr.value) + ' pp).' : 'Valore ufficiale FRED in tempo reale (' + mName(fr.month, {month:'long', year:'numeric'}) + '): ' + pp(fr.value) + ' pp.') + '</p>' : '';
+  const body = '<div class="h-smg"><div style="display:grid; gap:12px; align-content:start;">'
+    + '<div class="h-smhead"><span class="h-chip ' + ST[0] + '">' + ST[1] + '</span><span class="h-smval" style="color:' + col + '">' + pp(S.value) + '<small>pp</small></span><span class="h-note">' + mName(S.month, {month:'long', year:'numeric'}) + ' · disoccupazione ' + hNf(S.unrate, 1) + '%</span></div>'
+    + '<p class="h-plain">' + read + '</p>' + meter + kpis
+    + '<p class="h-smform"><b>Come si calcola:</b> media a 3 mesi della disoccupazione USA − minimo delle medie a 3 mesi dei 12 mesi precedenti. Scatta a ' + pp(S.threshold) + ' punti percentuali.</p>'
+    + '<div><span class="h-lbl">Ultimi ' + S.history.length + ' mesi</span>' + sahmSpark(S.history, S.threshold) + '</div>' + check + '</div>'
+    + '<div><span class="h-lbl">Su quali mercati può influire</span><div style="margin-top:6px;">' + rows + '</div><p class="h-note" style="margin-top:6px;">Tendenze storiche quando il segnale peggiora o scatta, non previsioni. Con il segnale spento, l’effetto sui prezzi è modesto.</p></div></div>';
+  return hCard({span:12, icon:'pulse', title, bd:['off'], cls:'g-jobs', body, foot:'Fonte: FRED (UNRATE e SAHMREALTIME) · dati di ' + mName(S.month, {month:'long', year:'numeric'}) + next + ' · soglia storica: dal dopoguerra è scattata all’inizio di quasi tutte le recessioni USA, ma non è infallibile (es. luglio 2024)'});
+}
+
 // Probabilità di taglio / invariato / rialzo dei tassi Fed, stimate dai future Fed Funds (api/fred-data?view=fedwatch).
 async function fetchFedWatch(){
   try{
@@ -2516,6 +2606,7 @@ function renderHubMacro(){
       : N[G.note] ? hCard({span:4, icon:'target', title:G.noteTitle, bd:['ai'], cls:`g-${G.g}`, body:hExp(N[G.note], 8)})
       : hCard({span:4, icon:'target', title:G.noteTitle, bd:['ai'], cls:`g-${G.g}`, body:`<p class="h-note">${NARRATIVE_UNAVAILABLE}</p>`});
   });
+  html += sahmCard();   // la Sahm Rule chiude il gruppo Lavoro
   el.innerHTML = html;
   hMeta('hMacroMeta', 'macro', 'Lettura AI');
 }
@@ -3055,11 +3146,12 @@ function applyLiveMarketPricing(live){
 }
 
 async function initLiveData(manual = false){
-  const [macro, market, cot, dxyCorr, bias, sentiment, macroCards, fedwatch] = await Promise.all([
+  const [macro, market, cot, dxyCorr, bias, sentiment, macroCards, fedwatch, sahm] = await Promise.all([
     fetchLiveMacro(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
     fetchBiasDaily(), fetchSentimentLive(false),
     loadMacroCards(),   // card Macro USA / Europa / Lavoro, quadro macro e barometro, dal calendario reale
     fetchFedWatch(),    // probabilità sui tassi Fed dai future Fed Funds
+    fetchSahm(),        // Sahm Rule (FRED)
   ]);
   renderTodaysReleases(macro);
   const marketUpdated = applyLiveMarketToMonitor(market);
@@ -3068,6 +3160,7 @@ async function initLiveData(manual = false){
   const positioningUpdated = renderSentimentIndicators(lastPositioning);   // Fear&Greed (CNN) + AAII
   applyFedCards(macro);
   const fedwatchUpdated = applyFedWatch(fedwatch);
+  const sahmUpdated = applySahm(sahm);
   try{ buildLiveTicker({market, macro, cot}); }catch(e){ console.warn('Ticker live non aggiornato:', e.message); }
   const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
   const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
@@ -3100,6 +3193,7 @@ async function initLiveData(manual = false){
   if(sentimentAssetsUpdated) parts.push('correlazioni e sentiment asset (live)');
   if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
   if(fedwatchUpdated) parts.push('probabilità sui tassi Fed (future Fed Funds)');
+  if(sahmUpdated) parts.push('Sahm Rule (FRED)');
   if(biasUpdated) parts.push('bias geo-macro AI');
   if(sentimentUpdated) parts.push('sentiment per categoria AI');
   if(priorityUpdated) parts.push('headline e rischi chiave (AI)');
