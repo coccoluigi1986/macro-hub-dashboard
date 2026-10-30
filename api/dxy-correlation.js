@@ -129,6 +129,7 @@ async function fetchRetailSentiment() {
   const raw = await res.json();
   if (!Array.isArray(raw)) throw new Error(raw && raw.error ? String(raw.error) : 'Risposta inattesa da Dukascopy');
   const out = {};
+  let asOf = 0;   // ora dell'ultimo aggiornamento dell'indice (ms): la card la mostra accanto ai dati
   raw.forEach((item) => {
     const key = DUKA_INSTRUMENT_MAP[item.title];
     if (!key) return;
@@ -136,8 +137,9 @@ async function fetchRetailSentiment() {
     const short = Number(item.short);
     if (Number.isNaN(long) || Number.isNaN(short)) return;
     out[key] = { long: Number(long.toFixed(1)), short: Number(short.toFixed(1)) };
+    asOf = Math.max(asOf, Number(item.date) || 0);
   });
-  return out;
+  return { rows: out, asOf: asOf || null };
 }
 
 // Serie storica dello yield US 10Y da FMP (Twelve Data non lo copre sul piano gratuito).
@@ -221,7 +223,7 @@ async function handleEvent(event) {
       fmpKey ? fetchTreasurySeries(fmpKey) : Promise.resolve(new Map()),
       // Non deve far fallire l'intera risposta se Dukascopy è irraggiungibile — il client ricade
       // sullo split derivato dalla variazione % quando manca il posizionamento retail reale.
-      fetchRetailSentiment().catch(e => { console.warn('Dukascopy sentiment fallito:', e.message); return {}; }),
+      fetchRetailSentiment().catch(e => { console.warn('Dukascopy sentiment fallito:', e.message); return { rows: {}, asOf: null }; }),
     ]);
 
     const dxyRets = dailyReturns(dxy);
@@ -257,7 +259,7 @@ async function handleEvent(event) {
     data.dxy = { changePercent: todayChange.dxy, ...volStats(dxy) };
 
     // Aggiunge long/short reali (quando Dukascopy li ha) alle stesse chiavi già presenti in "data".
-    Object.entries(retailSentiment).forEach(([key, s]) => {
+    Object.entries(retailSentiment.rows).forEach(([key, s]) => {
       data[key] = { ...(data[key] || {}), long: s.long, short: s.short };
     });
 
@@ -286,6 +288,7 @@ async function handleEvent(event) {
         updatedAt: new Date().toISOString(),
         source: 'Correlazione di Pearson a 30g e volatilità realizzata a 7g sui rendimenti giornalieri — DXY ricostruito dai cambi BCE (Frankfurter) vs serie Yahoo Finance',
         lookbackDays: LOOKBACK_DAYS,
+        retailAsOf: retailSentiment.asOf ? new Date(retailSentiment.asOf).toISOString() : null,   // ora dell'ultimo dato Dukascopy
         parseWarning: warnings.length ? `Correlazione non calcolabile per: ${warnings.join(', ')}` : null,
         data,
       }),

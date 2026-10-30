@@ -8,8 +8,8 @@
 <meta name="theme-color" content="#0A0E1A">
 <!-- App installabile (PWA): manifest, icone e meta per iPhone/iPad -->
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=3">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Macro Hub">
@@ -710,6 +710,259 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 .h-arr{display:inline-flex; align-items:center; gap:5px; font:600 11px/1 'IBM Plex Mono',monospace; letter-spacing:.04em; text-transform:uppercase; padding:6px 8px; border-radius:6px; border:1px solid var(--border); background:var(--panel2); white-space:nowrap;}
 .h-arr.up{color:var(--green); border-color:rgba(52,211,153,.4);} .h-arr.dn{color:var(--red); border-color:rgba(240,104,94,.4);} .h-arr.mx{color:var(--gold); border-color:rgba(224,169,77,.4);}
 @media(max-width:640px){ .h-smrow{grid-template-columns:1fr; gap:6px;} }
+/* ===================== REDESIGN v3 — pagina a tutta larghezza, più pulita e guidata ===================== */
+/* Questo blocco va DOPO gli stili esistenti: ridefinisce solo ciò che cambia (spazi, superfici, intestazioni, larghezza). */
+:root{
+  --bg:#080C17; --panel:#0F1528; --panel2:#151C33; --border:#1F2842; --line:rgba(255,255,255,.07);
+  --text2:#B9C0D4; --dim:#8F97B0;
+  --shadow:0 1px 0 rgba(255,255,255,.045) inset, 0 14px 32px -20px rgba(0,0,0,.7);
+}
+body{
+  font-size:14px; line-height:1.55;
+  background:
+    radial-gradient(1100px 520px at 92% -8%, rgba(94,168,245,.11), transparent 62%),
+    radial-gradient(900px 480px at -4% 6%, rgba(224,169,77,.055), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+}
+@media(max-width:860px){ body{background-attachment:scroll;} }
+
+/* ---------- barra di avanzamento della lettura ---------- */
+#scrollProg{position:fixed; top:62px; left:0; height:2px; width:0; z-index:102; background:linear-gradient(90deg,var(--accent),#7BD3F7,var(--gold)); box-shadow:0 0 10px rgba(94,168,245,.6); pointer-events:none;}
+
+/* ---------- intestazione ---------- */
+header{padding:16px clamp(16px,2.2vw,40px);}
+.hd-mode{display:inline-flex; padding:3px; border-radius:99px; border:1px solid var(--line); background:var(--panel);}
+.hd-mode button{font:600 12px/1 'Space Grotesk',sans-serif; letter-spacing:.02em; color:var(--dim); background:none; border:0; border-radius:99px; padding:8px 13px; cursor:pointer; transition:all .15s;}
+.hd-mode button:hover{color:var(--text);}
+.hd-mode button[aria-pressed="true"]{background:var(--accent); color:#06101F;}
+
+/* ---------- LARGHEZZA: la pagina usa tutto lo schermo, niente vuoto a destra ---------- */
+.layout{grid-template-columns:236px minmax(0,1fr);}
+main{max-width:none; padding:26px clamp(18px,2.4vw,48px) 48px;}
+@media(max-width:860px){ main{padding:14px 12px 28px;} }
+.h-grid{gap:18px;}
+@media(max-width:860px){ .h-grid{gap:12px;} }
+section{margin-bottom:46px;}
+section.collapsed{margin-bottom:14px;}
+.h-cell:empty{display:none;}
+
+/* più card per riga quando c'è spazio (le righe incomplete si riempiono da sole: vedi pack() in redesign.js) */
+@media(min-width:1500px){
+  .h-c4{grid-column:span 3;}
+  .h-stg{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+@media(min-width:2100px){
+  .h-c4,.h-c3{grid-column:span 2;}
+  .h-stg{grid-template-columns:repeat(8,minmax(0,1fr));}
+}
+
+/* prima sezione su schermo largo: bias + notizie sopra, poi il prossimo evento a sinistra e driver/rischi impilati a destra */
+@media(min-width:1500px){
+  #priority .h-grid{grid-auto-flow:row dense;}
+  #priority #hOggiBias{grid-column:span 4;} #priority #hOggiCats{grid-column:span 8;}
+  #priority #nextEventContainer{grid-column:1 / span 7; grid-row:span 2;}
+  #priority #hOggiDrivers, #priority #hOggiRisks{grid-column:8 / span 5;}
+}
+/* indicatori "cosa prezza il mercato": 5 colonne su schermo largo, 3 su schermo medio; l'ultima riga si allarga da sola */
+@media(min-width:1100px){ .h-kpis.big{grid-template-columns:repeat(5,minmax(0,1fr));} }
+@media(min-width:700px) and (max-width:1099px){ .h-kpis.big{grid-template-columns:repeat(3,minmax(0,1fr));} }
+/* tessere degli indicatori macro: 4 per riga (8 tessere = 2 righe piene) */
+@media(min-width:700px){ .h-inds{grid-template-columns:repeat(4,minmax(0,1fr));} }
+/* prossimo evento chiave: dati a sinistra, scenari e dossier a destra */
+.h-nx{display:grid; gap:14px 30px;} .h-nxl,.h-nxr{display:grid; gap:13px; align-content:start; min-width:0;}
+@media(min-width:1180px){ .h-nx{grid-template-columns:minmax(300px,.72fr) minmax(0,1.5fr);} .h-nxl{padding-right:30px; border-right:1px solid var(--line);} }
+
+/* ---------- superfici più morbide, con profondità ---------- */
+.h-card{
+  border-radius:18px; padding:20px 22px 16px; gap:13px; border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,0) 42%), var(--panel);
+  box-shadow:var(--shadow); transition:border-color .2s, transform .2s, box-shadow .2s;
+}
+.h-card:hover{border-color:rgba(94,168,245,.38); transform:translateY(-2px); box-shadow:var(--shadow), 0 18px 40px -22px rgba(94,168,245,.35);}
+.h-card.h-accent{border-color:rgba(94,168,245,.32); background:linear-gradient(165deg,rgba(94,168,245,.11),var(--panel) 62%);}
+.h-card h4{font-size:15.5px; letter-spacing:-.012em;}
+.h-ico{width:34px; height:34px; border-radius:11px;}
+.h-ico svg{width:18px; height:18px;}
+.h-note{font-size:13px;} .h-plain{font-size:14px;} .h-clamp{font-size:14px;}
+.h-card > .h-ft{font-size:12px; line-height:1.5;}
+.h-kpis.wide{border-radius:18px; border-color:var(--line); box-shadow:var(--shadow);}
+.h-bd{padding:4px 7px;}
+@media(prefers-reduced-motion:reduce){ .h-card,.h-card:hover{transition:none; transform:none;} }
+
+/* ---------- intestazioni di sezione: numero in evidenza, titolo grande, spiegazione sotto ---------- */
+.sec-head{align-items:center; gap:14px; border-bottom:0; padding:0; margin:0 0 18px;}
+.sec-num{flex:none; display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:var(--accent-soft); border:1px solid rgba(94,168,245,.32); color:var(--accent); font:600 13px 'IBM Plex Mono',monospace;}
+.sec-ttl{display:grid; gap:2px; min-width:0; flex:1;}
+.sec-head h2{font-size:23px; font-weight:700; letter-spacing:-.022em; line-height:1.15; flex:none;}
+.sec-ttl .sec-desc{margin:0; max-width:none; text-align:left; font-size:13px; color:var(--dim); display:block;}
+.sec-chevron{width:18px; height:18px; margin-left:auto; padding:0; color:var(--dim);}
+.sec-head:hover .sec-chevron{color:var(--accent);}
+@media(max-width:860px){ .sec-num{width:36px; height:36px; font-size:12px; border-radius:11px;} .sec-head h2{font-size:19px;} }
+@media(max-width:700px){ .sec-head{flex-wrap:nowrap;} .sec-head h2{flex:none;} .sec-ttl .sec-desc{order:0; flex-basis:auto;} }
+
+/* spiegazione "in parole semplici" (modalità Principiante) */
+.sec-help{display:none; gap:12px; align-items:flex-start; margin:-6px 0 18px; padding:13px 17px; border-radius:14px; background:rgba(94,168,245,.065); border:1px solid rgba(94,168,245,.2); font-size:13.5px; line-height:1.6; color:var(--text2);}
+body.mode-beginner .sec-help{display:flex;}
+section.collapsed .sec-help{display:none!important;}
+.sec-help svg{flex:none; width:20px; height:20px; margin-top:1px; color:var(--accent); fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round;}
+.sec-help b{color:var(--text); font-weight:600;}
+
+/* separatori dei tre gruppi (stessi nomi del menu) */
+.grp-band{display:flex; align-items:center; gap:14px; margin:4px 0 24px; font:600 11px/1 'IBM Plex Mono',monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--dim);}
+.grp-band span{padding:7px 13px; border-radius:99px; border:1px solid var(--line); background:var(--panel);}
+.grp-band::after{content:""; flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent);}
+
+/* ---------- IL POLSO DEL MERCATO (riassunto in 10 secondi) ---------- */
+.pulse{margin:0 0 40px;}
+.pulse-hd{display:flex; align-items:flex-end; justify-content:space-between; gap:10px 24px; flex-wrap:wrap; margin-bottom:16px;}
+.pulse-hd h2{font:700 26px/1.15 'Space Grotesk',sans-serif; letter-spacing:-.025em;}
+.pulse-hd p{color:var(--dim); font-size:13.5px; margin-top:4px;}
+.pulse-leg{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:12px; color:var(--text2);}
+.pulse-leg span{display:inline-flex; align-items:center; gap:7px;} .pulse-leg i{width:9px; height:9px; border-radius:50%;}
+.pulse-grid{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:16px;}
+@media(max-width:1699px){ .pulse-grid{grid-template-columns:repeat(3,minmax(0,1fr));} }
+@media(max-width:760px){ .pulse-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;} .pulse-hd h2{font-size:21px;} }
+.pt{position:relative; display:flex; flex-direction:column; gap:7px; text-align:left; padding:18px 18px 16px; border-radius:18px; border:1px solid var(--line); color:inherit; font:inherit; cursor:pointer; overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0) 50%), var(--panel); box-shadow:var(--shadow); transition:transform .2s, border-color .2s;
+  --tone:var(--accent);}
+.pt::before{content:""; position:absolute; left:0; right:0; top:0; height:3px; background:var(--tone);}
+.pt:hover{transform:translateY(-3px); border-color:color-mix(in srgb,var(--tone) 55%,transparent);}
+.pt:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.pt.g{--tone:var(--green);} .pt.r{--tone:var(--red);} .pt.y{--tone:var(--gold);} .pt.b{--tone:var(--accent);}
+.pt .l{font:600 10.5px/1.2 'IBM Plex Mono',monospace; letter-spacing:.11em; text-transform:uppercase; color:var(--dim);}
+.pt .v{font:700 27px/1.1 'Space Grotesk',sans-serif; letter-spacing:-.02em; color:var(--tone); min-height:30px; display:flex; align-items:baseline; gap:6px; flex-wrap:wrap;}
+.pt .v small{font:500 13px 'IBM Plex Mono',monospace; color:var(--dim);}
+.pt .s{font-size:12.8px; line-height:1.45; color:var(--text2);}
+.pt .go{margin-top:auto; padding-top:4px; font-size:12px; font-weight:500; color:var(--accent); opacity:.85;}
+.pt-bar{position:relative; height:7px; border-radius:4px; margin-top:4px; background:linear-gradient(90deg,var(--red),var(--gold) 50%,var(--green));} .pt-bar i{position:absolute; top:-4px; width:3px; height:15px; margin-left:-1.5px; border-radius:2px; background:var(--text); box-shadow:0 0 0 2px var(--panel);}
+.pt-barl{display:flex; justify-content:space-between; font:500 9.5px 'IBM Plex Mono',monospace; color:var(--dim2); letter-spacing:.04em;}
+.pt.skel .v, .pt.skel .s{color:transparent; border-radius:6px; background:linear-gradient(90deg,var(--panel2),rgba(255,255,255,.07),var(--panel2)); background-size:200% 100%; animation:skel 1.4s linear infinite;} .pt.skel .v{width:60%;} .pt.skel .s{width:90%; min-height:15px;}
+@keyframes skel{to{background-position:-200% 0;}}
+@media(prefers-reduced-motion:reduce){ .pt,.pt:hover{transition:none; transform:none;} .pt.skel .v,.pt.skel .s{animation:none;} }
+
+/* guida di lettura (Principiante) */
+.pulse-guide{display:none; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:16px;}
+body.mode-beginner .pulse-guide{display:grid;}
+@media(max-width:760px){ .pulse-guide{grid-template-columns:1fr;} }
+.pg{display:flex; gap:13px; align-items:flex-start; padding:15px 17px; border-radius:16px; background:rgba(94,168,245,.06); border:1px dashed rgba(94,168,245,.3);}
+.pg .n{flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; background:var(--accent); color:#06101F; font:700 13px 'Space Grotesk',sans-serif;}
+.pg b{display:block; font:600 14px 'Space Grotesk',sans-serif; margin-bottom:2px;} .pg span{font-size:13px; color:var(--text2); line-height:1.5;}
+.pulse-gloss{display:none; margin-top:14px; border-radius:16px; border:1px solid var(--line); background:var(--panel);}
+body.mode-beginner .pulse-gloss{display:block;}
+.pulse-gloss summary{cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px; padding:13px 17px; font:600 13.5px 'Space Grotesk',sans-serif;} .pulse-gloss summary::-webkit-details-marker{display:none;}
+.pulse-gloss summary::after{content:"▾"; margin-left:auto; color:var(--dim); transition:transform .2s;} .pulse-gloss[open] summary::after{transform:rotate(180deg);}
+.gl-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px 24px; padding:2px 17px 17px;}
+.gl-grid div{font-size:13px; color:var(--text2); line-height:1.5;} .gl-grid b{color:var(--text); font-weight:600;}
+
+/* parole tecniche: sottolineatura tratteggiata + spiegazione al passaggio del mouse */
+.has-tip{cursor:help;}
+.h-chip.has-tip,.h-bd.has-tip{text-decoration:underline dotted rgba(255,255,255,.28); text-underline-offset:3px;}
+
+/* ---------- ritorno in cima ---------- */
+#toTop{position:fixed; right:22px; bottom:22px; z-index:90; width:46px; height:46px; border-radius:50%; border:1px solid rgba(94,168,245,.4); background:rgba(15,21,40,.92); color:var(--accent); display:grid; place-items:center; cursor:pointer; opacity:0; pointer-events:none; transform:translateY(10px); transition:all .25s; box-shadow:0 12px 30px -10px rgba(0,0,0,.7); backdrop-filter:blur(8px);}
+#toTop.on{opacity:1; pointer-events:auto; transform:none;} #toTop:hover{background:var(--accent); color:#06101F;}
+#toTop svg{width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
+@media(max-width:860px){ #toTop{right:14px; bottom:14px; width:42px; height:42px;} }
+
+/* ---------- comparsa delle sezioni quando si scorre ---------- */
+.rv{opacity:0; transform:translateY(18px); transition:opacity .55s ease, transform .55s ease;}
+.rv.in{opacity:1; transform:none;}
+@media(prefers-reduced-motion:reduce){ .rv{opacity:1; transform:none; transition:none;} }
+
+/* ===================== MOVIMENTO, COLORE E PROFONDITÀ (v3.1) ===================== */
+
+/* ---------- sfondo "aurora": tre bagliori che si spostano lentamente dietro ai contenuti ---------- */
+#aurora{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;}
+#aurora i{position:absolute; width:64vmax; height:64vmax; border-radius:50%; will-change:transform;}
+#aurora i:nth-child(1){left:-20vmax; top:-26vmax; background:radial-gradient(circle,rgba(94,168,245,.30),transparent 62%); animation:aur1 40s ease-in-out infinite alternate;}
+#aurora i:nth-child(2){right:-24vmax; top:2vmax; background:radial-gradient(circle,rgba(167,139,250,.22),transparent 62%); animation:aur2 52s ease-in-out infinite alternate;}
+#aurora i:nth-child(3){left:12vmax; bottom:-34vmax; background:radial-gradient(circle,rgba(45,212,191,.17),transparent 62%); animation:aur3 60s ease-in-out infinite alternate;}
+@keyframes aur1{to{transform:translate3d(16vmax,12vmax,0) scale(1.18);}}
+@keyframes aur2{to{transform:translate3d(-14vmax,16vmax,0) scale(1.12);}}
+@keyframes aur3{to{transform:translate3d(18vmax,-10vmax,0) scale(1.2);}}
+#aurora::after{content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.075) 1px,transparent 1px); background-size:30px 30px; -webkit-mask-image:linear-gradient(180deg,#000 0,transparent 60%); mask-image:linear-gradient(180deg,#000 0,transparent 60%);}
+header, .layout, footer{position:relative; z-index:1;}
+@media(prefers-reduced-motion:reduce){ #aurora i{animation:none;} }
+
+/* ---------- un colore per ogni sezione ---------- */
+main > section{--sec:#5EA8F5;}
+section#priority{--sec:#5EA8F5;} section#marketmon{--sec:#2DD4BF;} section#hub-cal{--sec:#F5B94D;} section#hub-sintesi{--sec:#A78BFA;}
+section#sentiment{--sec:#F472B6;} section#hub-pos{--sec:#FB923C;} section#macro{--sec:#38BDF8;} section#hub-bc{--sec:#818CF8;} section#hub-geo{--sec:#E879F9;}
+.sec-num{background:color-mix(in srgb,var(--sec,#5EA8F5) 15%,transparent); border-color:color-mix(in srgb,var(--sec,#5EA8F5) 48%,transparent); color:var(--sec,#5EA8F5); box-shadow:0 0 26px -8px var(--sec,#5EA8F5);}
+.sec-head h2{background:linear-gradient(90deg,#fff 30%,color-mix(in srgb,var(--sec,#5EA8F5) 55%,#fff)); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;}
+.sec-head{position:relative; padding-bottom:12px;}
+.sec-head::after{content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:linear-gradient(90deg,color-mix(in srgb,var(--sec,#5EA8F5) 70%,transparent),rgba(255,255,255,.06) 55%,transparent);}
+section .h-ico{background:color-mix(in srgb,var(--sec,#5EA8F5) 15%,transparent); color:var(--sec,#5EA8F5); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--sec,#5EA8F5) 28%,transparent);}
+section .h-card:hover{border-color:color-mix(in srgb,var(--sec,#5EA8F5) 55%,transparent);}
+
+/* ---------- riflesso che segue il mouse sulle card ---------- */
+.h-card, .pt{position:relative;}
+.h-card::after, .pt::after{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; transition:opacity .3s;
+  background:radial-gradient(360px circle at var(--mx,50%) var(--my,0%), color-mix(in srgb,var(--sec,var(--accent)) 17%,transparent), transparent 65%);}
+.h-card:hover::after, .pt:hover::after{opacity:1;}
+@media(hover:none){ .h-card::after,.pt::after{display:none;} }
+
+/* ---------- vita nei dettagli ---------- */
+.h-bd.live::before{content:""; display:inline-block; width:6px; height:6px; margin-right:5px; vertical-align:1px; border-radius:50%; background:currentColor; animation:ping 1.9s ease-out infinite;}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55);} 75%,100%{box-shadow:0 0 0 7px rgba(52,211,153,0);}}
+.hd-logo{box-shadow:0 6px 22px -8px rgba(94,168,245,.6); animation:logoGlow 4.5s ease-in-out infinite alternate;}
+@keyframes logoGlow{to{box-shadow:0 8px 30px -4px rgba(94,168,245,.85), 0 0 0 1px rgba(94,168,245,.35);}}
+.h-bias .risk-off, .pt.r .v{text-shadow:0 0 30px rgba(240,104,94,.5);}
+.h-bias .risk-on, .pt.g .v{text-shadow:0 0 30px rgba(52,211,153,.45);}
+.h-bias .neutrale, .pt.y .v{text-shadow:0 0 30px rgba(224,169,77,.45);}
+.pt.b .v{text-shadow:0 0 30px rgba(94,168,245,.4);}
+.h-cd{text-shadow:0 0 24px rgba(224,169,77,.5);}
+.mono, .h-kpi b, .h-px b, .h-big, .pt .v, .h-ind .v, .h-fg b{font-variant-numeric:tabular-nums;}
+.h-chip.g{background:linear-gradient(180deg,rgba(52,211,153,.16),rgba(52,211,153,.05));}
+.h-chip.r{background:linear-gradient(180deg,rgba(240,104,94,.16),rgba(240,104,94,.05));}
+.h-chip.y{background:linear-gradient(180deg,rgba(224,169,77,.16),rgba(224,169,77,.05));}
+.h-btn, .hd-ic, .pt, .mn-item{transition:transform .15s, border-color .2s, background .2s, color .2s;}
+.h-btn:active, .hd-ic:active{transform:scale(.96);}
+
+/* ---------- barre e misuratori: si riempiono quando compaiono ---------- */
+.h-rbar, .h-split, .h-stack, .h-meter, .h-gradbar, .pt-bar{animation:wipe 1.15s cubic-bezier(.2,.7,.2,1) backwards;}
+@keyframes wipe{from{clip-path:inset(-8px 100% -8px 0);} to{clip-path:inset(-8px -8px -8px 0);}}
+.h-tr i, .h-stt .cv i{transform-origin:left center; animation:growX 1.05s cubic-bezier(.2,.7,.2,1) backwards;}
+@keyframes growX{from{transform:scaleX(0);}}
+.h-fwcol .bar i{transform-origin:bottom; animation:growY 1.1s cubic-bezier(.2,.7,.2,1) backwards;}
+@keyframes growY{from{transform:scaleY(0);}}
+.pt-bar i{transition:left 1.2s cubic-bezier(.2,.8,.2,1);}
+@media(prefers-reduced-motion:reduce){ .h-rbar,.h-split,.h-stack,.h-meter,.h-gradbar,.pt-bar,.h-tr i,.h-stt .cv i,.h-fwcol .bar i{animation:none;} .pt-bar i{transition:none;} .h-bd.live::before,.hd-logo{animation:none;} }
+
+/* ---------- tessere "polso": comparsa a cascata e mini-grafico ---------- */
+.pt{animation:ptIn .75s cubic-bezier(.2,.7,.2,1) backwards;}
+.pt:nth-child(2){animation-delay:.07s;} .pt:nth-child(3){animation-delay:.14s;} .pt:nth-child(4){animation-delay:.21s;} .pt:nth-child(5){animation-delay:.28s;} .pt:nth-child(6){animation-delay:.35s;}
+@keyframes ptIn{from{opacity:0; transform:translateY(20px) scale(.97);}}
+.pt .h-spark{position:absolute; right:12px; bottom:14px; width:44%; height:34px; opacity:.95; margin:0;}
+@media(prefers-reduced-motion:reduce){ .pt{animation:none;} }
+.rv{transform:none; transition:opacity .6s ease;}
+
+/* ---------- ultime notizie (fascia che scorre sotto le tessere) ---------- */
+.pn{display:flex; align-items:center; gap:14px; margin-top:16px; padding:11px 16px; border-radius:14px; border:1px solid var(--line); background:linear-gradient(90deg,rgba(94,168,245,.08),rgba(255,255,255,.015)); overflow:hidden;}
+.pn[hidden]{display:none;}
+.pn-tag{flex:none; display:inline-flex; align-items:center; gap:8px; font:600 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--accent);}
+.pn-tag i{width:7px; height:7px; border-radius:50%; background:var(--red); animation:ping2 1.6s ease-out infinite;}
+@keyframes ping2{0%{box-shadow:0 0 0 0 rgba(240,104,94,.6);} 75%,100%{box-shadow:0 0 0 8px rgba(240,104,94,0);}}
+.pn-a{flex:1; min-width:0; display:flex; align-items:baseline; gap:10px; color:var(--text); text-decoration:none; font-size:13.5px; overflow:hidden; white-space:nowrap;}
+.pn-a:hover span{text-decoration:underline;}
+.pn-a b{flex:none; font:600 12px 'IBM Plex Mono',monospace; color:var(--text2);} .pn-a em{flex:none; font:500 11.5px 'IBM Plex Mono',monospace; color:var(--dim); font-style:normal;}
+.pn-a span{min-width:0; overflow:hidden; text-overflow:ellipsis;}
+.pn-dots{flex:none; display:flex; gap:5px;} .pn-dots i{width:6px; height:6px; border-radius:50%; background:var(--border); transition:background .3s, transform .3s;} .pn-dots i.on{background:var(--accent); transform:scale(1.25);}
+@media(max-width:700px){ .pn{padding:10px 12px; gap:10px;} .pn-dots{display:none;} .pn-a em{display:none;} }
+
+/* ---------- spiegazioni dentro le card ("in parole semplici") ---------- */
+.h-why{display:flex; gap:9px; align-items:flex-start; margin:0; padding:9px 12px; border-radius:11px; background:rgba(94,168,245,.07); border:1px solid rgba(94,168,245,.16); font-size:12.8px; line-height:1.5; color:var(--text2);}
+.h-why svg{flex:none; width:16px; height:16px; margin-top:2px; color:var(--accent); fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round;}
+.h-why b{color:var(--text); font-weight:600;} .h-why span{min-width:0;}
+body.mode-expert .h-why{display:none;}
+/* retail: colonna "Lettura" */
+.h-rrow{grid-template-columns:96px 1fr 104px 72px 62px 112px;}
+.h-rrow .rd{justify-self:end;} .h-rrow.hh .rd{text-align:right;}
+.h-rrow .rd .h-chip{padding:5px 8px; font-size:10.5px;}
+@media(max-width:900px){ .h-rrow{grid-template-columns:90px 1fr 100px 66px 56px 100px;} }
+@media(max-width:700px){ .h-rrow{grid-template-columns:70px 1fr 62px;} .h-rrow .rd{grid-column:1/-1; justify-self:start;} .h-rrow.hh .rd{display:none;} }
+
 </style>
 </head>
 <body>
@@ -729,7 +982,7 @@ details.h-det > .h-det-body{padding-top:10px; display:grid; gap:10px;}
 
 <header>
   <div class="hd-brand">
-    <img class="hd-logo" src="/icons/icon-192.png?v=2" width="42" height="42" alt="">
+    <img class="hd-logo" src="/icons/icon-192.png?v=3" width="42" height="42" alt="">
     <h1>MACRO HUB <span>TRADING</span></h1>
   </div>
   <div class="hd-side">
@@ -1129,16 +1382,17 @@ function renderKeyEvent(ev){
   const d = new Date(ev.utc);
   const dateStr = d.toLocaleDateString('it-IT', {weekday:'long', day:'2-digit', month:'long', timeZone:'Europe/Rome'});
   const timeStr = d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'});
-  container.innerHTML = hCard({span:0, icon:'cal', title:'Prossimo evento chiave', bd:['live', 'ai'], body:`
+  container.innerHTML = hCard({span:0, icon:'cal', title:'Prossimo evento chiave', bd:['live', 'ai'], body:`<div class="h-nx"><div class="h-nxl">
     <p class="h-hl">${escHtml(ev.title)}</p>
     <p class="h-note"><span class="h-chip y">Alto impatto</span>&nbsp; ${escHtml(dateStr)} · ore ${timeStr} (Italia)</p>
     <div><div class="h-cd" id="ecCountdown">--:--:--:--</div><p class="h-note" style="margin-top:5px;">giorni : ore : minuti : secondi</p></div>
     <div class="h-kpis">${hKpi('Attese', escHtml(ev.attese))}${hKpi('Precedente', escHtml(ev.precedente))}${hKpi('Actual', ev.actual != null ? escHtml(ev.actual) : '—')}</div>
+    </div><div class="h-nxr">
     <div class="h-scn">
       <div class="h-sc bad"><span class="l">Se esce sopra le attese</span><p id="ecIfAbove">Analisi AI in caricamento…</p></div>
       <div class="h-sc good"><span class="l">Se esce sotto le attese</span><p id="ecIfBelow">Analisi AI in caricamento…</p></div>
     </div>
-    <div id="ecAiDossier"></div>`, foot:'Attese e precedente: consensus del calendario economico · scenari e dossier: analisi AI'});
+    <div id="ecAiDossier"></div></div></div>`, foot:'Attese e precedente: consensus del calendario economico · scenari e dossier: analisi AI'});
   loadEventDossier(ev);
 }
 
@@ -1989,7 +2243,7 @@ function applySentimentLive(data){
   if(!data || !data.categories || !data.categories.length) return false;
   HUB.sent = data; delete HUB.fail.sent;
   const metaEl = document.getElementById('snMeta');
-  if(metaEl) metaEl.innerHTML = `generata alle <b>${hTime(data.generatedAt)}</b> · ${data.newsCount||0} news${data.ai===false?' · fallback':''} · si rigenera da sola oltre le 6h di età`;
+  if(metaEl) metaEl.innerHTML = `generata alle <b>${hTime(data.generatedAt)}</b> (${hAgo(data.generatedAt)}) · ${data.newsCount||0} news${data.ai===false?' · fallback':''} · si rigenera da sola oltre le 3h di età`;
   renderHubSent(); renderOggiCats(); renderOggiRisks();
   return true;
 }
@@ -2080,7 +2334,7 @@ function applySentimentAssetsLive(market, dxyCorr){
     return {...a, chg, corr, long, short};
   });
   if(!rows.some(r=>r.long != null || r.chg != null)){ HUB.rtFail = true; renderHubSent(); return false; }
-  HUB.rt = rows; HUB.rtFail = false;
+  HUB.rt = rows; HUB.rtFail = false; HUB.rtAsOf = lastRetailAsOf;
   renderHubSent();   // la card "Retail vs prezzo" dell'hub Sentiment si ridisegna da HUB.rt
   return true;
 }
@@ -2451,10 +2705,10 @@ function renderHubPos(){
   let mood = '';
   if(fg){
     let acc = 0; const segs = [25, 20, 10, 20, 25].map(w => { const lo = acc, hi = acc + w; acc = hi; return `<i style="flex:${w}" class="${fg.score >= lo && (fg.score < hi || hi === 100) ? 'on' : ''}"></i>`; }).join('');
-    mood += `<div class="h-fg"><b>${fg.score}</b><span>${escHtml(fg.ratingIt)} — Fear &amp; Greed</span></div><div class="h-meter">${segs}<span class="pin" style="left:${fg.score}%"></span></div><div class="h-ml"><span>Paura estrema</span><span>Avidità estrema</span></div><p class="h-note">ieri ${fg.previousClose} · 7 giorni fa ${fg.previousWeek} · 30 giorni fa ${fg.previousMonth} · 1 anno fa ${fg.previousYear}</p>`;
+    mood += `<div class="h-fg"><b>${fg.score}</b><span>${escHtml(fg.ratingIt)} — Fear &amp; Greed</span></div><div class="h-meter">${segs}<span class="pin" style="left:${fg.score}%"></span></div><div class="h-ml"><span>Paura estrema</span><span>Avidità estrema</span></div><p class="h-note">ieri ${fg.previousClose} · 7 giorni fa ${fg.previousWeek} · 30 giorni fa ${fg.previousMonth} · 1 anno fa ${fg.previousYear}</p>${hWhy(FG_WHY)}`;
   }
   if(aa){
-    mood += `<div><span class="h-lbl">AAII — sondaggio del ${escHtml(aa.date)}</span><div class="h-stack"><i style="flex:${aa.bullish};background:var(--green)"></i><i style="flex:${aa.neutral};background:var(--dim2)"></i><i style="flex:${aa.bearish};background:var(--red)"></i></div><div class="h-legend"><span>Bullish <b>${hNf(aa.bullish, 1)}%</b></span><span>Neutrale <b>${hNf(aa.neutral, 1)}%</b></span><span>Bearish <b>${hNf(aa.bearish, 1)}%</b></span></div></div>`;
+    mood += `<div><span class="h-lbl">AAII — sondaggio del ${escHtml(aa.date)}</span><div class="h-stack"><i style="flex:${aa.bullish};background:var(--green)"></i><i style="flex:${aa.neutral};background:var(--dim2)"></i><i style="flex:${aa.bearish};background:var(--red)"></i></div><div class="h-legend"><span>Bullish <b>${hNf(aa.bullish, 1)}%</b></span><span>Neutrale <b>${hNf(aa.neutral, 1)}%</b></span><span>Bearish <b>${hNf(aa.bearish, 1)}%</b></span></div>${hWhy(AAII_WHY)}</div>`;
   }
   if(!mood) mood = P === null ? '<p class="h-note">Indicatori di sentiment in caricamento…</p>' : '<p class="h-note">Fear &amp; Greed e AAII non raggiungibili in questo momento.</p>';
   html += hCard({span:12, icon:'smile', title:'Umore degli investitori', bd:['live','ai'], body:`<div class="h-two">${'<div>' + mood + '</div>'}<div>${S && S.sentNote ? hExp(S.sentNote, 8) : '<p class="h-note">Lettura AI in caricamento…</p>'}</div></div>`, foot:'Fonti: CNN Fear &amp; Greed e AAII, letti dal vivo. NAAIM e CBOE Put/Call non sono mostrati: non esiste una fonte gratuita aggiornata.'});
@@ -2612,6 +2866,34 @@ function renderHubMacro(){
 }
 
 // ---- 04 Sentiment: notizie per categoria, retail, validazione incrociata
+// Spiegazioni "in parole semplici" sotto i titoli delle card di sentiment (si nascondono con l'interruttore "Esperto")
+const hWhy = t => `<p class="h-why"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.6 1 2.5h6c0-.9.2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg><span>${t}</span></p>`;
+const hAgo = iso => { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 2 ? 'adesso' : m < 90 ? m + ' min fa' : Math.round(m / 60) + ' h fa'; };
+const CAT_WHY = {
+  fed_rates:   'Cosa dicono le notizie sui tassi della Fed. <b>Bearish</b> = tassi alti più a lungo, mercati più prudenti; <b>Bullish</b> = attese di tassi più bassi, più voglia di rischio.',
+  geopolitics: 'Notizie su guerre, tensioni e accordi. Il segno dice se spingono i prezzi degli asset più sensibili (petrolio, oro, rifugi) verso l\'alto o verso il basso.',
+  macro:       'Dati economici su inflazione, lavoro e crescita. <b>Bullish</b> = dati che sostengono i mercati, <b>Bearish</b> = dati che li frenano.',
+  dxy:         'Il dollaro. <b>Bullish</b> = tende a rafforzarsi, <b>Bearish</b> = tende a indebolirsi.',
+  commodities: 'Oro e materie prime. <b>Bullish</b> = prezzi in tendenza al rialzo, <b>Bearish</b> = al ribasso.',
+  equity:      'Azioni e indici. <b>Bullish</b> = clima favorevole alle azioni, <b>Bearish</b> = clima sfavorevole.',
+};
+const XV_WHY = {
+  aligned:  'Le notizie e i dati reali (COT, open interest, macro) raccontano la stessa storia: il segnale è più solido.',
+  conflict: 'Notizie e dati reali si contraddicono: meglio prudenza, il movimento potrebbe non essere sostenuto.',
+};
+const FG_WHY = 'Va da 0 a 100: sotto 25 gli investitori sono in <b>paura estrema</b>, sopra 75 in <b>avidità estrema</b>. Gli estremi spesso precedono un\'inversione.';
+const AAII_WHY = 'Ogni settimana l\'AAII chiede a investitori individuali se si aspettano mercati in rialzo (<b>bullish</b>), ribasso (<b>bearish</b>) o laterali. Storicamente la media è circa 37% bullish e 31% bearish.';
+// retail: lettura sintetica di uno split long/short (folla molto sbilanciata = spesso segnale contrarian)
+const rtLabel = long => long == null ? null : long >= 65 ? ['y', 'Long', 'La maggior parte dei trader retail ha comprato: spesso è un segnale contrarian (rischio di ribasso).'] : long <= 35 ? ['y', 'Short', 'La maggior parte dei trader retail ha venduto: spesso è un segnale contrarian (rischio di rialzo).'] : ['', 'Equilibrata', 'Compratori e venditori sono vicini al 50%: la folla non dà un segnale chiaro.'];
+const rtPill = r => { const L = rtLabel(r.long); return L ? `<span class="h-chip ${L[0]} has-tip" title="${L[2]}">${L[1]}</span>` : '<span class="h-chip has-tip" title="Split stimato dalla variazione di prezzo di oggi: non è posizionamento reale.">Stima</span>'; };
+function hRetailHow(R){
+  const real = (R || []).filter(r => r.long != null);
+  if(!real.length) return '';
+  const top = real.reduce((a, b) => Math.abs(b.long - 50) > Math.abs(a.long - 50) ? b : a);
+  const lg = Math.round(top.long), sh = Math.round(top.short);
+  const lean = lg >= 65 || lg <= 35 ? ' Quando la folla è così sbilanciata il prezzo spesso va nella direzione opposta: è la lettura <b>contrarian</b>.' : ' Vicino al 50% la folla è divisa e non dà un segnale chiaro.';
+  return hWhy(`<b>Come leggerla:</b> <b>long</b> = trader che comprano (scommettono sul rialzo), <b>short</b> = che vendono (ribasso). Esempio dai dati di adesso: <b>${escHtml(top.name)} ${lg}% long / ${sh}% short</b> → su 100 trader retail, ${lg} puntano al rialzo e ${sh} al ribasso.${lean}`);
+}
 const RT_OP_TEXT = '<b>Regola operativa:</b> se DXY scende insieme ai rendimenti reali, preferire posizioni lunghe su EUR/USD, GBP/USD e sui metalli; se DXY sale insieme ai rendimenti, ridurre o invertire l\'esposizione risk-on. Il posizionamento retail (Dukascopy SWFX) va letto spesso in chiave contrarian quando molto sbilanciato (oltre il 65-70% da un lato); dove non disponibile, lo split riflette semplicemente l\'ampiezza della variazione di oggi. La correlazione DXY è calcolata sui rendimenti giornalieri degli ultimi 30 giorni.';
 function hRetail(){
   const R = HUB.rt;
@@ -2622,12 +2904,12 @@ function hRetail(){
     else if(r.chg != null){ const s = chgToSplit(r.chg); green = s.green; red = s.red; }
     const bar = green == null ? '<div class="h-rbar"></div>' : `<div class="h-rbar" role="img" aria-label="${green}% long, ${red}% short"><i class="g" style="flex:${green}"></i><i class="r" style="flex:${red}"></i></div>`;
     const split = green == null ? 'N/D' : `<span class="h-up">${green}%</span> / <span class="h-down">${red}%</span>`;
-    return `<div class="h-rrow"><span class="nm">${escHtml(r.name)}</span>${bar}<span class="sp">${split}</span><span class="ch">${r.chg == null ? 'N/D' : `<span class="${hDir(r.chg)}">${hSg(r.chg)}%</span>`}</span><span class="co">${r.corr == null ? '—' : fmtCorr(r.corr)}</span></div>`;
+    return `<div class="h-rrow"><span class="nm">${escHtml(r.name)}</span>${bar}<span class="sp">${split}</span><span class="ch">${r.chg == null ? 'N/D' : `<span class="${hDir(r.chg)}">${hSg(r.chg)}%</span>`}</span><span class="co">${r.corr == null ? '—' : fmtCorr(r.corr)}</span><span class="rd">${rtPill(r)}</span></div>`;
   }).join('');
   const readings = R.map(r => `<p class="h-plain"><b>${escHtml(r.name)}</b> — ${escHtml(sentimentReading(r))}</p>`).join('');
   return hCard({span:12, icon:'layers', title:'Retail vs prezzo — correlazioni e sentiment asset', bd:['live'],
-    body:`<div><div class="h-rrow hh"><span>Asset</span><span class="bar">Retail long / short</span><span class="sp"></span><span class="ch">Var. oggi</span><span class="co">Corr. DXY</span></div>${rows}</div><details class="h-det"><summary>Lettura per asset</summary><div class="h-det-body">${readings}</div></details>${hExp(RT_OP_TEXT, 3)}`,
-    foot:'Posizionamento retail: Dukascopy SWFX Sentiment Index, ogni 30 minuti · correlazione DXY a 30 giorni sui rendimenti giornalieri'});
+    body:`${hRetailHow(R)}<div><div class="h-rrow hh"><span>Asset</span><span class="bar">Retail long / short</span><span class="sp"></span><span class="ch">Var. oggi</span><span class="co">Corr. DXY</span><span class="rd">Lettura</span></div>${rows}</div><details class="h-det"><summary>Lettura per asset</summary><div class="h-det-body">${readings}</div></details>${hExp(RT_OP_TEXT, 3)}`,
+    foot:'Posizionamento retail: Dukascopy SWFX Sentiment Index, aggiornato ogni 30 minuti' + (HUB.rtAsOf ? ' · ultimo dato delle ' + hTime(HUB.rtAsOf) + ' (' + hAgo(HUB.rtAsOf) + ')' : '') + ' · correlazione DXY a 30 giorni sui rendimenti giornalieri'});
 }
 function renderHubSent(){
   const el = document.getElementById('hSentGrid'); if(!el) return;
@@ -2636,14 +2918,14 @@ function renderHubSent(){
   if(S && S.categories && S.categories.length){
     html += S.categories.map(c => {
       const tr = SN_TREND[c.bias] || SN_TREND.NEUTRAL, src = (c.sources || []).filter(Boolean);
-      return hCard({span:4, icon:'news', title:c.label, bd:['ai'], cls:'h-tile', body:`<span class="h-chip ${tr[0]}">${tr[1]}</span>${hExp(c.narrative, 5)}`, foot:src.length ? `Fonti: ${escHtml(src.join(', '))}` : ''});
+      return hCard({span:4, icon:'news', title:c.label, bd:['ai'], cls:'h-tile', body:`<span class="h-chip ${tr[0]}">${tr[1]}</span>${hWhy(CAT_WHY[c.key] || 'Il segno dice se le notizie di questo tema spingono i prezzi in su (Bullish) o in giù (Bearish).')}${hExp(c.narrative, 5)}`, foot:src.length ? `Fonti: ${escHtml(src.join(', '))}` : ''});
     }).join('');
   } else html += hLoading('Sentiment per categoria', 'news', 12, 'sent');
   html += '<div class="h-subhd">Posizionamento retail e correlazioni</div>' + hRetail();
   html += '<div class="h-subhd">Validazione incrociata — news vs dati reali</div>';
   if(X && X.xval && X.xval.length){
-    html += X.xval.map(x => hCard({span:4, icon:'layers', title:x.title, bd:['ai'], cls:'h-tile', body:`<span class="h-chip ${x.status === 'aligned' ? 'g' : 'r'}">${x.status === 'aligned' ? 'Allineato' : 'In conflitto'}</span>${hExp(x.text, 5)}`})).join('');
-    if(X.xvBias) html += hCard({span:12, icon:'scale', title:'Bias risultante', bd:['ai'], cls:'h-accent', body:hExp(X.xvBias, 3), foot:'Confronto tra la narrativa delle news e ciò che mostrano COT, open interest e quadro macro'});
+    html += X.xval.map(x => hCard({span:4, icon:'layers', title:x.title, bd:['ai'], cls:'h-tile', body:`<span class="h-chip ${x.status === 'aligned' ? 'g' : 'r'}">${x.status === 'aligned' ? 'Allineato' : 'In conflitto'}</span>${hWhy(x.status === 'aligned' ? XV_WHY.aligned : XV_WHY.conflict)}${hExp(x.text, 5)}`})).join('');
+    if(X.xvBias) html += hCard({span:12, icon:'scale', title:'Bias risultante', bd:['ai'], cls:'h-accent', body:hWhy('È la sintesi finale: mette insieme le notizie con ciò che mostrano COT, open interest e dati macro.') + hExp(X.xvBias, 3), foot:'Confronto tra la narrativa delle news e ciò che mostrano COT, open interest e quadro macro'});
   } else html += hLoading('Validazione incrociata', 'layers', 12, 'sentiment');
   el.innerHTML = html;
   hMeta('hSentMeta', 'sentiment', 'Validazione incrociata');
@@ -2684,12 +2966,14 @@ async function fetchLiveCOT(dateParam){
   }catch(e){ return null; }
 }
 
+let lastRetailAsOf = null;   // ora dell'ultimo dato retail (Dukascopy), dalla risposta di /api/dxy-correlation
 async function fetchLiveDXYCorr(){
   try{
     const res = await fetch('/api/dxy-correlation');
     if(!res.ok) return null;
     const json = await res.json();
     if(json.parseWarning) console.warn('DXY correlation warning:', json.parseWarning);
+    lastRetailAsOf = json.retailAsOf || null;
     return json.data;
   }catch(e){ return null; }
 }
@@ -3304,6 +3588,301 @@ async function installApp(){
 }
 if(isIOSDevice) showInstallBtn();
 if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }); }
+</script>
+<script>
+// ---------- REDESIGN v3: riassunto iniziale, spiegazioni in parole semplici, righe sempre piene ----------
+// Gira dopo lo script principale e usa il suo stato (HUB, keyEvents, helper hQ/hNf/...). Se qualcosa manca, la pagina resta quella di prima.
+(function(){
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const IC = {
+    bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.6 1 2.5h6c0-.9.2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+    up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+  };
+  const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
+
+  // ---- modalità di lettura: Principiante (con spiegazioni) / Esperto (solo dati) ----
+  function setMode(m){
+    document.body.classList.toggle('mode-beginner', m === 'beginner');
+    document.body.classList.toggle('mode-expert', m === 'expert');
+    $$('.hd-mode button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
+    try{ localStorage.setItem('mhub_mode', m); }catch(e){}
+    requestAnimationFrame(packAll);
+  }
+  (function(){
+    const side = $('.hd-side'); if(!side) return;
+    const box = document.createElement('div');
+    box.className = 'hd-mode'; box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Livello di lettura');
+    box.innerHTML = '<button type="button" data-m="beginner" title="Con spiegazioni in parole semplici">Principiante</button><button type="button" data-m="expert" title="Solo i dati, senza spiegazioni">Esperto</button>';
+    box.addEventListener('click', e => { const b = e.target.closest('button'); if(b) setMode(b.dataset.m); });
+    side.insertBefore(box, side.firstChild);
+    let m = 'beginner'; try{ if(localStorage.getItem('mhub_mode') === 'expert') m = 'expert'; }catch(e){}
+    setMode(m);
+  })();
+
+  // ---- sezioni: titolo + spiegazione sotto, gruppi, spiegazione "in parole semplici" ----
+  const HELP = {
+    priority:   '<b>Il riassunto della giornata.</b> Parti dal <b>Bias</b>: dice se i mercati sono prudenti (<i>Risk-off</i>) o fiduciosi (<i>Risk-on</i>). Poi guarda i <b>driver</b> (cosa muove i prezzi) e l\'<b>evento in arrivo</b>: sono i momenti in cui i prezzi si muovono di più.',
+    marketmon:  '<b>I prezzi in tempo reale degli asset principali.</b> Il numero grande è il prezzo; la freccia è la variazione di oggi (<b>verde</b> sale, <b>rosso</b> scende). La piccola linea mostra l\'andamento recente.',
+    'hub-cal':  '<b>Gli appuntamenti con i dati economici.</b> Quelli ad <b>alto impatto</b> possono far muovere molto i prezzi in pochi minuti: conoscerli prima evita brutte sorprese.',
+    'hub-sintesi':'<b>Un colpo d\'occhio per ogni asset.</b> Vedi la direzione indicata dall\'analisi (<i>bullish</i> = tendenza al rialzo, <i>bearish</i> = al ribasso) e quanto l\'analisi è convinta.',
+    sentiment:  '<b>Che aria tira.</b> Cosa raccontano le notizie e cosa fanno i trader retail. Quando notizie e posizionamento dei grandi operatori vanno nella stessa direzione, il segnale è più solido.',
+    'hub-pos':  '<b>Cosa fanno i grandi operatori</b> (report COT, ogni venerdì) e quanta voglia di rischio c\'è. Aiuta a capire se un movimento ha ancora "benzina" o è già affollato.',
+    macro:      '<b>I dati economici appena usciti.</b> Ogni numero è affiancato a quello atteso dagli analisti e al precedente: se il dato batte le attese il mercato reagisce, di solito subito.',
+    'hub-bc':   '<b>I tassi d\'interesse muovono tutto</b>: dollaro, oro, azioni. Qui vedi cosa decide la banca centrale e cosa si aspetta il mercato alla prossima riunione.',
+    'hub-geo':  '<b>Guerre, sanzioni, elezioni.</b> Eventi che spostano i capitali verso i beni rifugio (oro, dollaro, franco svizzero) oppure verso il rischio.',
+  };
+  $$('main > section[id]').forEach(sec => {
+    const head = $(':scope > .sec-head', sec); if(!head) return;
+    const h2 = $('h2', head), desc = $('.sec-desc', head);
+    if(h2 && !$('.sec-ttl', head)){
+      const wrap = document.createElement('div'); wrap.className = 'sec-ttl';
+      head.insertBefore(wrap, h2); wrap.appendChild(h2); if(desc) wrap.appendChild(desc);
+    }
+    if(HELP[sec.id] && !$(':scope > .sec-help', sec)){
+      const el = document.createElement('div'); el.className = 'sec-help'; el.innerHTML = svg('bulb') + '<p>' + HELP[sec.id] + '</p>';
+      head.after(el);
+    }
+    if(!reduce) sec.classList.add('rv');
+  });
+  [['priority', 'Oggi e mercati'], ['sentiment', 'Macro e sentiment'], ['hub-bc', 'Approfondimenti macro']].forEach(([id, t]) => {
+    const s = document.getElementById(id); if(!s || s.previousElementSibling && s.previousElementSibling.classList.contains('grp-band')) return;
+    const b = document.createElement('div'); b.className = 'grp-band'; b.innerHTML = '<span>' + t + '</span>'; s.before(b);
+  });
+  if(!reduce && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {rootMargin:'0px 0px -6% 0px', threshold:.02});
+    $$('.rv').forEach(el => io.observe(el));
+  } else $$('.rv').forEach(el => el.classList.add('in'));
+
+  // ---- IL POLSO DEL MERCATO: sei tessere con lo stato di oggi, ognuna porta alla sua sezione ----
+  const main = $('main');
+  const pulse = document.createElement('div');
+  pulse.className = 'pulse'; pulse.id = 'pulse';
+  pulse.innerHTML =
+    '<div class="pulse-hd"><div><h2>Il polso del mercato</h2><p>Lo stato di oggi in 10 secondi · tocca una tessera per andare ai dettagli</p></div>'
+    + '<div class="pulse-leg" aria-label="Come leggere i colori"><span><i style="background:var(--green)"></i>Favorevole / calma</span><span><i style="background:var(--gold)"></i>Attenzione / neutro</span><span><i style="background:var(--red)"></i>Rischio / tensione</span><span><i style="background:var(--accent)"></i>Informazione</span></div></div>'
+    + '<div class="pulse-grid" id="pulseGrid"></div>'
+    + '<div class="pn" id="pulseNews" hidden><span class="pn-tag"><i></i>Ultime notizie</span><a class="pn-a" id="pnA" target="_blank" rel="noopener noreferrer"></a><span class="pn-dots" id="pnDots" aria-hidden="true"></span></div>'
+    + '<div class="pulse-guide"><div class="pg"><span class="n">1</span><div><b>Guarda il quadro</b><span>Il bias dice se i mercati sono prudenti (<i>Risk-off</i>) o fiduciosi (<i>Risk-on</i>).</span></div></div>'
+    + '<div class="pg"><span class="n">2</span><div><b>Controlla cosa sta per uscire</b><span>I dati ad alto impatto muovono i prezzi in pochi minuti: sapere quando escono evita sorprese.</span></div></div>'
+    + '<div class="pg"><span class="n">3</span><div><b>Scendi nei dettagli</b><span>Usa il menu "Sezioni" a sinistra: ogni titolo ha una spiegazione in parole semplici.</span></div></div></div>'
+    + '<details class="pulse-gloss"><summary>Parole da sapere</summary><div class="gl-grid">'
+    + '<div><b>Bullish / Bearish</b> — tendenza al rialzo / al ribasso del prezzo.</div>'
+    + '<div><b>Risk-on / Risk-off</b> — i mercati sono fiduciosi e cercano rendimento / sono prudenti e cercano rifugi.</div>'
+    + '<div><b>Hawkish / Dovish</b> — la banca centrale tende a tassi più alti / più bassi.</div>'
+    + '<div><b>VIX</b> — l\'"indice della paura": più è alto, più i mercati sono nervosi.</div>'
+    + '<div><b>Long / Short</b> — chi compra (scommette sul rialzo) / chi vende (scommette sul ribasso).</div>'
+    + '<div><b>Contrarian</b> — leggere la folla al contrario: se quasi tutti comprano, il prezzo spesso scende.</div>'
+    + '<div><b>Attese (consensus)</b> — il numero che gli analisti si aspettano: conta la differenza con il dato reale.</div>'
+    + '<div><b>COT</b> — report settimanale che mostra come sono posizionati i grandi operatori.</div>'
+    + '<div><b>Punti base (pb)</b> — centesimi di punto percentuale: 25 pb = 0,25%.</div>'
+    + '<div><b>Alto impatto</b> — evento che può far muovere molto i prezzi in pochi minuti.</div></div></details>';
+  main.insertBefore(pulse, main.firstChild);
+
+  const esc = s => (typeof escHtml === 'function' ? escHtml(s) : String(s));
+  const num = (k, v, d) => `<span class="cnt" data-k="${k}" data-v="${v}" data-d="${d}">${hNf(v, d)}</span>`;   // numero che "conta" fino al valore
+  const T = ({k, tone = 'b', l, v, s = '', x = '', go}) => ({k, tone, go, html:`<span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span>${x}<span class="go">Vai alla sezione →</span>`});
+  const SK = (k, l, go) => ({k, tone:'b', go, skel:true, html:`<span class="l">${l}</span><span class="v">…</span><span class="s">…</span>`});
+  const sparkOf = (name, up) => { try{ const m = marketData.find(x => x.name === name); return m && Array.isArray(m.spark) && m.spark.length >= 4 ? sparkSVG(m.spark, up ? '#34D399' : '#F0685E') : ''; }catch(e){ return ''; } };
+  let lastBias = 50;   // ultima posizione del segnalino del bias (la nuova parte da lì e scivola)
+  function pulseTiles(){
+    const out = [];
+    // 1. bias di oggi
+    const b = HUB.bias;
+    if(b){
+      const cls = biasToneClass(b.label), score = typeof b.score === 'number' ? b.score : 50;
+      out.push(T({k:'bias', tone:cls === 'risk-on' ? 'g' : cls === 'risk-off' ? 'r' : 'y', l:'Bias di oggi', v:esc(b.label || '—'), go:'priority',
+        s:cls === 'risk-on' ? 'I mercati sono fiduciosi: si cerca rendimento.' : cls === 'risk-off' ? 'I mercati sono prudenti: si cercano rifugi.' : 'Nessuna direzione prevalente.',
+        x:`<div class="pt-bar" role="img" aria-label="Bias ${score} su 100"><i data-to="${score}" data-from="${lastBias}" style="left:${lastBias}%"></i></div><div class="pt-barl"><span>Risk-off</span><span>${score}/100</span><span>Risk-on</span></div>`}));
+      lastBias = score;
+    } else out.push(SK('bias', 'Bias di oggi', 'priority'));
+    // 2. prossimo evento chiave
+    const ev = typeof pickNextKeyEvent === 'function' ? pickNextKeyEvent() : null;
+    if(ev){
+      const ms = Math.max(0, ev.utc - Date.now()), h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), d = Math.floor(h / 24);
+      const when = d >= 1 ? `${d} g ${h % 24} h` : h >= 1 ? `${h} h ${m} min` : `${m} min`;
+      const dt = new Date(ev.utc).toLocaleString('it-IT', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'});
+      out.push(T({k:'event', tone:'y', l:'Prossimo evento chiave', v:when, go:'priority', s:`<b>${esc(ev.title)}</b><br>${esc(dt)} (ora italiana) · alto impatto`}));
+    } else out.push(SK('event', 'Prossimo evento chiave', 'priority'));
+    // 3. VIX: l'indice della paura
+    const vx = hQ('vix');
+    if(vx){
+      const p = vx.price, lv = p < 15 ? ['g', 'Calma'] : p < 20 ? ['b', 'Normale'] : p < 30 ? ['y', 'Tensione'] : ['r', 'Paura'];
+      const ch = vx.changePercent != null ? `${vx.changePercent >= 0 ? '▲' : '▼'} ${hSg(vx.changePercent)}% oggi` : '';
+      out.push(T({k:'vix', tone:lv[0], l:'Paura del mercato · VIX', v:`${num('vix', p, 2)} <small>${lv[1]}</small>`, go:'marketmon', s:`Più il VIX è alto, più i mercati sono nervosi. ${ch}`,
+        x:sparkOf('VIX', (vx.changePercent || 0) < 0)}));
+    } else out.push(SK('vix', 'Paura del mercato · VIX', 'marketmon'));
+    // 4. tassi Fed
+    const m = HUB.fw && HUB.fw.meetings && HUB.fw.meetings[0];
+    if(m){
+      const opts = [[m.pHold, 'Tassi invariati'], [m.pCut, 'Taglio dei tassi'], [m.pHike, 'Rialzo dei tassi']].sort((a, b) => b[0] - a[0]), top = opts[0];
+      const dd = new Date(m.date + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'UTC'});
+      out.push(T({k:'fed', tone:'b', l:'Fed · prossima riunione', v:`${num('fed', Math.round(top[0] * 100), 0)}% <small>${top[1].toLowerCase()}</small>`, go:'hub-bc', s:`Cosa prezza il mercato per la riunione del ${dd} (stima dai future Fed Funds).`}));
+    } else out.push(HUB.fwFail ? T({k:'fed', tone:'b', l:'Fed · prossima riunione', v:'—', go:'hub-bc', s:'Probabilità non disponibili ora.'}) : SK('fed', 'Fed · prossima riunione', 'hub-bc'));
+    // 5. Sahm Rule
+    const S = HUB.sahm;
+    if(S){
+      const st = {none:['g', 'Nessun segnale'], watch:['y', 'Attenzione'], triggered:['r', 'Segnale scattato']}[S.state] || ['y', '—'];
+      out.push(T({k:'sahm', tone:st[0], l:'Rischio recessione USA', v:`${S.value < -0.004 ? '−' : ''}${num('sahm', Math.abs(S.value), 2)} <small>pp</small>`, go:'macro', s:`<b>${st[1]}</b> · la Sahm Rule scatta a 0,50 pp, misura se la disoccupazione sta salendo.`}));
+    } else out.push(HUB.sahmFail ? T({k:'sahm', tone:'b', l:'Rischio recessione USA', v:'—', go:'macro', s:'Dato non disponibile ora.'}) : SK('sahm', 'Rischio recessione USA', 'macro'));
+    // 6. azionario USA
+    const sp = hQ('sp500');
+    if(sp){
+      const up = (sp.changePercent || 0) >= 0;
+      out.push(T({k:'sp', tone:up ? 'g' : 'r', l:'Azionario USA · S&amp;P 500', v:num('sp', sp.price, 0), go:'marketmon', s:`${up ? '▲' : '▼'} ${hSg(sp.changePercent || 0)}% oggi · ${up ? 'le azioni salgono' : 'le azioni scendono'}`, x:sparkOf('S&P 500', up)}));
+    } else out.push(SK('sp', 'Azionario USA · S&amp;P 500', 'marketmon'));
+    return out;
+  }
+  // i numeri "contano" dal valore precedente a quello nuovo; il segnalino del bias scivola dalla vecchia posizione alla nuova
+  const prevNum = {};
+  function animateTile(b){
+    $$('.cnt', b).forEach(el => {
+      const to = +el.dataset.v, d = +el.dataset.d, k = el.dataset.k, from = prevNum[k] == null ? 0 : prevNum[k];
+      prevNum[k] = to;
+      if(reduce || from === to) return;
+      const t0 = performance.now(), dur = Math.min(1100, 500 + Math.abs(to - from) * 6);
+      const step = now => { const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = hNf(from + (to - from) * e, d); if(p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+    const pin = $('.pt-bar i', b);
+    if(pin) requestAnimationFrame(() => requestAnimationFrame(() => { pin.style.left = pin.dataset.to + '%'; }));
+  }
+  const els = {};
+  function renderPulse(){
+    try{
+      const grid = $('#pulseGrid');
+      pulseTiles().forEach(t => {
+        let b = els[t.k];
+        if(!b){ b = document.createElement('button'); b.type = 'button'; b.addEventListener('click', () => goToSection(b.dataset.go)); els[t.k] = b; grid.appendChild(b); }
+        b.dataset.go = t.go;
+        const cls = 'pt ' + t.tone + (t.skel ? ' skel' : ''); if(b.className !== cls) b.className = cls;
+        if(b.dataset.h !== t.html){ b.dataset.h = t.html; b.innerHTML = t.html; animateTile(b); }
+      });
+    }catch(e){ /* i dati non sono ancora pronti */ }
+  }
+  renderPulse(); setInterval(renderPulse, 2000);
+
+  // ---- righe sempre piene: l'ultima riga di ogni griglia si allarga per coprire tutta la larghezza ----
+  function pack(grid){
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length; if(cols < 2) return;
+    const items = [...grid.children];
+    items.forEach(it => { if(it.dataset.packed){ it.style.gridColumn = ''; delete it.dataset.packed; } });
+    let row = [], used = 0;
+    const flush = () => {
+      if(row.length && used < cols){
+        const extra = cols - used, base = Math.floor(extra / row.length), rem = extra % row.length;
+        row.forEach((r, i) => { r.el.style.gridColumn = 'span ' + (r.span + base + (i < rem ? 1 : 0)); r.el.dataset.packed = '1'; });
+      }
+      row = []; used = 0;
+    };
+    items.forEach(el => {
+      const cs = getComputedStyle(el); if(cs.display === 'none') return;
+      const mm = /^span\s+(\d+)/.exec(cs.gridColumnStart), span = mm ? +mm[1] : cs.gridColumnStart === 'auto' ? 1 : cols;   // "auto" = una colonna; riga intera o posizione scelta a mano = la riga si chiude
+      if(span >= cols){ flush(); return; }
+      if(used + span > cols) flush();
+      row.push({el, span}); used += span;
+      if(used === cols){ row = []; used = 0; }
+    });
+    flush();
+  }
+  function packAll(){ try{ $$('main .h-grid, main .h-inds, main .h-kpis.big').forEach(pack); }catch(e){} }
+  let packT = 0; const packSoon = () => { clearTimeout(packT); packT = setTimeout(packAll, 120); };
+  const mo = new MutationObserver(packSoon);
+  $$('main .h-grid').forEach(g => mo.observe(g, {childList:true}));
+  window.addEventListener('resize', packSoon);
+  document.addEventListener('change', e => { if(e.target && e.target.matches && e.target.matches('input[type=radio]')) packSoon(); });
+  packSoon();
+
+  // ---- parole tecniche con spiegazione al passaggio del mouse ----
+  const TIPS = [
+    [/bullish/i, 'Bullish: tendenza al rialzo'], [/bearish/i, 'Bearish: tendenza al ribasso'],
+    [/risk-?on/i, 'Risk-on: i mercati sono fiduciosi e cercano rendimento'], [/risk-?off/i, 'Risk-off: i mercati sono prudenti e cercano rifugi'],
+    [/hawk/i, 'Hawkish: la banca centrale tende a tassi più alti'], [/dov(e|ish)/i, 'Dovish: la banca centrale tende a tassi più bassi'],
+    [/neutr/i, 'Neutral: nessuna direzione prevalente'], [/volatilit/i, 'Volatilità: quanto i prezzi si muovono in fretta'],
+    [/alto impatto/i, 'Alto impatto: può far muovere molto i prezzi in pochi minuti'],
+    [/in conflitto/i, 'In conflitto: notizie e dati reali si contraddicono'], [/allineato/i, 'Allineato: notizie e dati reali raccontano la stessa storia'],
+  ];
+  function tipify(){
+    try{
+      $$('main .h-chip:not(.has-tip), main .h-bd:not(.has-tip)').forEach(el => {
+        const t = el.textContent || ''; const hit = TIPS.find(([re]) => re.test(t));
+        if(hit){ el.title = hit[1]; el.classList.add('has-tip'); }
+      });
+    }catch(e){}
+  }
+  let tipT = 0; new MutationObserver(() => { clearTimeout(tipT); tipT = setTimeout(tipify, 300); }).observe(main, {childList:true, subtree:true});
+  tipify();
+
+  // ---- barra di avanzamento + ritorno in cima ----
+  const prog = document.createElement('div'); prog.id = 'scrollProg'; document.body.appendChild(prog);
+  const topBtn = document.createElement('button'); topBtn.id = 'toTop'; topBtn.type = 'button'; topBtn.setAttribute('aria-label', 'Torna in cima'); topBtn.innerHTML = svg('up');
+  topBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:reduce ? 'auto' : 'smooth'})); document.body.appendChild(topBtn);
+  let sT = false;
+  function onScroll(){
+    sT = false;
+    const h = document.documentElement.scrollHeight - innerHeight;
+    prog.style.width = (h > 0 ? Math.min(100, scrollY / h * 100) : 0) + '%';
+    topBtn.classList.toggle('on', scrollY > 900);
+  }
+  addEventListener('scroll', () => { if(!sT){ sT = true; requestAnimationFrame(onScroll); } }, {passive:true}); onScroll();
+})();
+
+// ---------- MOVIMENTO (v3.1): sfondo, riflesso sulle card, comparsa a cascata, ultime notizie ----------
+(function(){
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // sfondo "aurora" (dietro a tutto)
+  const aur = document.createElement('div'); aur.id = 'aurora'; aur.setAttribute('aria-hidden', 'true'); aur.innerHTML = '<i></i><i></i><i></i>';
+  document.body.insertBefore(aur, document.body.firstChild);
+
+  // il riflesso sulle card segue il mouse
+  document.addEventListener('pointermove', e => {
+    const c = e.target.closest && e.target.closest('.h-card, .pt'); if(!c) return;
+    const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }, {passive:true});
+
+  // le card di ogni sezione entrano a cascata la prima volta che la sezione compare
+  if(!reduce && 'IntersectionObserver' in window && Element.prototype.animate){
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if(!e.isIntersecting) return; io.unobserve(e.target);
+      $$('.h-grid > *:not(.h-subhd)', e.target).filter(c => c.offsetParent !== null).slice(0, 14).forEach((c, i) => {
+        c.animate([{opacity:0, transform:'translateY(22px) scale(.985)'}, {opacity:1, transform:'none'}], {duration:650, delay:Math.min(i, 10) * 55, easing:'cubic-bezier(.2,.7,.2,1)', fill:'backwards'});
+      });
+    }), {threshold:.12});
+    $$('main > section[id]').forEach(s => io.observe(s));
+  }
+
+  // ultime notizie: una alla volta, dal flusso reale delle fonti già usate dalla dashboard
+  (function(){
+    const strip = $('#pulseNews'); if(!strip) return;
+    const a = $('#pnA'), dots = $('#pnDots');
+    const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const ago = iso => { const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 2 ? 'adesso' : m < 90 ? m + ' min fa' : Math.round(m / 60) + ' h fa'; };
+    let items = [], i = 0, timer = 0;
+    function show(n, animate){
+      const it = items[n]; if(!it) return;
+      a.href = it.url;
+      a.innerHTML = `<b>${esc(it.source)}</b><em>${ago(it.published)}</em><span>${esc(it.title)}</span>`;
+      dots.innerHTML = items.map((_, k) => `<i class="${k === n ? 'on' : ''}"></i>`).join('');
+      if(animate && !reduce && a.animate) a.animate([{opacity:0, transform:'translateY(8px)'}, {opacity:1, transform:'none'}], {duration:450, easing:'ease-out'});
+    }
+    async function load(){
+      try{
+        const r = await fetch('/api/news-aggregated'); if(!r.ok) return;
+        const j = await r.json();
+        items = (j.items || []).filter(x => x && x.title && /^https?:\/\//i.test(x.url || '')).sort((p, q) => new Date(q.published) - new Date(p.published)).slice(0, 8);
+        if(!items.length) return;
+        strip.hidden = false; i = 0; show(0, false);
+        clearInterval(timer);
+        timer = setInterval(() => { if(document.hidden || strip.matches(':hover')) return; i = (i + 1) % items.length; show(i, true); }, 6500);
+      }catch(e){ /* senza notizie la fascia resta nascosta */ }
+    }
+    load(); setInterval(load, 5 * 60 * 1000);
+  })();
+})();
 </script>
 </body>
 </html>

@@ -106,9 +106,9 @@ async function handleEvent(event) {
 
     return {
       statusCode: 200,
-      // 6h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
+      // 3h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
       // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${payload.ai ? 21600 : 120}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${payload.ai ? 10800 : 120}` },
       body: JSON.stringify(payload),
     };
   } catch (err) {

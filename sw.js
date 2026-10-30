@@ -8,7 +8,7 @@
 //   - icone, manifest, font di Google → dalla cache mentre si aggiornano in background.
 // Per forzare l'aggiornamento della cache dopo modifiche a questo file basta cambiare VERSION.
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `mhub-shell-${VERSION}`;
 const FONT_CACHE = `mhub-fonts-${VERSION}`;
 const PRECACHE = ['/', '/info', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
