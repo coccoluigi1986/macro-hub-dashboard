@@ -4328,7 +4328,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   async function load(){
     state = 'loading'; paintList(); paintDetail();
     try{
-      const r = await fetch('/api/market-data?view=volatility'); if(!r.ok) throw new Error('HTTP ' + r.status);
+      const r = await fetch('/api/market-data?view=volatility&v=2');   // v=2: i browser non riusano la vecchia risposta (calcolo a 30 giorni) if(!r.ok) throw new Error('HTTP ' + r.status);
       const j = await r.json(); if(!j || !Array.isArray(j.assets)) throw new Error('risposta inattesa');
       DATA = j; state = 'ready';
       if(!DATA.assets.some(a => a.key === sel && !a.error)) sel = (DATA.assets.find(a => !a.error) || {}).key;
