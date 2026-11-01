@@ -1144,6 +1144,14 @@ body{background:var(--bg);}
 html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scrolling .fx-load, html.is-scrolling .pl-main.skel, html.is-scrolling .pn-tag i, html.is-scrolling .pl-k i, html.is-scrolling .ticker{animation-play-state:paused!important;}
 @media(prefers-reduced-motion:reduce){ .sec-head.t-on h2, .pulse-hd.t-on h2, .sec-head.t-on .sec-desc{animation:none;} }
 
+/* ===================== VOLATILITÀ: selettore del periodo ===================== */
+.vl-per{display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:2px 2px 0;}
+.vl-per > span{font:600 10.5px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-right:4px;}
+.vl-per button{font:600 12px/1 var(--fb); padding:8px 12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text2); cursor:pointer; transition:all .15s;}
+.vl-per button:hover{border-color:var(--accent); color:var(--text);}
+.vl-per button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#06101F;}
+.vl-pbadge{font:500 11px/1 var(--fm); letter-spacing:.04em; padding:5px 8px; border-radius:6px; border:1px solid var(--border); color:var(--text2); background:var(--bg); align-self:center;}
+
 </style>
 </head>
 <body>
@@ -4158,7 +4166,8 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
 </script>
 <script>
 // ---------- VOLATILITÀ PER ASSET: tabella interattiva + grafici per ora del giorno e per giorno della settimana ----------
-// I dati arrivano da /api/market-data?view=volatility (candele orarie reali di Yahoo Finance, media delle ultime 10 settimane, ora italiana).
+// I dati arrivano da /api/market-data?view=volatility (candele orarie reali di Yahoo Finance, ora italiana), con la media su quattro periodi:
+// 1 settimana, 4 settimane, 10 settimane (la finestra di Mataf, predefinita) e 6 mesi.
 // Si carica solo quando la sezione si avvicina allo schermo. Se qualcosa non risponde si dice e basta: nessun dato inventato.
 (function(){
   'use strict';
@@ -4171,7 +4180,17 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   const pad = n => String(n).padStart(2, '0');
   const decOf = a => a.unit === 'punti' ? 2 : 1;
   const unitOf = a => a.unit === 'punti' ? 'punti' : a.unit;
-  let DATA = null, sel = 'EURUSD', filter = 'all', q = '', sort = {k:'default', dir:1}, state = 'idle';
+  // periodi della media: [chiave, testo del pulsante, come si dice nelle frasi]
+  const PERIODI = [['1w', '1 sett.', 'ultima settimana'], ['4w', '4 sett.', 'ultime 4 settimane'], ['10w', '10 sett.', 'ultime 10 settimane'], ['26w', '6 mesi', 'ultimi 6 mesi']];
+  let DATA = null, sel = 'EURUSD', filter = 'all', q = '', sort = {k:'default', dir:1}, state = 'idle', per = '10w';
+  try{ const sv = localStorage.getItem('mhub_vol_periodo'); if(PERIODI.some(p => p[0] === sv)) per = sv; }catch(e){}
+  const perFrase = () => (PERIODI.find(p => p[0] === per) || PERIODI[2])[2];
+  const P = a => (a.periods && a.periods[per]) || a;   // statistiche del periodo scelto (se mancano: quelle di primo livello, 10 settimane)
+  const colTips = () => ({
+    range:'Escursione media giornaliera (massimo − minimo) · ' + perFrase() + (per === '10w' ? ': la stessa misura di Mataf' : ''),
+    usd:'Valore in dollari dell\'escursione media per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard · ' + perFrase(),
+    pct:'Escursione media in % del prezzo attuale · ' + perFrase(),
+  });
 
   // ora e giorno in corso (ora italiana): servono a colorare di giallo la barra "adesso"
   const nowParts = () => {
@@ -4184,14 +4203,23 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   function shell(){
     root.innerHTML =
       '<div class="vl-left"><div class="vl-bar">'
+      + '<div class="vl-per" id="vlPer" role="group" aria-label="Periodo della media"><span>Periodo</span>' + PERIODI.map(([k, b, fr]) => `<button type="button" data-p="${k}" title="Media delle ${fr.replace(/^ultim[ae] /, '')}" aria-pressed="${k === per}">${b}</button>`).join('') + '</div>'
       + '<label class="vl-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="vlQ" placeholder="Cerca un asset…" aria-label="Cerca un asset" autocomplete="off"></label>'
       + '<div class="vl-chips" id="vlChips" role="group" aria-label="Tipo di asset"></div></div>'
       + '<div class="vl-cols" role="row"><button type="button" data-s="name" title="Ordina per nome">Asset</button><span>Trend</span>'
-      + '<button type="button" class="r" data-s="range" title="Escursione media giornaliera (massimo − minimo) delle ultime 10 settimane: la stessa misura di Mataf">Pips</button>'
-      + '<button type="button" class="r" data-s="usd" title="Valore in dollari dell\'escursione media per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard">$</button>'
-      + '<button type="button" class="r" data-s="pct" title="Escursione media in % del prezzo">%</button></div>'
+      + '<button type="button" class="r" data-s="range" id="vlColRange">Pips</button>'
+      + '<button type="button" class="r" data-s="usd" id="vlColUsd">$</button>'
+      + '<button type="button" class="r" data-s="pct" id="vlColPct">%</button></div>'
       + '<div class="vl-scroll" id="vlList" role="listbox" aria-label="Asset"></div></div>'
       + '<div class="vl-right" id="vlDetail"></div>';
+    const setTips = () => { const t = colTips(); root.querySelector('#vlColRange').title = t.range; root.querySelector('#vlColUsd').title = t.usd; root.querySelector('#vlColPct').title = t.pct; };
+    setTips();
+    root.querySelector('#vlPer').addEventListener('click', e => {
+      const b = e.target.closest('[data-p]'); if(!b || b.dataset.p === per) return;
+      per = b.dataset.p; try{ localStorage.setItem('mhub_vol_periodo', per); }catch(x){}
+      $$c(root, '#vlPer [data-p]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.p === per)));
+      setTips(); paintList(); paintDetail();
+    });
     const chips = root.querySelector('#vlChips');
     chips.innerHTML = CLS.map(([k, n]) => `<button type="button" class="vl-chip" data-c="${k}" aria-pressed="${k === filter}">${n}</button>`).join('');
     chips.addEventListener('click', e => { const b = e.target.closest('[data-c]'); if(!b) return; filter = b.dataset.c; $$c(chips, '[data-c]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.c === filter))); paintList(); });
@@ -4219,7 +4247,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     return `<svg class="vl-sp ${up ? 'up' : 'dn'}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${xy.map(p => p.join(',')).join(' ')}"/></svg>`;
   };
   const cmp = () => {
-    const key = {name:a => a.name.toLowerCase(), range:a => a.avgRange, usd:a => a.usd, pct:a => a.avgPct}[sort.k];
+    const key = {name:a => a.name.toLowerCase(), range:a => P(a).avgRange, usd:a => P(a).usd, pct:a => P(a).avgPct}[sort.k];
     if(!key) return null;
     // pips, punti e punti base non sono confrontabili: nella colonna "Pips" ogni unità resta a sé (prima i pips, poi i punti, poi i bp)
     const UN = {pips:0, punti:1, bp:2};
@@ -4236,10 +4264,10 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     const c = cmp(); if(c) rows = [...rows].sort(c);
     list.innerHTML = rows.length ? rows.map(a => {
       if(a.error) return `<button type="button" class="vl-row" role="option" data-k="${a.key}" aria-selected="${a.key === sel}"><span class="nm">${esc(a.name)}</span><span></span><span class="n r" style="grid-column:3/-1">non disponibile</span></button>`;
-      const u = a.unit === 'pips' ? '' : `<i>${a.unit === 'punti' ? 'pt' : a.unit}</i>`;
+      const u = a.unit === 'pips' ? '' : `<i>${a.unit === 'punti' ? 'pt' : a.unit}</i>`, s = P(a);
       return `<button type="button" class="vl-row" role="option" data-k="${a.key}" aria-selected="${a.key === sel}" tabindex="${a.key === sel ? 0 : -1}">`
-        + `<span class="nm">${esc(a.name)}${a.cls !== 'fx' ? `<small>${CLS_NAME[a.cls] || ''}</small>` : ''}</span><span>${spark(a.spark)}</span>`
-        + `<span class="n r"><b>${nf(a.avgRange, decOf(a))}</b>${u}</span><span class="n r">${a.usd == null ? '—' : nf(a.usd, 2)}</span><span class="n r">${nf(a.avgPct, 2)}</span></button>`;
+        + `<span class="nm">${esc(a.name)}${a.cls !== 'fx' ? `<small>${CLS_NAME[a.cls] || ''}</small>` : ''}</span><span>${spark(s.spark)}</span>`
+        + `<span class="n r"><b>${nf(s.avgRange, decOf(a))}</b>${u}</span><span class="n r">${s.usd == null ? '—' : nf(s.usd, 2)}</span><span class="n r">${nf(s.avgPct, 2)}</span></button>`;
     }).join('') : '<div class="vl-empty">Nessun asset trovato.</div>';
   }
   function choose(k, focus){
@@ -4291,28 +4319,28 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     const d = decOf(a), U = unitOf(a), now = nowParts();
     const na = a.cls === 'fx' ? 'chiusura di New York: dato non mostrato' : 'mercato chiuso';
     const W = Math.round(Math.max(300, Math.min(720, el.clientWidth - (innerWidth <= 700 ? 26 : 42))));   // larghezza reale del riquadro
-    const hrs = a.hours, wk = a.weekdays;
+    const sp = P(a), hrs = sp.hours, wk = sp.weekdays, fr = perFrase();
     const hMax = Math.max(...hrs.filter(v => v != null)), iH = hrs.indexOf(hMax);
     const wMax = Math.max(...wk.filter(v => v != null)), iW = wk.indexOf(wMax);
-    const tod = a.today ? a.today.range / a.avgRange * 100 : null;
+    const tod = a.today ? a.today.range / sp.avgRange * 100 : null;
     const kpis = [
-      ['Escursione media al giorno', `${nf(a.avgRange, d)}<small>${U}</small>`, `${nf(a.avgPct, 2)}% del prezzo${a.usd != null ? ` · ${nf(a.usd, 0)} $ per lotto` : ''}`, ''],
+      ['Escursione media al giorno', `${nf(sp.avgRange, d)}<small>${U}</small>`, `${nf(sp.avgPct, 2)}% del prezzo${sp.usd != null ? ` · ${nf(sp.usd, 0)} $ per lotto` : ''}`, ''],
       ['Ora più volatile', `${pad(iH)}:00–${pad((iH + 1) % 24)}:00`, `${nf(hMax, d)} ${U} per candela oraria`, 'gold'],
       ['Giorno più volatile', DAYS[iW], `${nf(wMax, d)} ${U} di media`, ''],
-      ['Oggi finora', a.today ? `${nf(a.today.range, d)}<small>${U}</small>` : '—', a.today ? `${Math.round(tod)}% della media` : 'mercato chiuso oggi', a.today ? (tod >= 100 ? 'up' : '') : ''],
+      ['Oggi finora', a.today ? `${nf(a.today.range, d)}<small>${U}</small>` : '—', a.today ? `${Math.round(tod)}% della media (${fr})` : 'mercato chiuso oggi', a.today ? (tod >= 100 ? 'up' : '') : ''],
     ].map(([l, v, s, c]) => `<div class="vl-kpi ${c}"><span class="l">${l}</span><b>${v}</b><span class="d">${s}</span></div>`).join('');
     const hours = chart({vals:hrs, labels:hrs.map((_, i) => String(i)), tips:hrs.map((_, i) => `${pad(i)}:00–${pad((i + 1) % 24)}:00`), cur:now.h, h:W < 520 ? 200 : 236, peak:true, dec:d, W});
     const week = chart({vals:wk, labels:DAYS_S, tips:DAYS, cur:now.w, h:W < 520 ? 176 : 200, valLabels:true, dec:d, W});
     const px = a.price != null ? nf(a.price, a.cls === 'fx' ? (a.key.endsWith('JPY') ? 3 : 5) : 2) : '';
-    const why = typeof hWhy === 'function' ? hWhy(`<b>Come leggerla:</b> ogni barra è quanto si muove in media il prezzo (dal minimo al massimo) in quell'ora o in quel giorno. Più la barra è alta, più il mercato è mosso. In giallo l'ora o il giorno in corso. È una media storica, non una previsione.`) : '';
+    const why = typeof hWhy === 'function' ? hWhy(`<b>Come leggerla:</b> ogni barra è quanto si muove in media il prezzo (dal minimo al massimo) in quell'ora o in quel giorno. Più la barra è alta, più il mercato è mosso. In giallo l'ora o il giorno in corso. È la media del periodo scelto, non una previsione.`) : '';
     el.innerHTML =
-      `<div class="vl-head"><h3 class="vl-title">${esc(a.name)}</h3><span class="vl-px">${px}</span><span class="vl-badge">${U}</span></div>`
+      `<div class="vl-head"><h3 class="vl-title">${esc(a.name)}</h3><span class="vl-px">${px}</span><span class="vl-badge">${U}</span><span class="vl-pbadge">media: ${fr}</span></div>`
       + `<div class="vl-kpis">${kpis}</div>` + why
-      + `<figure class="vl-fig"><figcaption>Volatilità per ora del giorno <span>escursione media di ogni candela oraria · ora italiana</span></figcaption>${hours}<div class="vl-tip" hidden></div></figure>`
-      + `<figure class="vl-fig"><figcaption>Volatilità per giorno della settimana <span>escursione media giornaliera (massimo − minimo)</span></figcaption>${week}<div class="vl-tip" hidden></div></figure>`
-      + `<div class="vl-leg"><span><i style="background:rgba(94,168,245,.55)"></i>media storica</span><span><i style="background:rgba(224,169,77,.7)"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
-      + `<p class="vl-foot">Fonte: Yahoo Finance, candele orarie · media delle ultime 10 settimane (${a.days} giornate di mercato) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
-      + `Pips, punti e % sono l'escursione media giornaliera (massimo − minimo), la stessa misura di Mataf, con la % calcolata sul prezzo attuale: confrontandola con altri siti può differire di qualche punto percentuale perché le quotazioni di partenza non sono identiche (le ore dopo la chiusura di New York, con spread molto larghi, sono escluse). Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p>`;
+      + `<figure class="vl-fig"><figcaption>Volatilità per ora del giorno <span>escursione media di ogni candela oraria · ora italiana · ${fr}</span></figcaption>${hours}<div class="vl-tip" hidden></div></figure>`
+      + `<figure class="vl-fig"><figcaption>Volatilità per giorno della settimana <span>escursione media giornaliera (massimo − minimo) · ${fr}</span></figcaption>${week}<div class="vl-tip" hidden></div></figure>`
+      + `<div class="vl-leg"><span><i style="background:rgba(94,168,245,.55)"></i>media del periodo</span><span><i style="background:rgba(224,169,77,.7)"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
+      + `<p class="vl-foot">Fonte: Yahoo Finance, candele orarie · media: ${fr} (${sp.days} giornate di mercato) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
+      + `Pips, punti e % sono l'escursione media giornaliera (massimo − minimo) del periodo scelto, con la % calcolata sul prezzo attuale. Con 10 settimane è la stessa misura di Mataf: confrontandola con altri siti può differire di qualche punto percentuale perché le quotazioni di partenza non sono identiche (le ore dopo la chiusura di New York, con spread molto larghi, sono escluse).${per === '1w' ? ' Su una sola settimana i valori dipendono molto dagli eventi di quei giorni.' : ''} Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p>`;
     $$c(el, '.vl-fig').forEach(fig => {
       const tip = fig.querySelector('.vl-tip');
       const show = e => {
@@ -4328,7 +4356,8 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   async function load(){
     state = 'loading'; paintList(); paintDetail();
     try{
-      const r = await fetch('/api/market-data?view=volatility&v=2');   // v=2: i browser non riusano la vecchia risposta (calcolo a 30 giorni) if(!r.ok) throw new Error('HTTP ' + r.status);
+      const r = await fetch('/api/market-data?view=volatility&v=3');   // v=3: i browser non riusano le risposte vecchie (senza i periodi)
+      if(!r.ok) throw new Error('HTTP ' + r.status);
       const j = await r.json(); if(!j || !Array.isArray(j.assets)) throw new Error('risposta inattesa');
       DATA = j; state = 'ready';
       if(!DATA.assets.some(a => a.key === sel && !a.error)) sel = (DATA.assets.find(a => !a.error) || {}).key;
