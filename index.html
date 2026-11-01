@@ -4158,7 +4158,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
 </script>
 <script>
 // ---------- VOLATILITÀ PER ASSET: tabella interattiva + grafici per ora del giorno e per giorno della settimana ----------
-// I dati arrivano da /api/market-data?view=volatility (candele orarie reali di Yahoo Finance, ultimi 3 mesi, ora italiana).
+// I dati arrivano da /api/market-data?view=volatility (candele orarie reali di Yahoo Finance, media delle ultime 10 settimane, ora italiana).
 // Si carica solo quando la sezione si avvicina allo schermo. Se qualcosa non risponde si dice e basta: nessun dato inventato.
 (function(){
   'use strict';
@@ -4187,7 +4187,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       + '<label class="vl-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="vlQ" placeholder="Cerca un asset…" aria-label="Cerca un asset" autocomplete="off"></label>'
       + '<div class="vl-chips" id="vlChips" role="group" aria-label="Tipo di asset"></div></div>'
       + '<div class="vl-cols" role="row"><button type="button" data-s="name" title="Ordina per nome">Asset</button><span>Trend</span>'
-      + '<button type="button" class="r" data-s="range" title="Escursione media giornaliera (massimo − minimo), ultime 30 giornate">Pips</button>'
+      + '<button type="button" class="r" data-s="range" title="Escursione media giornaliera (massimo − minimo) delle ultime 10 settimane: la stessa misura di Mataf">Pips</button>'
       + '<button type="button" class="r" data-s="usd" title="Valore in dollari dell\'escursione media per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard">$</button>'
       + '<button type="button" class="r" data-s="pct" title="Escursione media in % del prezzo">%</button></div>'
       + '<div class="vl-scroll" id="vlList" role="listbox" aria-label="Asset"></div></div>'
@@ -4282,13 +4282,14 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     if(state !== 'ready'){
       el.innerHTML = state === 'error'
         ? '<div class="vl-load">Non riesco a leggere i dati di volatilità adesso.<br><button type="button" class="vl-retry" id="vlRetry">Riprova</button></div>'
-        : '<div class="vl-load fx-load">Calcolo la volatilità dalle candele orarie degli ultimi 3 mesi…</div>';
+        : '<div class="vl-load fx-load">Calcolo la volatilità dalle candele orarie di Yahoo Finance…</div>';
       const b = el.querySelector('#vlRetry'); if(b) b.addEventListener('click', load);
       return;
     }
     const a = DATA.assets.find(x => x.key === sel) || DATA.assets.find(x => !x.error);
     if(!a || a.error){ el.innerHTML = '<div class="vl-load">Dati non disponibili per questo asset in questo momento.</div>'; return; }
     const d = decOf(a), U = unitOf(a), now = nowParts();
+    const na = a.cls === 'fx' ? 'chiusura di New York: dato non mostrato' : 'mercato chiuso';
     const W = Math.round(Math.max(300, Math.min(720, el.clientWidth - (innerWidth <= 700 ? 26 : 42))));   // larghezza reale del riquadro
     const hrs = a.hours, wk = a.weekdays;
     const hMax = Math.max(...hrs.filter(v => v != null)), iH = hrs.indexOf(hMax);
@@ -4310,14 +4311,14 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       + `<figure class="vl-fig"><figcaption>Volatilità per ora del giorno <span>escursione media di ogni candela oraria · ora italiana</span></figcaption>${hours}<div class="vl-tip" hidden></div></figure>`
       + `<figure class="vl-fig"><figcaption>Volatilità per giorno della settimana <span>escursione media giornaliera (massimo − minimo)</span></figcaption>${week}<div class="vl-tip" hidden></div></figure>`
       + `<div class="vl-leg"><span><i style="background:rgba(94,168,245,.55)"></i>media storica</span><span><i style="background:rgba(224,169,77,.7)"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
-      + `<p class="vl-foot">Fonte: Yahoo Finance, candele orarie degli ultimi 3 mesi (${a.days} giornate) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
-      + `Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p>`;
+      + `<p class="vl-foot">Fonte: Yahoo Finance, candele orarie · media delle ultime 10 settimane (${a.days} giornate di mercato) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
+      + `Pips, punti e % sono l'escursione media giornaliera (massimo − minimo), la stessa misura di Mataf, con la % calcolata sul prezzo attuale: confrontandola con altri siti può differire di qualche punto percentuale perché le quotazioni di partenza non sono identiche (le ore dopo la chiusura di New York, con spread molto larghi, sono escluse). Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p>`;
     $$c(el, '.vl-fig').forEach(fig => {
       const tip = fig.querySelector('.vl-tip');
       const show = e => {
         const g = e.target.closest && e.target.closest('.vl-col'); if(!g){ tip.hidden = true; return; }
         const bar = g.querySelector('.bar') || g.querySelector('.hit'), r = bar.getBoundingClientRect(), fr = fig.getBoundingClientRect();
-        tip.innerHTML = g.dataset.v ? `<i>${g.dataset.t}</i> · ${g.dataset.v} ${U}` : `<i>${g.dataset.t}</i> · mercato chiuso`;
+        tip.innerHTML = g.dataset.v ? `<i>${g.dataset.t}</i> · ${g.dataset.v} ${U}` : `<i>${g.dataset.t}</i> · ${na}`;
         tip.style.left = (r.left - fr.left + r.width / 2) + 'px'; tip.style.top = Math.max(26, r.top - fr.top - 6) + 'px'; tip.hidden = false;
       };
       fig.addEventListener('pointermove', show); fig.addEventListener('pointerdown', show); fig.addEventListener('pointerleave', () => { tip.hidden = true; });
