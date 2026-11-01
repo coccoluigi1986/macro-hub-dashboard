@@ -13,11 +13,15 @@
 // - v3 (questa): Yahoo Finance (endpoint pubblico "chart", vedi lib/yahoo.js), che copre tutti
 //   questi simboli senza bisogno di alcuna chiave.
 //
+// ?view=volatility → volatilità reale per asset (candele orarie, per ora del giorno e per giorno della settimana), lib/volatility.js.
+// Sta qui perché il piano gratuito di Vercel consente al massimo 12 funzioni e sono tutte usate.
+//
 // Raggiungibile su: https://tuosito.vercel.app/api/market-data
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchPositioning } = require('../lib/positioning');
+const { getVolatility } = require('../lib/volatility');
 
 const SYMBOLS = {
   sp500:  '^GSPC',   // S&P 500
@@ -36,7 +40,19 @@ const SYMBOLS = {
   russell:'^RUT',    // Russell 2000
 };
 
-async function handleEvent() {
+async function handleEvent(event) {
+  const params = (event && event.queryStringParameters) || {};
+  if (params.view === 'volatility') {
+    try {
+      const vol = await getVolatility();
+      // 1 ora: il profilo di volatilità cambia lentamente; se qualche asset non ha risposto, cache breve per riprovare presto
+      const maxAge = vol.assets.some((x) => x.error) ? 120 : 3600;
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + maxAge }, body: JSON.stringify(vol) };
+    } catch (err) {
+      // errore: cache brevissima, così un problema transitorio non resta "congelato"
+      return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }, body: JSON.stringify({ error: err.message }) };
+    }
+  }
   try {
     // Fear & Greed (CNN) e AAII, insieme ai prezzi: fetchPositioning non lancia mai, ogni indicatore
     // non raggiungibile torna semplicemente null.

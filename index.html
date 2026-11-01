@@ -68,24 +68,6 @@ a{color:inherit;}
 
 /* ===== SENTIMENT — pulsante rigenera + meta ===== */
 
-/* ===== INDICE VOLATILITÀ GIORNALIERA PER ASSET (tabella live, da calendario economico reale) ===== */
-.vd-table-wrap{overflow-x:auto; background:var(--panel); border:1px solid var(--border); border-radius:10px;}
-.vd-table{width:100%; min-width:880px; table-layout:fixed; border-collapse:collapse; font-size:11.5px;}
-.vd-table col.vd-c-day{width:8%;} .vd-table col.vd-c-asset{width:10%;} .vd-table col.vd-c-idx{width:7%;}
-.vd-table col.vd-c-time{width:17%;} .vd-table col.vd-c-cat{width:28%;} .vd-table col.vd-c-read{width:30%;}
-.vd-table th{text-align:left; font-size:9.3px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--dim2); padding:0 10px 8px; line-height:1.3;}
-.vd-table td{padding:8px 10px; border-top:1px solid var(--border); vertical-align:top;}
-.vd-table tr.vd-row:hover td{background:var(--panel2);}
-.vd-table td.vd-day{color:var(--accent); font-family:var(--fm); font-weight:600; white-space:nowrap;}
-.vd-table td.vd-asset{font-weight:600; color:var(--text); font-family:var(--fm); white-space:nowrap;}
-.vd-idx{display:inline-block; font-family:var(--fm); font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:4px;}
-.vd-idx.basso{background:var(--panel2); color:var(--dim2);}
-.vd-idx.moderato{background:var(--gold-soft); color:var(--gold);}
-.vd-idx.alto{background:var(--red-soft); color:var(--red);}
-.vd-table td.vd-time{color:var(--dim); font-family:var(--fm); font-size:10.5px;}
-.vd-table td.vd-cat{color:var(--dim);}
-.vd-table td.vd-read{color:var(--dim);}
-.vd-empty{padding:16px; text-align:center; color:var(--dim2); font-size:12px; font-style:italic;}
 
 /* ===== MARKET MONITOR (stile screenshot: card con sparkline, volatilità, corr DXY) ===== */
 
@@ -1057,6 +1039,84 @@ html[data-font="4"] .pulse-hd h2, html[data-font="4"] .sec-head h2, html[data-fo
 html[data-font="4"] .h-card h4, html[data-font="4"] .pg b{font-weight:600; letter-spacing:0;}
 
 
+/* ===================== VOLATILITÀ PER ASSET (tabella interattiva) ===================== */
+.vl{display:grid; grid-template-columns:minmax(340px,5fr) minmax(0,7fr); gap:18px; align-items:start; margin-top:12px;}
+@media(max-width:1100px){ .vl{grid-template-columns:1fr;} }
+.vl-left, .vl-right{background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0) 40%), var(--panel2); border:1px solid var(--line,var(--border)); border-radius:16px; min-width:0;}
+.vl-left{display:flex; flex-direction:column; overflow:hidden;}
+.vl-right{padding:18px 20px 16px; display:grid; gap:14px;}
+@media(max-width:700px){ .vl-right{padding:14px 12px;} }
+
+/* barra di ricerca e filtri */
+.vl-bar{display:grid; gap:10px; padding:12px 12px 10px; border-bottom:1px solid var(--border);}
+.vl-search{display:flex; align-items:center; gap:9px; padding:0 12px; height:40px; border-radius:11px; background:var(--bg); border:1px solid var(--border); color:var(--dim); transition:border-color .15s;}
+.vl-search:focus-within{border-color:var(--accent); color:var(--accent);}
+.vl-search svg{flex:none; width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round;}
+.vl-search input{flex:1; min-width:0; background:none; border:0; outline:0; color:var(--text); font:500 13.5px var(--fb);}
+.vl-search input::placeholder{color:var(--dim2);}
+.vl-chips{display:flex; flex-wrap:wrap; gap:6px;}
+.vl-chip{font:600 11.5px/1 var(--fb); padding:7px 11px; border-radius:99px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; transition:all .15s;}
+.vl-chip:hover{border-color:var(--accent); color:var(--text);}
+.vl-chip[aria-pressed="true"]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
+
+/* tabella */
+.vl-scroll{max-height:620px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:var(--border) transparent;}
+.vl-cols, .vl-row{display:grid; grid-template-columns:minmax(96px,1.25fr) 74px minmax(64px,.9fr) minmax(68px,.9fr) 52px; gap:8px; align-items:center; padding:0 14px;}
+.vl-cols{position:sticky; top:0; z-index:2; height:36px; background:var(--panel2); border-bottom:1px solid var(--border); font:600 10.5px/1 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--dim);}
+.vl-cols button{all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:4px; color:inherit; font:inherit; letter-spacing:inherit; text-transform:inherit; white-space:nowrap;}
+.vl-cols button:hover{color:var(--text);} .vl-cols button.on{color:var(--accent);}
+.vl-cols button.on::after{content:"▾"; font-size:9px;} .vl-cols button.on.asc::after{content:"▴";}
+.vl-cols .r, .vl-row .r{justify-self:end; text-align:right;}
+.vl-row{width:100%; min-height:38px; padding-top:6px; padding-bottom:6px; border:0; border-bottom:1px solid var(--border); background:none; color:var(--text); text-align:left; cursor:pointer; font:inherit; transition:background .12s;}
+.vl-row:last-child{border-bottom:0;}
+.vl-row:hover{background:rgba(255,255,255,.035);}
+.vl-row:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+.vl-row[aria-selected="true"]{background:linear-gradient(90deg,var(--accent-soft),rgba(94,168,245,.04)); box-shadow:inset 3px 0 0 var(--accent);}
+.vl-row .nm{font:600 13px/1.25 var(--fb); color:var(--text);}
+.vl-row .nm small{display:block; font:500 10px var(--fm); letter-spacing:.06em; color:var(--dim2); text-transform:uppercase; margin-top:1px;}
+.vl-row .n{font:500 12.5px var(--fm); color:var(--text2); font-variant-numeric:tabular-nums; white-space:nowrap;}
+.vl-row .n b{font-weight:600; color:var(--text);}
+.vl-row .n i{font-style:normal; font-size:10px; color:var(--dim2); margin-left:3px;}
+.vl-sp{display:block; width:64px; height:20px; overflow:visible;} .vl-sp polyline{fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke;}
+.vl-sp.up polyline{stroke:var(--green);} .vl-sp.dn polyline{stroke:var(--red);} .vl-sp circle{fill:currentColor;} .vl-sp.up{color:var(--green);} .vl-sp.dn{color:var(--red);}
+.vl-empty{padding:26px 16px; text-align:center; color:var(--dim); font-size:13px;}
+@media(max-width:700px){ .vl-cols, .vl-row{grid-template-columns:minmax(80px,1.2fr) 58px minmax(56px,.9fr) minmax(56px,.9fr) 40px; gap:6px; padding:0 10px;} .vl-sp{width:52px;} .vl-scroll{max-height:460px;} }
+
+/* pannello dell'asset scelto */
+.vl-head{display:flex; align-items:baseline; flex-wrap:wrap; gap:6px 14px;}
+.vl-title{font:700 clamp(24px,2vw,32px)/1.1 var(--fh); letter-spacing:-.015em; color:var(--text); margin:0;}
+.vl-px{font:600 15px var(--fm); color:var(--text2); font-variant-numeric:tabular-nums;}
+.vl-badge{font:600 10px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; padding:5px 8px; border-radius:6px; border:1px solid rgba(94,168,245,.35); color:var(--accent); background:var(--accent-soft); align-self:center;}
+.vl-kpis{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;}
+@media(max-width:900px){ .vl-kpis{grid-template-columns:repeat(2,minmax(0,1fr));} }
+.vl-kpi{padding:11px 13px; border-radius:12px; border:1px solid var(--border); background:var(--bg); display:flex; flex-direction:column; gap:3px; min-width:0;}
+.vl-kpi .l{font:600 10px/1.2 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--dim);}
+.vl-kpi b{font:600 19px/1.2 var(--fm); color:var(--text); font-variant-numeric:tabular-nums; white-space:nowrap;} .vl-kpi b small{font:500 11px var(--fm); color:var(--dim); margin-left:4px;}
+.vl-kpi .d{font:500 11.5px/1.35 var(--fb); color:var(--dim);}
+.vl-kpi.gold b{color:var(--gold);} .vl-kpi.up b{color:var(--green);} .vl-kpi.dn b{color:var(--red);}
+.vl-fig{margin:0; position:relative; min-width:0;}
+.vl-fig figcaption{font:600 11px/1.3 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-bottom:6px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px;}
+.vl-fig figcaption span{font-weight:500; letter-spacing:.02em; text-transform:none; color:var(--dim2);}
+.vl-svg{display:block; width:100%; height:auto; overflow:visible;}
+.vl-svg text{font-family:var(--fm); fill:var(--dim2); font-size:10px;}
+.vl-svg .gl{stroke:var(--border); stroke-width:1;} .vl-svg .ax{stroke:#2C3558; stroke-width:1;}
+.vl-svg .peak{stroke:var(--red); stroke-opacity:.6; stroke-width:1; stroke-dasharray:4 4;} .vl-svg .pk{fill:var(--red); fill-opacity:.85; font-size:10px;}
+.vl-col{cursor:crosshair;} .vl-col .hit{fill:transparent;}
+.vl-col .bar{fill:rgba(94,168,245,.30); stroke:rgba(94,168,245,.8); stroke-width:1; transition:fill .12s;}
+.vl-col .cross{stroke:rgba(255,255,255,.25); stroke-width:1; opacity:0;}
+.vl-col:hover .bar, .vl-col.on .bar{fill:rgba(94,168,245,.7);} .vl-col:hover .cross{opacity:1;}
+.vl-col.cur .bar{fill:rgba(224,169,77,.42); stroke:var(--gold);} .vl-col.cur:hover .bar{fill:rgba(224,169,77,.75);}
+.vl-col.top .bar{stroke:#fff; stroke-opacity:.8;}
+.vl-col .xl{fill:var(--dim2); font-size:10px;} .vl-col.cur .xl{fill:var(--gold); font-weight:600;}
+.vl-col .vv{fill:var(--text2); font-size:11px; font-weight:500;}
+.vl-tip{position:absolute; z-index:5; pointer-events:none; transform:translate(-50%,-100%); padding:6px 9px; border-radius:8px; background:var(--accent); color:#06101F; font:600 11.5px/1.25 var(--fm); white-space:nowrap; box-shadow:0 10px 24px -8px rgba(0,0,0,.7);}
+.vl-tip[hidden]{display:none;} .vl-tip i{font-style:normal; font-weight:500; opacity:.8;}
+.vl-leg{display:flex; flex-wrap:wrap; gap:6px 16px; font:500 11.5px var(--fb); color:var(--dim);} .vl-leg span{display:inline-flex; align-items:center; gap:7px;} .vl-leg i{width:11px; height:11px; border-radius:3px; display:inline-block;}
+.vl-foot{font-size:11.5px; color:var(--dim2); line-height:1.5; padding-top:10px; border-top:1px solid var(--border);}
+.vl-load{padding:40px 16px; text-align:center; color:var(--dim); font-size:13.5px;}
+.vl-retry{margin-top:12px; font:600 12.5px var(--fb); padding:8px 14px; border-radius:99px; border:1px solid var(--accent); background:var(--accent-soft); color:var(--accent); cursor:pointer;}
+@media(prefers-reduced-motion:no-preference){ .vl-col .bar{animation:vlGrow .7s cubic-bezier(.2,.7,.2,1) backwards; transform-box:fill-box; transform-origin:bottom;} @keyframes vlGrow{from{transform:scaleY(0);}} }
+
 </style>
 </head>
 <body>
@@ -1173,19 +1233,10 @@ html[data-font="4"] .h-card h4, html[data-font="4"] .pg b{font-weight:600; lette
   </div>
     </div>
   </details>
-  <details class="h-more" id="vol">
-    <summary><span>Dettaglio della volatilità per asset e per giorno</span></summary>
+  <details class="h-more" id="vol" open>
+    <summary><span>Volatilità per asset — scegli un asset e guarda come si muove</span></summary>
     <div class="h-more-body">
-  <div class="vd-table-wrap">
-    <table class="vd-table">
-      <colgroup><col class="vd-c-day"><col class="vd-c-asset"><col class="vd-c-idx"><col class="vd-c-time"><col class="vd-c-cat"><col class="vd-c-read"></colgroup>
-      <thead><tr>
-        <th>Giorno</th><th>Asset</th><th>Indice</th><th>Fasce più volatili (Europa/Roma)</th><th>Catalizzatori principali</th><th>Lettura operativa</th>
-      </tr></thead>
-      <tbody id="volDayTableBody"></tbody>
-    </table>
-  </div>
-  <div class="section-note">L'indice (1-5) e gli orari derivano dagli eventi in calendario di impatto medio/alto per la valuta di riferimento di ciascun asset, nella settimana lavorativa corrente (Lun-Ven). Non è una previsione di volatilità realizzata: segnala solo <b>quando</b> ci si aspettano più probabilmente movimenti ampi.</div>
+      <div class="vl" id="volTool"></div>
     </div>
   </details>
 </section>
@@ -2267,31 +2318,8 @@ function volIndexScore(events){
   const med = events.filter(e=>e.importance==='medio').length;
   return Math.max(1, Math.min(5, high*2 + med));
 }
-function volIndexClass(score){ return score>=4 ? 'alto' : score===3 ? 'moderato' : 'basso'; }
-
-function volTimeWindows(events){
-  if(!events.length) return '—';
-  const times = [...new Set(events.map(e=>new Date(e.date).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Europe/Rome'})))];
-  times.sort();
-  return times.slice(0,5).join(', ');
-}
-function volCatalysts(events){
-  if(!events.length) return 'Nessun evento medio/alto impatto in calendario';
-  const titles = [...new Set(events.map(e=>e.title))];
-  return titles.slice(0,4).join(', ') + (titles.length>4 ? ` +${titles.length-4}` : '');
-}
-function volReading(asset, events, score){
-  if(!events.length) return `${asset.label}: nessun catalizzatore ${asset.currency} rilevante questo giorno — volatilità attesa contenuta, da flusso ordini.`;
-  const top = [...events].sort((a,b)=> (a.importance==='alto'?0:1) - (b.importance==='alto'?0:1))[0];
-  const tier = score>=4 ? 'Alta probabilità di movimento ampio' : score===3 ? 'Possibile movimento moderato' : 'Volatilità probabilmente contenuta';
-  const rest = events.length>1 ? ` (+${events.length-1} altri eventi ${asset.currency})` : '';
-  return `${tier} su ${asset.label} in occasione di ${top.title}${rest}.`;
-}
-
-async function renderVolatilityTable(){
-  const tbody = document.getElementById('volDayTableBody');
-  if(!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="6" class="vd-empty">Caricamento calendario in corso…</td></tr>';
+// Eventi del calendario della settimana: alimentano la mappa "Quando aspettarsi movimenti ampi" dell'hub Calendario
+async function loadVolEvents(){
   try{
     const [monday, friday] = currentWorkWeekRange();
     const from = new Date(monday).toISOString();
@@ -2300,35 +2328,12 @@ async function renderVolatilityTable(){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     const events = (data.events||[]).filter(e=>e.importance==='alto' || e.importance==='medio');
-    HUB.volEvents = events; HUB.volRange = [monday, friday]; HUB.volFail = false; renderHubCal();   // mappa della volatilità dell'hub Calendario
-
-    let rows = '';
-    for(let dayMs=monday; dayMs<=friday; dayMs+=86400000){
-      const dayLabel = new Date(dayMs).toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', timeZone:'UTC'}).replace('.', '');
-      const dayLocal = new Date(dayMs).toLocaleDateString('en-CA', {timeZone:'UTC'});
-      VOL_ASSETS.forEach(asset=>{
-        const dayEvents = events.filter(e=>
-          e.currency === asset.currency &&
-          new Date(e.date).toLocaleDateString('en-CA', {timeZone:'Europe/Rome'}) === dayLocal
-        ).sort((a,b)=> new Date(a.date) - new Date(b.date));
-        const score = volIndexScore(dayEvents);
-        rows += `<tr class="vd-row">
-          <td class="vd-day">${dayLabel}</td>
-          <td class="vd-asset">${asset.label}</td>
-          <td><span class="vd-idx ${volIndexClass(score)}">${score}/5</span></td>
-          <td class="vd-time">${volTimeWindows(dayEvents)}</td>
-          <td class="vd-cat">${volCatalysts(dayEvents)}</td>
-          <td class="vd-read">${volReading(asset, dayEvents, score)}</td>
-        </tr>`;
-      });
-    }
-    tbody.innerHTML = rows || '<tr><td colspan="6" class="vd-empty">Nessun dato disponibile.</td></tr>';
+    HUB.volEvents = events; HUB.volRange = [monday, friday]; HUB.volFail = false; renderHubCal();
   }catch(e){
-    tbody.innerHTML = '<tr><td colspan="6" class="vd-empty">Calendario non raggiungibile in questo momento — riprova tra poco.</td></tr>';
     HUB.volFail = true; renderHubCal();
   }
 }
-renderVolatilityTable();
+loadVolEvents();
 
 // ---------- SENTIMENT NEWS PER CATEGORIA ----------
 // Le categorie e i rischi chiave arrivano da /api/sentiment-categories (analisi AI su notizie reali) e finiscono nello
@@ -2770,7 +2775,7 @@ function renderHubCal(){
       + '</div><p class="h-note" style="margin-top:8px;">Indice da 1 a 5 per giorno e asset, calcolato dagli eventi in calendario. Non è una previsione di volatilità.</p>';
   }
   el.innerHTML = hCard({span:7, icon:'cal', title:'Prossimi eventi ad alto impatto', bd:['live'], body:evHtml, foot:'<button type="button" class="h-link" onclick="goToSection(\'calendar\')">Apri tutto il calendario, con tutti i filtri →</button>'})
-    + hCard({span:5, icon:'bolt', title:'Quando aspettarsi movimenti ampi', bd:['live'], body:heat, foot:'<button type="button" class="h-link" onclick="goToSection(\'vol\')">Dettaglio per asset e giorno →</button>'});
+    + hCard({span:5, icon:'bolt', title:'Quando aspettarsi movimenti ampi', bd:['live'], body:heat, foot:'<button type="button" class="h-link" onclick="goToSection(\'vol\')">Volatilità reale per asset →</button>'});
 }
 
 // ---- 09 Posizionamento e rischio
@@ -3598,7 +3603,7 @@ function refreshLive(){
   const btn = document.getElementById('refreshBtn'); if(btn) btn.classList.add('spin');   // l'icona gira finché i dati non sono arrivati
   initLiveData(true).finally(()=>{ if(btn) btn.classList.remove('spin'); });
   fetchCalEventsForRange(...getCalDateRange());
-  renderVolatilityTable();
+  loadVolEvents();
   loadKeyEvents();
 }
 
@@ -4112,6 +4117,198 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
 
   // per le immagini di anteprima: porta subito tutto allo stato finale
   window.__fxFlush = () => { $$('.t-pre').forEach(h => { h.classList.remove('t-pre'); h.classList.add('t-on'); }); $$('[data-fxw]').forEach(e => e.classList.add('fx-in')); };
+})();
+</script>
+<script>
+// ---------- VOLATILITÀ PER ASSET: tabella interattiva + grafici per ora del giorno e per giorno della settimana ----------
+// I dati arrivano da /api/market-data?view=volatility (candele orarie reali di Yahoo Finance, ultimi 3 mesi, ora italiana).
+// Si carica solo quando la sezione si avvicina allo schermo. Se qualcosa non risponde si dice e basta: nessun dato inventato.
+(function(){
+  'use strict';
+  const root = document.getElementById('volTool'); if(!root) return;
+  const nf = (n, d) => typeof hNf === 'function' ? hNf(n, d) : Number(n).toFixed(d).replace('.', ',');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[c]));
+  const CLS = [['all', 'Tutti'], ['fx', 'Forex'], ['met', 'Materie prime'], ['idx', 'Indici'], ['oth', 'Altro']];
+  const CLS_NAME = {fx:'Forex', met:'Materie prime', idx:'Indici', oth:'Altro'};
+  const DAYS = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'], DAYS_S = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven'];
+  const pad = n => String(n).padStart(2, '0');
+  const decOf = a => a.unit === 'punti' ? 2 : 1;
+  const unitOf = a => a.unit === 'punti' ? 'punti' : a.unit;
+  let DATA = null, sel = 'EURUSD', filter = 'all', q = '', sort = {k:'default', dir:1}, state = 'idle';
+
+  // ora e giorno in corso (ora italiana): servono a colorare di giallo la barra "adesso"
+  const nowParts = () => {
+    const d = new Date();
+    const h = parseInt(d.toLocaleString('en-GB', {timeZone:'Europe/Rome', hour:'2-digit', hourCycle:'h23'}), 10);
+    const w = {Mon:0, Tue:1, Wed:2, Thu:3, Fri:4}[d.toLocaleDateString('en-US', {timeZone:'Europe/Rome', weekday:'short'})];
+    return {h, w: w == null ? -1 : w};
+  };
+
+  function shell(){
+    root.innerHTML =
+      '<div class="vl-left"><div class="vl-bar">'
+      + '<label class="vl-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="vlQ" placeholder="Cerca un asset…" aria-label="Cerca un asset" autocomplete="off"></label>'
+      + '<div class="vl-chips" id="vlChips" role="group" aria-label="Tipo di asset"></div></div>'
+      + '<div class="vl-cols" role="row"><button type="button" data-s="name" title="Ordina per nome">Asset</button><span>Trend</span>'
+      + '<button type="button" class="r" data-s="range" title="Escursione media giornaliera (massimo − minimo), ultime 30 giornate">Pips</button>'
+      + '<button type="button" class="r" data-s="usd" title="Valore in dollari dell\'escursione media per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard">$</button>'
+      + '<button type="button" class="r" data-s="pct" title="Escursione media in % del prezzo">%</button></div>'
+      + '<div class="vl-scroll" id="vlList" role="listbox" aria-label="Asset"></div></div>'
+      + '<div class="vl-right" id="vlDetail"></div>';
+    const chips = root.querySelector('#vlChips');
+    chips.innerHTML = CLS.map(([k, n]) => `<button type="button" class="vl-chip" data-c="${k}" aria-pressed="${k === filter}">${n}</button>`).join('');
+    chips.addEventListener('click', e => { const b = e.target.closest('[data-c]'); if(!b) return; filter = b.dataset.c; $$c(chips, '[data-c]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.c === filter))); paintList(); });
+    root.querySelector('#vlQ').addEventListener('input', e => { q = e.target.value.trim().toLowerCase().replace(/[\/\s]/g, ''); paintList(); });
+    root.querySelector('.vl-cols').addEventListener('click', e => {
+      const b = e.target.closest('[data-s]'); if(!b) return;
+      const k = b.dataset.s; sort = sort.k === k ? {k, dir:-sort.dir} : {k, dir:k === 'name' ? 1 : -1}; paintList();
+    });
+    const list = root.querySelector('#vlList');
+    list.addEventListener('click', e => { const r = e.target.closest('[data-k]'); if(r) choose(r.dataset.k, false); });
+    list.addEventListener('keydown', e => {
+      if(e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      const rows = $$c(list, '[data-k]'), i = rows.findIndex(r => r.dataset.k === sel), n = rows[i + (e.key === 'ArrowDown' ? 1 : -1)];
+      if(n){ e.preventDefault(); choose(n.dataset.k, true); }
+    });
+  }
+  const $$c = (el, s) => [...el.querySelectorAll(s)];
+
+  // ---------- elenco ----------
+  const spark = (pts) => {
+    if(!pts || pts.length < 3) return '<span class="n">—</span>';
+    const mn = Math.min(...pts), mx = Math.max(...pts), W = 60, H = 18, sp = (mx - mn) || 1;
+    const xy = pts.map((v, i) => [(i / (pts.length - 1) * W).toFixed(1), (H - 1 - (v - mn) / sp * (H - 2)).toFixed(1)]);
+    const up = pts[pts.length - 1] >= pts[0];
+    return `<svg class="vl-sp ${up ? 'up' : 'dn'}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${xy.map(p => p.join(',')).join(' ')}"/></svg>`;
+  };
+  const cmp = () => {
+    const key = {name:a => a.name.toLowerCase(), range:a => a.avgRange, usd:a => a.usd, pct:a => a.avgPct}[sort.k];
+    if(!key) return null;
+    // pips, punti e punti base non sono confrontabili: nella colonna "Pips" ogni unità resta a sé (prima i pips, poi i punti, poi i bp)
+    const UN = {pips:0, punti:1, bp:2};
+    return (a, b) => {
+      if(sort.k === 'range'){ const ua = UN[a.unit] == null ? 9 : UN[a.unit], ub = UN[b.unit] == null ? 9 : UN[b.unit]; if(ua !== ub) return ua - ub; }
+      const x = key(a), y = key(b); if(x == null && y == null) return 0; if(x == null) return 1; if(y == null) return -1; return (x < y ? -1 : x > y ? 1 : 0) * sort.dir;
+    };
+  };
+  function paintList(){
+    const list = root.querySelector('#vlList'); if(!list) return;
+    root.querySelectorAll('.vl-cols [data-s]').forEach(b => { const on = b.dataset.s === sort.k; b.classList.toggle('on', on); b.classList.toggle('asc', on && sort.dir === 1); });
+    if(state !== 'ready'){ list.innerHTML = `<div class="vl-empty ${state === 'loading' ? 'fx-load' : ''}">${state === 'error' ? 'Dati di volatilità non raggiungibili in questo momento.' : 'Caricamento delle candele orarie…'}</div>`; return; }
+    let rows = DATA.assets.filter(a => (filter === 'all' || a.cls === filter) && (!q || a.name.toLowerCase().replace(/[\/\s]/g, '').includes(q) || a.key.toLowerCase().includes(q)));
+    const c = cmp(); if(c) rows = [...rows].sort(c);
+    list.innerHTML = rows.length ? rows.map(a => {
+      if(a.error) return `<button type="button" class="vl-row" role="option" data-k="${a.key}" aria-selected="${a.key === sel}"><span class="nm">${esc(a.name)}</span><span></span><span class="n r" style="grid-column:3/-1">non disponibile</span></button>`;
+      const u = a.unit === 'pips' ? '' : `<i>${a.unit === 'punti' ? 'pt' : a.unit}</i>`;
+      return `<button type="button" class="vl-row" role="option" data-k="${a.key}" aria-selected="${a.key === sel}" tabindex="${a.key === sel ? 0 : -1}">`
+        + `<span class="nm">${esc(a.name)}${a.cls !== 'fx' ? `<small>${CLS_NAME[a.cls] || ''}</small>` : ''}</span><span>${spark(a.spark)}</span>`
+        + `<span class="n r"><b>${nf(a.avgRange, decOf(a))}</b>${u}</span><span class="n r">${a.usd == null ? '—' : nf(a.usd, 2)}</span><span class="n r">${nf(a.avgPct, 2)}</span></button>`;
+    }).join('') : '<div class="vl-empty">Nessun asset trovato.</div>';
+  }
+  function choose(k, focus){
+    sel = k;
+    root.querySelectorAll('#vlList [data-k]').forEach(r => { const on = r.dataset.k === k; r.setAttribute('aria-selected', String(on)); r.tabIndex = on ? 0 : -1; if(on && focus) r.focus({preventScroll:false}); });
+    paintDetail();
+  }
+
+  // ---------- grafici a barre (SVG) ----------
+  function nice(max){
+    if(!(max > 0)) return {max:1, step:.25};
+    const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p, s = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+    return {max:Math.ceil(max / s - 1e-9) * s, step:s};
+  }
+  function chart({vals, labels, tips, cur, h, peak, valLabels, dec, W = 720}){
+    const every = W < 520 && !valLabels ? 2 : 1;
+    const padL = W < 520 ? 34 : 40, padR = 8, padT = valLabels ? 22 : 18, padB = 26, plotH = h - padT - padB, n = vals.length, slot = (W - padL - padR) / n, bw = Math.min(valLabels ? 76 : 22, slot * (valLabels ? .62 : .74));
+    const nums = vals.filter(v => v != null), top = nums.length ? Math.max(...nums) : 0, {max, step} = nice(top);
+    const y = v => padT + plotH - (v / max) * plotH;
+    let grid = '';
+    for(let v = 0; v <= max + 1e-9; v += step){ const yy = y(v); grid += `<line class="${v === 0 ? 'ax' : 'gl'}" x1="${padL}" x2="${W - padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}"/><text x="${padL - 7}" y="${(yy + 3.5).toFixed(1)}" text-anchor="end">${nf(v, step < 1 ? 1 : 0)}</text>`; }
+    const iTop = nums.length ? vals.indexOf(top) : -1;
+    const cols = vals.map((v, i) => {
+      const x = padL + i * slot, cx = x + slot / 2, bh = v == null ? 0 : v / max * plotH;
+      const cls = ['vl-col', i === cur ? 'cur' : '', i === iTop ? 'top' : ''].filter(Boolean).join(' ');
+      return `<g class="${cls}" data-t="${esc(tips[i])}" data-v="${v == null ? '' : nf(v, dec)}">`
+        + `<rect class="hit" x="${x.toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${plotH + padB}"/>`
+        + `<line class="cross" x1="${cx.toFixed(1)}" x2="${cx.toFixed(1)}" y1="${padT}" y2="${padT + plotH}"/>`
+        + (v == null ? '' : `<rect class="bar" x="${(cx - bw / 2).toFixed(1)}" y="${(padT + plotH - bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="2.5"/>`)
+        + (valLabels && v != null ? `<text class="vv" x="${cx.toFixed(1)}" y="${(padT + plotH - bh - 6).toFixed(1)}" text-anchor="middle">${nf(v, dec)}</text>` : '')
+        + (i % every === 0 ? `<text class="xl" x="${cx.toFixed(1)}" y="${h - 8}" text-anchor="middle">${esc(labels[i])}</text>` : '') + '</g>';
+    }).join('');
+    const pk = peak && nums.length ? `<line class="peak" x1="${padL}" x2="${W - padR}" y1="${y(top).toFixed(1)}" y2="${y(top).toFixed(1)}"/><text class="pk" x="${W - padR}" y="${(y(top) - 5).toFixed(1)}" text-anchor="end">picco ${nf(top, dec)}</text>` : '';
+    return `<svg class="vl-svg" viewBox="0 0 ${W} ${h}" role="img" aria-label="Grafico a barre">${grid}${pk}${cols}</svg>`;
+  }
+
+  // ---------- pannello dell'asset ----------
+  function paintDetail(){
+    const el = root.querySelector('#vlDetail'); if(!el) return;
+    if(state !== 'ready'){
+      el.innerHTML = state === 'error'
+        ? '<div class="vl-load">Non riesco a leggere i dati di volatilità adesso.<br><button type="button" class="vl-retry" id="vlRetry">Riprova</button></div>'
+        : '<div class="vl-load fx-load">Calcolo la volatilità dalle candele orarie degli ultimi 3 mesi…</div>';
+      const b = el.querySelector('#vlRetry'); if(b) b.addEventListener('click', load);
+      return;
+    }
+    const a = DATA.assets.find(x => x.key === sel) || DATA.assets.find(x => !x.error);
+    if(!a || a.error){ el.innerHTML = '<div class="vl-load">Dati non disponibili per questo asset in questo momento.</div>'; return; }
+    const d = decOf(a), U = unitOf(a), now = nowParts();
+    const W = Math.round(Math.max(300, Math.min(720, el.clientWidth - (innerWidth <= 700 ? 26 : 42))));   // larghezza reale del riquadro
+    const hrs = a.hours, wk = a.weekdays;
+    const hMax = Math.max(...hrs.filter(v => v != null)), iH = hrs.indexOf(hMax);
+    const wMax = Math.max(...wk.filter(v => v != null)), iW = wk.indexOf(wMax);
+    const tod = a.today ? a.today.range / a.avgRange * 100 : null;
+    const kpis = [
+      ['Escursione media al giorno', `${nf(a.avgRange, d)}<small>${U}</small>`, `${nf(a.avgPct, 2)}% del prezzo${a.usd != null ? ` · ${nf(a.usd, 0)} $ per lotto` : ''}`, ''],
+      ['Ora più volatile', `${pad(iH)}:00–${pad((iH + 1) % 24)}:00`, `${nf(hMax, d)} ${U} per candela oraria`, 'gold'],
+      ['Giorno più volatile', DAYS[iW], `${nf(wMax, d)} ${U} di media`, ''],
+      ['Oggi finora', a.today ? `${nf(a.today.range, d)}<small>${U}</small>` : '—', a.today ? `${Math.round(tod)}% della media` : 'mercato chiuso oggi', a.today ? (tod >= 100 ? 'up' : '') : ''],
+    ].map(([l, v, s, c]) => `<div class="vl-kpi ${c}"><span class="l">${l}</span><b>${v}</b><span class="d">${s}</span></div>`).join('');
+    const hours = chart({vals:hrs, labels:hrs.map((_, i) => String(i)), tips:hrs.map((_, i) => `${pad(i)}:00–${pad((i + 1) % 24)}:00`), cur:now.h, h:W < 520 ? 200 : 236, peak:true, dec:d, W});
+    const week = chart({vals:wk, labels:DAYS_S, tips:DAYS, cur:now.w, h:W < 520 ? 176 : 200, valLabels:true, dec:d, W});
+    const px = a.price != null ? nf(a.price, a.cls === 'fx' ? (a.key.endsWith('JPY') ? 3 : 5) : 2) : '';
+    const why = typeof hWhy === 'function' ? hWhy(`<b>Come leggerla:</b> ogni barra è quanto si muove in media il prezzo (dal minimo al massimo) in quell'ora o in quel giorno. Più la barra è alta, più il mercato è mosso. In giallo l'ora o il giorno in corso. È una media storica, non una previsione.`) : '';
+    el.innerHTML =
+      `<div class="vl-head"><h3 class="vl-title">${esc(a.name)}</h3><span class="vl-px">${px}</span><span class="vl-badge">${U}</span></div>`
+      + `<div class="vl-kpis">${kpis}</div>` + why
+      + `<figure class="vl-fig"><figcaption>Volatilità per ora del giorno <span>escursione media di ogni candela oraria · ora italiana</span></figcaption>${hours}<div class="vl-tip" hidden></div></figure>`
+      + `<figure class="vl-fig"><figcaption>Volatilità per giorno della settimana <span>escursione media giornaliera (massimo − minimo)</span></figcaption>${week}<div class="vl-tip" hidden></div></figure>`
+      + `<div class="vl-leg"><span><i style="background:rgba(94,168,245,.55)"></i>media storica</span><span><i style="background:rgba(224,169,77,.7)"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
+      + `<p class="vl-foot">Fonte: Yahoo Finance, candele orarie degli ultimi 3 mesi (${a.days} giornate) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
+      + `Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p>`;
+    $$c(el, '.vl-fig').forEach(fig => {
+      const tip = fig.querySelector('.vl-tip');
+      const show = e => {
+        const g = e.target.closest && e.target.closest('.vl-col'); if(!g){ tip.hidden = true; return; }
+        const bar = g.querySelector('.bar') || g.querySelector('.hit'), r = bar.getBoundingClientRect(), fr = fig.getBoundingClientRect();
+        tip.innerHTML = g.dataset.v ? `<i>${g.dataset.t}</i> · ${g.dataset.v} ${U}` : `<i>${g.dataset.t}</i> · mercato chiuso`;
+        tip.style.left = (r.left - fr.left + r.width / 2) + 'px'; tip.style.top = Math.max(26, r.top - fr.top - 6) + 'px'; tip.hidden = false;
+      };
+      fig.addEventListener('pointermove', show); fig.addEventListener('pointerdown', show); fig.addEventListener('pointerleave', () => { tip.hidden = true; });
+    });
+  }
+
+  async function load(){
+    state = 'loading'; paintList(); paintDetail();
+    try{
+      const r = await fetch('/api/market-data?view=volatility'); if(!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json(); if(!j || !Array.isArray(j.assets)) throw new Error('risposta inattesa');
+      DATA = j; state = 'ready';
+      if(!DATA.assets.some(a => a.key === sel && !a.error)) sel = (DATA.assets.find(a => !a.error) || {}).key;
+    }catch(e){ state = 'error'; }
+    paintList(); paintDetail();
+    const row = root.querySelector('#vlList [aria-selected="true"]'), box = root.querySelector('#vlList');
+    if(row && box && !q) box.scrollTop = Math.max(0, row.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - box.clientHeight / 3);
+  }
+
+  shell(); paintList(); paintDetail();
+  // si carica quando la sezione è vicina allo schermo; ogni 5 minuti si ridisegna per aggiornare "ora in corso" e "oggi"
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => { if(es.some(e => e.isIntersecting) && state === 'idle'){ io.disconnect(); load(); } }, {rootMargin:'500px 0px'});
+    io.observe(root);
+  } else load();
+  setInterval(() => { if(state === 'ready' && !document.hidden) paintDetail(); }, 5 * 60 * 1000);
+  let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if(state === 'ready') paintDetail(); }, 200); });
+  window.__volLoad = () => { if(state === 'idle') load(); };   // per le immagini di anteprima
 })();
 </script>
 </body>
