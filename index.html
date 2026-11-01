@@ -1117,6 +1117,33 @@ html[data-font="4"] .h-card h4, html[data-font="4"] .pg b{font-weight:600; lette
 .vl-retry{margin-top:12px; font:600 12.5px var(--fb); padding:8px 14px; border-radius:99px; border:1px solid var(--accent); background:var(--accent-soft); color:var(--accent); cursor:pointer;}
 @media(prefers-reduced-motion:no-preference){ .vl-col .bar{animation:vlGrow .7s cubic-bezier(.2,.7,.2,1) backwards; transform-box:fill-box; transform-origin:bottom;} @keyframes vlGrow{from{transform:scaleY(0);}} }
 
+/* ===================== PRESTAZIONI: scorrimento più fluido (v5) ===================== */
+/* Stesso aspetto, meno lavoro per il browser mentre si scorre. */
+
+/* 1) Sfondo: niente "background-attachment: fixed" (obbliga a ridisegnare tutta la pagina a ogni scorrimento).
+      I due bagliori fissi passano nel livello #aurora, che è già fisso: si vede lo stesso. */
+body{background:var(--bg);}
+#aurora{background:radial-gradient(1100px 520px at 92% -8%, rgba(94,168,245,.11), transparent 62%), radial-gradient(900px 480px at -4% 6%, rgba(224,169,77,.055), transparent 60%);}
+/* 2) I tre bagliori dello sfondo restano ma fermi: spostarli di continuo costringeva a ricomporre grandi livelli a ogni fotogramma */
+#aurora i{animation:none!important; will-change:auto;}
+/* 3) Maschera sul ticker e sfocatura dietro al tasto "torna su" e alla barra del menu su telefono: costringevano a ridisegnare a ogni scorrimento */
+.ticker-wrap{-webkit-mask-image:none; mask-image:none;}
+#toTop{-webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(15,21,40,.97);}
+@media(max-width:860px){ .menubar{-webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(10,14,26,.98);} }
+/* 4) Pallini LIVE e logo fermi: 27 animazioni continue in meno */
+.h-bd.live::before{animation:none;}
+.hd-logo{animation:none; box-shadow:0 7px 26px -6px rgba(94,168,245,.72);}
+/* 5) Titoli di sezione: sfumatura ferma; resta l'ingresso, e a fine corsa l'animazione non resta agganciata (backwards, non both) */
+.sec-head h2{animation:none;}
+.sec-head.t-on h2{animation:titleIn 1.05s cubic-bezier(.2,.7,.2,1) backwards;}
+.pulse-hd.t-on h2{animation:titleIn 1.05s cubic-bezier(.2,.7,.2,1) backwards, txFlow 16s steps(80) 1s infinite;}
+.sec-head.t-on .sec-desc{animation:fadeUp .9s .28s cubic-bezier(.2,.7,.2,1) backwards;}
+/* 6) Barra di avanzamento: cambia con transform (composizione), non con width (layout) */
+#scrollProg{width:100%; transform:scaleX(0); transform-origin:0 50%; will-change:transform;}
+/* 7) Mentre si scorre, le animazioni di sottofondo si fermano e riprendono a scorrimento finito */
+html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scrolling .fx-load, html.is-scrolling .pl-main.skel, html.is-scrolling .pn-tag i, html.is-scrolling .pl-k i, html.is-scrolling .ticker{animation-play-state:paused!important;}
+@media(prefers-reduced-motion:reduce){ .sec-head.t-on h2, .pulse-hd.t-on h2, .sec-head.t-on .sec-desc{animation:none;} }
+
 </style>
 </head>
 <body>
@@ -3640,12 +3667,14 @@ function menuGo(id){ toggleMenu(false); goToSection(id); }
 document.addEventListener('click', e => { const bar = document.getElementById('menubar'); if(bar && !bar.contains(e.target)) toggleMenu(false); });
 document.addEventListener('keydown', e => { const p = document.getElementById('menuPanel'); if(e.key === 'Escape' && p && !p.hidden){ toggleMenu(false); const b = document.getElementById('menuBtn'); if(b) b.focus(); } });
 // sezione corrente: l'ultima il cui titolo ha già superato le barre fisse
-let menuTick = false;
+let menuTick = false, menuLast = null;
 function menuSpy(){
   menuTick = false;
   const secs = [...document.querySelectorAll('main > section[id]')]; if(!secs.length) return;
   let cur = secs[0];
   secs.forEach(s => { if(s.getBoundingClientRect().top <= 160) cur = s; });
+  if(cur.id === menuLast) return;     // la sezione non è cambiata: niente da riscrivere
+  menuLast = cur.id;
   const info = MENU.flatMap(g => g.items).find(it => it.id === cur.id);
   const el = document.getElementById('menuCur');
   if(el && info) el.innerHTML = `<b>${info.n}</b>${info.t}`;
@@ -3847,7 +3876,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
         if(!b){ b = document.createElement('button'); b.type = 'button'; b.addEventListener('click', () => goToSection(b.dataset.go)); els[t.k] = b; grid.appendChild(b); }
         b.dataset.go = t.go;
         const cls = 'pt ' + t.tone + (t.skel ? ' skel' : ''); if(b.className !== cls) b.className = cls;
-        if(b.dataset.h !== t.html){ b.dataset.h = t.html; b.innerHTML = t.html; animateTile(b); }
+        const sig = t.html.replace(/grad[a-z0-9]{4,8}/g, 'grad'); if(b.dataset.h !== sig){ b.dataset.h = sig; b.innerHTML = t.html; animateTile(b); }
       });
     }catch(e){ /* i dati non sono ancora pronti */ }
   }
@@ -3901,7 +3930,10 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       });
     }catch(e){}
   }
-  let tipT = 0; new MutationObserver(() => { clearTimeout(tipT); tipT = setTimeout(tipify, 300); }).observe(main, {childList:true, subtree:true});
+  let tipT = 0; new MutationObserver(ms => {
+    if(ms.every(m => { const x = m.target.nodeType === 1 ? m.target : m.target.parentElement; return x && x.closest && x.closest('.h-cd, .pl, .pn, #pulseGrid'); })) return;
+    clearTimeout(tipT); tipT = setTimeout(tipify, 300);
+  }).observe(main, {childList:true, subtree:true});
   tipify();
 
   // ---- barra di avanzamento + ritorno in cima ----
@@ -3912,7 +3944,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   function onScroll(){
     sT = false;
     const h = document.documentElement.scrollHeight - innerHeight;
-    prog.style.width = (h > 0 ? Math.min(100, scrollY / h * 100) : 0) + '%';
+    prog.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, scrollY / h) : 0).toFixed(4) + ')';
     topBtn.classList.toggle('on', scrollY > 900);
   }
   addEventListener('scroll', () => { if(!sT){ sT = true; requestAnimationFrame(onScroll); } }, {passive:true}); onScroll();
@@ -3929,9 +3961,14 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   document.body.insertBefore(aur, document.body.firstChild);
 
   // il riflesso sulle card segue il mouse
+  let pmE = null, pmT = 0;
   document.addEventListener('pointermove', e => {
-    const c = e.target.closest && e.target.closest('.h-card, .pt'); if(!c) return;
-    const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    pmE = e; if(pmT) return;
+    pmT = requestAnimationFrame(() => {
+      pmT = 0; const ev = pmE; if(!ev) return;
+      const c = ev.target.closest && ev.target.closest('.h-card, .pt'); if(!c) return;
+      const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (ev.clientX - r.left) + 'px'); c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+    });
   }, {passive:true});
 
   // le card di ogni sezione entrano a cascata la prima volta che la sezione compare
@@ -4309,6 +4346,17 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   setInterval(() => { if(state === 'ready' && !document.hidden) paintDetail(); }, 5 * 60 * 1000);
   let rz = 0; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if(state === 'ready') paintDetail(); }, 200); });
   window.__volLoad = () => { if(state === 'idle') load(); };   // per le immagini di anteprima
+})();
+</script>
+<script>
+// ---------- PRESTAZIONI: durante lo scorrimento le animazioni di sottofondo si fermano (vedi perf.css, punto 7) ----------
+(function(){
+  'use strict';
+  const root = document.documentElement; let t = 0, on = false;
+  addEventListener('scroll', () => {
+    if(!on){ on = true; root.classList.add('is-scrolling'); }
+    clearTimeout(t); t = setTimeout(() => { on = false; root.classList.remove('is-scrolling'); }, 160);
+  }, {passive:true});
 })();
 </script>
 </body>
