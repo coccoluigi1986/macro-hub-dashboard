@@ -1810,7 +1810,7 @@ function mvAsset(a){
 }
 function mvSlot(s){
   const news = s.news.length
-    ? `<ul class="mv-news">${s.news.map(n => `<li><span class="mv-t">${escHtml(mvWhen(n.published))}</span><a href="${escHtml(n.url || '#')}" target="_blank" rel="noopener noreferrer">${escHtml(n.title)}</a><span class="mv-src">${escHtml(n.source)}${n.level === 'ALTO' ? '<span class="mv-hi">alto impatto</span>' : ''}</span></li>`).join('')}</ul>`
+    ? `<ul class="mv-news">${s.news.map(n => `<li><span class="mv-t">${escHtml(mvWhen(n.published))}</span><a href="${escHtml(n.url || '#')}" target="_blank" rel="noopener noreferrer"${n.titleIt ? ` title="Titolo originale: ${escHtml(n.title).replace(/"/g, '&quot;')}"` : ''}>${escHtml(n.titleIt || n.title)}</a><span class="mv-src">${escHtml(n.source)}${n.level === 'ALTO' ? '<span class="mv-hi">alto impatto</span>' : ''}</span></li>`).join('')}</ul>`
     : '<p class="mv-none">Nessuna notizia chiara nel flusso in quelle ore: movimento di flussi e posizionamento.</p>';
   return `<div class="mv-row"><div class="mv-when"><span class="mv-day">${escHtml(s.day)}</span><span class="mv-ses ${s.ses.toLowerCase()}"><i></i>${escHtml(s.ses)}</span><span class="mv-hours">${escHtml(s.hours)} · ora italiana</span>${s.live ? '<span class="mv-live">in corso</span>' : ''}</div><div class="mv-assets">${s.assets.map(mvAsset).join('')}</div>${news}</div>`;
 }
@@ -1824,7 +1824,7 @@ function renderMarketMoves(){
   else body = `<div class="mv-wrap">${d.slots.map(mvSlot).join('')}</div>`;
   el.innerHTML = hCard({span:12, icon:'pulse', title:'Cosa ha mosso i mercati', bd:['live'], cls:'h-accent', body:
     `<p class="h-note" style="margin-top:-4px">Gli asset che si sono mossi più del solito, fascia per fascia, con le notizie uscite in quelle ore. Una notizia forte (un attacco, una dichiarazione di Trump, una banca centrale) muove tutti i mercati insieme: qui li vedi nello stesso momento.</p>${body}`,
-    foot:`<span class="mv-legend">Movimenti reali a 15 minuti (Yahoo Finance) confrontati con il movimento tipico di ogni asset; notizie da 16 fonti, ordinate per impatto. Le notizie sono <b>concomitanti</b> ai movimenti: indicano cosa stava succedendo, non una causa certa.${d ? ` Aggiornato alle ${escHtml(hTime(d.generatedAt))}.` : ''}</span>`});
+    foot:`<span class="mv-legend">Movimenti reali a 15 minuti (Yahoo Finance) confrontati con il movimento tipico di ogni asset; notizie da 16 fonti, ordinate per impatto. Le notizie sono <b>concomitanti</b> ai movimenti: indicano cosa stava succedendo, non una causa certa. I titoli sono tradotti in italiano in automatico e il link apre l'articolo originale.${d ? ` Aggiornato alle ${escHtml(hTime(d.generatedAt))}.` : ''}</span>`});
 }
 async function loadMarketMoves(){
   try{
@@ -4085,13 +4085,14 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     function show(n, animate){
       const it = items[n]; if(!it) return;
       a.href = it.url;
-      a.innerHTML = `<b>${esc(it.source)}</b><em>${ago(it.published)}</em><span>${esc(it.title)}</span>`;
+      a.innerHTML = `<b>${esc(it.source)}</b><em>${ago(it.published)}</em><span>${esc(it.titleIt || it.title)}</span>`;
+      a.title = it.titleIt ? 'Titolo originale: ' + it.title : '';
       dots.innerHTML = items.map((_, k) => `<i class="${k === n ? 'on' : ''}"></i>`).join('');
       if(animate && !reduce && a.animate) a.animate([{opacity:0, transform:'translateY(8px)'}, {opacity:1, transform:'none'}], {duration:450, easing:'ease-out'});
     }
     async function load(){
       try{
-        const r = await fetch('/api/news-aggregated'); if(!r.ok) return;
+        const r = await fetch('/api/news-aggregated?lang=it'); if(!r.ok) return;   // titoli già tradotti in italiano (titleIt)
         const j = await r.json();
         items = (j.items || []).filter(x => x && x.title && /^https?:\/\//i.test(x.url || '')).sort((p, q) => new Date(q.published) - new Date(p.published)).slice(0, 8);
         if(!items.length) return;

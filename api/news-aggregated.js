@@ -4,7 +4,8 @@
 // pubblici (+ Finnhub se FINNHUB_KEY è configurata). Vedi lib/news.js per le fonti e la
 // logica di dedup.
 //
-// Query param opzionali: ?limit=40 (default) · ?topic=geo (filtra per parole chiave geopolitiche)
+// Query param opzionali: ?limit=40 (default) · ?topic=geo (filtra per parole chiave geopolitiche) · ?lang=it (aggiunge titleIt, il titolo
+// tradotto in italiano, alle prime 12 notizie) · ?view=moves (scheda "Cosa ha mosso i mercati", titoli già in italiano)
 // ?debug=1 → non aggrega, testa OGNI feed RSS singolarmente e riporta status/conteggio/errore per
 // ciascuno — utile per capire perché una fonte non restituisce nulla (es. blocco anti-bot su IP
 // datacenter, 403/429, timeout) invece di vederla sparire in silenzio dal risultato aggregato.
@@ -12,6 +13,7 @@
 
 const { aggregateNews, fetchRssWithDiag, RSS_FEEDS } = require('../lib/news');
 const { getMarketContext, uiSummary } = require('../lib/market-context');
+const { translateTitles } = require('../lib/translate-headlines');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const GEO_KEYWORDS = [
@@ -38,9 +40,14 @@ async function handleEvent(event) {
     // (dati Yahoo a 15 minuti + notizie ordinate per impatto, lib/market-context.js). Nessuna AI: sempre fresco, cache breve.
     if (params.view === 'moves') {
       const summary = uiSummary(await getMarketContext());
+      // titoli in italiano (titleIt); se la traduzione non c'è resta il titolo originale e la cache è breve, così si riprova presto
+      const shown = summary.slots.flatMap(s => s.news);
+      const tr = await translateTitles(shown.map(n => n.title));
+      shown.forEach(n => { if (tr.has(n.title)) n.titleIt = tr.get(n.title); });
+      const complete = shown.every(n => n.titleIt);
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 300 : 60}` },
         body: JSON.stringify(summary),
       };
     }
@@ -54,9 +61,19 @@ async function handleEvent(event) {
     }
     items = items.slice(0, limit);
 
+    // ?lang=it → aggiunge titleIt (titolo in italiano) alle notizie in testa all'elenco, quelle che la dashboard mostra; le altre restano in inglese
+    let complete = true;
+    if (params.lang === 'it') {
+      const head = items.slice(0, 12).map(i => ({ ...i }));   // copie: gli oggetti originali stanno nella memoria condivisa di lib/news.js
+      const tr = await translateTitles(head.map(i => i.title));
+      head.forEach(i => { if (tr.has(i.title)) i.titleIt = tr.get(i.title); });
+      complete = head.every(i => i.titleIt);
+      items = [...head, ...items.slice(12)];
+    }
+
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=600' },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 600 : 120}` },
       body: JSON.stringify({
         count: items.length,
         topic,
