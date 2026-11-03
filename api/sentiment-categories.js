@@ -12,6 +12,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/sentiment-categories
 
 const { aggregateNews } = require('../lib/news');
+const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
@@ -59,12 +60,17 @@ async function handleEvent(event) {
       };
     }
 
+    // Contesto condiviso (notizie per impatto + movimenti reali con notizie concomitanti); se manca si usa l'elenco per data.
+    const ctx = await getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; });
+
     let payload = null;
     if (llmConfigured()) {
       try {
         const catSpec = CATEGORIES.map(c => `- "${c.key}" (${c.label})`).join('\n');
-        const prompt = 'Ecco le ultime notizie reali dai mercati (fonte e ora UTC tra parentesi):\n\n'
-          + `${newsBlock(items, 30)}\n\n`
+        const prompt = (ctx
+          ? `Ecco le notizie reali delle ultime 30 ore, ordinate per impatto (fonte, giorno e ora di Roma; ALTO = muove tutti i mercati):\n\n${ctx.text.news}\n\n`
+            + `MOVIMENTI REALI DEGLI ASSET (sessioni in ora di Roma) E NOTIZIE USCITE IN QUELLE ORE:\n${ctx.text.moves}\n\n${ctx.text.rules}\n\n`
+          : `Ecco le ultime notizie reali dai mercati (fonte e ora UTC tra parentesi):\n\n${newsBlock(items, 30)}\n\n`)
           + `Per OGNI categoria qui sotto produci il sentiment operativo:\n${catSpec}\n\n`
           + 'Restituisci JSON con questa struttura esatta:\n'
           + '{\n'

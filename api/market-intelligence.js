@@ -20,6 +20,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/market-intelligence
 
 const { aggregateNews } = require('../lib/news');
+const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
@@ -39,15 +40,17 @@ function newsBlock(items, limit = 24) {
   return items.slice(0, limit).map((n, i) => `${i + 1}. [${n.source} ${n.published.slice(11, 16)}] ${n.title} — ${n.summary.slice(0, 160)}`).join('\n');
 }
 
-async function fetchBatch(batchAssets, priceLines, newsText) {
+async function fetchBatch(batchAssets, priceLines, newsText, movesText, rulesText) {
   const prompt = `PREZZI ATTUALI (dalla dashboard, appena aggiornati):\n${priceLines}\n\n`
-    + `NOTIZIE REALI DELLE ULTIME ORE:\n${newsText}\n\n`
+    + (movesText ? `MOVIMENTI REALI DEGLI ASSET (sessioni in ora di Roma) E NOTIZIE USCITE IN QUELLE ORE:\n${movesText}\n\n` : '')
+    + `NOTIZIE REALI DELLE ULTIME ORE${movesText ? ', ORDINATE PER IMPATTO (giorno e ora di Roma; ALTO = muove tutti i mercati)' : ''}:\n${newsText}\n\n`
+    + (rulesText ? `${rulesText}\n\n` : '')
     + `Per OGNI asset qui sotto produci il driver di mercato aggiornato ad ADESSO:\n${batchAssets.map(a => `- "${a}"`).join('\n')}\n\n`
     + 'Restituisci JSON con questa struttura esatta:\n'
     + '{\n'
     + '  "assets": [\n'
     + '    {"name":"<nome asset esatto>",'
-    + '"driver":"2 frasi in italiano, tecniche, su cosa muove concretamente l\'asset in questo momento — collega esplicitamente le notizie sopra al prezzo. Max 260 caratteri.",'
+    + '"driver":"2 frasi in italiano, tecniche, su cosa muove concretamente l\'asset in questo momento — collega esplicitamente la notizia più rilevante (con il suo orario) al movimento reale dell\'asset. Max 260 caratteri.",'
     + '"bars":[{"lbl":"nome fattore, max 40 caratteri","pct":0..100,"tone":"red|gold|green","note":"max 100 caratteri"},{"lbl":"secondo fattore","pct":0..100,"tone":"red|gold|green","note":"max 100 caratteri"}]}\n'
     + '  ]\n'
     + '}\n'
@@ -66,17 +69,19 @@ async function handleEvent(event) {
     }
 
     const items = await aggregateNews(30);
+    // Contesto condiviso con le altre analisi (notizie per impatto + movimenti reali con notizie concomitanti); se manca, elenco per data.
+    const ctx = await getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; });
     const assets = {};
     let anyAi = false;
 
-    if (llmConfigured() && items.length) {
+    if (llmConfigured() && (items.length || ctx)) {
       const priceLines = ASSETS.map(a => {
         const s = snapshot[a];
         return s ? `- ${a}: ${s.val}${s.chg != null ? ` (${s.chg >= 0 ? '+' : ''}${s.chg}%)` : ''}` : `- ${a}: prezzo non disponibile`;
       }).join('\n');
-      const newsText = newsBlock(items, 24);
+      const newsText = ctx ? ctx.text.news : newsBlock(items, 24);
 
-      const results = await Promise.allSettled(BATCHES.map(b => fetchBatch(b, priceLines, newsText)));
+      const results = await Promise.allSettled(BATCHES.map(b => fetchBatch(b, priceLines, newsText, ctx ? ctx.text.moves : '', ctx ? ctx.text.rules : '')));
       results.forEach((r, i) => {
         if (r.status !== 'fulfilled') {
           console.warn(`market intelligence batch ${BATCHES[i].join(',')} failed:`, r.reason && r.reason.message);

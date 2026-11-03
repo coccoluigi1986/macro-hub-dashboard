@@ -1152,6 +1152,46 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 .vl-per button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#06101F;}
 .vl-pbadge{font:500 11px/1 var(--fm); letter-spacing:.04em; padding:5px 8px; border-radius:6px; border:1px solid var(--border); color:var(--text2); background:var(--bg); align-self:center;}
 
+
+/* ===== Cosa ha mosso i mercati: movimenti reali per fascia oraria + notizie concomitanti ===== */
+.mv-wrap{display:grid; gap:0;}
+.mv-row{display:grid; grid-template-columns:150px minmax(0,1.05fr) minmax(0,1.45fr); gap:6px 22px; padding:16px 0; border-top:1px solid var(--border);}
+.mv-row:first-child{border-top:0; padding-top:4px;}
+.mv-when{display:flex; flex-direction:column; gap:7px; align-items:flex-start; min-width:0;}
+.mv-day{font:600 14px/1.2 var(--fh); letter-spacing:-.005em; color:var(--text);}
+.mv-ses{display:inline-flex; align-items:center; gap:6px; font:600 10.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; padding:5px 8px; border-radius:6px; border:1px solid var(--border); color:var(--text2); background:var(--panel2);}
+.mv-ses i{width:6px; height:6px; border-radius:50%; background:var(--dim2);}
+.mv-ses.asia i{background:#A78BFA;} .mv-ses.europa i{background:var(--accent);} .mv-ses.usa i{background:var(--gold);} .mv-ses.notte i{background:var(--dim2);}
+.mv-hours{font:500 11.5px/1.2 var(--fm); color:var(--dim);}
+.mv-live{font:600 9.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--green); display:inline-flex; align-items:center; gap:5px;}
+.mv-live::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 0 0 rgba(52,211,153,.5); animation:mvPulse 1.8s ease-out infinite;}
+@keyframes mvPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5);} 100%{box-shadow:0 0 0 8px rgba(52,211,153,0);}}
+.mv-assets{display:flex; flex-wrap:wrap; gap:7px; align-content:flex-start; min-width:0;}
+.mv-as{display:flex; flex-direction:column; gap:3px; min-width:112px; padding:8px 10px 9px; border-radius:10px; border:1px solid var(--border); background:var(--panel2); position:relative; overflow:hidden;}
+.mv-as::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--dim2);}
+.mv-as.up::before{background:var(--green);} .mv-as.down::before{background:var(--red);}
+.mv-as .n{font:500 11px/1.2 var(--fm); letter-spacing:.04em; color:var(--text2);}
+.mv-as .p{font:700 16px/1.15 var(--fm); letter-spacing:-.01em;}
+.mv-as.up .p{color:var(--green);} .mv-as.down .p{color:var(--red);}
+.mv-as .x{font:500 10.5px/1.2 var(--fm); color:var(--dim);}
+.mv-as .m{display:flex; gap:3px; margin-top:1px;} .mv-as .m b{width:14px; height:3px; border-radius:2px; background:var(--border);}
+.mv-as.up .m b.on{background:var(--green);} .mv-as.down .m b.on{background:var(--red);}
+.mv-news{display:grid; gap:9px; align-content:start; min-width:0; list-style:none; margin:0; padding:0;}
+.mv-news li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:2px 10px; align-items:baseline; min-width:0;}
+.mv-t{font:500 11px/1.4 var(--fm); color:var(--dim); white-space:nowrap;}
+.mv-news a{color:var(--text); text-decoration:none; font-size:13.5px; line-height:1.4; font-weight:500; overflow-wrap:anywhere;}
+.mv-news a:hover{color:var(--accent); text-decoration:underline;}
+.mv-src{grid-column:2; font-size:11.5px; color:var(--dim2); display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+.mv-hi{font:600 9px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(224,169,77,.4); background:var(--gold-soft); padding:3px 5px; border-radius:4px;}
+.mv-none{font-size:12.5px; color:var(--dim); line-height:1.5; font-style:italic;}
+.mv-legend{font-size:11.5px; color:var(--dim2); line-height:1.55;}
+@media(max-width:980px){
+  .mv-row{grid-template-columns:minmax(0,1fr); gap:11px; padding:15px 0;}
+  .mv-when{flex-direction:row; flex-wrap:wrap; align-items:center; gap:8px 10px;}
+}
+@media(max-width:480px){ .mv-as{min-width:calc(50% - 4px); flex:1 1 calc(50% - 4px);} .mv-assets{gap:7px;} }
+@media(max-width:640px){ .mv-row:nth-child(n+4){display:none;} }   /* sul telefono le ultime tre fasce bastano */
+
 </style>
 </head>
 <body>
@@ -1219,6 +1259,7 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
     <span class="meta" id="mktStatusText">Prezzi e driver AI in caricamento…</span>
     <button class="h-btn" id="mktRegenBtn" onclick="regenerateMarketIntelligence()" title="Rigenera driver AI ora">↻ Rigenera driver AI</button>
   </div>
+  <div class="h-grid" id="hMktMoves" style="margin-bottom:14px;"></div>
   <div class="h-grid" id="marketMonitorContainer"></div>
   <div class="h-grid" id="hMktPricing" style="margin-top:14px;"></div>
   <div class="source-tag" id="hMktMeta"></div>
@@ -1751,6 +1792,49 @@ function renderMarketMonitor(){
   }).join('');
 }
 renderMarketMonitor();
+
+// ---------- COSA HA MOSSO I MERCATI: movimenti reali per fascia oraria + notizie uscite in quelle ore ----------
+// Dati da /api/news-aggregated?view=moves: candele a 15 minuti di Yahoo Finance (variazione per sessione Asia / Europa / USA, ora italiana,
+// confrontata con il movimento tipico di ogni asset) abbinate alle notizie ordinate per impatto. Nessuna AI: sempre fresco.
+// Le notizie sono CONCOMITANTI ai movimenti (uscite nelle ore del movimento): non si dichiara una causa certa.
+const MV_SHORT = {'Nasdaq 100 (future)':'Nasdaq 100', 'S&P 500 (future)':'S&P 500', 'Dollaro (DXY)':'Dollaro DXY', 'Rendimento US 10Y':'US 10Y'};
+const mvWhen = iso => new Date(iso).toLocaleString('it-IT', {weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/Rome'}).replace(',', '');
+function mvAsset(a){
+  const up = a.pct >= 0;
+  const yld = a.key === 'rendimenti';
+  // il rendimento si legge in punti base (4,96% → +4 pb), non in variazione percentuale del rendimento
+  const val = yld ? `${(a.to - a.from) >= 0 ? '+' : '−'}${Math.round(Math.abs(a.to - a.from) * 100)} pb` : `${up ? '+' : '−'}${hNf(Math.abs(a.pct))}%`;
+  const dots = a.ratio >= 5 ? 3 : a.ratio >= 3 ? 2 : 1;
+  const tip = `${hNf(a.ratio, 1)} volte il movimento tipico di questo asset in una fascia analoga`;
+  return `<div class="mv-as ${up ? 'up' : 'down'}" title="${tip}"><span class="n">${escHtml(MV_SHORT[a.name] || a.name)}</span><span class="p">${up ? '▲' : '▼'} ${val}</span><span class="x">${hNf(a.ratio, 1)}× il solito</span><span class="m"><b class="on"></b><b class="${dots > 1 ? 'on' : ''}"></b><b class="${dots > 2 ? 'on' : ''}"></b></span></div>`;
+}
+function mvSlot(s){
+  const news = s.news.length
+    ? `<ul class="mv-news">${s.news.map(n => `<li><span class="mv-t">${escHtml(mvWhen(n.published))}</span><a href="${escHtml(n.url || '#')}" target="_blank" rel="noopener noreferrer">${escHtml(n.title)}</a><span class="mv-src">${escHtml(n.source)}${n.level === 'ALTO' ? '<span class="mv-hi">alto impatto</span>' : ''}</span></li>`).join('')}</ul>`
+    : '<p class="mv-none">Nessuna notizia chiara nel flusso in quelle ore: movimento di flussi e posizionamento.</p>';
+  return `<div class="mv-row"><div class="mv-when"><span class="mv-day">${escHtml(s.day)}</span><span class="mv-ses ${s.ses.toLowerCase()}"><i></i>${escHtml(s.ses)}</span><span class="mv-hours">${escHtml(s.hours)} · ora italiana</span>${s.live ? '<span class="mv-live">in corso</span>' : ''}</div><div class="mv-assets">${s.assets.map(mvAsset).join('')}</div>${news}</div>`;
+}
+function renderMarketMoves(){
+  const el = document.getElementById('hMktMoves'); if(!el) return;
+  const d = HUB.moves;
+  let body;
+  if(HUB.fail.moves) body = '<p class="h-note">Movimenti non disponibili in questo momento: riprova tra poco.</p>';
+  else if(!d) body = '<p class="h-note">Caricamento dei movimenti…</p>';
+  else if(!d.slots.length) body = '<p class="h-note">Nessun movimento più ampio del solito nelle ultime 30 ore: i mercati si sono mossi in linea con la normalità.</p>';
+  else body = `<div class="mv-wrap">${d.slots.map(mvSlot).join('')}</div>`;
+  el.innerHTML = hCard({span:12, icon:'pulse', title:'Cosa ha mosso i mercati', bd:['live'], cls:'h-accent', body:
+    `<p class="h-note" style="margin-top:-4px">Gli asset che si sono mossi più del solito, fascia per fascia, con le notizie uscite in quelle ore. Una notizia forte (un attacco, una dichiarazione di Trump, una banca centrale) muove tutti i mercati insieme: qui li vedi nello stesso momento.</p>${body}`,
+    foot:`<span class="mv-legend">Movimenti reali a 15 minuti (Yahoo Finance) confrontati con il movimento tipico di ogni asset; notizie da 16 fonti, ordinate per impatto. Le notizie sono <b>concomitanti</b> ai movimenti: indicano cosa stava succedendo, non una causa certa.${d ? ` Aggiornato alle ${escHtml(hTime(d.generatedAt))}.` : ''}</span>`});
+}
+async function loadMarketMoves(){
+  try{
+    const res = await fetch('/api/news-aggregated?view=moves');
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    HUB.moves = await res.json(); delete HUB.fail.moves;
+  }catch(e){ console.warn('Movimenti per fascia non disponibili:', e.message); if(!HUB.moves) HUB.fail.moves = true; }
+  renderMarketMoves();
+}
+renderMarketMoves();
 
 // ---------- SORPRESA VS ATTESE (parser numerico + generatore barra, riusabile) ----------
 function parseNum(s){
@@ -3585,6 +3669,7 @@ async function initLiveData(manual = false){
   // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
   // bloccare il resto del refresh (bias/sentiment/status line), aggiorna la UI da sola a fine fetch.
   fetchMarketIntelligence().then(applyMarketIntelligence);
+  loadMarketMoves();   // movimenti reali per fascia oraria + notizie concomitanti (senza AI, non blocca il resto)
   const biasUpdated = applyBiasDaily(bias);
   const sentimentUpdated = applySentimentLive(sentiment);
   if(!sentimentUpdated){

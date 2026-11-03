@@ -11,6 +11,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/news-aggregated
 
 const { aggregateNews, fetchRssWithDiag, RSS_FEEDS } = require('../lib/news');
+const { getMarketContext, uiSummary } = require('../lib/market-context');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const GEO_KEYWORDS = [
@@ -30,6 +31,17 @@ async function handleEvent(event) {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
         body: JSON.stringify({ checkedAt: new Date().toISOString(), workingFeeds: okCount, totalFeeds: feeds.length, feeds }),
+      };
+    }
+
+    // ?view=moves → "Cosa ha mosso i mercati": movimenti reali degli asset per sessione con le notizie uscite in quelle ore
+    // (dati Yahoo a 15 minuti + notizie ordinate per impatto, lib/market-context.js). Nessuna AI: sempre fresco, cache breve.
+    if (params.view === 'moves') {
+      const summary = uiSummary(await getMarketContext());
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' },
+        body: JSON.stringify(summary),
       };
     }
 

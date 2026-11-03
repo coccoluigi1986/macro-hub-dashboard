@@ -21,6 +21,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/narrative?section=geo
 
 const { aggregateNews } = require('../lib/news');
+const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured } = require('../lib/llm');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchFredSnapshot } = require('../lib/fred');
@@ -144,7 +145,10 @@ const EXTRA_BLOCKS = {
 async function buildContext(needs = []) {
   const safe = (p) => p.catch((e) => { console.warn('narrative grounding fallito:', e.message); return ''; });
   const extraKeys = needs.filter((k) => EXTRA_BLOCKS[k]);
-  const [news, market, macro, calendar, ...extras] = await Promise.all([
+  // Contesto condiviso con le altre analisi: notizie ordinate per impatto (ultime 30 ore, ora di Roma) e movimenti reali degli asset con le
+  // notizie concomitanti. Se non è disponibile, si ricade sull'elenco delle ultime notizie per data.
+  const [ctx, news, market, macro, calendar, ...extras] = await Promise.all([
+    getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; }),
     aggregateNews(40).then(items => items.slice(0, 30).map((n, i) => `${i + 1}. [${n.source} ${n.published.slice(5, 16).replace('T', ' ')} UTC] ${n.title} — ${n.summary.slice(0, 170)}`).join('\n')).catch((e) => { console.warn('news fallite:', e.message); return ''; }),
     safe(marketLines()), safe(fredLines()), safe(calendarLines()),
     ...extraKeys.map((k) => safe(EXTRA_BLOCKS[k].fn())),
@@ -152,8 +156,12 @@ async function buildContext(needs = []) {
   const today = new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Rome' });
   const extraText = extraKeys.map((k, i) => `${EXTRA_BLOCKS[k].title}:\n${extras[i] || '- non disponibili'}\n\n`).join('');
   return {
-    hasData: Boolean(news || market),
-    text: `DATA DI OGGI: ${today}\n\nNOTIZIE REALI RECENTI (fonte, ora UTC):\n${news || '- nessuna notizia disponibile'}\n\n`
+    hasData: Boolean(news || market || ctx),
+    text: `DATA DI OGGI: ${today}\n\n`
+      + (ctx
+        ? `NOTIZIE REALI DELLE ULTIME 30 ORE, ORDINATE PER IMPATTO (fonte, giorno e ora di Roma; ALTO = muove tutti i mercati):\n${ctx.text.news || '- nessuna notizia disponibile'}\n\n`
+          + `MOVIMENTI REALI DEGLI ASSET (sessioni in ora di Roma) E NOTIZIE USCITE IN QUELLE ORE:\n${ctx.text.moves || '- non disponibili'}\n\n${ctx.text.rules}\n\n`
+        : `NOTIZIE REALI RECENTI (fonte, ora UTC):\n${news || '- nessuna notizia disponibile'}\n\n`)
       + `PREZZI DI OGGI (Yahoo Finance):\n${market || '- non disponibili'}\n\n`
       + `DATI MACRO UFFICIALI (FRED):\n${macro || '- non disponibili'}\n\n`
       + extraText
@@ -169,7 +177,8 @@ const str = (v) => (typeof v === 'string' ? v : '');
 const SECTIONS = {
   geo: {
     maxTokens: 2200,
-    task: 'Produci l\'analisi della sezione GEOPOLITICA: i driver geopolitici attivi in questo momento e il loro impatto sui mercati.',
+    task: 'Produci l\'analisi della sezione GEOPOLITICA: i driver geopolitici attivi in questo momento e il loro impatto sui mercati. '
+      + 'Parti dall\'evento geopolitico di maggior impatto delle ultime 30 ore, anche se è di notte (indica giorno, ora e sessione), e nella seconda card spiega come ha mosso DAVVERO petrolio, oro/argento, dollaro, rendimenti, indici e VIX, usando i movimenti reali forniti.',
     schema: '{\n'
       + '  "cards": [\n'
       + '    {"label":"titolo breve del principale conflitto/tensione geopolitica attiva","text":"3-4 frasi, max 450 caratteri"},\n'
@@ -228,7 +237,8 @@ const SECTIONS = {
   },
   assets: {
     maxTokens: 3600,
-    task: 'Produci il CRUSCOTTO ASSET: per ciascuno dei 6 asset indicati, bias direzionale e lettura. Usa i prezzi e le variazioni di oggi forniti.',
+    task: 'Produci il CRUSCOTTO ASSET: per ciascuno dei 6 asset indicati, bias direzionale e lettura. Usa i prezzi e le variazioni di oggi forniti. '
+      + 'Per ogni asset spiega il movimento reale (anche quello della sessione asiatica o europea) con la notizia concomitante e il suo orario; il bias deve essere coerente con quel movimento e con la notizia dominante.',
     schema: '{\n'
       + '  "assets": [ 6 oggetti, uno per ciascuna chiave esattamente in quest\'ordine: eurusd, usdjpy, gold, silver, oil, equity (equity = S&P 500 / Nasdaq),\n'
       + '    {"key":"eurusd","bias":"bull|bear|neutral","bias_label":"etichetta maiuscola breve, max 36 caratteri","sentiment":"max 90 caratteri","outlook":"scenari qualitativi con percentuali che sommano 100, es. 50% rialzo / 35% laterale / 15% ribasso, max 90 caratteri","text":"3-4 frasi, max 520 caratteri, con driver concreti tratti da notizie e dati"} ]\n'
@@ -242,7 +252,8 @@ const SECTIONS = {
   },
   indices: {
     maxTokens: 1400,
-    task: 'Produci le note operative sugli INDICI AZIONARI USA: come si muove ciascun indice oggi e perché, con attenzione ai driver (tassi, rendimenti, tech, energia, small cap).',
+    task: 'Produci le note operative sugli INDICI AZIONARI USA: come si muove ciascun indice oggi e perché, con attenzione ai driver (tassi, rendimenti, tech, energia, small cap) '
+      + 'e alla notizia dominante delle ultime ore (geopolitica, Trump, banche centrali) con il suo effetto sui movimenti reali forniti.',
     schema: '{\n'
       + '  "indices": [ 4 oggetti, uno per ciascuna chiave esattamente in quest\'ordine: sp500, nasdaq, dow, russell,\n'
       + '    {"key":"sp500","text":"2-3 frasi, max 380 caratteri, anche con una nota operativa"} ]\n'

@@ -16,6 +16,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/bias-daily
 
 const { aggregateNews } = require('../lib/news');
+const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
@@ -47,12 +48,17 @@ function fallback() {
 async function handleEvent(event) {
   try {
     const items = await aggregateNews(30);
+    // Contesto condiviso con le altre analisi: notizie ordinate per impatto sulle ultime 30 ore + movimenti reali degli asset con le
+    // notizie concomitanti (lib/market-context.js). Se non è disponibile si ricade sul vecchio elenco per data.
+    const ctx = await getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; });
 
     let payload = null;
-    if (llmConfigured() && items.length) {
+    if (llmConfigured() && (items.length || ctx)) {
       try {
-        const prompt = 'NOTIZIE REALI DELLE ULTIME ORE:\n'
-          + `${newsBlock(items, 24)}\n\n`
+        const prompt = (ctx
+          ? `NOTIZIE REALI DELLE ULTIME 30 ORE, ORDINATE PER IMPATTO (fonte, giorno e ora di Roma; ALTO = muove tutti i mercati):\n${ctx.text.news}\n\n`
+            + `MOVIMENTI REALI DEGLI ASSET (sessioni in ora di Roma) E NOTIZIE USCITE IN QUELLE ORE:\n${ctx.text.moves}\n\n${ctx.text.rules}\n\n`
+          : `NOTIZIE REALI DELLE ULTIME ORE:\n${newsBlock(items, 24)}\n\n`)
           + 'Produci la LETTURA DEL BIAS GIORNALIERO GEOPOLITICO-MACRO. JSON esatto:\n'
           + '{\n'
           + '  "label": "RISK-ON|RISK-OFF|NEUTRALE",\n'
@@ -64,7 +70,8 @@ async function handleEvent(event) {
           + `  "assets": [{"asset":"${BIAS_ASSETS.join('|')}","direction":"Bullish|Bearish|Neutrale","probability":55..90}]\n`
           + '}\n'
           + 'Per "Indici" intendi S&P 500 e Nasdaq 100 insieme; per "VIX" la direzione indica la volatilità (Bullish = volatilità in aumento, Bearish = in calo). '
-          + 'Basa la direzione di ogni asset solo sulle notizie sopra.\n'
+          + 'Basa la direzione di ogni asset sulle notizie e sui movimenti reali sopra: la direzione è la tua lettura per le prossime ore e deve restare coerente con quanto l\'asset ha fatto davvero (se vai contro il movimento recente, spiegalo nel driver). '
+          + 'La headline e almeno un driver devono citare la notizia dominante delle ultime ore, con il suo orario.\n'
           + `Includi 4 driver e tutti e ${BIAS_ASSETS.length} gli asset. Solo JSON.`;
 
         const data = await llmJSON({ system: BIAS_SYS, prompt, maxTokens: 2500 });
