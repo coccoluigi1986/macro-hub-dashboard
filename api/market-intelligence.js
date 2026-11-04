@@ -107,7 +107,16 @@ async function handleEvent(event) {
       }).join('\n');
       const newsText = ctx ? ctx.text.news : newsBlock(items, 24);
 
-      const results = await Promise.allSettled(BATCHES.map(b => fetchBatch(b, priceLines, newsText, ctx ? ctx.text.moves : '', ctx ? ctx.text.rules : '')));
+      const run = (b) => fetchBatch(b, priceLines, newsText, ctx ? ctx.text.moves : '', ctx ? ctx.text.rules : '');
+      const results = await Promise.allSettled(BATCHES.map(run));
+      // Con la cache scaduta partono insieme molte richieste all'AI e il piano gratuito ne rifiuta qualcuna: i gruppi falliti si rifanno una volta dopo
+      // una breve pausa, invece di lasciare quei driver "in caricamento" fino al tentativo successivo del browser.
+      const failed = results.map((r, i) => (r.status === 'rejected' ? i : -1)).filter(i => i >= 0);
+      if (failed.length) {
+        await new Promise(r => setTimeout(r, 2500));
+        const again = await Promise.allSettled(failed.map(i => run(BATCHES[i])));
+        failed.forEach((i, k) => { results[i] = again[k]; });
+      }
       results.forEach((r, i) => {
         if (r.status !== 'fulfilled') {
           console.warn(`market intelligence batch ${BATCHES[i].join(',')} failed:`, r.reason && r.reason.message);
