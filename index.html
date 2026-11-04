@@ -1200,6 +1200,55 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 @media(max-width:480px){ .mv-as{min-width:calc(50% - 4px); flex:1 1 calc(50% - 4px);} .mv-assets{gap:7px;} }
 @media(max-width:640px){ .mv-row:nth-child(n+4){display:none;} }   /* sul telefono le ultime tre fasce bastano */
 
+
+/* ===== INDICATORI CHIAVE DEL MERCATO: quadro generale + tabella a sei righe ===== */
+section#hub-ind{--sec:#A3E635;}
+.t-pos{--c:var(--green);} .t-neu{--c:#8FA2CC;} .t-warn{--c:var(--gold);} .t-neg{--c:var(--red);}
+.ik{display:grid; gap:14px;}
+/* quadro generale */
+.ik-vd{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 30px; align-items:center; padding:16px 22px; border:1px solid var(--border); border-left:4px solid var(--c); border-radius:14px; background:linear-gradient(100deg,color-mix(in srgb,var(--c) 12%,transparent),transparent 55%),var(--panel);}
+.ik-vd .ik-vl span{display:block; font:500 10.5px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--dim);}
+.ik-vd .ik-vl b{display:block; margin-top:7px; font:700 clamp(24px,2.1vw,31px)/1.1 var(--fh); letter-spacing:-.015em; color:var(--c);}
+.ik-vd .ik-vt{display:grid; gap:7px;} .ik-vd p{display:flex; gap:9px; align-items:flex-start; font-size:14px; line-height:1.5; color:var(--text2);}
+.ik-vd p i{flex:none; width:8px; height:8px; margin-top:7px; border-radius:50%;} .ik-vd p b{color:var(--text); font-weight:600; margin-right:4px;}
+.ik-vd .w i{background:var(--red);} .ik-vd .a i{background:var(--green);}
+/* tabella */
+.ik-tbl{background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden;}
+.ik-th, .ik-r .mn{display:grid; grid-template-columns:minmax(220px,1.05fr) 170px minmax(0,2.7fr) 78px; gap:16px; align-items:center; padding:0 18px 0 22px;}
+.ik-th{height:38px; font:500 10.5px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--dim); background:var(--panel2); border-bottom:1px solid var(--border);}
+.ik-r{position:relative; border-bottom:1px solid var(--border);} .ik-r:last-child{border-bottom:0;}
+.ik-r::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--c);}
+.ik-r .mn{min-height:70px; padding-top:12px; padding-bottom:12px;}
+.ik-r .a b{display:block; font:600 clamp(14.5px,1.05vw,16px)/1.3 var(--fh); letter-spacing:-.01em;} .ik-r .a small{display:block; margin-top:3px; font-size:12px; line-height:1.4; color:var(--dim);}
+.ik-r .bd{display:inline-flex; align-items:center; gap:8px; padding:8px 11px; border-radius:6px; border:1px solid color-mix(in srgb,var(--c) 42%,transparent); background:color-mix(in srgb,var(--c) 14%,transparent); color:var(--c); font:700 11px/1 var(--fm); letter-spacing:.07em; text-transform:uppercase; white-space:nowrap;}
+.ik-r .bd i{width:8px; height:8px; border-radius:50%; background:var(--c);}
+.ik-r .t{font-size:13.5px; line-height:1.55; color:var(--text2);}
+.ik-r .x{justify-self:end; display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border-radius:7px; border:1px solid var(--border); background:var(--panel2); color:var(--text2); font:600 11px/1 var(--fm); letter-spacing:.05em; text-transform:uppercase; cursor:pointer;}
+.ik-r .x:hover{border-color:var(--accent); color:var(--text);} .ik-r .x i{width:6px; height:6px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg) translate(-1px,-1px); transition:transform .15s;}
+.ik-r.open .x i{transform:rotate(-135deg) translate(-1px,-1px);}
+.ik-r.sub{background:rgba(255,255,255,.018);} .ik-r.sub .mn{min-height:58px;} .ik-r.sub .a{padding-left:24px;} .ik-r.sub::before{width:3px; opacity:.8;}
+.ik-r.sub .a b{font-size:13.5px; font-weight:500;} .ik-r.sub .a b::before{content:"↳"; margin-right:8px; color:var(--dim2);} .ik-r.sub .t{font-size:12.5px;} .ik-r.sub .bd{font-size:10.5px; padding:7px 10px;}
+/* dettaglio: tabella dei dati */
+.ik-r .dt{display:none; padding:2px 22px 18px 22px;} .ik-r.open .dt{display:block;} .ik-r.sub .dt{padding-left:44px;}
+.dt table{width:100%; border-collapse:collapse; font-size:12.5px;}
+.dt th{text-align:left; font:500 10px/1 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--dim2); padding:9px 8px; border-bottom:1px solid var(--border);}
+.dt td{font-family:var(--fb); padding:9px 8px; border-bottom:1px solid rgba(255,255,255,.05); vertical-align:top;} .dt tr.hint td{display:none; padding:2px 8px 10px 26px; font-size:12px; line-height:1.55; color:var(--dim); border-bottom:1px solid rgba(255,255,255,.05);}
+.dt tr.o + tr.hint td{display:table-cell;} .dt tbody tr:not(.hint){cursor:pointer;} .dt tbody tr:not(.hint):hover td{background:rgba(255,255,255,.03);}
+.dt .nm{color:var(--text2); width:34%;} .dt .nm i{display:inline-block; width:8px; height:8px; margin-right:10px; border-radius:50%; background:var(--c);}
+.dt .v{font:600 12.5px/1.4 var(--fm); white-space:nowrap;} .dt .c{color:var(--text2); font:500 12px/1.4 var(--fm);} .dt .s{color:var(--c); font:600 11px/1.5 var(--fm); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap;} .dt .d{color:var(--dim2); font:400 11px/1.5 var(--fm);}
+.dt h5{margin:14px 0 8px; font:500 10.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--dim);}
+.dt ol{list-style:none; display:grid; gap:8px;} .dt li a{color:var(--text); font-size:13px; line-height:1.4; text-decoration:none;} .dt li a:hover{color:var(--accent); text-decoration:underline;} .dt li small{display:block; margin-top:1px; font-size:11px; color:var(--dim2);}
+.ik-lg{font-size:12px; line-height:1.7; color:var(--dim); max-width:1000px;} .ik-lg b{color:var(--text2); font-weight:600;}
+.ik-lg span{display:inline-flex; align-items:center; gap:5px; margin:0 6px 0 3px; font:500 11px/1 var(--fm); color:var(--text2);} .ik-lg span i{width:8px; height:8px; border-radius:50%; background:var(--c);}
+/* telefono e schermi stretti: ogni riga diventa un blocco */
+@media(max-width:900px){
+  .ik-th{display:none;}
+  .ik-r .mn{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"a s" "t t" "x x"; gap:10px 12px; padding:14px 14px 12px 18px;}
+  .ik-r .a{grid-area:a;} .ik-r .s{grid-area:s;} .ik-r .t{grid-area:t;} .ik-r .x{grid-area:x; justify-self:start;}
+  .ik-r.sub .a{padding-left:0;} .ik-r.sub .mn{padding-left:30px;} .ik-vd{grid-template-columns:minmax(0,1fr);} .ik-r .dt{padding:2px 14px 14px 18px; overflow-x:auto;} .ik-r.sub .dt{padding-left:30px;}
+  .dt table{min-width:520px;}
+}
+
 </style>
 </head>
 <body>
@@ -1273,9 +1322,16 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
   <div class="source-tag" id="hMktMeta"></div>
 </section>
 
-<!-- ============ 03 CALENDARIO E VOLATILITÀ ============ -->
+<!-- ============ 03 INDICATORI CHIAVE DEL MERCATO ============ -->
+<section id="hub-ind">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Indicatori chiave del mercato</h2><span class="sec-desc">Il quadro generale in sei righe: cosa si guarda, in che stato è e perché</span></div>
+  <div id="ikRoot"><p class="h-note">Calcolo degli indicatori…</p></div>
+  <div class="source-tag" id="ikMeta"></div>
+</section>
+
+<!-- ============ 04 CALENDARIO E VOLATILITÀ ============ -->
 <section id="hub-cal">
-  <div class="sec-head"><span class="sec-num">03</span><h2>Calendario e volatilità</h2><span class="sec-desc">Prossimi eventi e quando aspettarsi movimenti ampi — dal calendario economico reale</span></div>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Calendario e volatilità</h2><span class="sec-desc">Prossimi eventi e quando aspettarsi movimenti ampi — dal calendario economico reale</span></div>
   <div class="h-grid" id="hCalGrid"><article class="h-card h-c12"><p class="h-note">Caricamento del calendario…</p></article></div>
   <details class="h-more" id="calendar">
     <summary><span>Apri tutto il calendario, con tutti i filtri</span><span class="sec-desc" id="icRange"></span></summary>
@@ -1327,7 +1383,7 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 
 <!-- ============ 04 SINTESI OPERATIVA ============ -->
 <section id="hub-sintesi">
-  <div class="sec-head"><span class="sec-num">04</span><h2>Sintesi operativa</h2><span class="sec-desc">Cruscotto asset e indici azionari — analisi AI live</span></div>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Sintesi operativa</h2><span class="sec-desc">Cruscotto asset e indici azionari — analisi AI live</span></div>
   <input type="radio" name="hfe" id="hfe-all" checked><input type="radio" name="hfe" id="hfe-val"><input type="radio" name="hfe" id="hfe-mat"><input type="radio" name="hfe" id="hfe-azi">
   <div class="h-filters"><label for="hfe-all">Tutti</label><label for="hfe-val">Valute</label><label for="hfe-mat">Materie prime</label><label for="hfe-azi">Azionario</label></div>
   <div class="h-grid" id="hSintGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
@@ -1336,7 +1392,7 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 
 <!-- ============ 05 SENTIMENT ============ -->
 <section id="sentiment">
-  <div class="sec-head"><span class="sec-num">05</span><h2>Sentiment di mercato</h2><span class="sec-desc">News per categoria · posizionamento retail · validazione incrociata con COT e dati</span></div>
+  <div class="sec-head"><span class="sec-num">06</span><h2>Sentiment di mercato</h2><span class="sec-desc">News per categoria · posizionamento retail · validazione incrociata con COT e dati</span></div>
   <div class="h-bar">
     <span class="meta" id="snMeta">verifica in corso...</span>
     <button class="h-btn" id="snRegenBtn" onclick="regenerateSentiment()" title="Rigenera ora">↻ Rigenera</button>
@@ -1347,7 +1403,7 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 
 <!-- ============ 06 POSIZIONAMENTO E RISCHIO ============ -->
 <section id="hub-pos">
-  <div class="sec-head"><span class="sec-num">06</span><h2>Posizionamento e rischio</h2><span class="sec-desc" id="cotSecDesc">Caricamento dell'ultimo report CFTC…</span></div>
+  <div class="sec-head"><span class="sec-num">07</span><h2>Posizionamento e rischio</h2><span class="sec-desc" id="cotSecDesc">Caricamento dell'ultimo report CFTC…</span></div>
   <div class="h-grid" id="hPosGrid"><article class="h-card h-c12"><p class="h-note">Caricamento…</p></article></div>
   <div class="source-tag" id="hPosMeta"></div>
   <details class="h-more" id="decisione">
@@ -1384,7 +1440,7 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 
 <!-- ============ 07 MACRO ============ -->
 <section id="macro">
-  <div class="sec-head"><span class="sec-num">07</span><h2>Macro — USA, Europa e lavoro</h2><span class="sec-desc">Ultimo dato uscito per indicatore: attuale, atteso dal consensus e precedente</span></div>
+  <div class="sec-head"><span class="sec-num">08</span><h2>Macro — USA, Europa e lavoro</h2><span class="sec-desc">Ultimo dato uscito per indicatore: attuale, atteso dal consensus e precedente</span></div>
   <input type="radio" name="hmf" id="hmf-all" checked><input type="radio" name="hmf" id="hmf-us"><input type="radio" name="hmf" id="hmf-eu"><input type="radio" name="hmf" id="hmf-jobs">
   <div class="h-filters"><label for="hmf-all">Tutto</label><label for="hmf-us">USA</label><label for="hmf-eu">Europa</label><label for="hmf-jobs">Lavoro</label></div>
   <div class="h-grid" id="hMacroGrid"></div>
@@ -1393,14 +1449,14 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 
 <!-- ============ 08 BANCHE CENTRALI E TASSI ============ -->
 <section id="hub-bc">
-  <div class="sec-head"><span class="sec-num">08</span><h2>Banche centrali e tassi</h2><span class="sec-desc">Fed, aspettative e rendimenti — dati ufficiali FRED + analisi AI live</span></div>
+  <div class="sec-head"><span class="sec-num">09</span><h2>Banche centrali e tassi</h2><span class="sec-desc">Fed, aspettative e rendimenti — dati ufficiali FRED + analisi AI live</span></div>
   <div class="h-grid" id="hBcGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
   <div class="source-tag" id="hBcMeta"></div>
 </section>
 
 <!-- ============ 09 GEOPOLITICA E NOTIZIE ============ -->
 <section id="hub-geo">
-  <div class="sec-head"><span class="sec-num">09</span><h2>Geopolitica e notizie</h2><span class="sec-desc">Driver del rischio globale e come le fonti raccontano i fatti — analisi AI live</span></div>
+  <div class="sec-head"><span class="sec-num">10</span><h2>Geopolitica e notizie</h2><span class="sec-desc">Driver del rischio globale e come le fonti raccontano i fatti — analisi AI live</span></div>
   <div class="h-grid" id="hGeoGrid"><article class="h-card h-c12"><p class="h-note">Analisi in caricamento…</p></article></div>
   <div class="source-tag" id="hGeoMeta"></div>
 </section>
@@ -1843,6 +1899,72 @@ async function loadMarketMoves(){
   renderMarketMoves();
 }
 renderMarketMoves();
+
+// ---------- INDICATORI CHIAVE DEL MERCATO ----------
+// Un quadro generale e una tabella a sei righe (economia e Fed · geopolitica · mercato azionario · settori azionari · tassi e Treasuries · liquidità):
+// ogni riga dice COSA si sta guardando, in che STATO è (parola chiara, con colore) e una frase con i numeri chiave. I dati che la compongono stanno in una
+// tabella a scomparsa. Dati da /api/market-data?view=indicators (FRED, Tesoro USA, Yahoo Finance, notizie): nessuna AI e nessun numero scritto a mano.
+const IK_META = {
+  macro: {t:'Economia e politica monetaria', s:'Inflazione, lavoro, crescita e tassi della Fed'},
+  geo: {t:'Tensioni geopolitiche e settori economici', s:'Guerre e conflitti: quanto pesano su mercati e settori'},
+  equity: {t:'Mercato azionario', s:'Indici, paura (VIX), tendenza e rischio di credito'},
+  sectors: {t:'Impatto sui settori azionari', s:'Dove va il denaro: crescita o difesa'},
+  rates: {t:'Tassi di interesse e Treasuries', s:'Rendimenti dei titoli di Stato USA'},
+  liquidity: {t:'Liquidità a mercato', s:'Quanto denaro c\'è nel sistema per sostenere i prezzi'},
+  curve: {t:'Curva dei tassi', s:'Prestiti lunghi contro corti'},
+  fed: {t:'Politica monetaria della Fed', s:'Quanto frena l\'economia'},
+  debt: {t:'Tetto al debito e deficit', s:'Quanto è pesante il debito USA'},
+};
+const IK_LBL = {pos:'Favorevole', neu:'Neutro', warn:'Da monitorare', neg:'Sotto pressione'};
+const IK_OPEN = new Set();                 // righe di dettaglio aperte dall'utente: restano aperte quando i dati si aggiornano
+function ikToggle(k, btn){ const r = btn.closest('.ik-r'); const open = r.classList.toggle('open'); if(open) IK_OPEN.add(k); else IK_OPEN.delete(k); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+const ikWhen = iso => new Date(iso).toLocaleString('it-IT', {weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/Rome'}).replace(',', '');
+function ikDetail(g){
+  const rows = g.items.map(i => `<tr class="t-${i.tone}" onclick="this.classList.toggle('o')"><td class="nm"><i></i>${escHtml(i.label)}</td><td class="v">${escHtml(i.value)}</td><td class="c">${escHtml(i.delta ? i.delta.text : '')}</td><td class="s">${IK_LBL[i.tone]}</td><td class="d">${escHtml(i.asof || '')}</td></tr><tr class="hint"><td colspan="5">${escHtml(i.sub)}. ${escHtml(i.hint)}</td></tr>`).join('');
+  const st = (g.stories || []).length ? `<h5>Le storie che muovono i mercati adesso</h5><ol>${g.stories.map(s => `<li><a href="${escHtml(s.url || '#')}" target="_blank" rel="noopener noreferrer">${escHtml(s.titleIt || s.title)}</a><small>${escHtml(s.source)} · ${escHtml(ikWhen(s.published))}</small></li>`).join('')}</ol>` : '';
+  return `<div class="dt"><table><thead><tr><th>Dato</th><th>Valore</th><th>Variazione</th><th>Stato</th><th>Dato del</th></tr></thead><tbody>${rows}</tbody></table>${st}</div>`;
+}
+function ikRow(g, sub){
+  const m = IK_META[g.id] || {t:g.title, s:''}, k = (sub ? 'sub:' : '') + g.id, open = IK_OPEN.has(k);
+  return `<div class="ik-r t-${g.tone}${sub ? ' sub' : ''}${open ? ' open' : ''}" id="ik-${g.id}"><div class="mn"><div class="a"><b>${escHtml(m.t)}</b><small>${escHtml(m.s)}</small></div>`
+    + `<div class="s"><span class="bd"><i></i>${escHtml(g.label)}</span></div><div class="t">${escHtml(g.brief || '')}</div>`
+    + `<button type="button" class="x" aria-expanded="${open}" onclick="ikToggle('${k}', this)" title="Mostra i dati che compongono questa riga"><span>Dati</span><i></i></button></div>${ikDetail(g)}</div>`;
+}
+function ikRender(){
+  const el = document.getElementById('ikRoot'); if(!el) return;
+  const d = HUB.ind;
+  if(!d){ el.innerHTML = `<p class="h-note">${HUB.indFail ? 'Indicatori non disponibili in questo momento: nuovo tentativo automatico tra poco.' : 'Calcolo degli indicatori…'}</p>`; return; }
+  const o = d.overall, G = d.groups;
+  const verdict = o ? `<div class="ik-vd t-${o.tone}"><div class="ik-vl"><span>Quadro generale oggi</span><b>${escHtml(o.label)}</b></div><div class="ik-vt">`
+    + (o.weigh.length ? `<p class="w"><i></i><span><b>Pesano</b> ${escHtml(o.weigh.join(' · '))}</span></p>` : '') + (o.hold.length ? `<p class="a"><i></i><span><b>Reggono</b> ${escHtml(o.hold.join(' · '))}</span></p>` : '') + '</div></div>' : '';
+  const rows = G.map(g => ikRow(g, false) + (g.sub ? g.sub.map(s => ikRow(s, true)).join('') : '')).join('');
+  el.innerHTML = `<div class="ik">${verdict}<div class="ik-tbl"><div class="ik-th"><span>Area</span><span>Stato</span><span>In sintesi</span><span></span></div>${rows}</div>`
+    + '<p class="ik-lg">Lo <b>stato</b> è la lettura per chi investe in azioni, dalla più favorevole alla più negativa: <span class="t-pos"><i></i>Favorevole</span><span class="t-neu"><i></i>Neutro</span><span class="t-warn"><i></i>Da monitorare</span><span class="t-neg"><i></i>Sotto pressione</span> (ogni area usa parole sue, per esempio «Tensione alta»). '
+    + 'Ogni riga sintetizza più dati veri: «Dati» mostra quali e, toccando un dato, come si legge. Lettura educativa, non un consiglio d\'investimento.</p></div>';
+  const m = document.getElementById('ikMeta');
+  if(m) m.textContent = `Fonti: FRED (Federal Reserve), Tesoro USA (FiscalData), Yahoo Finance e notizie da 16 fonti; ogni dato ha la sua data (alcuni sono settimanali o mensili). Aggiornato alle ${hTime(d.generatedAt)}.`;
+}
+let IK_TRY = 0;
+async function ikLoad(){
+  try{
+    const res = await fetch('/api/market-data?view=indicators' + (IK_TRY ? '&retry=' + Math.floor(Date.now() / 60000) : ''));
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    if(!j.groups || !j.groups.length) throw new Error('nessun gruppo');
+    HUB.ind = j; HUB.indFail = false; IK_TRY = 0;
+  }catch(e){
+    console.warn('Indicatori chiave non disponibili:', e.message);
+    if(!HUB.ind){ HUB.indFail = true; if(IK_TRY < 3) setTimeout(ikLoad, [20000, 60000, 150000][IK_TRY]); IK_TRY++; }
+  }
+  ikRender();
+}
+ikRender();
+(function(){
+  const sec = document.getElementById('hub-ind'); let started = false;
+  const go = () => { if(started) return; started = true; ikLoad(); setInterval(() => { if(!document.hidden) ikLoad(); }, 10 * 60 * 1000); };
+  if('IntersectionObserver' in window && sec){ const io = new IntersectionObserver(es => { if(es.some(e => e.isIntersecting)){ io.disconnect(); go(); } }, {rootMargin:'700px 0px'}); io.observe(sec); }
+  setTimeout(go, 6000);   // anche se nessuno scorre fin lì: i dati sono pronti quando serve
+})();
 
 // ---------- SORPRESA VS ATTESE (parser numerico + generatore barra, riusabile) ----------
 function parseNum(s){
@@ -3859,15 +3981,16 @@ const MENU = [
   {grp:'Oggi e mercati', items:[
     {id:'priority',    n:'01', t:'Il quadro di oggi',         d:'Bias del giorno, notizie chiave, prossimo evento', i:'pulse'},
     {id:'marketmon',   n:'02', t:'Mercati e prezzi',           d:'Prezzi, volatilità e cosa prezza il mercato', i:'trend'},
-    {id:'hub-cal',     n:'03', t:'Calendario e volatilità',    d:'Eventi in arrivo e giorni a rischio', i:'cal', subs:[['calendar', 'Calendario completo'], ['vol', 'Volatilità per asset']]},
-    {id:'hub-sintesi', n:'04', t:'Sintesi operativa',          d:'Cruscotto per asset e indici azionari', i:'target'}]},
+    {id:'hub-ind',    n:'03', t:'Indicatori chiave',          d:'Economia, geopolitica, azioni, tassi e liquidità', i:'bars'},
+    {id:'hub-cal',     n:'04', t:'Calendario e volatilità',    d:'Eventi in arrivo e giorni a rischio', i:'cal', subs:[['calendar', 'Calendario completo'], ['vol', 'Volatilità per asset']]},
+    {id:'hub-sintesi', n:'05', t:'Sintesi operativa',          d:'Cruscotto per asset e indici azionari', i:'target'}]},
   {grp:'Macro e sentiment', items:[
-    {id:'sentiment',   n:'05', t:'Sentiment di mercato',       d:'Notizie, retail e validazione incrociata', i:'smile'},
-    {id:'hub-pos',     n:'06', t:'Posizionamento e rischio',   d:'Risk-on/off, COT e umore degli investitori', i:'layers', subs:[['decisione', 'Quadro decisionale'], ['cot', 'COT in dettaglio']]},
-    {id:'macro',       n:'07', t:'Macro: USA, Europa, lavoro', d:'Ogni dato accanto alle attese', i:'bars'}]},
+    {id:'sentiment',   n:'06', t:'Sentiment di mercato',       d:'Notizie, retail e validazione incrociata', i:'smile'},
+    {id:'hub-pos',     n:'07', t:'Posizionamento e rischio',   d:'Risk-on/off, COT e umore degli investitori', i:'layers', subs:[['decisione', 'Quadro decisionale'], ['cot', 'COT in dettaglio']]},
+    {id:'macro',       n:'08', t:'Macro: USA, Europa, lavoro', d:'Ogni dato accanto alle attese', i:'bars'}]},
   {grp:'Approfondimenti macro', items:[
-    {id:'hub-bc',      n:'08', t:'Banche centrali e tassi',    d:'Fed, aspettative e rendimenti', i:'bank'},
-    {id:'hub-geo',     n:'09', t:'Geopolitica e notizie',      d:'Rischio globale e notizie a confronto', i:'globe'}]},
+    {id:'hub-bc',      n:'09', t:'Banche centrali e tassi',    d:'Fed, aspettative e rendimenti', i:'bank'},
+    {id:'hub-geo',     n:'10', t:'Geopolitica e notizie',      d:'Rischio globale e notizie a confronto', i:'globe'}]},
 ];
 function buildMenu(){
   const p = document.getElementById('menuPanel'); if(!p) return;

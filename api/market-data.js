@@ -22,6 +22,9 @@ const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchPositioning } = require('../lib/positioning');
 const { getVolatility } = require('../lib/volatility');
+const { getIndicators } = require('../lib/indicators');
+const { getMarketContext } = require('../lib/market-context');
+const { translateTitles } = require('../lib/translate-headlines');
 
 const SYMBOLS = {
   sp500:  '^GSPC',   // S&P 500
@@ -42,6 +45,16 @@ const SYMBOLS = {
 
 async function handleEvent(event) {
   const params = (event && event.queryStringParameters) || {};
+  // ?view=indicators → "Indicatori chiave del mercato": sei gruppi di indicatori reali (FRED, Tesoro USA, Yahoo, notizie) con semaforo, lib/indicators.js
+  if (params.view === 'indicators') {
+    try {
+      const data = await getIndicators({ ctxFn: () => getMarketContext(), translate: translateTitles });
+      // 10 minuti; se qualche fonte non ha risposto solo 1, così il prossimo giro la recupera
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 600) }, body: JSON.stringify(data) };
+    } catch (err) {
+      return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
+    }
+  }
   if (params.view === 'volatility') {
     try {
       const vol = await getVolatility();
