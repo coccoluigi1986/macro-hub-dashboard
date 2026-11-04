@@ -343,7 +343,7 @@ async function handleEvent(event) {
       return { statusCode: 400, body: JSON.stringify({ error: `Parametro section non valido. Valori ammessi: ${Object.keys(SECTIONS).join(', ')}` }) };
     }
 
-    let data = null;
+    let data = null, reason = null;
     if (llmConfigured()) {
       try {
         const ctx = await buildContext(spec.needs || []);
@@ -351,17 +351,22 @@ async function handleEvent(event) {
           const prompt = `${ctx.text}\n${spec.task}\nRestituisci JSON con questa struttura esatta:\n${spec.schema}\nSolo JSON.`;
           const raw = await llmJSON({ system: SYS, prompt, maxTokens: spec.maxTokens });
           data = spec.normalize(raw);
+        } else {
+          reason = 'nessun dato di contesto disponibile';
         }
       } catch (e) {
         console.warn(`narrative ${section} AI failed:`, e.message);
+        reason = String(e.message).slice(0, 160);   // il motivo del ripiego, visibile nella risposta (nessun dato riservato)
       }
+    } else {
+      reason = 'chiave AI non configurata';
     }
 
     const ai = Boolean(data);
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ai ? 10800 : 120}` },
-      body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data }),
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ai ? 10800 : 60}` },
+      body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data, ...(ai ? {} : { reason }) }),
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };

@@ -63,7 +63,7 @@ async function handleEvent(event) {
     // Contesto condiviso (notizie per impatto + movimenti reali con notizie concomitanti); se manca si usa l'elenco per data.
     const ctx = await getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; });
 
-    let payload = null;
+    let payload = null, failReason = null;
     if (llmConfigured()) {
       try {
         const catSpec = CATEGORIES.map(c => `- "${c.key}" (${c.label})`).join('\n');
@@ -105,10 +105,11 @@ async function handleEvent(event) {
         };
       } catch (e) {
         console.warn('sentiment categories AI failed:', e.message);
+        failReason = String(e.message).slice(0, 160);   // il motivo del ripiego, visibile nella risposta (nessun dato riservato)
       }
     }
 
-    if (!payload) payload = fallback(items);
+    if (!payload) { payload = fallback(items); if (failReason) payload.reason = failReason; }
 
     return {
       statusCode: 200,

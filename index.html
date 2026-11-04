@@ -990,7 +990,7 @@ header h1 span{background:linear-gradient(90deg,#5EA8F5,#8FE3FF,#FFD27A,#5EA8F5)
 .pw.y{color:var(--gold); text-shadow:0 0 26px rgba(224,169,77,.4);} .pw.b{color:var(--accent); text-shadow:0 0 26px rgba(94,168,245,.4);}
 .pw.hi{color:#fff;} .pw.k{color:var(--dim);}
 .pw.big{font-size:1.12em; letter-spacing:-.03em;}
-.pl-main.skel, .fx-load{background:linear-gradient(90deg,var(--dim) 30%,#fff 50%,var(--dim) 70%); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:shimmerTxt 1.7s linear infinite;}
+.pl-main.skel, .fx-load{background:linear-gradient(90deg,var(--dim) 30%,#fff 50%,var(--dim) 70%); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; animation:shimmerTxt 1.7s linear 5;}   /* 5 passaggi (~8 s) e poi resta fermo: un segnaposto rimasto in attesa non tiene più la CPU occupata all'infinito */
 @keyframes shimmerTxt{from{background-position:200% 0;}to{background-position:-200% 0;}}
 
 /* ---------- numeri: lampo quando cambiano ---------- */
@@ -1130,6 +1130,13 @@ body{background:var(--bg);}
 .ticker-wrap{-webkit-mask-image:none; mask-image:none;}
 #toTop{-webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(15,21,40,.97);}
 @media(max-width:860px){ .menubar{-webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(10,14,26,.98);} }
+/* 3b) A pagina ferma (20 s senza movimenti, vedi lo script "html.calm") gli effetti decorativi che non finiscono mai si fermano: ognuno costringeva il
+      browser a ricalcolare gli stili e a ridisegnare 60 volte al secondo. Il nastro dei prezzi continua, ma isolato (contain) e su un livello suo. */
+html.calm header h1 span, html.calm .pulse-hd:not(.t-on) h2, html.calm .fx-load, html.calm .pl-main.skel,
+html.calm .pn-tag i, html.calm .pl-k i, html.calm .h-bd.live::before, html.calm .mv-live::after, html.calm .hd-logo{animation-play-state:paused!important;}
+html.calm .pulse-hd.t-on h2{animation-play-state:running, paused!important;}   /* due animazioni: l'entrata del titolo (finita) e il riflesso (che si ferma) */
+.ticker-wrap{contain:layout paint;}
+.ticker{will-change:transform;}
 /* 4) Pallini LIVE e logo fermi: 27 animazioni continue in meno */
 .h-bd.live::before{animation:none;}
 .hd-logo{animation:none; box-shadow:0 7px 26px -6px rgba(94,168,245,.72);}
@@ -1163,9 +1170,10 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 .mv-ses i{width:6px; height:6px; border-radius:50%; background:var(--dim2);}
 .mv-ses.asia i{background:#A78BFA;} .mv-ses.europa i{background:var(--accent);} .mv-ses.usa i{background:var(--gold);} .mv-ses.notte i{background:var(--dim2);}
 .mv-hours{font:500 11.5px/1.2 var(--fm); color:var(--dim);}
-.mv-live{font:600 9.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--green); display:inline-flex; align-items:center; gap:5px;}
-.mv-live::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 0 0 rgba(52,211,153,.5); animation:mvPulse 1.8s ease-out infinite;}
-@keyframes mvPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5);} 100%{box-shadow:0 0 0 8px rgba(52,211,153,0);}}
+.mv-live{position:relative; font:600 9.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--green); display:inline-flex; align-items:center; padding-left:12px;}
+.mv-live::before, .mv-live::after{content:""; position:absolute; left:0; top:50%; width:6px; height:6px; margin-top:-3px; border-radius:50%; background:var(--green);}
+.mv-live::after{animation:mvPulse 1.8s ease-out infinite;}   /* l'anello che si allarga usa solo transform e opacity: non fa ridisegnare la pagina ad ogni fotogramma */
+@keyframes mvPulse{from{transform:scale(1); opacity:.55;} to{transform:scale(2.8); opacity:0;}}
 .mv-assets{display:flex; flex-wrap:wrap; gap:7px; align-content:flex-start; min-width:0;}
 .mv-as{display:flex; flex-direction:column; gap:3px; min-width:112px; padding:8px 10px 9px; border-radius:10px; border:1px solid var(--border); background:var(--panel2); position:relative; overflow:hidden;}
 .mv-as::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--dim2);}
@@ -2576,9 +2584,9 @@ let lastPositioning = null;              // Fear&Greed + AAII dall'ultimo /api/m
 function safeHtml(t){ return escHtml(t || '').replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>'); }
 function bulletList(items){ return (items||[]).map(x=>`• ${safeHtml(x)}`).join('<br>'); }
 
-async function fetchNarrative(section, bust){
+async function fetchNarrative(section, bust, revalidate){
   try{
-    const res = await fetch(`/api/narrative?section=${section}${bust ? `&retry=${bust}` : ''}`);
+    const res = await fetch(`/api/narrative?section=${section}${bust ? `&retry=${bust}` : ''}`, revalidate ? {cache:'no-cache'} : undefined);
     if(!res.ok) return null;
     return await res.json();
   }catch(e){ return null; }
@@ -2656,17 +2664,18 @@ function ensureNarrative(section, bust){
     }
     NARRATIVE_STATE[section] = null;   // consente un nuovo tentativo alla prossima apertura
     showNarrativeUnavailable(section);
-    if(!NARRATIVE_RETRIED[section]){
-      NARRATIVE_RETRIED[section] = true;
-      setTimeout(()=>ensureNarrative(section, Date.now()), 20000);
-    }
+    // fino a tre nuovi tentativi automatici (dopo 20 s, 1 min e 2,5 min): prima ce n'era uno solo e, se falliva, la card restava "non disponibile"
+    // finché non si ricaricava la pagina. Il numero cambia ogni minuto per saltare la cache CDN di 60 s sulle risposte di ripiego.
+    const n = NARRATIVE_RETRIED[section] = (NARRATIVE_RETRIED[section] || 0) + 1;
+    if(n <= 3) setTimeout(()=>ensureNarrative(section, Math.floor(Date.now() / 60000)), [20000, 60000, 150000][n - 1]);
   });
 }
 function ensureNarrativesForSection(domId){
   NARRATIVE_SECTIONS.filter(n=>(NARRATIVE_DOM[n]||[n]).includes(domId)).forEach(n=>ensureNarrative(n));
 }
-// Richieste scaglionate: l'apertura della pagina lancia già diverse chiamate AI in parallelo (bias, sentiment, mercati...)
-NARRATIVE_SECTIONS.forEach((s, i)=>setTimeout(()=>ensureNarrative(s), i * 700));
+// Richieste scaglionate, ma di poco (250 ms): con la cache calda ogni risposta arriva subito e a 700 ms l'ultima sezione partiva dopo 5 secondi;
+// se invece la cache è scaduta il piccolo scarto basta a non far scattare insieme il limite di richieste dell'AI.
+NARRATIVE_SECTIONS.forEach((s, i)=>setTimeout(()=>ensureNarrative(s), i * 250));
 
 // Dati FRED (target range, CPI...) per l'hub Banche centrali: la prossima decisione Fed si legge dal calendario in renderHubBC.
 function applyFedCards(macro){
@@ -3163,9 +3172,10 @@ async function fetchLiveMacro(){
   }catch(e){ return null; } // offline, locale, o funzione non ancora deployata: nessun errore visibile
 }
 
-async function fetchLiveMarket(){
+async function fetchLiveMarket(fresh){
   try{
-    const res = await fetch('/api/market-data');
+    // fresh: l'indirizzo cambia ogni 2 minuti (la durata della cache), così un aggiornamento non riusa la copia che il browser tiene
+    const res = await fetch('/api/market-data' + (fresh ? '?t=' + Math.floor(Date.now() / 120000) : ''));
     if(!res.ok) return null;
     const json = await res.json();
     lastPositioning = json.positioning || null;   // Fear&Greed (CNN) + AAII, vedi renderSentimentIndicators
@@ -3185,9 +3195,9 @@ async function fetchLiveCOT(dateParam){
 }
 
 let lastRetailAsOf = null;   // ora dell'ultimo dato retail (Dukascopy), dalla risposta di /api/dxy-correlation
-async function fetchLiveDXYCorr(){
+async function fetchLiveDXYCorr(fresh){
   try{
-    const res = await fetch('/api/dxy-correlation');
+    const res = await fetch('/api/dxy-correlation' + (fresh ? '?t=' + Math.floor(Date.now() / 300000) : ''));
     if(!res.ok) return null;
     const json = await res.json();
     if(json.parseWarning) console.warn('DXY correlation warning:', json.parseWarning);
@@ -3212,19 +3222,21 @@ function assetDirClass(dir){
   return 'neutral';
 }
 
-async function fetchBiasDaily(){
+// bust = numero che cambia ogni minuto: salta la cache CDN delle risposte di ripiego (2 min) per un nuovo tentativo; revalidate = ricontrolla la
+// versione più recente invece di riusare la copia che il browser tiene per 3 ore (aggiornamento automatico).
+async function fetchBiasDaily(bust, revalidate){
   try{
     // "v=2": le risposte sono tenute in cache dal browser per 3 ore; cambiando il numero si forza una volta sola il nuovo formato (8 asset)
-    const res = await fetch('/api/bias-daily?v=2');
+    const res = await fetch('/api/bias-daily?v=2' + (bust ? '&retry=' + bust : ''), revalidate ? {cache:'no-cache'} : undefined);
     if(!res.ok) return null;
     return await res.json();
   }catch(e){ return null; }
 }
 
-async function fetchSentimentLive(force){
+async function fetchSentimentLive(force, bust, revalidate){
   try{
-    const url = force ? '/api/sentiment-categories?force=1' : '/api/sentiment-categories';
-    const res = await fetch(url, force ? {cache:'no-store'} : undefined);
+    const url = force ? '/api/sentiment-categories?force=1' : bust ? '/api/sentiment-categories?retry=' + bust : '/api/sentiment-categories';
+    const res = await fetch(url, force ? {cache:'no-store'} : revalidate ? {cache:'no-cache'} : undefined);
     if(!res.ok) return null;
     return await res.json();
   }catch(e){ return null; }
@@ -3411,12 +3423,12 @@ function applyLiveCorrToMonitor(live){
 
 const TONE_COLOR = {red:'var(--red)', gold:'var(--gold)', green:'var(--green)'};
 
-async function fetchMarketIntelligence(){
+async function fetchMarketIntelligence(revalidate, bust){
   try{
-    const snapshot = {};
-    marketData.forEach(m=>{ snapshot[m.name] = {val:m.val, chg:m.chg}; });
-    const url = `/api/market-intelligence?snapshot=${encodeURIComponent(JSON.stringify(snapshot))}`;
-    const res = await fetch(url);
+    // Nessun prezzo nell'indirizzo: li legge il server. Con i prezzi del visitatore ogni apertura era un indirizzo nuovo, la cache non serviva
+    // mai e ogni visita faceva generare di nuovo i driver (4 chiamate a Gemini). Ora la risposta è la stessa per tutti e resta in cache 3 ore.
+    const url = '/api/market-intelligence' + (bust ? '?retry=' + bust : '');
+    const res = await fetch(url, revalidate ? {cache:'no-cache'} : undefined);
     if(!res.ok) return null;
     return await res.json();
   }catch(e){ return null; }
@@ -3647,75 +3659,188 @@ function applyLiveMarketPricing(live){
   return any;
 }
 
+// ---------- CARICAMENTO DEI DATI LIVE: progressivo, con nuovi tentativi e aggiornamento automatico ----------
+// Prima la pagina aspettava TUTTE le chiamate, comprese le due analisi AI (3-10 secondi quando la cache è scaduta), prima di mostrare prezzi, macro, COT e
+// ticker: tutto compariva in blocco alla fine. Ora ogni dato si applica appena arriva e le analisi AI non bloccano nulla; se un'analisi AI non risponde
+// (limite di richieste di Gemini) si ritenta da sola con pause crescenti. A scheda aperta i dati si aggiornano da soli (vedi liveAutoTick).
+const LIVE = {macro:null, market:null, cot:null, corr:null, miAt:null};   // ultimi dati veri, riusati dai ricalcoli incrociati degli aggiornamenti automatici
+const LIVE_STAMP = {prices:Date.now(), moves:Date.now(), ai:Date.now()};  // quando è stato fatto l'ultimo aggiornamento di ciascun gruppo
+const liveRun = (name, fn) => { try{ return fn(); }catch(e){ console.warn('Aggiornamento "' + name + '" non riuscito:', e.message); return false; } };
+
+// Ritenta un'analisi AI finché non risponde davvero (ai !== false): dopo 15 s, 45 s e 2 min, con un numero che cambia ogni minuto per saltare la cache
+// CDN delle risposte di ripiego.
+function liveRetryAi(fetchFn, isGood, apply, delays = [15000, 45000, 120000]){
+  let n = 0;
+  const next = () => {
+    if(n >= delays.length) return;
+    setTimeout(async () => {
+      let d = null; try{ d = await fetchFn(Math.floor(Date.now() / 60000)); }catch(e){}
+      if(isGood(d)){ apply(d); return; }
+      n++; next();
+    }, delays[n]);
+  };
+  next();
+}
+const biasOk = d => Boolean(d && d.ai !== false && d.label);
+const sentOk = d => Boolean(d && d.ai !== false && d.categories && d.categories.length);
+const miOk = d => Boolean(d && d.ai !== false && d.assets && Object.keys(d.assets).length >= marketData.length);
+
+// Ridisegnare una card ricrea i suoi elementi: i testi che l'utente ha aperto con "Leggi tutto" / "Mostra altri" si richiuderebbero. Si annotano
+// prima del ridisegno e si riaprono dopo.
+function liveKeepOpen(fn){
+  const open = [];
+  document.querySelectorAll('main .h-exp > input:checked, main .h-list > input:checked').forEach(inp => {
+    const host = inp.closest('[id]'); if(!host) return;
+    open.push([host.id, [...host.querySelectorAll('.h-exp > input, .h-list > input')].indexOf(inp)]);
+  });
+  const out = fn();
+  open.forEach(([id, i]) => { const host = document.getElementById(id); const inp = host && host.querySelectorAll('.h-exp > input, .h-list > input')[i]; if(inp) inp.checked = true; });
+  return out;
+}
+
 async function initLiveData(manual = false){
-  const [macro, market, cot, dxyCorr, bias, sentiment, macroCards, fedwatch, sahm] = await Promise.all([
-    fetchLiveMacro(), fetchLiveMarket(), fetchLiveCOT(), fetchLiveDXYCorr(),
-    fetchBiasDaily(), fetchSentimentLive(false),
-    loadMacroCards(),   // card Macro USA / Europa / Lavoro, quadro macro e barometro, dal calendario reale
-    fetchFedWatch(),    // probabilità sui tassi Fed dai future Fed Funds
-    fetchSahm(),        // Sahm Rule (FRED)
-  ]);
-  renderTodaysReleases(macro);
-  const marketUpdated = applyLiveMarketToMonitor(market);
-  const cotUpdated = applyLiveCOTToReport(cot);
-  const corrUpdated = applyLiveCorrToMonitor(dxyCorr);
-  const positioningUpdated = renderSentimentIndicators(lastPositioning);   // Fear&Greed (CNN) + AAII
-  applyFedCards(macro);
-  const fedwatchUpdated = applyFedWatch(fedwatch);
-  const sahmUpdated = applySahm(sahm);
-  try{ buildLiveTicker({market, macro, cot}); }catch(e){ console.warn('Ticker live non aggiornato:', e.message); }
-  const sentimentAssetsUpdated = applySentimentAssetsLive(market, dxyCorr);
-  const pricingUpdated = applyLiveMarketPricing(macro); // dopo market/fx: legge VIX/Oro/DXY già aggiornati da marketData
-  // Non awaited di proposito: genera 4 batch AI in parallelo e può richiedere 10-20s — non deve
-  // bloccare il resto del refresh (bias/sentiment/status line), aggiorna la UI da sola a fine fetch.
-  fetchMarketIntelligence().then(applyMarketIntelligence);
-  loadMarketMoves();   // movimenti reali per fascia oraria + notizie concomitanti (senza AI, non blocca il resto)
-  const biasUpdated = applyBiasDaily(bias);
-  const sentimentUpdated = applySentimentLive(sentiment);
-  if(!sentimentUpdated){
-    // Funzione non raggiungibile (non solo fallback server-side, che applySentimentLive gestisce già) —
-    // messaggio onesto invece di lasciare "verifica in corso..." per sempre.
-    const snEl = document.getElementById('snMeta');
-    if(snEl) snEl.textContent = 'Analisi AI non raggiungibile in questo momento — riprova con "Rigenera".';
-    HUB.fail.sent = true; renderHubSent(); renderOggiCats(); renderOggiRisks();
-  }
-  // Bias e sentiment già scaricati sopra alimentano anche le card dell'hub Il quadro di oggi (applyBiasDaily / applySentimentLive).
-  const priorityUpdated = biasUpdated || sentimentUpdated;
-  if(currentKeyEvent) loadEventDossier(currentKeyEvent); // dossier AI sull'evento chiave già selezionato
-  const dpSel = document.getElementById('dpAssetSelect');
-  if(dpSel && dpSel.value) renderDecisionPanel(dpSel.value);
+  const r = {};   // cosa è stato aggiornato (per il tooltip dello stato in alto)
+  const pMacro = fetchLiveMacro(), pMarket = fetchLiveMarket(manual), pCot = fetchLiveCOT(), pCorr = fetchLiveDXYCorr();
+  const pCards = loadMacroCards(),   // card Macro USA / Europa / Lavoro, quadro macro e barometro, dal calendario reale
+    pFw = fetchFedWatch(),           // probabilità sui tassi Fed dai future Fed Funds
+    pSahm = fetchSahm();             // Sahm Rule (FRED)
+  const pBias = fetchBiasDaily(), pSent = fetchSentimentLive(false);   // analisi AI: partono subito, ma nulla le aspetta
+
+  // --- dati veloci: ognuno si applica appena arriva ---
+  const aMacro = pMacro.then(macro => { LIVE.macro = macro; liveRun('macro', () => { renderTodaysReleases(macro); applyFedCards(macro); }); return macro; });
+  const aMarket = pMarket.then(market => {
+    LIVE.market = market;
+    r.market = liveRun('prezzi', () => applyLiveMarketToMonitor(market));
+    r.pos = liveRun('posizionamento', () => renderSentimentIndicators(lastPositioning));   // Fear&Greed (CNN) + AAII
+    return market;
+  });
+  const aCot = pCot.then(cot => { LIVE.cot = cot; r.cot = liveRun('COT', () => applyLiveCOTToReport(cot)); return cot; });
+  const aCorr = pCorr.then(corr => { LIVE.corr = corr; r.corr = liveRun('correlazioni', () => applyLiveCorrToMonitor(corr)); return corr; });
+  const aFw = pFw.then(fw => { r.fw = liveRun('FedWatch', () => applyFedWatch(fw)); });
+  const aSahm = pSahm.then(s => { r.sahm = liveRun('Sahm', () => applySahm(s)); });
+  const aTicker = Promise.all([aMarket, aMacro, aCot]).then(([market, macro, cot]) => liveRun('ticker', () => buildLiveTicker({market, macro, cot})));
+  const aAssets = Promise.all([aMarket, aCorr]).then(([market, corr]) => { r.assets = liveRun('sentiment asset', () => applySentimentAssetsLive(market, corr)); });
+  const aPricing = Promise.all([aMarket, aMacro]).then(([, macro]) => { r.pricing = liveRun('cosa prezza il mercato', () => applyLiveMarketPricing(macro)); });   // legge VIX/Oro/DXY già aggiornati
+  loadMarketMoves();   // movimenti reali per fascia oraria + notizie concomitanti (senza AI)
+  // driver AI degli asset: non bloccano nulla e nulla li blocca; se mancano degli asset si ritenta
+  fetchMarketIntelligence().then(d => { applyMarketIntelligence(d); if(!miOk(d)) liveRetryAi(b => fetchMarketIntelligence(false, b), miOk, applyMarketIntelligence); else LIVE.miAt = d.generatedAt; });
+
+  // --- analisi AI: si applicano appena arrivano; se falliscono si ritenta, e intanto la card dice "non disponibile" (non resta vuota) ---
+  const aBias = pBias.then(bias => {
+    r.bias = liveRun('bias', () => applyBiasDaily(bias));
+    if(!biasOk(bias)) liveRetryAi(b => fetchBiasDaily(b), biasOk, d => liveRun('bias', () => applyBiasDaily(d)));
+    return bias;
+  });
+  const aSent = pSent.then(sent => {
+    r.sent = liveRun('sentiment', () => applySentimentLive(sent));
+    if(!r.sent){
+      // Funzione non raggiungibile (non solo fallback server-side, che applySentimentLive gestisce già) —
+      // messaggio onesto invece di lasciare "verifica in corso..." per sempre.
+      const snEl = document.getElementById('snMeta');
+      if(snEl) snEl.textContent = 'Analisi AI non raggiungibile in questo momento — nuovo tentativo automatico tra poco.';
+      HUB.fail.sent = true; renderHubSent(); renderOggiCats(); renderOggiRisks();
+    }
+    if(!sentOk(sent)) liveRetryAi(b => fetchSentimentLive(false, b), sentOk, d => liveRun('sentiment', () => applySentimentLive(d)));
+    return sent;
+  });
+
   const note = document.getElementById('refreshNote');
   const statusLine = document.getElementById('dataStatusLine');
-  const now = new Date().toLocaleString('it-IT', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
-  const parts = [];
-  if(macroCards) parts.push('card Macro USA/Europa/Lavoro e Barometro Hawkish/Dovish (calendario economico)');
-  if(marketUpdated) parts.push('prezzi mercato (Yahoo Finance)');
-  if(cotUpdated) parts.push('COT completo con percentili a 52 settimane (CFTC)');
-  if(corrUpdated) parts.push('correlazione DXY reale a 30g (Yahoo Finance/Frankfurter/FMP)');
-  if(positioningUpdated) parts.push('Fear & Greed e AAII');
-  if(sentimentAssetsUpdated) parts.push('correlazioni e sentiment asset (live)');
-  if(pricingUpdated) parts.push('cosa prezza il mercato (FRED)');
-  if(fedwatchUpdated) parts.push('probabilità sui tassi Fed (future Fed Funds)');
-  if(sahmUpdated) parts.push('Sahm Rule (FRED)');
-  if(biasUpdated) parts.push('bias geo-macro AI');
-  if(sentimentUpdated) parts.push('sentiment per categoria AI');
-  if(priorityUpdated) parts.push('headline e rischi chiave (AI)');
   const liveNote = 'Le analisi narrative (Geopolitica, Fed, Macro, Sentiment, COT, Risk-On/Off, Notizie a confronto, Cruscotto Asset, Indici) sono generate dall\'AI su dati reali; non restano commenti scritti a mano.';
-  // L'intestazione mostra solo "● Live" / "● Dati non raggiungibili": il dettaglio di cosa è stato aggiornato sta nel tooltip.
-  if(parts.length){
-    if(manual){ note.textContent = '✓ Dati aggiornati'; note.classList.remove('warn'); }
-    statusLine.textContent = '● Live'; statusLine.className = 'hd-live ok';
-    statusLine.title = `Aggiornati al ${now}: ${parts.join(', ')}. ${liveNote}`;
-  } else {
-    note.textContent = 'Funzioni live non raggiungibili — verifica il deploy delle Serverless Functions su Vercel'; note.classList.add('warn');
-    statusLine.textContent = '● Dati non raggiungibili'; statusLine.className = 'hd-live warn';
-    statusLine.title = 'Nessuna funzione live ha risposto su questo dominio: le sezioni restano in attesa dei dati.';
-  }
-  setTimeout(()=>{
-    note.textContent='';
-    document.querySelectorAll('.live-flash').forEach(el=>el.classList.remove('live-flash'));
-  }, 6000);
+  let cardsOk = false;
+  const paintStatus = (first) => {
+    const now = new Date().toLocaleString('it-IT', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+    const parts = [];
+    if(cardsOk) parts.push('card Macro USA/Europa/Lavoro e Barometro Hawkish/Dovish (calendario economico)');
+    if(r.market) parts.push('prezzi mercato (Yahoo Finance)');
+    if(r.cot) parts.push('COT completo con percentili a 52 settimane (CFTC)');
+    if(r.corr) parts.push('correlazione DXY reale a 30g (Yahoo Finance/Frankfurter/FMP)');
+    if(r.pos) parts.push('Fear & Greed e AAII');
+    if(r.assets) parts.push('correlazioni e sentiment asset (live)');
+    if(r.pricing) parts.push('cosa prezza il mercato (FRED)');
+    if(r.fw) parts.push('probabilità sui tassi Fed (future Fed Funds)');
+    if(r.sahm) parts.push('Sahm Rule (FRED)');
+    if(r.bias) parts.push('bias geo-macro AI');
+    if(r.sent) parts.push('sentiment per categoria AI');
+    if(r.bias || r.sent) parts.push('headline e rischi chiave (AI)');
+    // L'intestazione mostra solo "● Live" / "● Dati non raggiungibili": il dettaglio di cosa è stato aggiornato sta nel tooltip.
+    if(parts.length){
+      if(manual && first){ note.textContent = '✓ Dati aggiornati'; note.classList.remove('warn'); }
+      statusLine.textContent = '● Live'; statusLine.className = 'hd-live ok';
+      statusLine.title = `Aggiornati al ${now}: ${parts.join(', ')}. ${liveNote}`;
+    } else if(first){
+      note.textContent = 'Funzioni live non raggiungibili — verifica il deploy delle Serverless Functions su Vercel'; note.classList.add('warn');
+      statusLine.textContent = '● Dati non raggiungibili'; statusLine.className = 'hd-live warn';
+      statusLine.title = 'Nessuna funzione live ha risposto su questo dominio: le sezioni restano in attesa dei dati.';
+    }
+  };
+  // stato in alto appena i dati veloci sono arrivati (non dopo le analisi AI)
+  const fast = Promise.allSettled([aMacro, aMarket, aCot, aCorr, pCards, aFw, aSahm, aTicker, aAssets, aPricing]).then(() => {
+    return pCards.then(c => { cardsOk = Boolean(c); }, () => {}).then(() => {
+      paintStatus(true);
+      setTimeout(()=>{ note.textContent=''; document.querySelectorAll('.live-flash').forEach(el=>el.classList.remove('live-flash')); }, 6000);
+    });
+  });
+  // dossier AI dell'evento chiave e quadro decisionale leggono bias e prezzi già applicati: partono a fine giro, senza bloccare niente
+  Promise.allSettled([fast, aBias, aSent]).then(() => {
+    paintStatus(false);
+    if(currentKeyEvent) loadEventDossier(currentKeyEvent);   // dossier AI sull'evento chiave già selezionato
+    const dpSel = document.getElementById('dpAssetSelect');
+    if(dpSel && dpSel.value) renderDecisionPanel(dpSel.value);
+  });
+  LIVE_STAMP.prices = LIVE_STAMP.moves = LIVE_STAMP.ai = Date.now();
+  return fast;   // chi aspetta (il pulsante "aggiorna") smette di girare quando i dati veloci sono arrivati
 }
+
+// ---------- AGGIORNAMENTO AUTOMATICO a scheda visibile ----------
+// Prima i dati si aggiornavano solo all'apertura o col pulsante: una scheda lasciata aperta restava ferma sui prezzi del mattino e sulle analisi di ore prima.
+// Ora: prezzi e card che ne dipendono ogni 2 minuti; movimenti per fascia e correlazioni ogni 5; analisi AI ricontrollate ogni 20 minuti (si ridisegnano
+// solo se sono state rigenerate). Se la scheda era nascosta, al ritorno si aggiorna subito ciò che è scaduto. Niente chiamate AI in più: si rileggono
+// le stesse risposte in cache, e l'AI si rigenera solo quando scade la sua cache di 3 ore.
+async function liveRefreshPrices(){
+  const market = await fetchLiveMarket(true);   // true: indirizzo che cambia ogni 2 minuti, così non si riusa la copia del browser
+  if(!market) return;
+  LIVE.market = market;
+  liveKeepOpen(() => {
+    liveRun('prezzi', () => applyLiveMarketToMonitor(market));
+    liveRun('posizionamento', () => renderSentimentIndicators(lastPositioning));
+    liveRun('cosa prezza il mercato', () => applyLiveMarketPricing(LIVE.macro));
+    liveRun('ticker', () => buildLiveTicker({market, macro:LIVE.macro, cot:LIVE.cot}));
+    liveRun('sentiment asset', () => applySentimentAssetsLive(market, LIVE.corr));
+  });
+}
+async function liveRefreshSlow(){
+  loadMarketMoves();
+  const corr = await fetchLiveDXYCorr(true);
+  if(!corr) return;
+  LIVE.corr = corr;
+  liveKeepOpen(() => { liveRun('correlazioni', () => applyLiveCorrToMonitor(corr)); liveRun('sentiment asset', () => applySentimentAssetsLive(LIVE.market, corr)); });
+}
+async function liveRefreshAi(){
+  const same = (a, b) => Boolean(a && b && a.generatedAt === b.generatedAt);
+  const [bias, sent, mi] = await Promise.all([fetchBiasDaily(0, true), fetchSentimentLive(false, 0, true), fetchMarketIntelligence(true)]);
+  liveKeepOpen(() => {
+    if(biasOk(bias) && !same(bias, HUB.bias)) liveRun('bias', () => applyBiasDaily(bias));
+    if(sentOk(sent) && !same(sent, HUB.sent)) liveRun('sentiment', () => applySentimentLive(sent));
+    if(miOk(mi) && mi.generatedAt !== LIVE.miAt){ LIVE.miAt = mi.generatedAt; liveRun('driver asset', () => applyMarketIntelligence(mi)); }
+  });
+  // analisi narrative già caricate (le sezioni chiuse non sono mai state richieste e non si richiedono qui)
+  const secs = NARRATIVE_SECTIONS.filter(s => NARRATIVE_STATE[s] === 'done');
+  const res = await Promise.all(secs.map(s => fetchNarrative(s, 0, true)));
+  secs.forEach((s, i) => {
+    const d = res[i];
+    if(d && d.ai && d.data && !same(d, HUB.res[s])) liveKeepOpen(() => liveRun('analisi ' + s, () => NARRATIVE_RENDERERS[s](d.data, d)));
+  });
+}
+function liveAutoTick(){
+  if(document.hidden) return;
+  const now = Date.now();
+  if(now - LIVE_STAMP.prices >= 120000){ LIVE_STAMP.prices = now; liveRefreshPrices().catch(e => console.warn('Aggiornamento prezzi:', e.message)); }
+  if(now - LIVE_STAMP.moves >= 300000){ LIVE_STAMP.moves = now; liveRefreshSlow().catch(e => console.warn('Aggiornamento movimenti:', e.message)); }
+  if(now - LIVE_STAMP.ai >= 1200000){ LIVE_STAMP.ai = now; liveRefreshAi().catch(e => console.warn('Aggiornamento analisi:', e.message)); }
+}
+setInterval(liveAutoTick, 30000);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) liveAutoTick(); });
 
 function refreshLive(){
   renderTicker();
@@ -4473,6 +4598,25 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     if(!on){ on = true; root.classList.add('is-scrolling'); }
     clearTimeout(t); t = setTimeout(() => { on = false; root.classList.remove('is-scrolling'); }, 160);
   }, {passive:true});
+})();
+</script>
+<script>
+// ---------- PRESTAZIONI: a pagina ferma gli effetti decorativi si fermano ----------
+// Ogni animazione che non finisce mai (pallini "live", riflesso sui titoli, pulsazione, segnaposto) costringe il browser a ricalcolare gli stili e a
+// ridisegnare ad ogni fotogramma, 60 volte al secondo, anche se nessuno guarda: è ciò che teneva la CPU occupata a pagina ferma. Ora girano finché la pagina
+// è in uso e si fermano dopo 20 secondi senza muovere il mouse, scorrere o toccare; al primo movimento ripartono (vedi "html.calm" nel CSS).
+(function(){
+  'use strict';
+  const root = document.documentElement; let t = 0, last = 0, first = true;   // dopo l'apertura bastano 8 secondi (i dati stanno arrivando), poi 20 dopo ogni movimento
+  const wake = () => {
+    const now = Date.now(); if(now - last < 1000 && !root.classList.contains('calm')) return;   // a ogni movimento del mouse basta un controllo al secondo
+    last = now; root.classList.remove('calm'); clearTimeout(t); t = setTimeout(() => root.classList.add('calm'), first ? 8000 : 20000); first = false;
+  };
+  ['pointermove', 'pointerdown', 'keydown', 'scroll', 'wheel', 'touchstart'].forEach(ev => addEventListener(ev, wake, {passive:true, capture:true}));
+  wake();
+  // Lo strumento "Volatilità per asset" partiva solo quando ci si avvicinava: fino ad allora la sezione mostrava "Caricamento delle candele orarie…" per sempre
+  // e, aprendola, c'erano 2 secondi di attesa. Si carica in background poco dopo l'apertura, quando i dati principali sono già arrivati.
+  setTimeout(() => { if(window.__volLoad) window.__volLoad(); }, 4000);
 })();
 </script>
 </body>

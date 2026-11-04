@@ -75,7 +75,8 @@ async function handleEvent(event) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=120',
+        // 2 minuti; se qualche simbolo non ha risposto solo 20 secondi, così l'aggiornamento successivo lo recupera presto
+        'Cache-Control': `public, max-age=${errors.length ? 20 : 120}`,
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),

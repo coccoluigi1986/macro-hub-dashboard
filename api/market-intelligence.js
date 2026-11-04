@@ -16,11 +16,12 @@
 // Se GEMINI_API_KEY manca o tutti i batch falliscono, il client tiene semplicemente il
 // driver statico di fallback già presente in marketData — stesso pattern del resto della dashboard.
 //
-// Query param: ?snapshot=<JSON URL-encoded> — { "<nome asset>": {"val":"...", "chg": n}, ... }
+// Query param opzionale: ?snapshot=<JSON URL-encoded> — { "<nome asset>": {"val":"...", "chg": n}, ... }; se manca, prezzi e variazioni li legge il server.
 // Raggiungibile su: https://tuosito.vercel.app/api/market-intelligence
 
 const { aggregateNews } = require('../lib/news');
 const { getMarketContext } = require('../lib/market-context');
+const { fetchYahooQuote } = require('../lib/yahoo');
 const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
@@ -60,13 +61,38 @@ async function fetchBatch(batchAssets, priceLines, newsText, movesText, rulesTex
   return llmJSON({ system: SYS, prompt, maxTokens: 2000 });
 }
 
+// Prezzi attuali letti dal server (stesse fonti della dashboard). Prima li mandava il browser dentro l'indirizzo della richiesta: ogni visitatore aveva
+// prezzi leggermente diversi, quindi indirizzi sempre diversi, la cache CDN non serviva mai e OGNI apertura della pagina faceva partire una nuova
+// generazione (4 chiamate a Gemini): lenta e così pesante sul limite di richieste da far fallire le altre analisi. Ora l'indirizzo è uguale per tutti.
+const SNAPSHOT_SYMBOLS = {
+  'DXY': ['DX-Y.NYB', 2], 'EUR/USD': ['EURUSD=X', 4], 'GBP/USD': ['GBPUSD=X', 4], 'Gold Futures': ['GC=F', 2], 'Silver Futures': ['SI=F', 2],
+  'WTI Crude Oil': ['CL=F', 2], 'Nasdaq 100': ['^NDX', 2], 'S&P 500': ['^GSPC', 2], 'Dow Jones': ['^DJI', 2], 'US 10Y Yield': ['^TNX', 3], 'VIX': ['^VIX', 2],
+};
+async function serverSnapshot() {
+  const out = {};
+  await Promise.all(Object.entries(SNAPSHOT_SYMBOLS).map(async ([name, [sym, dec]]) => {
+    try {
+      const q = await fetchYahooQuote(sym);
+      if (q.price != null) {
+        out[name] = {
+          val: q.price.toLocaleString('it-IT', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: 'always' }),
+          chg: q.changePercent != null ? Number(q.changePercent.toFixed(2)) : null,
+        };
+      }
+    } catch (e) { /* quell'asset resta "prezzo non disponibile" nel prompt */ }
+  }));
+  return out;
+}
+
 async function handleEvent(event) {
   try {
     const params = event.queryStringParameters || {};
     let snapshot = {};
+    // ?snapshot=… resta accettato (pagine già aperte con la vecchia versione lo mandano ancora); altrimenti i prezzi li legge il server
     if (params.snapshot) {
       try { snapshot = JSON.parse(params.snapshot); } catch (e) { snapshot = {}; }
     }
+    if (!snapshot || !Object.keys(snapshot).length) snapshot = await serverSnapshot();
 
     const items = await aggregateNews(30);
     // Contesto condiviso con le altre analisi (notizie per impatto + movimenti reali con notizie concomitanti); se manca, elenco per data.

@@ -52,7 +52,7 @@ async function handleEvent(event) {
     // notizie concomitanti (lib/market-context.js). Se non è disponibile si ricade sul vecchio elenco per data.
     const ctx = await getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; });
 
-    let payload = null;
+    let payload = null, failReason = null;
     if (llmConfigured() && (items.length || ctx)) {
       try {
         const prompt = (ctx
@@ -89,10 +89,11 @@ async function handleEvent(event) {
         };
       } catch (e) {
         console.warn('daily bias AI failed:', e.message);
+        failReason = String(e.message).slice(0, 160);   // il motivo del ripiego, visibile nella risposta (nessun dato riservato)
       }
     }
 
-    if (!payload) payload = fallback();
+    if (!payload) { payload = fallback(); if (failReason) payload.reason = failReason; }
 
     return {
       statusCode: 200,

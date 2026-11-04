@@ -282,7 +282,8 @@ async function handleEvent(event) {
         // 5 minuti: la correlazione a 30g da sola potrebbe restare in cache anche di più, ma questa
         // risposta include anche la variazione % "di oggi" (DXY/FX/gold) usata dalla card
         // "Correlazioni e Sentiment Asset" — quella deve restare ragionevolmente fresca.
-        'Cache-Control': 'public, max-age=300',
+        // se qualche serie manca o il posizionamento retail non è arrivato, cache breve: la card si completa al giro successivo
+        'Cache-Control': `public, max-age=${warnings.length || !Object.keys(retailSentiment.rows).length ? 45 : 300}`,
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),
