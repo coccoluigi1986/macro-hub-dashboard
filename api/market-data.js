@@ -49,8 +49,8 @@ async function handleEvent(event) {
   if (params.view === 'indicators') {
     try {
       const data = await getIndicators({ ctxFn: () => getMarketContext(), translate: translateTitles });
-      // 10 minuti; se qualche fonte non ha risposto solo 1, così il prossimo giro la recupera
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 600) }, body: JSON.stringify(data) };
+      // 20 minuti (le traduzioni dei titoli usano l'AI: meno richieste); se qualche fonte non ha risposto solo 1, così il prossimo giro la recupera
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 1200) }, body: JSON.stringify(data) };
     } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }

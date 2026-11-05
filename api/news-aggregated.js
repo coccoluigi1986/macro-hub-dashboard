@@ -47,7 +47,7 @@ async function handleEvent(event) {
       const complete = shown.every(n => n.titleIt);
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 300 : 60}` },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 900 : 60}` },
         body: JSON.stringify(summary),
       };
     }
@@ -73,7 +73,7 @@ async function handleEvent(event) {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 600 : 120}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? (params.lang === "it" ? 1800 : 600) : 120}` },
       body: JSON.stringify({
         count: items.length,
         topic,
