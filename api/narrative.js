@@ -22,7 +22,7 @@
 
 const { aggregateNews } = require('../lib/news');
 const { getMarketContext } = require('../lib/market-context');
-const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
+const { llmJSON, llmConfigured, failureInfo, modelList } = require('../lib/llm');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchFredSnapshot } = require('../lib/fred');
 const { fetchCalendarEvents } = require('../lib/calendar');
@@ -338,6 +338,10 @@ SECTIONS.hawkdove.needs = ['released'];
 async function handleEvent(event) {
   try {
     const section = ((event.queryStringParameters || {}).section || '').trim();
+    // ?section=modelli → diagnostica: quali modelli userebbe l'AI, nell'ordine (solo nomi, nessun dato riservato; la richiesta non consuma quota)
+    if (section === 'modelli') {
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify({ configurata: llmConfigured(), modelli: llmConfigured() ? await modelList(process.env.GEMINI_API_KEY) : [] }) };
+    }
     const spec = SECTIONS[section];
     if (!spec) {
       return { statusCode: 400, body: JSON.stringify({ error: `Parametro section non valido. Valori ammessi: ${Object.keys(SECTIONS).join(', ')}` }) };
