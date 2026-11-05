@@ -17,7 +17,7 @@
 
 const { aggregateNews } = require('../lib/news');
 const { getMarketContext } = require('../lib/market-context');
-const { llmJSON, llmConfigured } = require('../lib/llm');
+const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const BIAS_SYS = 'Sei un analista macro-geopolitico senior. Rispondi SEMPRE in italiano. '
@@ -52,7 +52,7 @@ async function handleEvent(event) {
     // notizie concomitanti (lib/market-context.js). Se non è disponibile si ricade sul vecchio elenco per data.
     const ctx = await getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; });
 
-    let payload = null, failReason = null;
+    let payload = null, failReason = null, fail = { ttl: 120, retryIn: 0 };
     if (llmConfigured() && (items.length || ctx)) {
       try {
         const prompt = (ctx
@@ -89,17 +89,18 @@ async function handleEvent(event) {
         };
       } catch (e) {
         console.warn('daily bias AI failed:', e.message);
-        failReason = String(e.message).slice(0, 160);   // il motivo del ripiego, visibile nella risposta (nessun dato riservato)
+        failReason = String(e.message).slice(0, 260);   // il motivo del ripiego, visibile nella risposta (nessun dato riservato)
+        fail = failureInfo(e);                           // quota esaurita: cache più lunga e nuovo tentativo più tardi
       }
     }
 
-    if (!payload) { payload = fallback(); if (failReason) payload.reason = failReason; }
+    if (!payload) { payload = fallback(); if (failReason) { payload.reason = failReason; payload.retryIn = fail.retryIn; } }
 
     return {
       statusCode: 200,
       // 3h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
       // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per 3 ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${payload.ai ? 10800 : 120}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${payload.ai ? 10800 : fail.ttl}` },
       body: JSON.stringify(payload),
     };
   } catch (err) {

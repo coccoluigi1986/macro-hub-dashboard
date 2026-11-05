@@ -22,7 +22,7 @@
 
 const { aggregateNews } = require('../lib/news');
 const { getMarketContext } = require('../lib/market-context');
-const { llmJSON, llmConfigured } = require('../lib/llm');
+const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchFredSnapshot } = require('../lib/fred');
 const { fetchCalendarEvents } = require('../lib/calendar');
@@ -343,7 +343,7 @@ async function handleEvent(event) {
       return { statusCode: 400, body: JSON.stringify({ error: `Parametro section non valido. Valori ammessi: ${Object.keys(SECTIONS).join(', ')}` }) };
     }
 
-    let data = null, reason = null;
+    let data = null, reason = null, fail = { ttl: 60, retryIn: 0 };
     if (llmConfigured()) {
       try {
         const ctx = await buildContext(spec.needs || []);
@@ -356,7 +356,8 @@ async function handleEvent(event) {
         }
       } catch (e) {
         console.warn(`narrative ${section} AI failed:`, e.message);
-        reason = String(e.message).slice(0, 160);   // il motivo del ripiego, visibile nella risposta (nessun dato riservato)
+        reason = String(e.message).slice(0, 260);   // il motivo del ripiego, visibile nella risposta (nessun dato riservato)
+        fail = failureInfo(e);                      // quota esaurita: cache più lunga e nuovo tentativo più tardi, invece di martellare l'AI ogni minuto
       }
     } else {
       reason = 'chiave AI non configurata';
@@ -365,8 +366,8 @@ async function handleEvent(event) {
     const ai = Boolean(data);
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ai ? 10800 : 60}` },
-      body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data, ...(ai ? {} : { reason }) }),
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ai ? 10800 : fail.ttl}` },
+      body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data, ...(ai ? {} : { reason, retryIn: fail.retryIn }) }),
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };

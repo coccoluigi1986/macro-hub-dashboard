@@ -22,7 +22,7 @@
 const { aggregateNews } = require('../lib/news');
 const { getMarketContext } = require('../lib/market-context');
 const { fetchYahooQuote } = require('../lib/yahoo');
-const { llmJSON, llmConfigured } = require('../lib/llm');
+const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const BATCHES = [
@@ -98,7 +98,7 @@ async function handleEvent(event) {
     // Contesto condiviso con le altre analisi (notizie per impatto + movimenti reali con notizie concomitanti); se manca, elenco per data.
     const ctx = await getMarketContext().catch((e) => { console.warn('market context non disponibile:', e.message); return null; });
     const assets = {};
-    let anyAi = false;
+    let anyAi = false, failInfo = null;
 
     if (llmConfigured() && (items.length || ctx)) {
       const priceLines = ASSETS.map(a => {
@@ -112,7 +112,8 @@ async function handleEvent(event) {
       // Con la cache scaduta partono insieme molte richieste all'AI e il piano gratuito ne rifiuta qualcuna: i gruppi falliti si rifanno una volta dopo
       // una breve pausa, invece di lasciare quei driver "in caricamento" fino al tentativo successivo del browser.
       const failed = results.map((r, i) => (r.status === 'rejected' ? i : -1)).filter(i => i >= 0);
-      if (failed.length) {
+      if (failed.length) failInfo = { ...failureInfo(results[failed[0]].reason), reason: String((results[failed[0]].reason || {}).message || '').slice(0, 260) };
+      if (failed.length && !(failInfo.quota === 'giorno')) {   // con la quota giornaliera esaurita riprovare subito è inutile
         await new Promise(r => setTimeout(r, 2500));
         const again = await Promise.allSettled(failed.map(i => run(BATCHES[i])));
         failed.forEach((i, k) => { results[i] = again[k]; });
@@ -137,15 +138,15 @@ async function handleEvent(event) {
       });
     }
 
-    const payload = { generatedAt: new Date().toISOString(), ai: anyAi, newsCount: items.length, assets };
     const complete = Object.keys(assets).length === ASSETS.length;
+    const payload = { generatedAt: new Date().toISOString(), ai: anyAi, newsCount: items.length, assets, ...(complete || !failInfo ? {} : { reason: failInfo.reason, retryIn: failInfo.retryIn }) };
 
     return {
       statusCode: 200,
       // 3h solo se TUTTI i batch sono andati a buon fine; se anche solo un batch è mancante
       // (rate limit, timeout), cache breve (2 min) così il prossimo giro può completare i mancanti
       // invece di restare "congelato" incompleto in CDN per ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 10800 : 120}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 10800 : (failInfo ? Math.max(120, failInfo.ttl) : 120)}` },
       body: JSON.stringify(payload),
     };
   } catch (err) {

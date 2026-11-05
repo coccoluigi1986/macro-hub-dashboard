@@ -2706,12 +2706,20 @@ let lastPositioning = null;              // Fear&Greed + AAII dall'ultimo /api/m
 function safeHtml(t){ return escHtml(t || '').replace(/&lt;b&gt;/g,'<b>').replace(/&lt;\/b&gt;/g,'</b>'); }
 function bulletList(items){ return (items||[]).map(x=>`• ${safeHtml(x)}`).join('<br>'); }
 
+// ---- ultima analisi AI riuscita, salvata nel browser ----
+// Se l'AI non risponde (quota di Gemini esaurita, errore passeggero) la pagina mostra l'ULTIMA analisi riuscita (fino a 24 ore, con il suo orario di
+// generazione) invece di una card vuota, e continua a riprovare. `stale:true` segna una risposta vecchia; `retryIn` = fra quanti secondi conviene riprovare.
+function aiSave(k, j){ try{ localStorage.setItem('mhub_ai:' + k, JSON.stringify({t:Date.now(), j})); }catch(e){} }
+function aiLoad(k){ try{ const o = JSON.parse(localStorage.getItem('mhub_ai:' + k)); if(o && Date.now() - o.t < 24 * 3600e3) return o.j; }catch(e){} return null; }
+async function aiGet(key, url, opts, good){
+  let j = null;
+  try{ const res = await fetch(url, opts); if(res.ok) j = await res.json(); }catch(e){}
+  if(j && good(j)){ aiSave(key, j); return j; }
+  const old = aiLoad(key);
+  return old ? {...old, stale:true, retryIn:(j && j.retryIn) || 0} : j;
+}
 async function fetchNarrative(section, bust, revalidate){
-  try{
-    const res = await fetch(`/api/narrative?section=${section}${bust ? `&retry=${bust}` : ''}`, revalidate ? {cache:'no-cache'} : undefined);
-    if(!res.ok) return null;
-    return await res.json();
-  }catch(e){ return null; }
+  return aiGet('n:' + section, `/api/narrative?section=${section}${bust ? `&retry=${bust}` : ''}`, revalidate ? {cache:'no-cache'} : undefined, j => j.ai && j.data);
 }
 
 function setNarrativeMeta(id, res){
@@ -2779,17 +2787,20 @@ function ensureNarrative(section, bust){
   const doms = (NARRATIVE_DOM[section] || [section]).map(id=>document.getElementById(id)).filter(Boolean);
   if(!doms.length || doms.every(el=>el.classList.contains('collapsed'))) return;
   NARRATIVE_STATE[section] = 'loading';
+  // nuovo tentativo automatico: dopo 20 s, 1 min e 2,5 min; se il server dice che la quota dell'AI è esaurita (retryIn) si aspetta quel tempo (fino a
+  // 15 min) per al massimo 12 volte, invece di martellare l'AI ogni minuto. Il numero cambia ogni minuto per saltare la cache CDN delle risposte di ripiego.
+  const retry = (res) => {
+    const n = NARRATIVE_RETRIED[section] = (NARRATIVE_RETRIED[section] || 0) + 1, hint = (res && res.retryIn) || 0;
+    if(n <= (hint ? 12 : 3)) setTimeout(()=>{ NARRATIVE_STATE[section] = null; ensureNarrative(section, Math.floor(Date.now() / 60000)); }, Math.min(900000, Math.max([20000, 60000, 150000][n - 1] || 150000, hint * 1000)));   // in millisecondi, al massimo 15 minuti
+  };
   fetchNarrative(section, bust).then(res=>{
     if(res && res.ai && res.data){
-      try{ NARRATIVE_RENDERERS[section](res.data, res); NARRATIVE_STATE[section] = 'done'; return; }
+      try{ NARRATIVE_RENDERERS[section](res.data, res); NARRATIVE_STATE[section] = res.stale ? null : 'done'; if(res.stale) retry(res); return; }   // analisi vecchia: si mostra e si riprova
       catch(e){ console.warn('Rendering analisi', section, 'fallito:', e.message); }
     }
     NARRATIVE_STATE[section] = null;   // consente un nuovo tentativo alla prossima apertura
     showNarrativeUnavailable(section);
-    // fino a tre nuovi tentativi automatici (dopo 20 s, 1 min e 2,5 min): prima ce n'era uno solo e, se falliva, la card restava "non disponibile"
-    // finché non si ricaricava la pagina. Il numero cambia ogni minuto per saltare la cache CDN di 60 s sulle risposte di ripiego.
-    const n = NARRATIVE_RETRIED[section] = (NARRATIVE_RETRIED[section] || 0) + 1;
-    if(n <= 3) setTimeout(()=>ensureNarrative(section, Math.floor(Date.now() / 60000)), [20000, 60000, 150000][n - 1]);
+    retry(res);
   });
 }
 function ensureNarrativesForSection(domId){
@@ -3347,21 +3358,13 @@ function assetDirClass(dir){
 // bust = numero che cambia ogni minuto: salta la cache CDN delle risposte di ripiego (2 min) per un nuovo tentativo; revalidate = ricontrolla la
 // versione più recente invece di riusare la copia che il browser tiene per 3 ore (aggiornamento automatico).
 async function fetchBiasDaily(bust, revalidate){
-  try{
-    // "v=2": le risposte sono tenute in cache dal browser per 3 ore; cambiando il numero si forza una volta sola il nuovo formato (8 asset)
-    const res = await fetch('/api/bias-daily?v=2' + (bust ? '&retry=' + bust : ''), revalidate ? {cache:'no-cache'} : undefined);
-    if(!res.ok) return null;
-    return await res.json();
-  }catch(e){ return null; }
+  // "v=2": le risposte sono tenute in cache dal browser per 3 ore; cambiando il numero si forza una volta sola il nuovo formato (8 asset)
+  return aiGet('bias', '/api/bias-daily?v=2' + (bust ? '&retry=' + bust : ''), revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.label);
 }
 
 async function fetchSentimentLive(force, bust, revalidate){
-  try{
-    const url = force ? '/api/sentiment-categories?force=1' : bust ? '/api/sentiment-categories?retry=' + bust : '/api/sentiment-categories';
-    const res = await fetch(url, force ? {cache:'no-store'} : revalidate ? {cache:'no-cache'} : undefined);
-    if(!res.ok) return null;
-    return await res.json();
-  }catch(e){ return null; }
+  const url = force ? '/api/sentiment-categories?force=1' : bust ? '/api/sentiment-categories?retry=' + bust : '/api/sentiment-categories';
+  return aiGet('sent', url, force ? {cache:'no-store'} : revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.categories && j.categories.length);
 }
 
 async function fetchEventDossier(ev){
@@ -3546,14 +3549,9 @@ function applyLiveCorrToMonitor(live){
 const TONE_COLOR = {red:'var(--red)', gold:'var(--gold)', green:'var(--green)'};
 
 async function fetchMarketIntelligence(revalidate, bust){
-  try{
-    // Nessun prezzo nell'indirizzo: li legge il server. Con i prezzi del visitatore ogni apertura era un indirizzo nuovo, la cache non serviva
-    // mai e ogni visita faceva generare di nuovo i driver (4 chiamate a Gemini). Ora la risposta è la stessa per tutti e resta in cache 3 ore.
-    const url = '/api/market-intelligence' + (bust ? '?retry=' + bust : '');
-    const res = await fetch(url, revalidate ? {cache:'no-cache'} : undefined);
-    if(!res.ok) return null;
-    return await res.json();
-  }catch(e){ return null; }
+  // Nessun prezzo nell'indirizzo: li legge il server. Con i prezzi del visitatore ogni apertura era un indirizzo nuovo, la cache non serviva
+  // mai e ogni visita faceva generare di nuovo i driver (4 chiamate a Gemini). Ora la risposta è la stessa per tutti e resta in cache 3 ore.
+  return aiGet('mi', '/api/market-intelligence' + (bust ? '?retry=' + bust : ''), revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.assets && Object.keys(j.assets).length >= marketData.length);
 }
 
 // Sovrascrive driver/bars di marketData (finora scritti a mano e statici per sempre) con
@@ -3791,21 +3789,23 @@ const liveRun = (name, fn) => { try{ return fn(); }catch(e){ console.warn('Aggio
 
 // Ritenta un'analisi AI finché non risponde davvero (ai !== false): dopo 15 s, 45 s e 2 min, con un numero che cambia ogni minuto per saltare la cache
 // CDN delle risposte di ripiego.
-function liveRetryAi(fetchFn, isGood, apply, delays = [15000, 45000, 120000]){
-  let n = 0;
+// hint = secondi che il server suggerisce di aspettare (quota dell'AI esaurita): in quel caso si aspetta di più (fino a 15 min) e si riprova più volte, ma piano.
+function liveRetryAi(fetchFn, isGood, apply, hint = 0, delays = [15000, 45000, 120000]){
+  let n = 0, wait = hint; const max = hint ? 12 : delays.length;
   const next = () => {
-    if(n >= delays.length) return;
+    if(n >= max) return;
     setTimeout(async () => {
       let d = null; try{ d = await fetchFn(Math.floor(Date.now() / 60000)); }catch(e){}
       if(isGood(d)){ apply(d); return; }
-      n++; next();
-    }, delays[n]);
+      wait = (d && d.retryIn) || wait; n++; next();
+    }, Math.min(900000, Math.max(delays[Math.min(n, delays.length - 1)], wait * 1000)));
   };
   next();
 }
-const biasOk = d => Boolean(d && d.ai !== false && d.label);
-const sentOk = d => Boolean(d && d.ai !== false && d.categories && d.categories.length);
-const miOk = d => Boolean(d && d.ai !== false && d.assets && Object.keys(d.assets).length >= marketData.length);
+// "buona" = fresca e completa: una risposta vecchia salvata nel browser (stale) si mostra ma si continua a riprovare
+const biasOk = d => Boolean(d && !d.stale && d.ai !== false && d.label);
+const sentOk = d => Boolean(d && !d.stale && d.ai !== false && d.categories && d.categories.length);
+const miOk = d => Boolean(d && !d.stale && d.ai !== false && d.assets && Object.keys(d.assets).length >= marketData.length);
 
 // Ridisegnare una card ricrea i suoi elementi: i testi che l'utente ha aperto con "Leggi tutto" / "Mostra altri" si richiuderebbero. Si annotano
 // prima del ridisegno e si riaprono dopo.
@@ -3845,12 +3845,12 @@ async function initLiveData(manual = false){
   const aPricing = Promise.all([aMarket, aMacro]).then(([, macro]) => { r.pricing = liveRun('cosa prezza il mercato', () => applyLiveMarketPricing(macro)); });   // legge VIX/Oro/DXY già aggiornati
   loadMarketMoves();   // movimenti reali per fascia oraria + notizie concomitanti (senza AI)
   // driver AI degli asset: non bloccano nulla e nulla li blocca; se mancano degli asset si ritenta
-  fetchMarketIntelligence().then(d => { applyMarketIntelligence(d); if(!miOk(d)) liveRetryAi(b => fetchMarketIntelligence(false, b), miOk, applyMarketIntelligence); else LIVE.miAt = d.generatedAt; });
+  fetchMarketIntelligence().then(d => { applyMarketIntelligence(d); if(!miOk(d)) liveRetryAi(b => fetchMarketIntelligence(false, b), miOk, applyMarketIntelligence, d && d.retryIn); else LIVE.miAt = d.generatedAt; });
 
   // --- analisi AI: si applicano appena arrivano; se falliscono si ritenta, e intanto la card dice "non disponibile" (non resta vuota) ---
   const aBias = pBias.then(bias => {
     r.bias = liveRun('bias', () => applyBiasDaily(bias));
-    if(!biasOk(bias)) liveRetryAi(b => fetchBiasDaily(b), biasOk, d => liveRun('bias', () => applyBiasDaily(d)));
+    if(!biasOk(bias)) liveRetryAi(b => fetchBiasDaily(b), biasOk, d => liveRun('bias', () => applyBiasDaily(d)), bias && bias.retryIn);
     return bias;
   });
   const aSent = pSent.then(sent => {
@@ -3862,7 +3862,7 @@ async function initLiveData(manual = false){
       if(snEl) snEl.textContent = 'Analisi AI non raggiungibile in questo momento — nuovo tentativo automatico tra poco.';
       HUB.fail.sent = true; renderHubSent(); renderOggiCats(); renderOggiRisks();
     }
-    if(!sentOk(sent)) liveRetryAi(b => fetchSentimentLive(false, b), sentOk, d => liveRun('sentiment', () => applySentimentLive(d)));
+    if(!sentOk(sent)) liveRetryAi(b => fetchSentimentLive(false, b), sentOk, d => liveRun('sentiment', () => applySentimentLive(d)), sent && sent.retryIn);
     return sent;
   });
 
