@@ -18,6 +18,7 @@ const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchFredSnapshot } = require('../lib/fred');
 const { getFedWatch } = require('../lib/fedwatch');
 const { getSahm } = require('../lib/sahm');
+const { releaseAwareTtl } = require('../lib/release-watch');
 
 async function handleEvent(event) {
   const apiKey = process.env.FRED_API_KEY;
@@ -56,7 +57,7 @@ async function handleEvent(event) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600', // cache 1 ora, questi dati non cambiano più spesso
+        'Cache-Control': 'public, max-age=' + await releaseAwareTtl(3600, 300), // 1 ora; scade prima subito dopo un dato importante, così FRED viene riletto appena lo aggiorna
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),

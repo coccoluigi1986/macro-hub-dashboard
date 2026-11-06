@@ -42,7 +42,7 @@ async function handleEvent(event) {
       statusCode: 200,
       // 15 min: le stime di consenso cambiano raramente infragiornata; abbastanza breve da
       // riflettere gli "actual" appena pubblicati senza restare congelati per ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=900' },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + await releaseAwareTtl(900, 120) },
       body: JSON.stringify({ generatedAt: new Date().toISOString(), from, to, count: events.length, events }),
     };
   } catch (err) {

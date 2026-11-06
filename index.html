@@ -1607,6 +1607,7 @@ const SN_TREND = {BULLISH:['g', '↗ Bullish'], BEARISH:['r', '↘ Bearish'], NE
 // li genera il dossier AI (/api/event-dossier). Orari in UTC, mostrati in ora italiana.
 let keyEvents = [];
 let keyEventsState = 'loading'; // loading | ready | error
+let keyEventsSig = null;        // firma degli eventi mostrati (ora + valore "actual"): l'aggiornamento automatico ridisegna solo se cambia
 let currentKeyEvent = null;
 
 function escHtml(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -1621,11 +1622,13 @@ function keyEventPriority(e){
   return pr;
 }
 
-async function loadKeyEvents(){
+// quiet = aggiornamento automatico a scheda aperta: si ridisegna solo se è cambiato qualcosa (di solito un dato appena uscito) e se la richiesta
+// fallisce restano i dati già mostrati. "no-cache" = il browser ricontrolla sempre con il server invece di riusare una copia di 15 minuti fa.
+async function loadKeyEvents(quiet){
   try{
     const from = new Date(); from.setUTCHours(0,0,0,0);
     const to = new Date(from.getTime() + 45*86400000);
-    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`);
+    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`, {cache:'no-cache'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     keyEvents = (data.events||[]).filter(e=>e.importance==='alto').map(e=>{
@@ -1634,16 +1637,24 @@ async function loadKeyEvents(){
         title: `${e.currency ? e.currency+' · ' : ''}${e.title}`, rawTitle:e.title,
         attese: fmtCalVal(e.forecast,e.unit,e.scale), precedente: fmtCalVal(e.previous,e.unit,e.scale),
         actual: e.actual!=null ? fmtCalVal(e.actual,e.unit,e.scale) : null,
+        raw: e,
       };
       ev.priority = keyEventPriority({currency:ev.currency, title:e.title});
       return ev;
     });
     keyEventsState = 'ready';
-  }catch(err){ keyEventsState = 'error'; }
-  refreshKeyEvent(true);
-  if(typeof renderHubBC === 'function') renderHubBC();    // prossimo FOMC dal calendario
-  if(typeof renderHubCal === 'function') renderHubCal();   // elenco eventi dell'hub Calendario
-  if(typeof renderHubMacro === 'function') renderHubMacro();   // data del prossimo rapporto sul lavoro (Sahm Rule)
+  }catch(err){ if(quiet && keyEventsState === 'ready') return; keyEventsState = 'error'; }
+  const sig = keyEvents.map(e => e.utc + ':' + e.actual).join('|');
+  if(quiet && sig === keyEventsSig) return;   // niente di nuovo: nulla da ridisegnare
+  keyEventsSig = sig;
+  const draw = () => {
+    refreshKeyEvent(true);
+    if(typeof renderHubBC === 'function') renderHubBC();    // prossimo FOMC dal calendario
+    if(typeof renderHubCal === 'function') renderHubCal();   // elenco eventi dell'hub Calendario
+    if(typeof renderHubMacro === 'function') renderHubMacro();   // data del prossimo rapporto sul lavoro (Sahm Rule)
+    if(typeof renderTodaysReleases === 'function') renderTodaysReleases();   // riquadro "Dati macro pubblicati oggi"
+  };
+  if(quiet && typeof liveKeepOpen === 'function') liveKeepOpen(draw); else draw();   // i testi aperti con "Leggi tutto" restano aperti
 }
 
 function pickNextKeyEvent(){
@@ -1992,16 +2003,20 @@ function surpriseInfo(lbl, cur, fore){
 // Prima erano valori scritti a mano (CPI di luglio, NFP di luglio...). Ora ogni tessera è l'ultimo dato già
 // uscito per quell'indicatore — attuale, atteso dal consensus, precedente — da /api/economic-calendar?view=macro.
 // Le card finiscono nello stato HUB.cards: le leggono l'hub Macro (renderHubMacro) e l'hub Banche centrali (renderHubBC).
-async function loadMacroCards(){
+async function loadMacroCards(quiet){
   try{
-    const res = await fetch('/api/economic-calendar?view=macro');
+    const res = await fetch('/api/economic-calendar?view=macro', {cache:'no-cache'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const j = await res.json();
+    const sig = JSON.stringify([j.us, j.eu, j.jobs]);
+    if(quiet && HUB.cardsSig === sig && !HUB.fail.cards) return j;   // aggiornamento automatico: nessun dato nuovo, le card restano come sono
+    HUB.cardsSig = sig;
     HUB.cards = j; delete HUB.fail.cards;
-    renderHubMacro();
-    renderHubBC();
+    const draw = () => { renderHubMacro(); renderHubBC(); };
+    if(quiet && typeof liveKeepOpen === 'function') liveKeepOpen(draw); else draw();
     return j;
   }catch(e){
+    if(quiet && HUB.cards) return HUB.cards;   // aggiornamento automatico fallito: restano le card già mostrate
     console.warn('Card macro dal calendario non disponibili:', e.message);
     HUB.fail.cards = true;
     renderHubMacro();
@@ -2150,25 +2165,29 @@ function calTradingReading(e){
   return 'Impatto contenuto: raramente market-moving.';
 }
 
-async function fetchCalEventsForRange(startMs, endMs){
+// quiet = aggiornamento automatico: niente "Caricamento…", la tabella si ridisegna solo se un valore è cambiato (così non chiude le righe aperte)
+const calSig = ev => ev.map(e => e.id + ':' + e.actual + ':' + e.forecast).join('|');
+async function fetchCalEventsForRange(startMs, endMs, quiet){
   const myToken = ++calFetchToken;
-  calLoading = true;
-  renderCalTable();
+  let draw = true;
+  if(!quiet){ calLoading = true; renderCalTable(); }
   try{
     const from = new Date(startMs).toISOString();
     const to = new Date(endMs + 86400000 - 1).toISOString(); // includi tutto l'ultimo giorno del range
-    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
+    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, {cache:'no-cache'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     if(myToken !== calFetchToken) return; // una richiesta più recente ha già preso il sopravvento
-    calRawEvents = data.events || [];
+    const ev = data.events || [];
+    if(quiet && !calLoadError && calSig(ev) === calSig(calRawEvents)) draw = false;   // niente di nuovo
+    calRawEvents = ev;
     calLoadError = false;
   }catch(e){
     if(myToken !== calFetchToken) return;
-    calRawEvents = [];
-    calLoadError = true;
+    if(quiet) draw = false;   // aggiornamento automatico fallito: restano i dati già mostrati
+    else { calRawEvents = []; calLoadError = true; }
   }finally{
-    if(myToken === calFetchToken){ calLoading = false; renderCalTable(); }
+    if(myToken === calFetchToken){ calLoading = false; if(draw) renderCalTable(); }
   }
 }
 
@@ -3296,9 +3315,9 @@ function renderHubSent(){
 // Se gira in locale o le funzioni non sono ancora pronte, non succede nulla di rotto:
 // resta semplicemente lo snapshot statico che già vedi.
 
-async function fetchLiveMacro(){
+async function fetchLiveMacro(fresh){
   try{
-    const res = await fetch('/api/fred-data');
+    const res = await fetch('/api/fred-data', fresh ? {cache:'no-cache'} : undefined);
     if(!res.ok) return null;
     const json = await res.json();
     return json.data;
@@ -3705,9 +3724,7 @@ async function loadCOTForDate(dateStr){
 }
 
 // ---------- BANNER "APPENA USCITO" — sintesi automatica il giorno del rilascio ----------
-// Confronta la data REALE del dato ricevuto da FRED con la data di oggi: se combaciano,
-// il dato è uscito proprio oggi — mostriamo una sintesi automatica invece di aspettare
-// che qualcuno la scriva a mano.
+// I dati usciti oggi arrivano dal calendario economico (vedi renderTodaysReleases): nessun testo scritto a mano.
 function isToday(iso){
   if(!iso) return false;
   const today = new Date();
@@ -3719,43 +3736,25 @@ function findMatchingKeyEvent(titleRegex){
   const todayEnd = new Date(); todayEnd.setHours(23,59,59,999);
   return keyEvents.find(e => e.currency === 'USD' && titleRegex.test(e.rawTitle) && e.utc >= todayStart.getTime() && e.utc <= todayEnd.getTime());
 }
-function renderTodaysReleases(live){
-  if(!live) return;
-  const releases = [];
-
-  if(isToday(live.nfpDate) && live.nfpChangeThousands!=null){
-    const ev = findMatchingKeyEvent(/non.?farm|payrolls/i);
-    releases.push({
-      title:'📊 Non-Farm Payrolls — appena uscito',
-      vals:`Attuale: <b>${live.nfpChangeThousands>=0?'+':''}${live.nfpChangeThousands}.000</b>${ev?` · Attese: <b>${ev.attese}</b>`:''} · Precedente: <b>${ev?ev.precedente:'—'}</b>`,
-      read: 'Confronta con le attese di consensus per capire la direzione del mercato.',
-    });
-  }
-  if(isToday(live.cpiDate) && live.cpiYoY){
-    const ev = findMatchingKeyEvent(/\bcpi\b|inflation rate/i);
-    releases.push({
-      title:'📊 CPI — appena uscito',
-      vals:`Attuale: <b>${toItNum(live.cpiYoY)}%</b> YoY${ev?` · Attese: <b>${ev.attese}</b>`:''} · Precedente: <b>${ev?ev.precedente:'—'}</b>`,
-      read: 'Dato inflazione appena pubblicato — verifica l\'impatto su Fed Funds futures.',
-    });
-  }
-  if(isToday(live.unemploymentDate) && live.unemploymentRate && !isToday(live.nfpDate)){
-    // Evita duplicati: disoccupazione esce quasi sempre insieme all'NFP, mostriamo solo se non già coperto sopra
-  }
-  if(isToday(live.gdpDate) && live.gdpAnnualizedQoQ){
-    releases.push({
-      title:'📊 PIL (GDP) — appena uscito',
-      vals:`Attuale: <b>${toItNum(live.gdpAnnualizedQoQ)}%</b> annualizzato`,
-      read:'Dato di crescita reale (GDPC1, FRED) appena aggiornato — confronta con le attese di consensus per il posizionamento su USD e Treasury.',
-    });
-  }
-
+// Prima il riquadro confrontava la data del dato FRED con quella di oggi, ma le serie mensili (NFP, CPI) portano il 1° del mese di riferimento: non scattava mai.
+// Ora nasce dal calendario economico: tutti i dati ad alto impatto (USD, EUR, GBP, JPY) di oggi che hanno già il valore "actual", con attese e precedente.
+function renderTodaysReleases(){
   const el = document.getElementById('todaysReleaseBanner');
   if(!el) return;
-  if(releases.length === 0){ el.innerHTML = ''; return; }
-  el.innerHTML = hCard({span:0, icon:'bolt', title:'Dati macro pubblicati oggi', bd:['off', 'live'], cls:'h-warn',
-    body:releases.map(r=>`<div class="h-rel"><b>${r.title}</b><span class="vals">${r.vals}</span><span class="read">${r.read}</span></div>`).join(''),
-    foot:'Confronto con le attese di consensus del calendario economico'});
+  const start = new Date(); start.setHours(0,0,0,0);
+  const now = Date.now();
+  const done = keyEvents
+    .filter(e => e.raw && e.raw.actual != null && e.utc >= start.getTime() && e.utc <= now && ['USD','EUR','GBP','JPY'].includes(e.currency))
+    .sort((a,b) => (b.priority - a.priority) || (b.utc - a.utc))
+    .slice(0, 6);
+  if(!done.length){ el.innerHTML = ''; return; }
+  const rows = done.map(e => {
+    const hh = new Date(e.utc).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'});
+    const per = e.raw.period ? ' (' + translatePeriod(e.raw.period) + ')' : '';
+    return `<div class="h-rel"><b>${escHtml(e.title + per)} — uscito alle ${hh}</b><span class="vals">Attuale: <b>${escHtml(e.actual)}</b> · Attese: <b>${escHtml(e.attese)}</b> · Precedente: <b>${escHtml(e.precedente)}</b></span><span class="read">${escHtml(calTradingReading(e.raw))}</span></div>`;
+  }).join('');
+  el.innerHTML = hCard({span:0, icon:'bolt', title:'Dati macro pubblicati oggi', bd:['off', 'live'], cls:'h-warn', body:rows,
+    foot:'Calendario economico: confronto con le attese di consenso · si aggiorna da solo quando esce un nuovo dato'});
 }
 
 
@@ -3784,7 +3783,7 @@ function applyLiveMarketPricing(live){
 // ticker: tutto compariva in blocco alla fine. Ora ogni dato si applica appena arriva e le analisi AI non bloccano nulla; se un'analisi AI non risponde
 // (limite di richieste di Gemini) si ritenta da sola con pause crescenti. A scheda aperta i dati si aggiornano da soli (vedi liveAutoTick).
 const LIVE = {macro:null, market:null, cot:null, corr:null, miAt:null};   // ultimi dati veri, riusati dai ricalcoli incrociati degli aggiornamenti automatici
-const LIVE_STAMP = {prices:Date.now(), moves:Date.now(), ai:Date.now()};  // quando è stato fatto l'ultimo aggiornamento di ciascun gruppo
+const LIVE_STAMP = {prices:Date.now(), moves:Date.now(), ai:Date.now(), cal:Date.now(), fred:Date.now()};  // quando è stato fatto l'ultimo aggiornamento di ciascun gruppo
 const liveRun = (name, fn) => { try{ return fn(); }catch(e){ console.warn('Aggiornamento "' + name + '" non riuscito:', e.message); return false; } };
 
 // Ritenta un'analisi AI finché non risponde davvero (ai !== false): dopo 15 s, 45 s e 2 min, con un numero che cambia ogni minuto per saltare la cache
@@ -3954,9 +3953,36 @@ async function liveRefreshAi(){
     if(d && d.ai && d.data && !same(d, HUB.res[s])) liveKeepOpen(() => liveRun('analisi ' + s, () => NARRATIVE_RENDERERS[s](d.data, d)));
   });
 }
+// Calendario e card macro: ogni 5 minuti, ogni minuto attorno a un dato importante (da 5 minuti prima fino a quando esce il valore, al massimo 20 minuti dopo)
+function liveCalInterval(){
+  const now = Date.now();
+  const hot = keyEvents.some(e => (e.utc > now && e.utc - now < 300000) || (e.utc <= now && now - e.utc < 1200000 && e.actual == null));
+  return hot ? 60000 : 300000;
+}
+async function liveRefreshCalendar(){
+  const before = keyEventsSig;
+  await Promise.all([loadKeyEvents(true), loadMacroCards(true), fetchCalEventsForRange(...getCalDateRange(), true)]);
+  if(before !== null && keyEventsSig !== before){
+    // è uscito un dato: sul server le analisi AI si rigenerano ~3 minuti dopo l'uscita, quindi le ricarico poco dopo (una sola volta)
+    clearTimeout(LIVE.aiSoon); LIVE.aiSoon = setTimeout(() => { LIVE_STAMP.ai = Date.now(); liveRefreshAi().catch(e => console.warn('Aggiornamento analisi:', e.message)); }, 200000);
+    liveRefreshMacro().catch(() => {});
+  }
+}
+async function liveRefreshMacro(){
+  const macro = await fetchLiveMacro(true);
+  if(!macro) return;
+  LIVE.macro = macro;
+  liveKeepOpen(() => {
+    liveRun('macro', () => { renderTodaysReleases(); applyFedCards(macro); });
+    liveRun('cosa prezza il mercato', () => applyLiveMarketPricing(macro));
+    liveRun('ticker', () => buildLiveTicker({market:LIVE.market, macro, cot:LIVE.cot}));
+  });
+}
 function liveAutoTick(){
   if(document.hidden) return;
   const now = Date.now();
+  if(now - LIVE_STAMP.cal >= liveCalInterval()){ LIVE_STAMP.cal = now; liveRefreshCalendar().catch(e => console.warn('Aggiornamento calendario:', e.message)); }
+  if(now - LIVE_STAMP.fred >= 600000){ LIVE_STAMP.fred = now; liveRefreshMacro().catch(e => console.warn('Aggiornamento dati FRED:', e.message)); }
   if(now - LIVE_STAMP.prices >= 120000){ LIVE_STAMP.prices = now; liveRefreshPrices().catch(e => console.warn('Aggiornamento prezzi:', e.message)); }
   if(now - LIVE_STAMP.moves >= 300000){ LIVE_STAMP.moves = now; liveRefreshSlow().catch(e => console.warn('Aggiornamento movimenti:', e.message)); }
   if(now - LIVE_STAMP.ai >= 1200000){ LIVE_STAMP.ai = now; liveRefreshAi().catch(e => console.warn('Aggiornamento analisi:', e.message)); }
