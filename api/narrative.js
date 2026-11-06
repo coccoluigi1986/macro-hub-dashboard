@@ -28,6 +28,7 @@ const { fetchFredSnapshot } = require('../lib/fred');
 const { fetchCalendarEvents } = require('../lib/calendar');
 const { fetchMacroCards, macroCardLines } = require('../lib/macro-cards');
 const { fetchCotSnapshot } = require('../lib/cot');
+const { releaseAwareTtl } = require('../lib/release-watch');
 const { fetchPositioning } = require('../lib/positioning');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
@@ -371,7 +372,7 @@ async function handleEvent(event) {
     const ai = Boolean(data);
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ai ? 10800 : fail.ttl}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ai ? await releaseAwareTtl(10800) : fail.ttl}` },
       body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data, ...(ai ? {} : { reason, retryIn: fail.retryIn }) }),
     };
   } catch (err) {

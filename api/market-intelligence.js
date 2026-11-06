@@ -23,6 +23,7 @@ const { aggregateNews } = require('../lib/news');
 const { getMarketContext } = require('../lib/market-context');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
+const { releaseAwareTtl } = require('../lib/release-watch');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 
 const BATCHES = [
@@ -146,7 +147,7 @@ async function handleEvent(event) {
       // 3h solo se TUTTI i batch sono andati a buon fine; se anche solo un batch è mancante
       // (rate limit, timeout), cache breve (2 min) così il prossimo giro può completare i mancanti
       // invece di restare "congelato" incompleto in CDN per ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 10800 : (failInfo ? Math.max(120, failInfo.ttl) : 120)}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? await releaseAwareTtl(10800) : (failInfo ? Math.max(120, failInfo.ttl) : 120)}` },
       body: JSON.stringify(payload),
     };
   } catch (err) {

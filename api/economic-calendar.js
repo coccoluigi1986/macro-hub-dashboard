@@ -13,6 +13,7 @@
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { fetchCalendarEvents } = require('../lib/calendar');
 const { fetchMacroCards } = require('../lib/macro-cards');
+const { releaseAwareTtl } = require('../lib/release-watch');
 
 async function handleEvent(event) {
   try {
@@ -24,7 +25,7 @@ async function handleEvent(event) {
       const cards = await fetchMacroCards();
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=900' },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + await releaseAwareTtl(900, 120) },   // 15 min; poco dopo un dato importante scade prima, così la card mostra il numero appena uscito
         body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar', ...cards }),
       };
     }
