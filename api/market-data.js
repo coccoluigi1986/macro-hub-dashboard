@@ -60,8 +60,8 @@ async function handleEvent(event) {
   if (params.view === 'cycle') {
     try {
       const data = await getCycle();
-      // 30 minuti (sono barre giornaliere); se qualche asset non ha risposto solo 1 minuto, così il prossimo giro lo recupera
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 1800) }, body: JSON.stringify(data) };
+      // 10 minuti (barre giornaliere, ma l'ultima è quella di oggi e cambia col prezzo); se qualche asset non ha risposto solo 1 minuto, così il prossimo giro lo recupera
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 600) }, body: JSON.stringify(data) };
     } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }

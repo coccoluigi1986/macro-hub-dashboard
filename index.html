@@ -1526,6 +1526,134 @@ section{margin-bottom:30px;}
 .h-kpi b{font-size:17px;}
 .h-kpis.wide{border-radius:14px;}
 
+/* ===== MENU DELLE SEZIONI: stesso aspetto del resto della dashboard (pannelli blu → verde, bagliori, barre e colori delle zone) ===== */
+.menubar{border-right-color:rgba(120,160,230,.16); background:linear-gradient(180deg,rgba(14,37,71,.30),transparent 42%);}
+.mb-btn{border:1px solid rgba(120,160,230,.30); border-radius:12px; padding:11px 14px; color:var(--text);
+  background:radial-gradient(120% 160% at 0% 0%,rgba(36,84,164,.55),transparent 58%),radial-gradient(110% 140% at 100% 100%,rgba(16,150,120,.20),transparent 62%),linear-gradient(135deg,#0E2547 0%,#0A1426 48%,#0C2224 100%);
+  box-shadow:0 10px 26px -16px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.07);}
+.mb-btn:hover, .mb-btn[aria-expanded="true"]{color:#fff; border-color:#38BDF8;
+  background:radial-gradient(120% 160% at 0% 0%,rgba(36,84,164,.65),transparent 58%),radial-gradient(110% 140% at 100% 100%,rgba(16,150,120,.26),transparent 62%),linear-gradient(135deg,#0E2547 0%,#0A1426 48%,#0C2224 100%);
+  box-shadow:0 0 0 1px rgba(56,189,248,.35),0 10px 26px -14px rgba(56,189,248,.55),inset 0 1px 0 rgba(255,255,255,.08);}
+.mb-btn svg{color:#38BDF8;}
+/* sezione corrente: numero in una piccola etichetta e righello a dieci tacche (come la scala a zone) */
+.mb-cur{display:grid; gap:8px; padding:3px 3px 0; font:500 11.5px/1.35 var(--fm); letter-spacing:.03em; color:var(--text2);}
+.mb-cur b{display:inline-block; margin-right:8px; padding:3px 6px; border-radius:6px; border:1px solid rgba(56,189,248,.4); background:rgba(56,189,248,.14); color:#38BDF8; font-weight:600; letter-spacing:.04em;}
+.mb-rl{display:flex; gap:3px;} .mb-rl i{flex:1; height:4px; border-radius:2px; background:rgba(255,255,255,.12);}
+.mb-rl i.on{background:linear-gradient(90deg,rgba(52,211,153,.55),#38BDF8); box-shadow:0 0 6px rgba(56,189,248,.45);} .mb-rl i.cur{background:#fff; box-shadow:0 0 8px rgba(255,255,255,.7);}
+/* gruppi e voci */
+.mb-panel{gap:7px;}
+.mn-grp{display:flex; align-items:center; gap:8px; padding:13px 3px 1px; color:var(--g,#8F97B0); font:600 10px/1 var(--fm); letter-spacing:.14em; text-transform:uppercase;}
+.mn-grp::before{content:""; flex:none; width:16px; height:3px; border-radius:2px; background:var(--g,#8F97B0); box-shadow:0 0 8px color-mix(in srgb,var(--g,#8F97B0) 70%,transparent);}
+.mn-grp:first-child{padding-top:3px;}
+.mn-item{position:relative; overflow:hidden; border:1px solid var(--border); border-radius:12px; padding:3px 3px 3px 6px;
+  background:radial-gradient(130% 90% at 0% 0%,color-mix(in srgb,var(--g,#5EA8F5) 9%,transparent),transparent 55%),linear-gradient(160deg,#101933 0%,#0B1224 62%,#0B1A1F 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.mn-item::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--g,#5EA8F5); opacity:.5; transition:opacity .15s,box-shadow .15s;}
+.mn-item:hover{border-color:color-mix(in srgb,var(--g,#5EA8F5) 50%,var(--border));} .mn-item:hover::before{opacity:.9;}
+.mn-item.on{border-color:color-mix(in srgb,var(--g,#5EA8F5) 65%,transparent);
+  background:radial-gradient(130% 100% at 0% 0%,color-mix(in srgb,var(--g,#5EA8F5) 18%,transparent),transparent 60%),linear-gradient(160deg,#111C38 0%,#0B1326 62%,#0B1A1F 100%);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--g,#5EA8F5) 28%,transparent),0 10px 24px -16px var(--g,#5EA8F5);}
+.mn-item.on::before{opacity:1; box-shadow:0 0 10px var(--g,#5EA8F5);}
+.mn-main .h-ico{background:color-mix(in srgb,var(--g,#5EA8F5) 14%,transparent); color:var(--g,#5EA8F5);}
+.mn-t b i{display:inline-block; margin-right:8px; padding:2px 5px; border-radius:5px; border:1px solid color-mix(in srgb,var(--g,#5EA8F5) 42%,transparent); background:color-mix(in srgb,var(--g,#5EA8F5) 15%,transparent); color:var(--g,#5EA8F5); font:600 10px/1 var(--fm);}
+.mn-sub{border-radius:99px; border-color:rgba(190,205,235,.24); background:rgba(7,12,24,.5);} .mn-sub:hover{color:var(--g,#5EA8F5); border-color:var(--g,#5EA8F5); background:color-mix(in srgb,var(--g,#5EA8F5) 10%,rgba(7,12,24,.5));}
+@media(max-width:860px){
+  .menubar{background:rgba(8,13,26,.94);}
+  .mb-rl{display:none;} .mb-cur{display:block;} .mb-cur b{margin-right:7px;}
+  .mb-panel{background:linear-gradient(160deg,#0F1A36 0%,#0A1224 60%,#0B1A1F 100%); border-color:rgba(120,160,230,.30); box-shadow:0 26px 60px -12px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.06);}
+}
+
+/* ===== UNIFORMITÀ: tutto il resto della dashboard nello stesso linguaggio ===== */
+
+/* ---- il polso del mercato: sei righe in un unico pannello blu → verde, con barra e semaforo ---- */
+#pulse .pulse-grid{display:block; padding:6px 18px; border:1px solid rgba(120,160,230,.22); border-radius:16px;
+  background:radial-gradient(120% 160% at 0% 0%,rgba(36,84,164,.55),transparent 58%),radial-gradient(110% 140% at 100% 100%,rgba(16,150,120,.20),transparent 62%),linear-gradient(135deg,#0E2547 0%,#0A1426 48%,#0C2224 100%);
+  box-shadow:0 14px 36px -22px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06); --zg:#34D399; --zn:#38BDF8; --zw:#E0A94D; --zr:#F0685E;}
+#pulse .pt{--c:var(--tone); display:grid; grid-template-columns:minmax(150px,21%) minmax(0,1fr) 190px minmax(0,1.25fr); grid-template-areas:"l x v s"; align-items:center; gap:0 16px; width:100%; min-height:50px; padding:5px 4px; border:0; border-bottom:1px solid rgba(255,255,255,.07); border-radius:0; background:none; box-shadow:none; animation:none; transform:none;}
+#pulse .pt:last-child{border-bottom:0;} #pulse .pt::before{display:none;} #pulse .pt:hover{transform:none; background:rgba(255,255,255,.035); border-color:rgba(255,255,255,.07);}
+#pulse .pt.g{--tone:#34D399;} #pulse .pt.r{--tone:#F0685E;} #pulse .pt.y{--tone:#E0A94D;} #pulse .pt.b{--tone:#38BDF8;}
+#pulse .pt .l{grid-area:l; font:600 10.5px/1.3 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--text2);}
+#pulse .pt .pt-x{grid-area:x; display:flex; align-items:center; min-width:0; min-height:26px;}
+#pulse .pt .v{grid-area:v; min-height:0; font:700 20px/1.1 var(--fh); letter-spacing:-.02em; color:var(--tone); text-shadow:0 0 22px color-mix(in srgb,var(--tone) 40%,transparent);} #pulse .pt .v small{font:500 11px var(--fm); color:var(--dim);}
+#pulse .pt .s{grid-area:s; font-size:12px; line-height:1.4; color:var(--dim);} #pulse .pt .s b{color:var(--text2); font-weight:600;}
+#pulse .pt .go{display:none;} #pulse .pt svg{max-width:100%; height:26px;}
+#pulse .pt.skel .v,#pulse .pt.skel .s{min-height:14px;}
+#pulse .pz{position:relative; display:block; width:100%; height:26px; background:linear-gradient(90deg,rgba(52,211,153,.07) 0 25%,rgba(56,189,248,.05) 25% 50%,rgba(224,169,77,.06) 50% 75%,rgba(240,104,94,.10) 75% 100%);}
+#pulse .pz::before{content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(rgba(190,200,225,.30),rgba(190,200,225,.30)) 25% 0/1px 100% no-repeat,linear-gradient(rgba(190,200,225,.30),rgba(190,200,225,.30)) 50% 0/1px 100% no-repeat,linear-gradient(rgba(190,200,225,.30),rgba(190,200,225,.30)) 75% 0/1px 100% no-repeat;}
+#pulse .pz::after{content:""; position:absolute; top:0; bottom:0; right:0; width:2px; background:#F0685E; box-shadow:0 0 8px rgba(240,104,94,.7);}
+#pulse .pz .pzb{position:absolute; left:0; top:50%; height:10px; margin-top:-5px; width:calc(var(--p) * 1%); min-width:8px; border-radius:5px; background:linear-gradient(90deg,color-mix(in srgb,var(--tone) 34%,transparent),var(--tone)); box-shadow:0 0 12px -3px color-mix(in srgb,var(--tone) 70%,transparent),inset 0 1px 0 rgba(255,255,255,.3);}
+#pulse .pz-st{display:flex; gap:2px; width:100%; height:18px;} #pulse .pz-st i{display:flex; align-items:center; justify-content:center; min-width:20px; border-radius:5px; font:700 10px/1 var(--fm); color:#06101F;} #pulse .pz-st i.g{background:#34D399;} #pulse .pz-st i.n{background:#8F97B0;} #pulse .pz-st i.r{background:#F0685E;}
+#pulse .pulse-hd{margin-bottom:12px;}
+#pulse .pulse-guide{gap:12px;} #pulse .pulse-guide .pg{border:1px solid var(--border); border-radius:14px; background:linear-gradient(160deg,#101933 0%,#0B1224 62%,#0B1A1F 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+#pulse .pulse-gloss > summary{border:1px solid var(--border); border-radius:14px; background:linear-gradient(160deg,#101933 0%,#0B1224 62%,#0B1A1F 100%);}
+@media(max-width:1100px){ #pulse .pt{grid-template-columns:minmax(120px,26%) minmax(0,1fr) 150px; grid-template-areas:"l x v" "s s s"; gap:2px 12px; padding:7px 4px;} }
+@media(max-width:640px){ #pulse .pulse-grid{padding:4px 12px;} #pulse .pt{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"l v" "x x" "s s"; gap:3px 10px;} #pulse .pt .pt-x{min-height:22px;} }
+
+/* ---- 01 · quadro di oggi ---- */
+.sx-bias{margin:2px 0 8px;} .sx-bh{display:flex; align-items:baseline; gap:12px; margin-bottom:6px;} .sx-bh .sig{font:700 26px/1.05 var(--fh); letter-spacing:-.02em; color:var(--c); text-shadow:0 0 22px color-mix(in srgb,var(--c) 40%,transparent);} .sx-bh span{font:500 12px var(--fm); color:var(--dim);}
+.sx-tk.bias{height:30px; background:linear-gradient(90deg,rgba(240,104,94,.14) 0 25%,rgba(224,169,77,.10) 25% 50%,rgba(56,189,248,.08) 50% 75%,rgba(52,211,153,.14) 75% 100%);}
+.sx-zl{display:flex; justify-content:space-between; margin-top:3px; font:500 9.5px/1.2 var(--fm); letter-spacing:.05em; color:var(--dim2);}
+.sx-hl{margin:8px 0 6px; font:600 13.5px/1.45 var(--fb); color:var(--text);}
+.sx-oc > .sx-r{grid-template-columns:130px minmax(0,1fr) 96px; grid-template-areas:"n t c" "s s s"; gap:2px 12px; padding:6px 0 5px;} .sx-oc > .sx-r > .sx-n{grid-area:n;} .sx-oc > .sx-r > .sx-tk{grid-area:t;} .sx-oc > .sx-r > .sx-ch{grid-area:c;} .sx-oc > .sx-r > .sx-sm{grid-area:s;}
+.sx-dr > .sx-r{grid-template-columns:minmax(0,1fr) 112px; grid-template-areas:"n c" "s s";} .sx-dr .sx-tk{display:none;}
+.sx-st > .sx-r,.sx-st.sx-h{grid-template-columns:150px 170px minmax(0,1fr) 112px 46px;}
+.sx-b.nd .sx-r{cursor:default;} .sx-b.nd .sx-r:hover{background:none;} .sx-b.nd .sx-n .cv{display:none;}
+.px{display:flex; align-items:baseline; gap:7px; white-space:nowrap;} .px b{font:600 12px var(--fm); color:var(--text);} .px i{font:500 10.5px var(--fm); font-style:normal; color:var(--dim);} .px i.h-up{color:var(--green);} .px i.h-down{color:var(--red);} .px em{font:500 9.5px var(--fm); font-style:normal; color:var(--dim2);}
+.sx-v.pxs{display:grid; gap:1px; text-align:left;}
+.sx-risk .h-list li::before{background:#E0A94D;} .sx-risk .h-list li{font-size:12.5px;}
+/* ---- 05 · sintesi operativa ---- */
+.sx-sa > .sx-r,.sx-sa.sx-h{grid-template-columns:150px 130px minmax(0,.9fr) 100px minmax(0,1.5fr);}
+.sx-ix > .sx-r{grid-template-columns:150px 130px minmax(0,1fr);}
+.sx-os{display:flex; gap:2px; width:100%; height:18px;} .sx-os i{display:flex; align-items:center; justify-content:center; min-width:22px; border-radius:5px; font:700 10px/1 var(--fm); font-style:normal; color:#06101F;} .sx-os i.g{background:#34D399;} .sx-os i.n{background:#8F97B0;} .sx-os i.r{background:#F0685E;}
+.sx-tk.os{background:none; height:30px;} .sx-tk.os::before{display:none;}
+#hfe-val:checked ~ #hSintGrid .sx-b:not(.cat-val), #hfe-mat:checked ~ #hSintGrid .sx-b:not(.cat-mat), #hfe-azi:checked ~ #hSintGrid .sx-b:not(.cat-azi),
+#hfe-val:checked ~ #hSintGrid .sx-wrap.cat-azi, #hfe-mat:checked ~ #hSintGrid .sx-wrap.cat-azi{display:none;}
+/* ---- 09 · banche centrali ---- */
+.sx-wrap.sx-c5{grid-column:span 5;} .sx-wrap.sx-c7{grid-column:span 7;} @media(max-width:1000px){ .sx-wrap.sx-c5,.sx-wrap.sx-c7{grid-column:1 / -1;} }
+.sx-reg{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:12px 30px;} .sx-regr{display:grid; gap:10px; align-content:start;}
+.sx-fph{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin:2px 0 4px;} .sx-fph span{font:500 9.5px/1.3 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--dim);} .sx-fph b{font:600 12.5px var(--fh); color:var(--text);}
+.sx-fp > .sx-r{grid-template-columns:130px minmax(0,1fr) 52px;} .sx-fm > .sx-r,.sx-fm.sx-h{grid-template-columns:110px minmax(0,1fr) 150px;} .sx-fp > .sx-r{min-height:34px;}
+.sx-fm .sx-v em{font-style:normal; font-weight:400; color:var(--dim);} .sx-fm.sx-h{margin-top:8px;}
+.sx-big{font:700 19px/1.25 var(--fh); letter-spacing:-.015em; color:var(--text);}
+.sx-q{padding:9px 12px; border:1px solid rgba(190,205,235,.2); border-radius:9px; background:rgba(7,12,24,.5);} .sx-q span{display:block; margin-bottom:3px; font:500 9.5px/1.2 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--dim);} .sx-q p{font-size:12.5px; line-height:1.5; color:var(--text2);}
+.sx-push{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 30px; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.09);}
+.sx-push h5{margin-bottom:6px; font:600 10.5px/1.2 var(--fm); letter-spacing:.08em; text-transform:uppercase;} .sx-push h5.r{color:#F0685E;} .sx-push h5.g{color:#34D399;}
+.sx-pl{list-style:none; display:grid; gap:5px;} .sx-pl li{position:relative; padding-left:13px; font-size:12.5px; line-height:1.45; color:var(--text2);} .sx-pl li::before{content:""; position:absolute; left:0; top:.55em; width:6px; height:6px; border-radius:2px; background:#8F97B0;} .sx-pl.r li::before{background:#F0685E;} .sx-pl.g li::before{background:#34D399;}
+.sx-fo{display:flex; justify-content:space-between; align-items:baseline; gap:14px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.06);} .sx-fo:last-of-type{border-bottom:0;} .sx-fo span{font-size:12.5px; color:var(--dim);} .sx-fo b{font:600 12.5px/1.35 var(--fb); text-align:right; color:var(--c);}
+.sx-dt > .sx-r,.sx-dt.sx-h{grid-template-columns:150px minmax(0,1fr) 92px 150px;}
+@media(max-width:1000px){ .sx-reg{grid-template-columns:minmax(0,1fr);} .sx-push{grid-template-columns:minmax(0,1fr);} .sx-sa > .sx-r,.sx-sa.sx-h{grid-template-columns:130px 110px minmax(0,1fr) 92px;} .sx-sa > .sx-r > .sx-sm,.sx-sa.sx-h > :last-child{display:none;} }
+@media(max-width:760px){
+  .sx-st.sx-h,.sx-sa.sx-h,.sx-dt.sx-h,.sx-fm.sx-h{display:none;}
+  .sx-st > .sx-r{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"n c" "p p" "t t"; gap:2px 10px; padding:7px 0;} .sx-st > .sx-r > .sx-n{grid-area:n;} .sx-st > .sx-r > .pxs{grid-area:p;} .sx-st > .sx-r > .sx-tk{grid-area:t;} .sx-st > .sx-r > .sx-ch{grid-area:c;} .sx-st > .sx-r > .pc{display:none;}
+  .sx-sa > .sx-r{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"n c" "p p" "t t" "s s"; gap:2px 10px; padding:7px 0;} .sx-sa > .sx-r > .sx-n{grid-area:n;} .sx-sa > .sx-r > .pxs{grid-area:p;} .sx-sa > .sx-r > .sx-tk{grid-area:t;} .sx-sa > .sx-r > .sx-ch{grid-area:c;} .sx-sa > .sx-r > .sx-sm{display:-webkit-box; grid-area:s;}
+  .sx-ix > .sx-r{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"n p" "s s"; gap:2px 10px; padding:7px 0;} .sx-ix > .sx-r > .sx-n{grid-area:n;} .sx-ix > .sx-r > .pxs{grid-area:p;} .sx-ix > .sx-r > .sx-sm{grid-area:s;}
+  .sx-fp > .sx-r{grid-template-columns:minmax(0,1fr) 52px; grid-template-areas:"n p" "t t"; gap:2px 10px;} .sx-fp > .sx-r > .sx-n{grid-area:n;} .sx-fp > .sx-r > .sx-tk{grid-area:t;} .sx-fp > .sx-r > .pc{grid-area:p;}
+  .sx-fm > .sx-r{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"n v" "t t"; gap:2px 10px;} .sx-fm > .sx-r > .sx-n{grid-area:n;} .sx-fm > .sx-r > .sx-tk{grid-area:t;} .sx-fm > .sx-r > .sx-v{grid-area:v;}
+  .sx-dt > .sx-r{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"n c" "t t" "v v"; gap:2px 10px; padding:7px 0;} .sx-dt > .sx-r > .sx-n{grid-area:n;} .sx-dt > .sx-r > .sx-tk{grid-area:t;} .sx-dt > .sx-r > .sx-ch{grid-area:c;} .sx-dt > .sx-r > .sx-v{grid-area:v; text-align:left;}
+  .sx-oc > .sx-r{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"n c" "t t" "s s";} .sx-dr > .sx-r{grid-template-areas:"n c" "s s";}
+}
+
+/* ---- 04 · calendario: indice 1–5 con i colori delle zone ---- */
+.h-hc{border-radius:7px; border-color:rgba(255,255,255,.08);}
+.h-hc.s1{background:rgba(52,211,153,.12); color:#7FE0BD;} .h-hc.s2{background:rgba(56,189,248,.16); color:#8FD6F7;} .h-hc.s3{background:rgba(224,169,77,.22); color:#F1C77E;} .h-hc.s4{background:rgba(240,128,94,.34); color:#FFC9B8;} .h-hc.s5{background:rgba(240,104,94,.55); color:#fff;}
+.h-ev .cur{border-radius:6px;}
+
+/* ---- 08 · Sahm Rule: barra con le zone (sotto 0,30 · 0,30–0,50 · oltre 0,50) ---- */
+.sx-sahm{--zg:#34D399; --zn:#38BDF8; --zw:#E0A94D; --zr:#F0685E;} .sx-sahm .sx-tk.sh{height:30px; --l1:37.5%; --l2:62.5%; --l3:-10%; background:linear-gradient(90deg,rgba(52,211,153,.10) 0 37.5%,rgba(224,169,77,.12) 37.5% 62.5%,rgba(240,104,94,.14) 62.5% 100%);}
+.sx-sahm .sx-tk.sh .sx-bar{--c:var(--sc);} .sx-sahm .sx-ticks{position:relative; height:14px; margin-top:3px; font:500 9.5px/1 var(--fm); color:var(--dim2);} .sx-sahm .sx-ticks span{position:absolute; transform:translateX(-50%);} .sx-sahm .sx-ticks span:first-child{transform:none;} .sx-sahm .sx-ticks span:last-child{transform:translateX(-100%);}
+
+/* ---- barre e riquadri ancora con il vecchio aspetto: stessa superficie e stessi colori ---- */
+.h-kpis.wide{background:radial-gradient(120% 160% at 0% 0%,rgba(36,84,164,.40),transparent 58%),linear-gradient(135deg,#0E2547 0%,#0A1426 55%,#0C2224 100%); border-color:rgba(120,160,230,.22);}
+.h-more > summary, .section-note, .h-det{border-color:var(--border);} .h-more > summary{background:linear-gradient(160deg,#101933 0%,#0B1224 62%,#0B1A1F 100%); border-radius:14px;}
+.h-card.h-nxc, #nextEventContainer > .h-card{background:radial-gradient(120% 160% at 0% 0%,rgba(36,84,164,.45),transparent 58%),radial-gradient(110% 140% at 100% 100%,rgba(16,150,120,.16),transparent 62%),linear-gradient(135deg,#0E2547 0%,#0A1426 48%,#0C2224 100%); border-color:rgba(120,160,230,.22);}
+#todaysReleaseBanner > .h-card{border-radius:14px;}
+.h-filters label, .cot-tab, .ic-chip{border-color:rgba(120,160,230,.26);} .h-filters label{background:rgba(7,12,24,.5);}
+
+/* i pannelli dentro le celle del quadro di oggi (che sono flessibili) occupano tutta la larghezza; lo storico del polso resta nella sua colonna */
+.h-cell > .ikx.sx-wrap{flex:1 1 100%; width:100%; min-width:0;}
+#pulse .pt .pt-x svg{position:static; right:auto; bottom:auto; left:auto; top:auto; width:100%; height:26px; opacity:1;}
+.sx-dt > .sx-r,.sx-dt.sx-h{grid-template-columns:120px minmax(0,1fr) 92px 178px;} .sx-dt .sx-v.dim{white-space:normal; text-align:right; font-size:11px; line-height:1.3;}
+
 </style>
 </head>
 <body>
@@ -2239,7 +2367,7 @@ async function cycLoad(){
 }
 renderMarketMonitor();
 setTimeout(cycLoad, 2500);                                          // dopo il primo disegno: non rallenta l'apertura
-setInterval(() => { if(!document.hidden) cycLoad(); }, 15 * 60 * 1000);
+setInterval(() => { if(!document.hidden) cycLoad(); }, 10 * 60 * 1000);
 
 // ---------- COSA HA MOSSO I MERCATI: movimenti reali per fascia oraria + notizie uscite in quelle ore ----------
 // Dati da /api/news-aggregated?view=moves: candele a 15 minuti di Yahoo Finance (variazione per sessione Asia / Europa / USA, ora italiana,
@@ -3299,7 +3427,7 @@ function sahmCard(){
     + hKpi('Minimo delle medie (12 mesi prec.)', hNf(S.minMa3) + '%', 'a ' + mName(S.minMonth, {month:'long', year:'numeric'}))
     + hKpi('Differenza', '<span style="color:' + col + '">' + pp(S.value) + ' pp</span>', 'soglia ' + pp(S.threshold) + ' pp') + '</div>';
   const pin = Math.max(0, Math.min(1, S.value)) * 100;
-  const meter = '<div class="h-smmeter" role="img" aria-label="Sahm Rule ' + pp(S.value) + ' punti percentuali, soglia ' + pp(S.threshold) + '"><span class="pin" style="left:' + pin + '%"></span></div><div class="h-smticks"><span style="left:0%">0</span><span style="left:30%">0,30</span><span style="left:50%">0,50</span><span style="left:100%">1,00</span></div>';
+  const meter = '<div class="ikx sx-sahm" style="--sc:' + col + '"><span class="sx-tk sh" role="img" aria-label="Sahm Rule ' + pp(S.value) + ' punti percentuali, soglia ' + pp(S.threshold) + '"><i class="sx-bar" style="--p:' + (Math.max(0, Math.min(0.8, S.value)) / 0.8 * 100) + '"></i></span><div class="sx-ticks"><span style="left:0%">0</span><span style="left:37.5%">0,30</span><span style="left:62.5%">0,50</span><span style="left:100%">0,80</span></div></div>';
   const rows = SAHM_MARKETS.map(r => '<div class="h-smrow"><span class="nm">' + r[0] + '</span><span class="h-arr ' + r[1] + '">' + (r[1] === 'up' ? '▲ ' : r[1] === 'dn' ? '▼ ' : '◆ ') + r[2] + '</span><span class="why">' + r[3] + '</span></div>').join('');
   const nfp = typeof keyEvents !== 'undefined' ? keyEvents.find(e => e.currency === 'USD' && /non.?farm|payrolls/i.test(e.rawTitle) && e.utc > Date.now()) : null;
   const next = nfp ? ' · prossimo aggiornamento con il rapporto sul lavoro del ' + new Date(nfp.utc).toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'Europe/Rome'}) : ' · si aggiorna a ogni rapporto sul lavoro';
@@ -3352,35 +3480,6 @@ function renderHubGeo(){
 
 // ---- 07 Banche centrali e tassi
 // Regime attuale: probabilità di taglio / invariato / rialzo (dai future Fed Funds) + le 4 spinte hawkish e le 4 dovish.
-function regimeCard(H, fomc){
-  const P = HUB.fw, FW = P && P.meetings, lo = P && P.lower, up = P && P.upper;
-  const pct = p => (p > 0 && p < 0.005) ? '<1%' : Math.round(p * 100) + '%';
-  const dIt = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'UTC'});
-  const dShort = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'short', timeZone:'UTC'}).replace('.', '');
-  const rng = (a, b) => hNf(a) + '–' + hNf(b) + '%';
-  const hawk = (H.hawk || []).slice(0, 4), dove = (H.dove || []).slice(0, 4);
-  let prob = '<p class="h-note">' + (HUB.fwFail ? 'Probabilità non disponibili in questo momento (future Fed Funds non raggiungibili).' : 'Probabilità in caricamento…') + '</p>', quick = '';
-  const m = FW && FW[0];   // la prima riunione ancora da svolgere
-  if(m){
-    const hhmm = fomc ? new Date(fomc.utc).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'}) : '';
-    const col = (cls, p, name, a, b, now) => '<div class="h-fwcol ' + cls + (now ? ' now' : '') + '"><span class="p">' + pct(p) + '</span><div class="bar" role="img" aria-label="' + name + ' ' + pct(p) + '"><i style="height:' + Math.max(0, Math.min(100, p * 100)) + '%"></i></div><div class="lb"><b>' + name + '</b><small>' + rng(a, b) + (now ? ' · attuale' : '') + '</small></div></div>';
-    const rows = FW.map((x, i) => '<tr><td><b>' + dShort(x.date) + '</b> · ' + (i === 0 ? 'decisione' : 'cumulato da oggi') + '</td><td class="c">' + pct(x.pCut) + '</td><td class="h">' + pct(x.pHold) + '</td><td class="r">' + pct(x.pHike) + '</td><td><b>' + hNf(x.rPost) + '%</b> <span style="color:var(--dim)">(' + (x.cumBp >= 0 ? '+' : '−') + hNf(Math.abs(x.cumBp), 1) + ' pb)</span></td></tr>').join('');
-    prob = '<div class="h-fwh"><span class="h-lbl">Probabilità sui tassi · riunione FOMC</span><b>' + dIt(m.date) + (hhmm ? ' · ore ' + hhmm + ' (Italia)' : '') + '</b></div>'
-      + '<div class="h-fwc">' + col('cut', m.pCut, 'Taglio', lo - 0.25, up - 0.25, false) + col('hold', m.pHold, 'Invariato', lo, up, true) + col('hike', m.pHike, 'Rialzo', lo + 0.25, up + 0.25, false) + '</div>'
-      + '<table class="h-fwt"><thead><tr><th>Riunione</th><th>Taglio</th><th>Invariato</th><th>Rialzo</th><th>Tasso implicito dopo</th></tr></thead><tbody>' + rows + '</tbody></table>'
-      + '<p class="h-note" style="margin-top:8px;">Oggi il tasso effettivo è ' + hNf(P.effr) + '% (target ' + rng(lo, up) + '). Ogni passo vale 25 punti base.</p>';
-    const l = FW[FW.length - 1], n = Math.round(l.cumBp / 25);
-    const first = m.pHold >= 0.5 ? 'tassi <b>invariati</b> (' + pct(m.pHold) + ')' : m.pHike >= 0.5 ? 'un <b>rialzo</b> (' + pct(m.pHike) + ')' : 'un <b>taglio</b> (' + pct(m.pCut) + ')';
-    const later = n === 0 ? 'nessuna variazione' : n > 0 ? 'circa <b>' + (n === 1 ? 'un rialzo' : n + ' rialzi') + ' da 25 pb</b>' : 'circa <b>' + (n === -1 ? 'un taglio' : Math.abs(n) + ' tagli') + ' da 25 pb</b>';
-    quick = '<div class="h-fwq"><span class="h-lbl">Lettura rapida</span><p>Il mercato prezza ' + first + ' il ' + dIt(m.date) + (FW.length > 1 ? '; entro il ' + dIt(l.date) + ' sconta ' + later + ' rispetto a oggi' : '') + '.</p></div>';
-  }
-  const lst = arr => '<ul>' + arr.map(x => '<li>' + safeHtml(x) + '</li>').join('') + '</ul>';
-  const right = '<p class="h-big">' + escHtml(H.regimeTitle) + '</p>' + hExp(H.regimeQuote, 4)
-    + '<div class="h-split" role="img" aria-label="' + hawk.length + ' spinte hawkish, ' + dove.length + ' dovish"><i class="h" style="flex:' + (hawk.length || 1) + '"></i><i class="d" style="flex:' + (dove.length || 1) + '"></i></div><div class="h-splitl"><span>' + hawk.length + ' spinte hawkish</span><span>' + dove.length + ' dovish</span></div>' + quick;
-  const push = '<div class="h-push"><div class="hk"><h5>▲ ' + hawk.length + ' spinte hawkish</h5>' + lst(hawk) + '</div><div class="dv"><h5>▼ ' + dove.length + ' spinte dovish</h5>' + lst(dove) + '</div></div>';
-  return hCard({span:12, icon:'scale', title:'Regime attuale', bd:['live', 'ai'], cls:'h-accent', body:'<div class="h-fwg"><div>' + prob + '</div><div style="display:grid; gap:11px; align-content:start;">' + right + '</div></div>' + push,
-    foot:'Probabilità: stima dai future Fed Funds CME (via Yahoo Finance) con metodo semplificato — può differire di qualche punto dal dato ufficiale CME FedWatch · Spinte: analisi AI su dati reali'});
-}
 function renderHubBC(){
   const el = document.getElementById('hBcGrid'); if(!el) return;
   const FR = HUB.fred, H = HUB.narr.hawkdove, F = HUB.narr.fed, M = HUB.narr.macro;
@@ -3409,20 +3508,9 @@ function renderHubBC(){
 
   // FOMC e aspettative + dati usciti (sorpresa rispetto alle attese)
   if(H && H.fomc){
-    html += hCard({span:5, icon:'cal', title:'FOMC e aspettative', bd:['ai'], body:`<p class="h-hl">${safeHtml(H.fomc.headline)}</p><div class="h-rows">${(H.fomc.rows||[]).map(r => `<div class="r"><span>${escHtml(r.label)}</span><b class="${r.tone === 'hawk' ? 'h-red' : r.tone === 'dove' ? 'h-grn' : ''}">${escHtml(r.value)}</b></div>`).join('')}</div>${H.fomc.note ? `<p class="h-note">${escHtml(H.fomc.note)}</p>` : ''}`});
+    html += sxFomc(H);
   } else html += hLoading('FOMC e aspettative', 'cal', 5, 'hawkdove');
-  if(HUB.cards){
-    const byId = {};
-    [...(HUB.cards.us||[]), ...(HUB.cards.eu||[]), ...(HUB.cards.jobs||[])].forEach(c => { if(c && c.available) byId[c.id] = c; });
-    const rows = HD_SPECS.map(spec => {
-      const pts = Object.entries(spec.ids).map(([id, sign]) => { const c = byId[id]; if(!c) return null; return c.surprise === 'above' ? sign : c.surprise === 'below' ? -sign : 0; }).filter(v => v !== null);
-      if(!pts.length) return '';
-      const h = pts.filter(v => v > 0).length, v = pts.filter(x => x < 0).length;
-      const b = h > v ? ['r','Hawkish'] : v > h ? ['g','Dovish'] : ['y','Neutrale'];
-      return `<div class="h-catrow"><span class="h-chip ${b[0]}">${b[1]}</span><b>${escHtml(spec.title)}</b><span class="sub">${h} hawkish · ${v} dovish · ${pts.length - h - v} in linea</span></div>`;
-    }).join('');
-    html += hCard({span:7, icon:'bars', title:'Dati usciti: che spinta danno alla Fed?', bd:['live'], body:`<div class="h-cats">${rows || '<p class="h-note">Nessun dato disponibile.</p>'}</div>`, foot:'Sorpresa rispetto alle attese, dal calendario economico'});
-  } else html += hCard({span:7, icon:'bars', title:'Dati usciti: che spinta danno alla Fed?', bd:['live'], body:'<p class="h-note">Dati dal calendario economico in caricamento…</p>'});
+  html += sxDati();
 
   // lettura dei tassi + sintesi operativa
   if(M && M.ratesNote) html += hCard({span:5, icon:'trend', title:'Rendimenti, VIX e dollaro', bd:['live','ai'], body:hExp(M.ratesNote, 4), foot:'Valori live da Yahoo Finance e FRED'});
@@ -3493,27 +3581,6 @@ function hOutlook(s){
   const col = (w, i) => (/rialz/.test(w) ? 'var(--green)' : /ribass/.test(w) ? 'var(--red)' : /later|stabil/.test(w) ? 'var(--dim2)' : RAMP[Math.min(i, 2)]);
   return `<div class="h-ol"><div class="h-stack">${parts.map((x, i) => `<i style="flex:${x.p};background:${col(x.w, i)}"></i>`).join('')}</div><div class="h-legend">${parts.map(x => `<span>${escHtml(x.w)} <b>${x.p}%</b></span>`).join('')}</div></div>`;
 }
-function renderHubSint(){
-  const el = document.getElementById('hSintGrid'); if(!el) return;
-  const A = HUB.narr.assets && HUB.narr.assets.assets, I = HUB.narr.indices && HUB.narr.indices.indices;
-  let html = '';
-  if(A){
-    html += A.map(a => {
-      const m = H_ASSETS[a.key]; if(!m) return '';
-      const bi = H_BIAS[a.bias] || H_BIAS.neutral, c = hChg(m[1]);
-      return hCard({span:4, icon:'trend', title:m[0], bd:['ai','live'], cls:`h-asset cat-${m[2]}`, body:`<div class="h-px"><b>${hVal(m[1], m[3])}</b><span class="d ${c.c}">${c.t}</span><span class="h-chip ${bi[0]} push">${escHtml(a.biasLabel || bi[1])}</span></div><p class="h-hl">${escHtml(a.sentiment)}</p>${hOutlook(a.outlook)}${hExp(a.text, 2)}`, foot:'Scenari indicativi, non probabilità statistiche'});
-    }).join('');
-  } else html += hLoading('Cruscotto asset', 'trend', 12, 'assets');
-  if(I){
-    html += I.map(i => {
-      const m = H_INDICES[i.key]; if(!m) return '';
-      const c = hChg(i.key);
-      return hCard({span:3, icon:'bars', title:m[0], bd:['ai'], cls:'h-idx cat-azi', body:`<div class="h-px"><b>${hVal(i.key, m[1])}</b><span class="d ${c.c}">${c.t}</span></div>${hExp(i.text, 4)}`});
-    }).join('');
-  } else html += hLoading('Indici azionari', 'bars', 12, 'indices');
-  el.innerHTML = html;
-  hMeta('hSintMeta', 'assets');
-}
 
 // ============ Hub Il quadro di oggi / Macro / Sentiment ============
 // ---- 01 Il quadro di oggi (bias, notizie chiave, driver, stance per asset, rischi). L'evento chiave e i dati
@@ -3521,73 +3588,161 @@ function renderHubSint(){
 const OGGI_CATS = [['geopolitics', 'Geopolitica'], ['fed_rates', 'Fed e tassi'], ['macro', 'Macro'], ['dxy', 'Dollaro / DXY']];
 const hWait = (state, ok) => (HUB.fail[state] ? NARRATIVE_UNAVAILABLE : ok);
 
+// ---------- UNIFORMITÀ: quadro di oggi (01), sintesi operativa (05) e banche centrali (09) nello stesso linguaggio delle altre sezioni ----------
+// Pannelli con lo stesso sfondo, righe con barra su scala a zone, chip e colori dei semafori. Le barre piene sono misure reali, quelle a righe giudizi dell'analisi AI.
+const UNI_T = {g:'t-pos', r:'t-neg', y:'t-warn', b:'t-neu'};   // le lettere dei vecchi chip diventano i semafori
+const uniClamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const UNI_BI = {BEARISH:['t-neg', 'Bearish', 'v-1'], BULLISH:['t-pos', 'Bullish', 'v1'], NEUTRAL:['t-warn', 'Neutro', 'v0']};
+
+// ===== 01 · Quadro di oggi =====
 function renderOggiBias(){
   const b = HUB.bias;
   if(!b){ hCell('hOggiBias', hCard({span:0, icon:'pulse', title:'Bias giornaliero', bd:['ai'], cls:'h-accent', body:`<p class="h-note">${hWait('bias', 'Bias in caricamento…')}</p>`})); return; }
   const cls = biasToneClass(b.label), score = typeof b.score === 'number' ? b.score : 50;
-  const sub = (title, x) => x ? `<div class="h-catrow"><span class="h-chip ${hTone(x.bias)}">${escHtml(x.bias || '—')}</span><b>${title}</b><span class="sub">${escHtml(x.note || '')}</span></div>` : '';
-  hCell('hOggiBias', hCard({span:0, icon:'pulse', title:'Bias giornaliero · geopolitico-macro', bd:['ai'], cls:'h-accent',
-    body:`<div class="h-bias"><b class="${cls}">${escHtml(b.label || '—')}</b><small>${score}/100</small></div><div class="h-gradbar" role="img" aria-label="Bias ${score} su 100"><span class="pin" style="left:${score}%"></span></div><div class="h-gradl"><span>Risk-off</span><span>Neutro</span><span>Risk-on</span></div><p class="h-hl">${escHtml(b.headline || '')}</p><div class="h-cats">${sub('Geopolitica', b.geo)}${sub('Macro / Policy', b.macro)}</div>`,
-    foot:`Aggiornato alle ${hTime(b.generatedAt)}${b.ai === false ? ' · analisi di riserva' : ''}`}));
+  const t = cls === 'risk-on' ? 't-pos' : cls === 'risk-off' ? 't-neg' : 't-warn';
+  const sub = (title, x) => x ? sxRow('bias:' + title, (UNI_T[hTone(x.bias)] || 't-neu') + ' sx-oc sx-dr', sxName(title) + sxChip(x.bias || '—') + `<span class="sx-sm">${escHtml(x.note || '')}</span>`, `<p>${escHtml(x.note || '')}</p>`) : '';
+  const hero = `<div class="sx-bias ${t}"><div class="sx-bh"><b class="sig">${escHtml(b.label || '—')}</b><span>${score}/100</span></div><span class="sx-tk bias" style="--p:${Math.max(score, 2)}"><i class="sx-bar"></i></span><div class="sx-zl"><span>Risk-off</span><span>Neutro</span><span>Risk-on</span></div></div>`;
+  hCell('hOggiBias', sxWrap(sxPanel({icon:'pulse', title:'Bias giornaliero · geopolitico-macro', bd:['ai'], body:hero + `<p class="sx-hl">${escHtml(b.headline || '')}</p>${sub('Geopolitica', b.geo)}${sub('Macro / Policy', b.macro)}`,
+    foot:`Aggiornato alle ${hTime(b.generatedAt)}${b.ai === false ? ' · analisi di riserva' : ''}`})));
 }
-
 function renderOggiCats(){
   const S = HUB.sent;
   if(!S || !S.categories || !S.categories.length){ hCell('hOggiCats', hCard({span:0, icon:'news', title:'Cosa muove i mercati oggi', bd:['ai'], body:`<p class="h-note">${hWait('sent', 'Analisi live in caricamento…')}</p>`})); return; }
   const by = {}; S.categories.forEach(c => { if(c && c.key) by[c.key] = c; });
-  const blocks = OGGI_CATS.map(([k, t]) => {
+  const rows = OGGI_CATS.map(([k, t]) => {
     const c = by[k]; if(!c || !c.narrative) return '';
-    const tr = SN_TREND[c.bias] || SN_TREND.NEUTRAL;
-    return `<div class="h-qb"><div class="h-qt"><b>${t}</b><span class="h-chip ${tr[0]}">${tr[1]}</span></div>${hExp(c.narrative, 4)}</div>`;
+    const b = UNI_BI[c.bias] || UNI_BI.NEUTRAL;
+    return sxRow('oc:' + k, b[0] + ' q sx-oc', sxName(t) + `<span class="sx-tk dv"><i class="sx-bar ${b[2]}"></i></span>` + sxChip(b[1]) + `<span class="sx-sm">${escHtml(sxFirst(c.narrative))}</span>`, `<p>${safeHtml(c.narrative)}</p>`);
   }).join('');
-  hCell('hOggiCats', hCard({span:0, icon:'news', title:'Cosa muove i mercati oggi', bd:['ai'], body:`<div class="h-quad">${blocks || '<p class="h-note">Nessuna categoria disponibile.</p>'}</div>`,
-    foot:`Sintesi di ${S.newsCount || 0} notizie · tutte le categorie in "Sentiment di mercato" · <button type="button" class="h-link" onclick="goToSection('sentiment')">Apri →</button>`}));
+  hCell('hOggiCats', sxWrap(sxPanel({icon:'news', title:'Cosa muove i mercati oggi', sub:'Il segno delle notizie, tema per tema', bd:['ai'], body:rows || '<p class="h-note">Nessuna categoria disponibile.</p>',
+    foot:`Sintesi di ${S.newsCount || 0} notizie · barra a righe = giudizio dell'AI · tutte le categorie in "Sentiment di mercato" · <button type="button" class="h-link" onclick="goToSection('sentiment')">Apri →</button>`})));
 }
-
 function renderOggiDrivers(){
   const b = HUB.bias;
   if(!b){ hCell('hOggiDrivers', hCard({span:0, icon:'bolt', title:'Driver del giorno', bd:['ai'], body:`<p class="h-note">${hWait('bias', 'Driver in caricamento…')}</p>`})); return; }
-  const TONE = {negative:'negative', positive:'positive'};
-  const rows = (b.drivers || []).map(d => `<div class="h-drv ${TONE[d.tone] || 'neutral'}"><b>${escHtml(d.label || '')}</b><span>${escHtml(d.detail || '')}</span></div>`).join('');
-  hCell('hOggiDrivers', hCard({span:0, icon:'bolt', title:'Driver del giorno', bd:['ai'], body:`<div class="h-drvs">${rows || '<p class="h-note">Nessun driver disponibile.</p>'}</div>`, foot:'Rosso = pesa sul rischio · verde = lo sostiene · giallo = neutro'}));
+  const D = {negative:['t-neg', 'Pesa sul rischio'], positive:['t-pos', 'Sostiene'], neutral:['t-warn', 'Neutro']};
+  const rows = (b.drivers || []).map((d, i) => { const x = D[d.tone] || D.neutral; return sxRow('dr:' + i, x[0] + ' sx-oc sx-dr', sxName(d.label || '') + sxChip(x[1]) + `<span class="sx-sm">${escHtml(d.detail || '')}</span>`, `<p>${escHtml(d.detail || '')}</p>`); }).join('');
+  hCell('hOggiDrivers', sxWrap(sxPanel({icon:'bolt', title:'Driver del giorno', sub:'Cosa sta muovendo i prezzi adesso', bd:['ai'], body:rows || '<p class="h-note">Nessun driver disponibile.</p>', foot:'Rosso = pesa sul rischio · verde = lo sostiene · giallo = neutro'})));
 }
-
-// Gli asset più osservati, nell'ordine in cui si leggono. "px" = prezzi live da mostrare (etichetta, chiave di HUB.mq, decimali);
-// "vol" = il VIX: la direzione è quella della volatilità, quindi i colori sono invertiti (volatilità in aumento = rischio).
-const STANCE_ASSETS = [
+// asset più osservati: "px" = prezzi live da mostrare; "vol" = il VIX (volatilità in aumento = rischio, colori invertiti)
+const UNI_STANCE = [
   {name:'Gold',       re:/^(gold|oro)$/i,                                       px:[['', 'gold', 2]]},
   {name:'Silver',     re:/^(silver|argento)$/i,                                 px:[['', 'silver', 2]]},
   {name:'DXY',        re:/^(dxy|dollar index|dollaro)$/i,                       px:[['', 'dxy', 2]]},
   {name:'EUR/USD',    re:/^eur\/?usd$/i,                                        px:[['', 'eurusd', 4]]},
   {name:'GBP/USD',    re:/^gbp\/?usd$/i,                                        px:[['', 'gbpusd', 4]]},
   {name:'Oil (WTI)',  re:/^(oil|wti|petrolio)$/i,                               px:[['', 'wti', 2]]},
-  {name:'Indici USA', re:/^(indici|indices|indexes|index|equity|azionario)$/i,  px:[['S&amp;P 500', 'sp500', 0], ['Nasdaq 100', 'nasdaq', 0]]},
+  {name:'Indici USA', re:/^(indici|indices|indexes|index|equity|azionario)$/i,  px:[['S&P', 'sp500', 0], ['NDX', 'nasdaq', 0]]},
   {name:'VIX',        re:/^vix$/i,                                              px:[['', 'vix', 2]], vol:true},
 ];
-function hStance(def, a){
-  const dc = a ? assetDirClass(a.direction) : 'none';            // bull | bear | neutral | none
-  const up = dc === 'bull', down = dc === 'bear';
-  let chip = up ? 'g' : down ? 'r' : 'y', label = a ? String(a.direction || '') : 'In attesa', tone = a ? dc : 'none';
-  if(def.vol && a){ chip = up ? 'r' : down ? 'g' : 'y'; tone = up ? 'bear' : down ? 'bull' : 'neutral'; label = up ? 'Volatilità ↑' : down ? 'Volatilità ↓' : 'Neutrale'; }
-  const px = def.px.map(([lbl, key, dec]) => { const c = hChg(key); return `<div class="px">${lbl ? `<span class="l">${lbl}</span>` : ''}<b>${hVal(key, dec)}</b><span class="d ${c.c}">${c.t}</span></div>`; }).join('');
-  const prob = a ? Math.max(0, Math.min(100, Number(a.probability) || 0)) : 0;
-  return `<div class="h-stt ${tone}"><div class="top"><span class="nm">${escHtml(def.name)}</span><span class="h-chip ${chip}">${escHtml(label)}</span></div>${px ? `<div class="pxs">${px}</div>` : ''}${a ? `<div class="cv" title="Convinzione dell'analisi"><span class="bar"><i style="width:${prob}%"></i></span><b>${prob}%</b></div>` : ''}</div>`;
+function uniStance(def, a){
+  const dc = a ? assetDirClass(a.direction) : 'none', up = dc === 'bull', down = dc === 'bear';
+  let t = up ? 't-pos' : down ? 't-neg' : 't-warn', label = a ? String(a.direction || '') : 'In attesa';
+  if(def.vol && a){ t = up ? 't-neg' : down ? 't-pos' : 't-warn'; label = up ? 'Volatilità ↑' : down ? 'Volatilità ↓' : 'Neutrale'; }
+  const prob = a ? uniClamp(Number(a.probability) || 0, 0, 100) : 0, side = t === 't-pos' ? 'v1' : t === 't-neg' ? 'v-1' : 'v0';
+  const px = def.px.map(([lbl, key, dec]) => { const c = hChg(key); return `<span class="px">${lbl ? `<em>${lbl}</em>` : ''}<b>${hVal(key, dec)}</b><i class="${c.c}">${c.t}</i></span>`; }).join('');
+  const cells = sxName(def.name) + `<span class="sx-v pxs">${px}</span><span class="sx-tk dv" title="Convinzione dell'analisi">${a ? `<i class="sx-bar ${side}" style="${side === 'v0' ? '' : 'width:' + Math.max(2, prob * 0.46) + '%'}"></i>` : ''}</span>` + sxChip(label) + `<span class="sx-v pc"><b>${a ? prob + '%' : '—'}</b></span>`;
+  return sxRow('st:' + def.name, t + ' nd sx-st', cells, '');
 }
 function renderOggiAssets(){
   const b = HUB.bias, title = 'Stance per asset';
   if(!b){ hCell('hOggiAssets', hCard({span:0, icon:'target', title, bd:['ai'], cls:'h-accent', body:`<p class="h-note">${hWait('bias', 'Stance in caricamento…')}</p>`})); return; }
   const list = (b.assets || []).filter(Boolean), used = new Set();
-  const tiles = STANCE_ASSETS.map(def => { const a = list.find(x => def.re.test(String(x.asset || '').trim())); if(a) used.add(a); return hStance(def, a); });
-  const extra = list.filter(a => !used.has(a)).map(a => hStance({name:String(a.asset || ''), px:[]}, a));   // eventuali altri asset non previsti
-  hCell('hOggiAssets', hCard({span:0, icon:'target', title, bd:['ai', 'live'], cls:'h-accent',
-    body:`<p class="h-note">Gli asset più osservati: oro, argento, dollaro, cambi, petrolio, indici e VIX.</p><div class="h-stg">${tiles.join('')}${extra.join('')}</div>`,
-    foot:'La barra indica la convinzione dell\'analisi, non una probabilità statistica · prezzi live da Yahoo Finance'}));
+  const rows = UNI_STANCE.map(def => { const a = list.find(x => def.re.test(String(x.asset || '').trim())); if(a) used.add(a); return uniStance(def, a); });
+  const extra = list.filter(a => !used.has(a)).map(a => uniStance({name:String(a.asset || ''), px:[]}, a));
+  const head = '<div class="sx-h sx-st"><span>Asset</span><span>Prezzo</span><span class="c">Ribasso ← → Rialzo</span><span>Direzione</span><span>Conv.</span></div>';
+  hCell('hOggiAssets', sxWrap(sxPanel({icon:'target', title, sub:'Direzione indicata dall\'analisi per gli asset più osservati', bd:['ai', 'live'], body:head + rows.join('') + extra.join(''),
+    foot:'La barra indica la convinzione dell\'analisi, non una probabilità statistica · prezzi live da Yahoo Finance'})));
 }
-
 function renderOggiRisks(){
   const S = HUB.sent;
   if(!S || !S.keyRisks || !S.keyRisks.length){ hCell('hOggiRisks', hCard({span:0, icon:'scale', title:'Cosa può ribaltare il quadro', bd:['ai'], cls:'h-warn', body:`<p class="h-note">${hWait('sent', 'Analisi live in caricamento…')}</p>`})); return; }
-  hCell('hOggiRisks', hCard({span:0, icon:'scale', title:'Cosa può ribaltare il quadro', bd:['ai'], cls:'h-warn', body:hList(S.keyRisks, 2), foot:'Rischi chiave emersi dalle notizie di oggi'}));
+  hCell('hOggiRisks', sxWrap(sxPanel({icon:'scale', title:'Cosa può ribaltare il quadro', sub:'I rischi che potrebbero cambiare lo scenario', bd:['ai'], body:hList(S.keyRisks, 2), foot:'Rischi chiave emersi dalle notizie di oggi'}), 'sx-risk'));
+}
+
+// ===== 05 · Sintesi operativa =====
+function uniOutlook(s){
+  const parts = [...String(s || '').matchAll(/(\d+)\s*%\s*([a-zà-ù]+)/gi)].map(m => ({p:+m[1], w:m[2].toLowerCase()}));
+  if(parts.length < 2) return {bar:'', txt:String(s || '')};
+  const k = w => /rialz/.test(w) ? 'g' : /ribass/.test(w) ? 'r' : 'n';
+  return {bar:`<span class="sx-os" role="img" aria-label="${escHtml(String(s))}">${parts.map(x => `<i class="${k(x.w)}" style="flex:${x.p}" title="${escHtml(x.w)} ${x.p}%">${x.p}</i>`).join('')}</span>`, txt:parts.map(x => x.w + ' ' + x.p + '%').join(' · ')};
+}
+function renderHubSint(){
+  const el = document.getElementById('hSintGrid'); if(!el) return;
+  const A = HUB.narr.assets && HUB.narr.assets.assets, I = HUB.narr.indices && HUB.narr.indices.indices;
+  const CATN = {val:'Valute', mat:'Materie prime', azi:'Azionario'}, TT = {g:'t-pos', r:'t-neg', y:'t-warn'};
+  let html = '';
+  if(A){
+    const rows = A.map(a => {
+      const m = H_ASSETS[a.key]; if(!m) return '';
+      const bi = H_BIAS[a.bias] || H_BIAS.neutral, c = hChg(m[1]), o = uniOutlook(a.outlook);
+      const cells = sxName(m[0], CATN[m[2]]) + `<span class="sx-v pxs"><span class="px"><b>${hVal(m[1], m[3])}</b><i class="${c.c}">${c.t}</i></span></span><span class="sx-tk os">${o.bar}</span>` + sxChip(bi[1]) + `<span class="sx-sm">${escHtml(a.sentiment || '')}</span>`;
+      return sxRow('sa:' + a.key, TT[bi[0]] + ' sx-sa cat-' + m[2], cells, `${a.biasLabel ? `<p class="why">${escHtml(a.biasLabel)}</p>` : ''}<p>${safeHtml(a.text)}</p>${o.txt ? `<p class="src">Scenari: ${escHtml(o.txt)} · indicativi, non probabilità statistiche</p>` : ''}`);
+    }).join('');
+    const head = '<div class="sx-h sx-sa"><span>Asset</span><span>Prezzo</span><span class="c">Scenario: ribasso · laterale · rialzo</span><span>Segno</span><span>In sintesi</span></div>';
+    html += sxWrap(sxPanel({icon:'trend', title:'Cruscotto asset', sub:'Direzione e scenari indicati dall\'analisi, asset per asset', bd:['ai', 'live'], body:head + rows, foot:'Scenari indicativi, non probabilità statistiche. Tocca una riga per l\'analisi completa.'}));
+  } else html += hLoading('Cruscotto asset', 'trend', 12, 'assets');
+  if(I){
+    const rows = I.map(i => {
+      const m = H_INDICES[i.key]; if(!m) return '';
+      const c = hChg(i.key);
+      return sxRow('ix:' + i.key, 't-neu sx-ix cat-azi', sxName(m[0]) + `<span class="sx-v pxs"><span class="px"><b>${hVal(i.key, m[1])}</b><i class="${c.c}">${c.t}</i></span></span><span class="sx-sm">${escHtml(sxFirst(i.text))}</span>`, `<p>${safeHtml(i.text)}</p>`);
+    }).join('');
+    html += sxWrap(sxPanel({icon:'bars', title:'Indici azionari', sub:'Come si muovono gli indici USA', bd:['ai'], body:rows}), 'cat-azi');
+  } else html += hLoading('Indici azionari', 'bars', 12, 'indices');
+  el.innerHTML = html;
+  hMeta('hSintMeta', 'assets');
+}
+
+// ===== 09 · Banche centrali =====
+function regimeCard(H, fomc){
+  const P = HUB.fw, FW = P && P.meetings, lo = P && P.lower, up = P && P.upper;
+  const pct = p => (p > 0 && p < 0.005) ? '<1%' : Math.round(p * 100) + '%';
+  const dIt = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'UTC'});
+  const dShort = iso => new Date(iso + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'short', timeZone:'UTC'}).replace('.', '');
+  const rng = (a, b) => hNf(a) + '–' + hNf(b) + '%';
+  const hawk = (H.hawk || []).slice(0, 4), dove = (H.dove || []).slice(0, 4);
+  let left = '<p class="h-note">' + (HUB.fwFail ? 'Probabilità non disponibili in questo momento (future Fed Funds non raggiungibili).' : 'Probabilità in caricamento…') + '</p>', quick = '';
+  const m = FW && FW[0];
+  if(m){
+    const hhmm = fomc ? new Date(fomc.utc).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'}) : '';
+    const pr = (t, name, p, a, b, now) => sxRow('fp:' + name, t + ' nd sx-fp', `<span class="sx-n"><b>${name}<i class="cv"></i></b><small>${rng(a, b)}${now ? ' · attuale' : ''}</small></span><span class="sx-tk" style="--p:${Math.max(p * 100, 1.5)}"><i class="sx-bar"></i></span><span class="sx-v pc"><b>${pct(p)}</b></span>`, '');
+    const meets = FW.map((x, i) => sxRow('fm:' + x.date, 't-neu nd sx-fm', `<span class="sx-n"><b>${dShort(x.date)}<i class="cv"></i></b><small>${i === 0 ? 'decisione' : 'cumulato da oggi'}</small></span><span class="sx-tk os"><span class="sx-os"><i class="g" style="flex:${x.pCut}" title="taglio ${pct(x.pCut)}"></i><i class="n" style="flex:${x.pHold}" title="invariato ${pct(x.pHold)}"></i><i class="r" style="flex:${x.pHike}" title="rialzo ${pct(x.pHike)}"></i></span></span><span class="sx-v"><b>${hNf(x.rPost)}%</b> <em>(${x.cumBp >= 0 ? '+' : '−'}${hNf(Math.abs(x.cumBp), 1)} pb)</em></span>`, '')).join('');
+    left = `<div class="sx-fph"><span>Probabilità sui tassi · riunione FOMC</span><b>${dIt(m.date)}${hhmm ? ' · ore ' + hhmm + ' (Italia)' : ''}</b></div>`
+      + pr('t-pos', 'Taglio', m.pCut, lo - 0.25, up - 0.25, false) + pr('t-warn', 'Invariato', m.pHold, lo, up, true) + pr('t-neg', 'Rialzo', m.pHike, lo + 0.25, up + 0.25, false)
+      + '<div class="sx-h sx-fm"><span>Riunione</span><span class="c">Taglio · invariato · rialzo</span><span>Tasso implicito dopo</span></div>' + meets
+      + `<p class="sx-hist">Oggi il tasso effettivo è <b>${hNf(P.effr)}%</b> (target ${rng(lo, up)}). Ogni passo vale 25 punti base.</p>`;
+    const l = FW[FW.length - 1], n = Math.round(l.cumBp / 25);
+    const first = m.pHold >= 0.5 ? 'tassi <b>invariati</b> (' + pct(m.pHold) + ')' : m.pHike >= 0.5 ? 'un <b>rialzo</b> (' + pct(m.pHike) + ')' : 'un <b>taglio</b> (' + pct(m.pCut) + ')';
+    const later = n === 0 ? 'nessuna variazione' : n > 0 ? 'circa <b>' + (n === 1 ? 'un rialzo' : n + ' rialzi') + ' da 25 pb</b>' : 'circa <b>' + (n === -1 ? 'un taglio' : Math.abs(n) + ' tagli') + ' da 25 pb</b>';
+    quick = `<div class="sx-q"><span>Lettura rapida</span><p>Il mercato prezza ${first} il ${dIt(m.date)}${FW.length > 1 ? '; entro il ' + dIt(l.date) + ' sconta ' + later + ' rispetto a oggi' : ''}.</p></div>`;
+  }
+  const lst = (arr, c) => `<ul class="sx-pl ${c}">${arr.map(x => '<li>' + safeHtml(x) + '</li>').join('')}</ul>`;
+  const right = `<p class="sx-big">${escHtml(H.regimeTitle)}</p>${hExp(H.regimeQuote, 4)}`
+    + `<span class="sx-os" role="img" aria-label="${hawk.length} spinte hawkish, ${dove.length} dovish"><i class="r" style="flex:${hawk.length || 1}">${hawk.length}</i><i class="g" style="flex:${dove.length || 1}">${dove.length}</i></span><div class="sx-zl"><span>${hawk.length} spinte hawkish</span><span>${dove.length} dovish</span></div>` + quick;
+  const push = `<div class="sx-push"><div><h5 class="r">▲ ${hawk.length} spinte hawkish</h5>${lst(hawk, 'r')}</div><div><h5 class="g">▼ ${dove.length} spinte dovish</h5>${lst(dove, 'g')}</div></div>`;
+  return sxWrap(sxPanel({icon:'scale', title:'Regime attuale', sub:'Cosa prezzano i future sui tassi e cosa spinge la Fed', bd:['live', 'ai'], body:`<div class="sx-reg"><div>${left}</div><div class="sx-regr">${right}</div></div>${push}`,
+    foot:'Probabilità: stima dai future Fed Funds CME (via Yahoo Finance) con metodo semplificato — può differire di qualche punto dal dato ufficiale CME FedWatch · Spinte: analisi AI su dati reali'}));
+}
+function sxFomc(H){
+  const rows = (H.fomc.rows || []).map(r => `<div class="sx-fo ${r.tone === 'hawk' ? 't-neg' : r.tone === 'dove' ? 't-pos' : 't-neu'}"><span>${escHtml(r.label)}</span><b>${escHtml(r.value)}</b></div>`).join('');
+  return sxWrap(sxPanel({icon:'cal', title:'FOMC e aspettative', bd:['ai'], body:`<p class="sx-hl">${safeHtml(H.fomc.headline)}</p>${rows}${H.fomc.note ? `<p class="sx-hist">${escHtml(H.fomc.note)}</p>` : ''}`}), 'sx-c5');
+}
+function sxDati(){
+  const T = {title:'Dati usciti: che spinta danno alla Fed?'};
+  if(!HUB.cards) return hCard({span:7, icon:'bars', title:T.title, bd:['live'], body:'<p class="h-note">Dati dal calendario economico in caricamento…</p>'});
+  const byId = {};
+  [...(HUB.cards.us || []), ...(HUB.cards.eu || []), ...(HUB.cards.jobs || [])].forEach(c => { if(c && c.available) byId[c.id] = c; });
+  const rows = HD_SPECS.map(spec => {
+    const pts = Object.entries(spec.ids).map(([id, sign]) => { const c = byId[id]; if(!c) return null; return c.surprise === 'above' ? sign : c.surprise === 'below' ? -sign : 0; }).filter(v => v !== null);
+    if(!pts.length) return '';
+    const h = pts.filter(v => v > 0).length, v = pts.filter(x => x < 0).length, tot = pts.length;
+    const b = h > v ? ['t-neg', 'Hawkish', 'v-1'] : v > h ? ['t-pos', 'Dovish', 'v1'] : ['t-warn', 'Neutrale', 'v0'];
+    const w = Math.max(2, Math.abs(h - v) / tot * 46);
+    return sxRow('dt:' + spec.title, b[0] + ' nd sx-dt', sxName(spec.title) + `<span class="sx-tk dv"><i class="sx-bar ${b[2]}" style="${b[2] === 'v0' ? '' : 'width:' + w + '%'}"></i></span>` + sxChip(b[1]) + `<span class="sx-v dim">${h} hawk · ${v} dovish · ${tot - h - v} in linea</span>`, '');
+  }).join('');
+  const head = '<div class="sx-h sx-dt"><span>Area</span><span class="c">Hawkish ← → Dovish</span><span>Spinta</span><span>Dati</span></div>';
+  return sxWrap(sxPanel({icon:'bars', title:T.title, sub:'La sorpresa rispetto alle attese, area per area', bd:['live'], body:rows ? head + rows : '<p class="h-note">Nessun dato disponibile.</p>', foot:'Sorpresa rispetto alle attese, dal calendario economico'}), 'sx-c7');
 }
 
 function renderHubOggi(){ renderOggiBias(); renderOggiCats(); renderOggiDrivers(); renderOggiAssets(); renderOggiRisks(); }
@@ -4524,24 +4679,24 @@ function refreshLive(){
 // Tendina sempre raggiungibile (barra fissa sotto i ticker): elenco numerato come nei titoli delle sezioni, con una riga
 // di descrizione e i collegamenti ai blocchi di dettaglio; la sezione che si sta guardando è evidenziata.
 const MENU = [
-  {grp:'Oggi e mercati', items:[
+  {grp:'Oggi e mercati', c:'#38BDF8', items:[
     {id:'priority',    n:'01', t:'Il quadro di oggi',         d:'Bias del giorno, notizie chiave, prossimo evento', i:'pulse'},
     {id:'marketmon',   n:'02', t:'Mercati e prezzi',           d:'Prezzi, ciclo di mercato e cosa prezza il mercato', i:'trend'},
     {id:'hub-ind',    n:'03', t:'Indicatori chiave',          d:'Economia, geopolitica, azioni, tassi e liquidità', i:'bars'},
     {id:'hub-cal',     n:'04', t:'Calendario e volatilità',    d:'Eventi in arrivo e giorni a rischio', i:'cal', subs:[['calendar', 'Calendario completo'], ['vol', 'Volatilità per asset']]},
     {id:'hub-sintesi', n:'05', t:'Sintesi operativa',          d:'Cruscotto per asset e indici azionari', i:'target'}]},
-  {grp:'Macro e sentiment', items:[
+  {grp:'Macro e sentiment', c:'#34D399', items:[
     {id:'sentiment',   n:'06', t:'Sentiment di mercato',       d:'Notizie, retail e validazione incrociata', i:'smile'},
     {id:'hub-pos',     n:'07', t:'Posizionamento e rischio',   d:'Risk-on/off, COT e umore degli investitori', i:'layers', subs:[['decisione', 'Quadro decisionale'], ['cot', 'COT in dettaglio']]},
     {id:'macro',       n:'08', t:'Macro: USA, Europa, lavoro', d:'Ogni dato accanto alle attese', i:'bars'}]},
-  {grp:'Approfondimenti macro', items:[
+  {grp:'Approfondimenti macro', c:'#E0A94D', items:[
     {id:'hub-bc',      n:'09', t:'Banche centrali e tassi',    d:'Fed, aspettative e rendimenti', i:'bank'},
     {id:'hub-geo',     n:'10', t:'Geopolitica e notizie',      d:'Rischio globale e notizie a confronto', i:'globe'}]},
 ];
 function buildMenu(){
   const p = document.getElementById('menuPanel'); if(!p) return;
-  p.innerHTML = MENU.map(g => `<div class="mn-grp">${g.grp}</div>` + g.items.map(it =>
-    `<div class="mn-item" data-sec="${it.id}"><button type="button" class="mn-main" onclick="menuGo('${it.id}')">${hIco(it.i)}<span class="mn-t"><b><i>${it.n}</i>${it.t}</b><small>${it.d}</small></span></button>`
+  p.innerHTML = MENU.map(g => `<div class="mn-grp" style="--g:${g.c}">${g.grp}</div>` + g.items.map(it =>
+    `<div class="mn-item" data-sec="${it.id}" style="--g:${g.c}"><button type="button" class="mn-main" onclick="menuGo('${it.id}')">${hIco(it.i)}<span class="mn-t"><b><i>${it.n}</i>${it.t}</b><small>${it.d}</small></span></button>`
     + (it.subs ? `<div class="mn-subs">${it.subs.map(s => `<button type="button" class="mn-sub" onclick="menuGo('${s[0]}')">${s[1]}</button>`).join('')}</div>` : '') + '</div>').join('')).join('');
   menuSpy();
 }
@@ -4564,7 +4719,7 @@ function menuSpy(){
   menuLast = cur.id;
   const info = MENU.flatMap(g => g.items).find(it => it.id === cur.id);
   const el = document.getElementById('menuCur');
-  if(el && info) el.innerHTML = `<b>${info.n}</b>${info.t}`;
+  if(el && info){ const all = MENU.flatMap(g => g.items), idx = all.indexOf(info); el.innerHTML = `<span><b>${info.n}</b>${info.t}</span><span class="mb-rl" aria-hidden="true">${all.map((x, k) => `<i class="${k < idx ? 'on' : k === idx ? 'on cur' : ''}"></i>`).join('')}</span>`; }
   document.querySelectorAll('.mn-item').forEach(x => x.classList.toggle('on', x.dataset.sec === cur.id));
 }
 window.addEventListener('scroll', () => { if(!menuTick){ menuTick = true; setTimeout(menuSpy, 90); } }, {passive:true});
@@ -4697,7 +4852,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
 
   const esc = s => (typeof escHtml === 'function' ? escHtml(s) : String(s));
   const num = (k, v, d) => hNf(v, d);
-  const T = ({k, tone = 'b', l, v, s = '', x = '', go}) => ({k, tone, go, html:`<span class="l">${l}</span><span class="v">${v}</span><span class="s">${s}</span>${x}<span class="go">Vai alla sezione →</span>`});
+  const T = ({k, tone = 'b', l, v, s = '', x = '', go}) => ({k, tone, go, html:`<span class="l">${l}</span><span class="pt-x">${x}</span><span class="v">${v}</span><span class="s">${s}</span><span class="go">Vai alla sezione →</span>`});
   const SK = (k, l, go) => ({k, tone:'b', go, skel:true, html:`<span class="l">${l}</span><span class="v">…</span><span class="s">…</span>`});
   const sparkOf = (name, up) => { try{ const m = marketData.find(x => x.name === name); return m && Array.isArray(m.spark) && m.spark.length >= 4 ? sparkSVG(m.spark, up ? '#34D399' : '#F0685E') : ''; }catch(e){ return ''; } };
   let lastBias = 50;   // ultima posizione del segnalino del bias (la nuova parte da lì e scivola)
@@ -4709,7 +4864,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       const cls = biasToneClass(b.label), score = typeof b.score === 'number' ? b.score : 50;
       out.push(T({k:'bias', tone:cls === 'risk-on' ? 'g' : cls === 'risk-off' ? 'r' : 'y', l:'Bias di oggi', v:esc(b.label || '—'), go:'priority',
         s:cls === 'risk-on' ? 'I mercati sono fiduciosi: si cerca rendimento.' : cls === 'risk-off' ? 'I mercati sono prudenti: si cercano rifugi.' : 'Nessuna direzione prevalente.',
-        x:`<div class="pt-bar" role="img" aria-label="Bias ${score} su 100"><i data-to="${score}" data-from="${lastBias}" style="left:${lastBias}%"></i></div><div class="pt-barl"><span>Risk-off</span><span>${score}/100</span><span>Risk-on</span></div>`}));
+        x:`<span class="pz" role="img" aria-label="Bias ${score} su 100"><i class="pzb" style="--p:${pmPlace(score, {cuts:[75, 50, 25], ends:[100, 0]}).zb.p}"></i></span>`}));
       lastBias = score;
     } else out.push(SK('bias', 'Bias di oggi', 'priority'));
     // 2. prossimo evento chiave
@@ -4726,20 +4881,20 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       const p = vx.price, lv = p < 15 ? ['g', 'Calma'] : p < 20 ? ['b', 'Normale'] : p < 30 ? ['y', 'Tensione'] : ['r', 'Paura'];
       const ch = vx.changePercent != null ? `${vx.changePercent >= 0 ? '▲' : '▼'} ${hSg(vx.changePercent)}% oggi` : '';
       out.push(T({k:'vix', tone:lv[0], l:'Paura del mercato · VIX', v:`${num('vix', p, 2)} <small>${lv[1]}</small>`, go:'marketmon', s:`Più il VIX è alto, più i mercati sono nervosi. ${ch}`,
-        x:sparkOf('VIX', (vx.changePercent || 0) < 0)}));
+        x:`<span class="pz" role="img" aria-label="VIX ${p}"><i class="pzb" style="--p:${pmPlace(p, {cuts:[15, 20, 30], ends:[10, 40]}).zb.p}"></i></span>`}));
     } else out.push(SK('vix', 'Paura del mercato · VIX', 'marketmon'));
     // 4. tassi Fed
     const m = HUB.fw && HUB.fw.meetings && HUB.fw.meetings[0];
     if(m){
       const opts = [[m.pHold, 'Tassi invariati'], [m.pCut, 'Taglio dei tassi'], [m.pHike, 'Rialzo dei tassi']].sort((a, b) => b[0] - a[0]), top = opts[0];
       const dd = new Date(m.date + 'T12:00:00Z').toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'UTC'});
-      out.push(T({k:'fed', tone:'b', l:'Fed · prossima riunione', v:`${num('fed', Math.round(top[0] * 100), 0)}% <small>${top[1].toLowerCase()}</small>`, go:'hub-bc', s:`Cosa prezza il mercato per la riunione del ${dd} (stima dai future Fed Funds).`}));
+      out.push(T({k:'fed', tone:'b', l:'Fed · prossima riunione', v:`${num('fed', Math.round(top[0] * 100), 0)}% <small>${top[1].toLowerCase()}</small>`, go:'hub-bc', s:`Cosa prezza il mercato per la riunione del ${dd} (stima dai future Fed Funds).`, x:`<span class="pz-st" role="img" aria-label="Taglio, invariato, rialzo"><i class="g" style="flex:${m.pCut}">${Math.round(m.pCut * 100)}</i><i class="n" style="flex:${m.pHold}">${Math.round(m.pHold * 100)}</i><i class="r" style="flex:${m.pHike}">${Math.round(m.pHike * 100)}</i></span>`}));
     } else out.push(HUB.fwFail ? T({k:'fed', tone:'b', l:'Fed · prossima riunione', v:'—', go:'hub-bc', s:'Probabilità non disponibili ora.'}) : SK('fed', 'Fed · prossima riunione', 'hub-bc'));
     // 5. Sahm Rule
     const S = HUB.sahm;
     if(S){
       const st = {none:['g', 'Nessun segnale'], watch:['y', 'Attenzione'], triggered:['r', 'Segnale scattato']}[S.state] || ['y', '—'];
-      out.push(T({k:'sahm', tone:st[0], l:'Rischio recessione USA', v:`${S.value < -0.004 ? '−' : ''}${num('sahm', Math.abs(S.value), 2)} <small>pp</small>`, go:'macro', s:`<b>${st[1]}</b> · la Sahm Rule scatta a 0,50 pp, misura se la disoccupazione sta salendo.`}));
+      out.push(T({k:'sahm', tone:st[0], l:'Rischio recessione USA', v:`${S.value < -0.004 ? '−' : ''}${num('sahm', Math.abs(S.value), 2)} <small>pp</small>`, go:'macro', s:`<b>${st[1]}</b> · la Sahm Rule scatta a 0,50 pp, misura se la disoccupazione sta salendo.`, x:`<span class="pz" role="img" aria-label="Sahm Rule"><i class="pzb" style="--p:${pmPlace(S.value, {cuts:[0.2, 0.3, 0.5], ends:[-0.1, 0.8]}).zb.p}"></i></span>`}));
     } else out.push(HUB.sahmFail ? T({k:'sahm', tone:'b', l:'Rischio recessione USA', v:'—', go:'macro', s:'Dato non disponibile ora.'}) : SK('sahm', 'Rischio recessione USA', 'macro'));
     // 6. azionario USA
     const sp = hQ('sp500');
