@@ -1698,6 +1698,9 @@ section{margin-bottom:30px;}
   .vl-hsp{display:none;}
 }
 
+/* le card segnaposto ("in caricamento" / "non disponibile", classe .h-c12) dentro un pannello a una colonna occupavano 12 colonne: la pagina si allargava a ~480 px sul telefono quando le analisi AI erano lente o fallivano */
+.ikx.sx > .h-card, .sx-stack > .h-card{grid-column:1 / -1; min-width:0;}
+
 /* ---- Volatilità per asset: versione compatta (elenco più stretto, riepilogo in una riga, due grafici affiancati e bassi, note a scomparsa) ---- */
 .vl{grid-template-columns:minmax(340px,3.8fr) minmax(0,8.2fr); gap:14px; align-items:stretch; margin-top:8px;}
 .vl-left{min-height:0;}
