@@ -25,6 +25,7 @@ const { getVolatility } = require('../lib/volatility');
 const { getIndicators } = require('../lib/indicators');
 const { getMarketContext } = require('../lib/market-context');
 const { translateTitles } = require('../lib/translate-headlines');
+const { getCycle } = require('../lib/cycle');
 
 const SYMBOLS = {
   sp500:  '^GSPC',   // S&P 500
@@ -51,6 +52,16 @@ async function handleEvent(event) {
       const data = await getIndicators({ ctxFn: () => getMarketContext(), translate: translateTitles });
       // 20 minuti (le traduzioni dei titoli usano l'AI: meno richieste); se qualche fonte non ha risposto solo 1, così il prossimo giro la recupera
       return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 1200) }, body: JSON.stringify(data) };
+    } catch (err) {
+      return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
+    }
+  }
+  // ?view=cycle → fase del ciclo e conferme di ogni asset, calcolate dai prezzi giornalieri reali di Yahoo Finance (lib/cycle.js)
+  if (params.view === 'cycle') {
+    try {
+      const data = await getCycle();
+      // 30 minuti (sono barre giornaliere); se qualche asset non ha risposto solo 1 minuto, così il prossimo giro lo recupera
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 1800) }, body: JSON.stringify(data) };
     } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }
