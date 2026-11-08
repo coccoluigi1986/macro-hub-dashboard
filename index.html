@@ -1695,8 +1695,31 @@ section{margin-bottom:30px;}
 @media(max-width:700px){
   .vl-zr{grid-template-columns:minmax(0,1fr) 54px; grid-template-areas:"n v" "t t" "c c"; gap:2px 10px; padding:7px 0;}
   .vl-zr > .sx-n{grid-area:n;} .vl-zr > .sx-tk{grid-area:t;} .vl-zr > .sx-v{grid-area:v;} .vl-zr > .sx-ch{grid-area:c;}
-  .vl-kpis{grid-template-columns:minmax(0,1fr);} .vl-hsp{display:none;}
+  .vl-hsp{display:none;}
 }
+
+/* ---- Volatilità per asset: versione compatta (elenco più stretto, riepilogo in una riga, due grafici affiancati e bassi, note a scomparsa) ---- */
+.vl{grid-template-columns:minmax(340px,3.8fr) minmax(0,8.2fr); gap:14px; align-items:stretch; margin-top:8px;}
+.vl-left{min-height:0;}
+.vl-bar{gap:8px; padding:10px 12px 8px;} .vl-search{height:36px;}
+.vl-chips{gap:5px;} .vl-chip{padding:5px 9px; font-size:11px;} .vl-per{gap:5px;} .vl-per > span{margin-right:1px; font-size:9.5px;} .vl-per button{padding:6px 9px; font-size:11.5px;}
+.vl-cols, .vl-row{grid-template-columns:minmax(70px,1fr) minmax(62px,.9fr) minmax(48px,.7fr) minmax(52px,.7fr) 40px; gap:8px; padding:0 12px;}
+.vl-scroll{flex:1 1 0; min-height:220px; max-height:none;}
+.vl-right{padding:12px 16px 10px; gap:9px; align-content:start;}
+.vl-title{font-size:clamp(20px,1.7vw,26px);} .vl-head{gap:4px 12px;} .vl-px{font-size:14px;}
+.vl-zr{min-height:38px; padding:2px 0;}
+.vl-kpis{grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;}
+.vl-kpi{padding:7px 11px; gap:1px;} .vl-kpi .l{font-size:9.5px;} .vl-kpi b{font-size:15px;} .vl-kpi b small{font-size:10.5px;} .vl-kpi .d{font-size:11px; line-height:1.3;}
+.vl-how{margin:0; padding:6px 11px; border-left:3px solid var(--accent); border-radius:0 8px 8px 0; background:rgba(94,168,245,.07); font-size:12px; line-height:1.45; color:var(--text2);} .vl-how b{color:var(--text); font-weight:600;}
+.vl-figs{display:grid; gap:10px;} .vl-figs.two{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr); gap:14px;}
+.vl-fig figcaption{margin-bottom:3px; font-size:11px; flex-wrap:nowrap; white-space:nowrap;} .vl-fig figcaption span{overflow:hidden; text-overflow:ellipsis;}
+.vl-leg{gap:3px 14px; font-size:11px;} .vl-leg i{width:10px; height:10px;}
+.vl-note > summary{display:inline-block; cursor:pointer; padding:2px 0; font:500 11.5px/1.3 var(--fb); color:var(--dim); list-style:none;} .vl-note > summary::-webkit-details-marker{display:none;}
+.vl-note > summary::before{content:"▸ "; color:var(--dim2);} .vl-note[open] > summary::before{content:"▾ ";} .vl-note > summary:hover{color:var(--text);}
+.vl-note .vl-foot{margin-top:4px; padding-top:8px;}
+@media(max-width:1100px){ .vl{grid-template-columns:1fr;} .vl-scroll{flex:none; max-height:340px;} }
+@media(max-width:560px){ .vl-cols, .vl-row{grid-template-columns:minmax(66px,1.2fr) minmax(52px,1fr) 56px 44px; gap:6px; padding:0 10px;} }   /* dopo la regola generale: sul telefono la colonna "$" è nascosta */
+@media(max-width:700px){ .vl-kpis{grid-template-columns:1fr; gap:5px;} .vl-kpi{flex-direction:row; align-items:baseline; justify-content:space-between; gap:8px;} .vl-kpi .d{display:none;} .vl-right{padding:11px 12px 9px;} }
 
 </style>
 </head>
@@ -5443,7 +5466,9 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     if(!a || a.error){ el.innerHTML = '<div class="vl-load">Dati non disponibili per questo asset in questo momento.</div>'; return; }
     const d = decOf(a), U = unitOf(a), now = nowParts();
     const na = a.cls === 'fx' ? 'chiusura di New York: dato non mostrato' : 'mercato chiuso';
-    const W = Math.round(Math.max(300, Math.min(720, el.clientWidth - (innerWidth <= 700 ? 26 : 42))));   // larghezza reale del riquadro
+    // larghezza reale del riquadro; da 660 px in su i due grafici stanno affiancati (ora del giorno più largo, giorno della settimana più stretto)
+    const avail = Math.round(Math.max(280, el.clientWidth - (innerWidth <= 700 ? 24 : 32))), twoCol = avail >= 660;
+    const Wh = twoCol ? Math.floor((avail - 14) * 1.55 / 2.55) : Math.min(720, avail), Ww = twoCol ? avail - 14 - Wh : Math.min(720, avail), CH = twoCol ? 196 : 172;
     const sp = P(a), hrs = sp.hours, wk = sp.weekdays, fr = perFrase();
     const hMax = Math.max(...hrs.filter(v => v != null)), iH = hrs.indexOf(hMax);
     const wMax = Math.max(...wk.filter(v => v != null)), iW = wk.indexOf(wMax);
@@ -5460,18 +5485,19 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       + zrow('Volatilità recente', rel == null ? 'dato non disponibile' : `1 sett. ${nf(w1.avgRange, d)} · 10 sett. ${nf(w10.avgRange, d)} ${U}`, rel == null ? '<span class="sx-tk vlk"></span>' : track(REL_Z(rel)[0], relP(rel), `${nf(rel, 2)}× la media delle 10 settimane`), rel == null ? '—' : `${nf(rel, 2)}×`, rel == null ? null : REL_Z(rel))
       + zrow('Oggi finora', a.today ? `${nf(a.today.range, d)} ${U} · ${Math.round(tod)}% della media (${fr})` : 'mercato chiuso oggi', a.today ? track(TOD_Z(tod)[0], todP(tod), `${Math.round(tod)}% dell'escursione media giornaliera`) : '<span class="sx-tk vlk"></span>', a.today ? `${Math.round(tod)}%` : '—', a.today ? TOD_Z(tod) : null)
       + '</div>';
-    const hours = chart({vals:hrs, labels:hrs.map((_, i) => String(i)), tips:hrs.map((_, i) => `${pad(i)}:00–${pad((i + 1) % 24)}:00`), cur:now.h, h:W < 520 ? 200 : 236, peak:true, dec:d, W});
-    const week = chart({vals:wk, labels:DAYS_S, tips:DAYS, cur:now.w, h:W < 520 ? 176 : 200, valLabels:true, dec:d, W});
+    const hours = chart({vals:hrs, labels:hrs.map((_, i) => String(i)), tips:hrs.map((_, i) => `${pad(i)}:00–${pad((i + 1) % 24)}:00`), cur:now.h, h:CH, peak:true, dec:d, W:Wh});
+    const week = chart({vals:wk, labels:DAYS_S, tips:DAYS, cur:now.w, h:CH, valLabels:true, dec:d, W:Ww});
     const px = a.price != null ? nf(a.price, a.cls === 'fx' ? (a.key.endsWith('JPY') ? 3 : 5) : 2) : '';
-    const why = typeof hWhy === 'function' ? hWhy(`<b>Come leggerla:</b> ogni barra è quanto si muove in media il prezzo (dal minimo al massimo) in quell'ora o in quel giorno. Il colore dice quanto è vicina al picco: verde calma, azzurro normale, giallo movimentata, rosso la zona del picco. L'ora o il giorno in corso ha il bordo bianco. È la media del periodo scelto, non una previsione.`) : '';
+    const how = `<p class="vl-how"><b>Come leggerla:</b> ogni barra è quanto si muove in media il prezzo (dal minimo al massimo) in quell'ora o in quel giorno; il colore dice quanto è vicina al picco. È la media del passato, non una previsione.</p>`;
     el.innerHTML =
       `<div class="vl-head"><h3 class="vl-title">${esc(a.name)}</h3><span class="vl-px">${px}</span><span class="vl-badge">${U}</span><span class="vl-pbadge">media: ${fr}</span>${sp.spark && sp.spark.length > 3 ? `<span class="vl-hsp" title="Andamento del prezzo nel periodo scelto">${spark(sp.spark)}</span>` : ''}</div>`
-      + zrows + `<div class="vl-kpis">${kpis}</div>` + why
-      + `<figure class="vl-fig"><figcaption>Volatilità per ora del giorno <span>escursione media di ogni candela oraria · ora italiana · ${fr}</span></figcaption>${hours}<div class="vl-tip" hidden></div></figure>`
-      + `<figure class="vl-fig"><figcaption>Volatilità per giorno della settimana <span>escursione media giornaliera (massimo − minimo) · ${fr}</span></figcaption>${week}<div class="vl-tip" hidden></div></figure>`
-      + `<div class="vl-leg"><span><i style="background:rgba(52,211,153,.6)"></i>calma (sotto il 25% del picco)</span><span><i style="background:rgba(56,189,248,.6)"></i>normale (25–50%)</span><span><i style="background:rgba(224,169,77,.65)"></i>movimentata (50–75%)</span><span><i style="background:rgba(240,104,94,.7)"></i>zona del picco (oltre il 75%)</span><span><i style="border:2px solid #fff"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
-      + `<p class="vl-foot">Fonte: Yahoo Finance, candele orarie · media: ${fr} (${sp.days} giornate di mercato) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
-      + `Pips, punti e % sono l'escursione media giornaliera (massimo − minimo) del periodo scelto, con la % calcolata sul prezzo attuale. Con 10 settimane è la stessa misura di Mataf: confrontandola con altri siti può differire di qualche punto percentuale perché le quotazioni di partenza non sono identiche (le ore dopo la chiusura di New York, con spread molto larghi, sono escluse).${per === '1w' ? ' Su una sola settimana i valori dipendono molto dagli eventi di quei giorni.' : ''} Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p>`;
+      + zrows + `<div class="vl-kpis">${kpis}</div>` + how
+      + `<div class="vl-figs${twoCol ? ' two' : ''}">`
+      + `<figure class="vl-fig"><figcaption>Per ora del giorno <span>ora italiana</span></figcaption>${hours}<div class="vl-tip" hidden></div></figure>`
+      + `<figure class="vl-fig"><figcaption>Per giorno della settimana</figcaption>${week}<div class="vl-tip" hidden></div></figure></div>`
+      + `<div class="vl-leg"><span><i style="background:rgba(52,211,153,.6)"></i>calma</span><span><i style="background:rgba(56,189,248,.6)"></i>normale</span><span><i style="background:rgba(224,169,77,.65)"></i>movimentata</span><span><i style="background:rgba(240,104,94,.7)"></i>vicino al picco (oltre il 75%)</span><span><i style="border:2px solid #fff"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
+      + `<details class="vl-note"><summary>Fonte e note di calcolo</summary><p class="vl-foot">Fonte: Yahoo Finance, candele orarie · media: ${fr} (${sp.days} giornate di mercato) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
+      + `Pips, punti e % sono l'escursione media giornaliera (massimo − minimo) del periodo scelto, con la % calcolata sul prezzo attuale. Con 10 settimane è la stessa misura di Mataf: confrontandola con altri siti può differire di qualche punto percentuale perché le quotazioni di partenza non sono identiche (le ore dopo la chiusura di New York, con spread molto larghi, sono escluse).${per === '1w' ? ' Su una sola settimana i valori dipendono molto dagli eventi di quei giorni.' : ''} Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p></details>`;
     $$c(el, '.vl-fig').forEach(fig => {
       const tip = fig.querySelector('.vl-tip');
       const show = e => {
