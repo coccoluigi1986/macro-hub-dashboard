@@ -1160,44 +1160,43 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 .vl-pbadge{font:500 11px/1 var(--fm); letter-spacing:.04em; padding:5px 8px; border-radius:6px; border:1px solid var(--border); color:var(--text2); background:var(--bg); align-self:center;}
 
 
-/* ===== Cosa ha mosso i mercati: movimenti reali per fascia oraria + notizie concomitanti ===== */
+/* ===== Cosa ha mosso i mercati: stesso linguaggio a barre delle altre sezioni (righe .sx-*, pista a quattro zone) + notizie concomitanti ===== */
+.mv-intro{margin:0 0 8px; max-width:880px;}
+.mv-lg{margin:0 0 4px; justify-content:flex-start;}
 .mv-wrap{display:grid; gap:0;}
-.mv-row{display:grid; grid-template-columns:150px minmax(0,1.05fr) minmax(0,1.45fr); gap:6px 22px; padding:16px 0; border-top:1px solid var(--border);}
+.mv-row{display:grid; grid-template-columns:132px minmax(0,1.7fr) minmax(0,1fr); gap:6px 22px; padding:12px 0 8px; border-top:1px solid var(--border);}
 .mv-row:first-child{border-top:0; padding-top:4px;}
 .mv-when{display:flex; flex-direction:column; gap:7px; align-items:flex-start; min-width:0;}
 .mv-day{font:600 14px/1.2 var(--fh); letter-spacing:-.005em; color:var(--text);}
 .mv-ses{display:inline-flex; align-items:center; gap:6px; font:600 10.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; padding:5px 8px; border-radius:6px; border:1px solid var(--border); color:var(--text2); background:var(--panel2);}
 .mv-ses i{width:6px; height:6px; border-radius:50%; background:var(--dim2);}
 .mv-ses.asia i{background:#A78BFA;} .mv-ses.europa i{background:var(--accent);} .mv-ses.usa i{background:var(--gold);} .mv-ses.notte i{background:var(--dim2);}
-.mv-hours{font:500 11.5px/1.2 var(--fm); color:var(--dim);}
+.mv-hours{font:500 11.5px/1.3 var(--fm); color:var(--dim);}
 .mv-live{position:relative; font:600 9.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--green); display:inline-flex; align-items:center; padding-left:12px;}
 .mv-live::before, .mv-live::after{content:""; position:absolute; left:0; top:50%; width:6px; height:6px; margin-top:-3px; border-radius:50%; background:var(--green);}
 .mv-live::after{animation:mvPulse 1.8s ease-out infinite;}   /* l'anello che si allarga usa solo transform e opacity: non fa ridisegnare la pagina ad ogni fotogramma */
 @keyframes mvPulse{from{transform:scale(1); opacity:.55;} to{transform:scale(2.8); opacity:0;}}
-.mv-assets{display:flex; flex-wrap:wrap; gap:7px; align-content:flex-start; min-width:0;}
-.mv-as{display:flex; flex-direction:column; gap:3px; min-width:112px; padding:8px 10px 9px; border-radius:10px; border:1px solid var(--border); background:var(--panel2); position:relative; overflow:hidden;}
-.mv-as::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--dim2);}
-.mv-as.up::before{background:var(--green);} .mv-as.down::before{background:var(--red);}
-.mv-as .n{font:500 11px/1.2 var(--fm); letter-spacing:.04em; color:var(--text2);}
-.mv-as .p{font:700 16px/1.15 var(--fm); letter-spacing:-.01em;}
-.mv-as.up .p{color:var(--green);} .mv-as.down .p{color:var(--red);}
-.mv-as .x{font:500 10.5px/1.2 var(--fm); color:var(--dim);}
-.mv-as .m{display:flex; gap:3px; margin-top:1px;} .mv-as .m b{width:14px; height:3px; border-radius:2px; background:var(--border);}
-.mv-as.up .m b.on{background:var(--green);} .mv-as.down .m b.on{background:var(--red);}
+.mv-assets{display:block; min-width:0;}
+.sx-mva > .sx-r{grid-template-columns:96px minmax(0,1fr) 86px 40px 98px; min-height:34px;}
+.sx-tk.mv{--l1:25%; --l2:50%; --l3:75%; height:30px; background:linear-gradient(90deg,rgba(52,211,153,.07) 0 25%,rgba(56,189,248,.05) 25% 50%,rgba(224,169,77,.06) 50% 75%,rgba(240,104,94,.10) 75% 100%);}
+.sx-tk.mv::after{content:""; position:absolute; top:0; bottom:0; right:0; width:2px; background:var(--zr); box-shadow:0 0 8px rgba(240,104,94,.7); border-radius:1px; pointer-events:none;}
+.sx-mva .sx-v.dim{font-size:11px;}
+.mv-nw{min-width:0;} .mv-nw h6{margin:3px 0 7px; font:500 9.5px/1.2 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--dim2);}
 .mv-news{display:grid; gap:9px; align-content:start; min-width:0; list-style:none; margin:0; padding:0;}
 .mv-news li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:2px 10px; align-items:baseline; min-width:0;}
 .mv-t{font:500 11px/1.4 var(--fm); color:var(--dim); white-space:nowrap;}
-.mv-news a{color:var(--text); text-decoration:none; font-size:13.5px; line-height:1.4; font-weight:500; overflow-wrap:anywhere;}
+.mv-news a{color:var(--text); text-decoration:none; font-size:13px; line-height:1.4; font-weight:500; overflow-wrap:anywhere;}
 .mv-news a:hover{color:var(--accent); text-decoration:underline;}
 .mv-src{grid-column:2; font-size:11.5px; color:var(--dim2); display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
 .mv-hi{font:600 9px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(224,169,77,.4); background:var(--gold-soft); padding:3px 5px; border-radius:4px;}
-.mv-none{font-size:12.5px; color:var(--dim); line-height:1.5; font-style:italic;}
-.mv-legend{font-size:11.5px; color:var(--dim2); line-height:1.55;}
-@media(max-width:980px){
-  .mv-row{grid-template-columns:minmax(0,1fr); gap:11px; padding:15px 0;}
+.mv-none{padding:9px 12px; border:1px dashed rgba(190,205,235,.22); border-radius:9px; font-size:12.5px; color:var(--dim); line-height:1.5; font-style:italic;}
+@media(max-width:1100px){ .mv-row{grid-template-columns:130px minmax(0,1fr); } .mv-nw{grid-column:1 / -1;} }
+@media(max-width:760px){
+  .mv-row{grid-template-columns:minmax(0,1fr); gap:10px; padding:13px 0 8px;}
   .mv-when{flex-direction:row; flex-wrap:wrap; align-items:center; gap:8px 10px;}
+  /* la regola mobile generica delle righe .sx-r assegna aree con nome (n, t, c…): qui vanno definite, altrimenti il browser crea colonne in più */
+  .sx-mva > .sx-r{grid-template-columns:92px minmax(0,1fr) 78px 36px; grid-template-areas:"n t v r"; gap:0 10px; padding:0;} .sx-mva > .sx-r > .sx-v{grid-area:v;} .sx-mva > .sx-r > .sx-v.dim{grid-area:r;} .sx-mva > .sx-r > .sx-ch{display:none;}
 }
-@media(max-width:480px){ .mv-as{min-width:calc(50% - 4px); flex:1 1 calc(50% - 4px);} .mv-assets{gap:7px;} }
 @media(max-width:640px){ .mv-row:nth-child(n+4){display:none;} }   /* sul telefono le ultime tre fasce bastano */
 
 
@@ -1652,7 +1651,52 @@ section{margin-bottom:30px;}
 /* i pannelli dentro le celle del quadro di oggi (che sono flessibili) occupano tutta la larghezza; lo storico del polso resta nella sua colonna */
 .h-cell > .ikx.sx-wrap{flex:1 1 100%; width:100%; min-width:0;}
 #pulse .pt .pt-x svg{position:static; right:auto; bottom:auto; left:auto; top:auto; width:100%; height:26px; opacity:1;}
-.sx-dt > .sx-r,.sx-dt.sx-h{grid-template-columns:120px minmax(0,1fr) 92px 178px;} .sx-dt .sx-v.dim{white-space:normal; text-align:right; font-size:11px; line-height:1.3;}
+.sx-dt .sx-v.dim{white-space:normal; font-size:11px; line-height:1.3;}
+@media(min-width:761px){ .sx-dt > .sx-r,.sx-dt.sx-h{grid-template-columns:120px minmax(0,1fr) 92px 178px;} .sx-dt .sx-v.dim{text-align:right;} }   /* solo schermi larghi: sul telefono vale la disposizione a due righe di sopra (prima questa regola, venendo dopo, la annullava e allargava la pagina) */
+
+/* ---- Volatilità per asset: stesso linguaggio a quattro zone (barra "Adesso" nell'elenco, righe a zone nel dettaglio, grafici con fasce e barre per zona) ---- */
+.vl{--zg:#34D399; --zn:#38BDF8; --zw:#E0A94D; --zr:#F0685E;}
+.vl .t-pos{--c:var(--zg);} .vl .t-neu{--c:var(--zn);} .vl .t-warn{--c:var(--zw);} .vl .t-neg{--c:var(--zr);} .vl .t-off{--c:var(--dim2);}
+.vl-left, .vl-right{border:1px solid var(--border); border-radius:14px; background:radial-gradient(130% 90% at 0% 0%,rgba(94,168,245,.09),transparent 55%),linear-gradient(160deg,#101933 0%,#0B1224 62%,#0B1A1F 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.vl-cols, .vl-row{grid-template-columns:minmax(86px,1.1fr) minmax(70px,1fr) minmax(54px,.8fr) minmax(56px,.8fr) 44px;}
+.vl-cols{background:#0D152B;}
+.sx-tk.vlk{height:22px;}
+.sx-tk.vlk::after{content:""; position:absolute; top:0; bottom:0; right:0; width:2px; background:var(--zr); box-shadow:0 0 8px rgba(240,104,94,.7); border-radius:1px; pointer-events:none;}
+.vl-row .sx-bar{height:8px;}
+.vl-zrs{display:grid; border-top:1px solid rgba(255,255,255,.08); border-bottom:1px solid rgba(255,255,255,.08);}
+.vl-zr{display:grid; grid-template-columns:minmax(170px,1.1fr) minmax(0,1.3fr) 54px 118px; gap:0 14px; align-items:center; min-height:46px; padding:4px 0;}
+.vl-zr + .vl-zr{border-top:1px solid rgba(255,255,255,.05);}
+.vl-zr .sx-n small{white-space:normal; line-height:1.3;}
+.vl-hsp{margin-left:auto; align-self:center;}
+.vl-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}
+.vl-kpi{background:rgba(7,12,24,.5); border-color:rgba(190,205,235,.2);} .vl-kpi.gold b{color:var(--text);}
+.vl-svg .zl{stroke:rgba(190,200,225,.28); stroke-width:1;}
+.vl .vl-col.z0 .bar{fill:rgba(52,211,153,.5); stroke:#34D399;} .vl .vl-col.z1 .bar{fill:rgba(56,189,248,.5); stroke:#38BDF8;} .vl .vl-col.z2 .bar{fill:rgba(224,169,77,.55); stroke:#E0A94D;} .vl .vl-col.z3 .bar{fill:rgba(240,104,94,.58); stroke:#F0685E;}
+.vl .vl-col.z0:hover .bar{fill:rgba(52,211,153,.9);} .vl .vl-col.z1:hover .bar{fill:rgba(56,189,248,.9);} .vl .vl-col.z2:hover .bar{fill:rgba(224,169,77,.9);} .vl .vl-col.z3:hover .bar{fill:rgba(240,104,94,.9);}
+.vl .vl-col.cur .bar{stroke:#fff; stroke-width:2;} .vl .vl-col.cur .xl{fill:#fff; font-weight:700;}
+/* ---- Calendario completo: stessa superficie degli altri pannelli, impatto a chip e una colonna "Sorpresa" con la barra a quattro zone ---- */
+.ic-table-wrap{--zg:#34D399; --zn:#38BDF8; --zw:#E0A94D; --zr:#F0685E; border-color:var(--border); border-radius:14px; background:radial-gradient(130% 90% at 0% 0%,rgba(94,168,245,.07),transparent 55%),linear-gradient(160deg,#101933 0%,#0B1224 62%,#0B1A1F 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.ic-table-wrap .t-pos{--c:var(--zg);} .ic-table-wrap .t-neu{--c:var(--zn);} .ic-table-wrap .t-warn{--c:var(--zw);} .ic-table-wrap .t-neg{--c:var(--zr);} .ic-table-wrap .t-off{--c:var(--dim2);}
+.ic-grid-cols{grid-template-columns:128px 52px 70px minmax(190px,2fr) 68px 68px 72px minmax(286px,1.5fr);}
+.ic-row{border-bottom-color:rgba(255,255,255,.06);} .ic-row.ic-head{background:#0D152B;} .ic-row.ic-head:hover{background:#0D152B;}
+.ic-impact-badge{border:1px solid transparent;} .ic-impact-badge.alto{border-color:rgba(240,104,94,.42);} .ic-impact-badge.medio{border-color:rgba(224,169,77,.42);} .ic-impact-badge.basso{border-color:var(--border);}
+.ic-sur{display:flex; align-items:center; gap:9px; min-width:0;}
+.ic-sur .sx-tk{flex:1 1 64px; min-width:52px; height:20px;} .ic-sur .sx-bar{height:8px;}
+.sx-tk.icv::after{content:""; position:absolute; top:0; bottom:0; right:0; width:2px; background:var(--zr); box-shadow:0 0 8px rgba(240,104,94,.7); border-radius:1px; pointer-events:none;}
+.ic-sv{flex:none; width:62px; text-align:right; font:600 11px/1 var(--fm); color:var(--text2); white-space:nowrap;}
+.ic-sur .sx-ch{flex:none; width:118px;} .ic-sur .sx-ch em{display:block; width:100%; text-align:center; overflow:hidden; text-overflow:ellipsis;}
+.ic-sur.t-off .sx-tk{visibility:hidden;} .ic-sur.t-off .sx-ch em{border-color:transparent; background:none; color:var(--dim2); font-weight:500; text-align:left; padding-left:0;}   /* senza stima o in arrivo: niente barra, solo una nota discreta */
+.ic-detail-row .ic-rd{display:block; margin-bottom:5px; color:var(--text2);} .ic-detail-row .ic-rd b{color:var(--text); font-weight:600;}
+@media(max-width:900px){ .ic-grid-cols{grid-template-columns:104px 46px 64px minmax(150px,1.6fr) 60px 60px 62px minmax(260px,1.4fr);} }
+@media(max-width:560px){
+  .vl-cols, .vl-row{grid-template-columns:minmax(66px,1.2fr) minmax(52px,1fr) 56px 44px; gap:6px; padding:0 10px;}
+  .vl-cols > :nth-child(4), .vl-row > :nth-child(4){display:none;}   /* sul telefono la colonna "$" lascia posto alle altre: resta nel dettaglio dell'asset */
+}
+@media(max-width:700px){
+  .vl-zr{grid-template-columns:minmax(0,1fr) 54px; grid-template-areas:"n v" "t t" "c c"; gap:2px 10px; padding:7px 0;}
+  .vl-zr > .sx-n{grid-area:n;} .vl-zr > .sx-tk{grid-area:t;} .vl-zr > .sx-v{grid-area:v;} .vl-zr > .sx-ch{grid-area:c;}
+  .vl-kpis{grid-template-columns:minmax(0,1fr);} .vl-hsp{display:none;}
+}
 
 </style>
 </head>
@@ -2375,20 +2419,24 @@ setInterval(() => { if(!document.hidden) cycLoad(); }, 10 * 60 * 1000);
 // Le notizie sono CONCOMITANTI ai movimenti (uscite nelle ore del movimento): non si dichiara una causa certa.
 const MV_SHORT = {'Nasdaq 100 (future)':'Nasdaq 100', 'S&P 500 (future)':'S&P 500', 'Dollaro (DXY)':'Dollaro DXY', 'Rendimento US 10Y':'US 10Y'};
 const mvWhen = iso => new Date(iso).toLocaleString('it-IT', {weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/Rome'}).replace(',', '');
-function mvAsset(a){
-  const up = a.pct >= 0;
-  const yld = a.key === 'rendimenti';
+// Quanto è insolito il movimento: stesse quattro zone delle altre sezioni, sul rapporto con il movimento tipico dell'asset (confini a 2×, 4×, 6×; la barra piena è 8×).
+function mvZone(r){
+  const p = Math.round(Math.min(98, Math.max(4, r * 12.5)) * 10) / 10;
+  return r < 2 ? {p, tone:'t-pos', lbl:'Appena sopra'} : r < 4 ? {p, tone:'t-neu', lbl:'Sopra il solito'} : r < 6 ? {p, tone:'t-warn', lbl:'Molto sopra'} : {p, tone:'t-neg', lbl:'Eccezionale'};
+}
+function mvAsset(a, slotKey){
+  const up = a.pct >= 0, yld = a.key === 'rendimenti', z = mvZone(a.ratio);
   // il rendimento si legge in punti base (4,96% → +4 pb), non in variazione percentuale del rendimento
   const val = yld ? `${(a.to - a.from) >= 0 ? '+' : '−'}${Math.round(Math.abs(a.to - a.from) * 100)} pb` : `${up ? '+' : '−'}${hNf(Math.abs(a.pct))}%`;
-  const dots = a.ratio >= 5 ? 3 : a.ratio >= 3 ? 2 : 1;
-  const tip = `${hNf(a.ratio, 1)} volte il movimento tipico di questo asset in una fascia analoga`;
-  return `<div class="mv-as ${up ? 'up' : 'down'}" title="${tip}"><span class="n">${escHtml(MV_SHORT[a.name] || a.name)}</span><span class="p">${up ? '▲' : '▼'} ${val}</span><span class="x">${hNf(a.ratio, 1)}× il solito</span><span class="m"><b class="on"></b><b class="${dots > 1 ? 'on' : ''}"></b><b class="${dots > 2 ? 'on' : ''}"></b></span></div>`;
+  const cells = sxName(MV_SHORT[a.name] || a.name) + `<span class="sx-tk mv"><i class="sx-bar" style="--p:${z.p}"></i></span>` + `<span class="sx-v ${up ? 'h-up' : 'h-down'}"><b>${up ? '▲' : '▼'} ${val}</b></span><span class="sx-v dim" title="${hNf(a.ratio, 1)} volte il movimento tipico di questo asset">${hNf(a.ratio, 1)}×</span>` + sxChip(z.lbl);
+  const det = `<p>Il prezzo è passato da <b>${hNf(a.from, a.dec)}</b> a <b>${hNf(a.to, a.dec)}</b> ${a.kind === 'accelerazione' ? 'in un\'accelerazione di una o poche ore' : 'nel corso della sessione'}: ${hNf(a.ratio, 1)} volte il movimento tipico di questo asset in una fascia analoga.</p><p class="why">Più la barra è lunga, più il movimento è fuori dall'ordinario per questo asset (non per gli altri): oltre 4 volte il solito vale la pena chiedersi cosa è successo.</p>`;
+  return sxRow('mv:' + slotKey + ':' + a.name, z.tone + ' sx-mva', cells, det);
 }
 function mvSlot(s){
   const news = s.news.length
     ? `<ul class="mv-news">${s.news.map(n => `<li><span class="mv-t">${escHtml(mvWhen(n.published))}</span><a href="${escHtml(n.url || '#')}" target="_blank" rel="noopener noreferrer"${n.titleIt ? ` title="Titolo originale: ${escHtml(n.title).replace(/"/g, '&quot;')}"` : ''}>${escHtml(n.titleIt || n.title)}</a><span class="mv-src">${escHtml(n.source)}${n.level === 'ALTO' ? '<span class="mv-hi">alto impatto</span>' : ''}</span></li>`).join('')}</ul>`
     : '<p class="mv-none">Nessuna notizia chiara nel flusso in quelle ore: movimento di flussi e posizionamento.</p>';
-  return `<div class="mv-row"><div class="mv-when"><span class="mv-day">${escHtml(s.day)}</span><span class="mv-ses ${s.ses.toLowerCase()}"><i></i>${escHtml(s.ses)}</span><span class="mv-hours">${escHtml(s.hours)} · ora italiana</span>${s.live ? '<span class="mv-live">in corso</span>' : ''}</div><div class="mv-assets">${s.assets.map(mvAsset).join('')}</div>${news}</div>`;
+  return `<div class="mv-row"><div class="mv-when"><span class="mv-day">${escHtml(s.day)}</span><span class="mv-ses ${s.ses.toLowerCase()}"><i></i>${escHtml(s.ses)}</span><span class="mv-hours">${escHtml(s.hours)} · ora italiana</span>${s.live ? '<span class="mv-live">in corso</span>' : ''}</div><div class="mv-assets">${s.assets.map(a => mvAsset(a, s.t0)).join('')}</div><div class="mv-nw"><h6>Notizie uscite in quelle ore</h6>${news}</div></div>`;
 }
 function renderMarketMoves(){
   const el = document.getElementById('hMktMoves'); if(!el) return;
@@ -2397,10 +2445,11 @@ function renderMarketMoves(){
   if(HUB.fail.moves) body = '<p class="h-note">Movimenti non disponibili in questo momento: riprova tra poco.</p>';
   else if(!d) body = '<p class="h-note">Caricamento dei movimenti…</p>';
   else if(!d.slots.length) body = '<p class="h-note">Nessun movimento più ampio del solito nelle ultime 30 ore: i mercati si sono mossi in linea con la normalità.</p>';
-  else body = `<div class="mv-wrap">${d.slots.map(mvSlot).join('')}</div>`;
-  el.innerHTML = hCard({span:12, icon:'pulse', title:'Cosa ha mosso i mercati', bd:['live'], cls:'h-accent', body:
-    `<p class="h-note" style="margin-top:-4px">Gli asset che si sono mossi più del solito, fascia per fascia, con le notizie uscite in quelle ore. Una notizia forte (un attacco, una dichiarazione di Trump, una banca centrale) muove tutti i mercati insieme: qui li vedi nello stesso momento.</p>${body}`,
-    foot:`<span class="mv-legend">Movimenti reali a 15 minuti (Yahoo Finance) confrontati con il movimento tipico di ogni asset; notizie da 16 fonti, ordinate per impatto. Le notizie sono <b>concomitanti</b> ai movimenti: indicano cosa stava succedendo, non una causa certa. I titoli sono tradotti in italiano in automatico e il link apre l'articolo originale.${d ? ` Aggiornato alle ${escHtml(hTime(d.generatedAt))}.` : ''}</span>`});
+  else body = `<div class="ikx-lg mv-lg"><span><i class="gb"></i>Quanto è insolito il movimento</span><span><i class="gl"></i>Confini: 2×, 4×, 6× il solito</span><span><i class="gr"></i>8× o più</span></div><div class="mv-wrap">${d.slots.map(mvSlot).join('')}</div>`;
+  const src = d && d.sources ? `${d.sources} fonti` : 'più fonti';
+  el.innerHTML = sxWrap(sxPanel({icon:'pulse', title:'Cosa ha mosso i mercati', sub:'Gli asset che si sono mossi più del solito, fascia per fascia, con le notizie uscite in quelle ore', bd:['live'],
+    body:`<p class="h-note mv-intro">Una notizia forte (un attacco, una dichiarazione di Trump, una banca centrale) muove tutti i mercati insieme: qui li vedi nello stesso momento. Tocca un asset per vedere da dove a dove si è mosso.</p>${body}`,
+    foot:`Movimenti reali a 15 minuti (Yahoo Finance) confrontati con il movimento tipico di ogni asset; notizie da ${src}, ordinate per impatto. Le notizie sono <b>concomitanti</b> ai movimenti: indicano cosa stava succedendo, non una causa certa. Nel fine settimana i mercati sono chiusi: si vedono le ultime fasce di venerdì con le notizie uscite in quelle ore. I titoli sono tradotti in italiano in automatico e il link apre l'articolo originale.${d ? ` Aggiornato alle ${escHtml(hTime(d.generatedAt))}.` : ''}`}));
 }
 async function loadMarketMoves(){
   try{
@@ -2730,11 +2779,17 @@ function translatePeriod(period){
 // Lettura sintetica per trading: se il dato è già uscito lo confronta con le attese (sorpresa
 // rialzista/ribassista/in linea), altrimenti dà una nota generica in base all'impatto — nessun
 // testo inventato, solo interpretazione dei numeri reali già ricevuti dal calendario live.
+// Scostamento del dato dal previsto in % (il denominatore non scende sotto 1: per i dati piccoli o in percentuale 0,3 contro 0,4 non è "+33%", è un decimo di punto).
+// Null se manca il dato o la stima. Lo usano sia la lettura per trading sia la barra "Sorpresa", così dicono sempre la stessa cosa.
+function calDev(e){
+  if(e.actual === null || e.actual === undefined || e.forecast === null || e.forecast === undefined || e.forecast === 0) return null;
+  return (e.actual - e.forecast) / Math.max(Math.abs(e.forecast), 1) * 100;
+}
 function calTradingReading(e){
   const hasActual = e.actual !== null && e.actual !== undefined;
   if(hasActual){
     if(e.forecast !== null && e.forecast !== undefined && e.forecast !== 0){
-      const diffPct = ((e.actual - e.forecast) / Math.abs(e.forecast)) * 100;
+      const diffPct = calDev(e);
       if(Math.abs(diffPct) < 3) return 'Dato in linea con le attese di consenso.';
       return diffPct > 0 ? 'Dato sopra le attese — possibile impatto sulla valuta.' : 'Dato sotto le attese — possibile impatto sulla valuta.';
     }
@@ -2743,6 +2798,19 @@ function calTradingReading(e){
   if(e.importance === 'alto') return 'Alto impatto: attesa volatilità nei minuti attorno al rilascio.';
   if(e.importance === 'medio') return 'Impatto moderato: rilevante in caso di forte scostamento dalle attese.';
   return 'Impatto contenuto: raramente market-moving.';
+}
+
+// Sorpresa: quanto il dato uscito si discosta dal previsto (calDev), sulla scala a quattro zone delle altre sezioni.
+// Confini al 3% ("in linea", la stessa soglia della lettura per trading), al 10% e al 25%; la barra piena è oltre il 50%. La direzione è nella freccia: sopra o sotto le attese.
+function calSurprise(e){
+  if(e.actual === null || e.actual === undefined) return {tone:'t-off', lbl:'In arrivo', p:null, val:'—'};
+  const d = calDev(e);
+  if(d === null) return {tone:'t-off', lbl:'Senza stima', p:null, val:'—'};
+  const a = Math.abs(d), up = d > 0;
+  const p = a < 3 ? a / 3 * 25 : a < 10 ? 25 + (a - 3) / 7 * 25 : a < 25 ? 50 + (a - 10) / 15 * 25 : 75 + Math.min(23, (a - 25) / 25 * 25);
+  const z = a < 3 ? ['t-pos', 'In linea'] : a < 10 ? ['t-neu', up ? 'Sopra le attese' : 'Sotto le attese'] : a < 25 ? ['t-warn', up ? 'Molto sopra' : 'Molto sotto'] : ['t-neg', 'Sorpresa forte'];
+  const txt = a >= 999 ? '>999' : a < 10 ? a.toFixed(1).replace('.', ',') : String(Math.round(a));
+  return {tone:z[0], lbl:z[1], p:Math.round(Math.min(98, Math.max(3, p)) * 10) / 10, val:(a < 0.05 ? '' : up ? '▲ +' : '▼ −') + txt + '%'};
 }
 
 // quiet = aggiornamento automatico: niente "Caricamento…", la tabella si ridisegna solo se un valore è cambiato (così non chiude le righe aperte)
@@ -2792,7 +2860,7 @@ function renderCalTable(){
 
   const head = `<div class="ic-row ic-head ic-grid-cols">
     <div>Data / ora (Londra)</div><div>Valuta</div><div>Impatto</div><div>Evento</div>
-    <div style="text-align:right;">Precedente</div><div style="text-align:right;">Previsto</div><div style="text-align:right;">Attuale</div><div>Lettura per trading</div>
+    <div style="text-align:right;">Precedente</div><div style="text-align:right;">Previsto</div><div style="text-align:right;">Attuale</div><div title="Quanto il dato uscito si discosta dal previsto (in % del previsto). Le linee sono al 3% (in linea), al 10% e al 25%; la barra piena è oltre il 50%. Senza previsione di consenso non si può misurare.">Sorpresa</div>
   </div>`;
 
   if(!evts.length){
@@ -2807,7 +2875,7 @@ function renderCalTable(){
     const prevStr = fmtCalVal(e.previous, e.unit, e.scale);
     const foreStr = fmtCalVal(e.forecast, e.unit, e.scale);
     const actStr = fmtCalVal(e.actual, e.unit, e.scale);
-    const reading = calTradingReading(e);
+    const reading = calTradingReading(e), sur = calSurprise(e);
     // TradingView fornisce "comment" solo in inglese — mostriamo subito un placeholder e lo
     // sostituiamo con la traduzione italiana (via /api/translate-text) alla prima apertura della
     // riga, così non traduciamo centinaia di righe che l'utente non apre mai.
@@ -2823,9 +2891,9 @@ function renderCalTable(){
       <div class="ic-num">${prevStr}</div>
       <div class="ic-num">${foreStr}</div>
       <div class="ic-num ${actStr!=='—'?'ic-num-actual':''}">${actStr}</div>
-      <div class="ic-reading">${reading}</div>
+      <div class="ic-sur ${sur.tone}"><span class="sx-tk icv">${sur.p == null ? '' : `<i class="sx-bar" style="--p:${sur.p}"></i>`}</span><span class="ic-sv">${sur.val}</span><span class="sx-ch"><em>${sur.lbl}</em></span></div>
     </div>
-    <div class="ic-detail-row" id="ic-detail-${idx}"><div class="ic-detail-inner">${detailText}${e.source?`<span class="ic-source">Fonte: ${e.source}${e.period?` · Periodo: ${translatePeriod(e.period)}`:''}</span>`:''}</div></div>`;
+    <div class="ic-detail-row" id="ic-detail-${idx}"><div class="ic-detail-inner"><span class="ic-rd"><b>Lettura per trading:</b> ${reading}</span>${detailText}${e.source?`<span class="ic-source">Fonte: ${e.source}${e.period?` · Periodo: ${translatePeriod(e.period)}`:''}</span>`:''}</div></div>`;
   }).join('');
 
   wrap.innerHTML = head + rows;
@@ -5249,7 +5317,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       + '<div class="vl-per" id="vlPer" role="group" aria-label="Periodo della media"><span>Periodo</span>' + PERIODI.map(([k, b, fr]) => `<button type="button" data-p="${k}" title="Media delle ${fr.replace(/^ultim[ae] /, '')}" aria-pressed="${k === per}">${b}</button>`).join('') + '</div>'
       + '<label class="vl-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="vlQ" placeholder="Cerca un asset…" aria-label="Cerca un asset" autocomplete="off"></label>'
       + '<div class="vl-chips" id="vlChips" role="group" aria-label="Tipo di asset"></div></div>'
-      + '<div class="vl-cols" role="row"><button type="button" data-s="name" title="Ordina per nome">Asset</button><span>Trend</span>'
+      + '<div class="vl-cols" role="row"><button type="button" data-s="name" title="Ordina per nome">Asset</button><button type="button" data-s="rel" id="vlColRel" title="Quanto si muove adesso rispetto al solito: escursione media dell\'ultima settimana confrontata con quella delle ultime 10 settimane. Le linee sono a 0,8×, 1,2× e 1,6×.">Adesso</button>'
       + '<button type="button" class="r" data-s="range" id="vlColRange">Pips</button>'
       + '<button type="button" class="r" data-s="usd" id="vlColUsd">$</button>'
       + '<button type="button" class="r" data-s="pct" id="vlColPct">%</button></div>'
@@ -5281,6 +5349,17 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   }
   const $$c = (el, s) => [...el.querySelectorAll(s)];
 
+  // ---------- volatilità recente: stesse quattro zone delle altre sezioni ----------
+  // "Adesso" = escursione media dell'ultima settimana ÷ quella delle ultime 10 settimane (sempre le stesse due finestre, qualunque periodo sia scelto per i numeri).
+  // Confini a 0,8×, 1,2× e 1,6×; la barra piena è 2×. "Oggi" = escursione di oggi finora ÷ escursione media giornaliera: confini al 50%, 100% e 150%.
+  const relOf = a => { const w = a.periods && a.periods['1w'], t = a.periods && a.periods['10w']; return w && t && w.avgRange > 0 && t.avgRange > 0 ? w.avgRange / t.avgRange : null; };
+  const REL_Z = r => r < .8 ? ['t-pos', 'Compressa'] : r < 1.2 ? ['t-neu', 'Normale'] : r < 1.6 ? ['t-warn', 'Elevata'] : ['t-neg', 'Estrema'];
+  const TOD_Z = t => t < 50 ? ['t-pos', 'Calma'] : t < 100 ? ['t-neu', 'Nella media'] : t < 150 ? ['t-warn', 'Sopra la media'] : ['t-neg', 'Estrema'];
+  const clampP = x => Math.round(Math.min(98, Math.max(3, x)) * 10) / 10;
+  const relP = r => clampP((r - .4) / 1.6 * 100), todP = t => clampP(t / 2);
+  const track = (z, p, tip) => `<span class="sx-tk vlk ${z}" title="${esc(tip)}"><i class="sx-bar" style="--p:${p}"></i></span>`;
+  const relBar = a => { const r = relOf(a); return r == null ? '<span class="n">—</span>' : track(REL_Z(r)[0], relP(r), `${nf(r, 2)}× la media delle 10 settimane: ${REL_Z(r)[1].toLowerCase()}`); };
+
   // ---------- elenco ----------
   const spark = (pts) => {
     if(!pts || pts.length < 3) return '<span class="n">—</span>';
@@ -5290,7 +5369,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     return `<svg class="vl-sp ${up ? 'up' : 'dn'}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${xy.map(p => p.join(',')).join(' ')}"/></svg>`;
   };
   const cmp = () => {
-    const key = {name:a => a.name.toLowerCase(), range:a => P(a).avgRange, usd:a => P(a).usd, pct:a => P(a).avgPct}[sort.k];
+    const key = {name:a => a.name.toLowerCase(), rel:a => relOf(a), range:a => P(a).avgRange, usd:a => P(a).usd, pct:a => P(a).avgPct}[sort.k];
     if(!key) return null;
     // pips, punti e punti base non sono confrontabili: nella colonna "Pips" ogni unità resta a sé (prima i pips, poi i punti, poi i bp)
     const UN = {pips:0, punti:1, bp:2};
@@ -5309,7 +5388,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       if(a.error) return `<button type="button" class="vl-row" role="option" data-k="${a.key}" aria-selected="${a.key === sel}"><span class="nm">${esc(a.name)}</span><span></span><span class="n r" style="grid-column:3/-1">non disponibile</span></button>`;
       const u = a.unit === 'pips' ? '' : `<i>${a.unit === 'punti' ? 'pt' : a.unit}</i>`, s = P(a);
       return `<button type="button" class="vl-row" role="option" data-k="${a.key}" aria-selected="${a.key === sel}" tabindex="${a.key === sel ? 0 : -1}">`
-        + `<span class="nm">${esc(a.name)}${a.cls !== 'fx' ? `<small>${CLS_NAME[a.cls] || ''}</small>` : ''}</span><span>${spark(s.spark)}</span>`
+        + `<span class="nm">${esc(a.name)}${a.cls !== 'fx' ? `<small>${CLS_NAME[a.cls] || ''}</small>` : ''}</span>${relBar(a)}`
         + `<span class="n r"><b>${nf(s.avgRange, decOf(a))}</b>${u}</span><span class="n r">${s.usd == null ? '—' : nf(s.usd, 2)}</span><span class="n r">${nf(s.avgPct, 2)}</span></button>`;
     }).join('') : '<div class="vl-empty">Nessun asset trovato.</div>';
   }
@@ -5330,12 +5409,15 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     const padL = W < 520 ? 34 : 40, padR = 8, padT = valLabels ? 22 : 18, padB = 26, plotH = h - padT - padB, n = vals.length, slot = (W - padL - padR) / n, bw = Math.min(valLabels ? 76 : 22, slot * (valLabels ? .62 : .74));
     const nums = vals.filter(v => v != null), top = nums.length ? Math.max(...nums) : 0, {max, step} = nice(top);
     const y = v => padT + plotH - (v / max) * plotH;
-    let grid = '';
+    // fasce a quattro zone rispetto al picco (0–25% · 25–50% · 50–75% · 75–100%): stesso linguaggio degli altri grafici; le barre prendono il colore della loro zona
+    const BAND = ['rgba(52,211,153,.075)', 'rgba(56,189,248,.06)', 'rgba(224,169,77,.07)', 'rgba(240,104,94,.11)'];
+    let grid = top > 0 ? BAND.map((c, k) => `<rect x="${padL}" y="${y((k + 1) * top / 4).toFixed(1)}" width="${W - padL - padR}" height="${(y(k * top / 4) - y((k + 1) * top / 4)).toFixed(1)}" fill="${c}"/>`).join('') + [1, 2, 3].map(k => `<line class="zl" x1="${padL}" x2="${W - padR}" y1="${y(k * top / 4).toFixed(1)}" y2="${y(k * top / 4).toFixed(1)}"/>`).join('') : '';
     for(let v = 0; v <= max + 1e-9; v += step){ const yy = y(v); grid += `<line class="${v === 0 ? 'ax' : 'gl'}" x1="${padL}" x2="${W - padR}" y1="${yy.toFixed(1)}" y2="${yy.toFixed(1)}"/><text x="${padL - 7}" y="${(yy + 3.5).toFixed(1)}" text-anchor="end">${nf(v, step < 1 ? 1 : 0)}</text>`; }
     const iTop = nums.length ? vals.indexOf(top) : -1;
     const cols = vals.map((v, i) => {
       const x = padL + i * slot, cx = x + slot / 2, bh = v == null ? 0 : v / max * plotH;
-      const cls = ['vl-col', i === cur ? 'cur' : '', i === iTop ? 'top' : ''].filter(Boolean).join(' ');
+      const zc = v == null || !(top > 0) ? '' : 'z' + Math.min(3, Math.floor(v / top * 4));
+      const cls = ['vl-col', zc, i === cur ? 'cur' : '', i === iTop ? 'top' : ''].filter(Boolean).join(' ');
       return `<g class="${cls}" data-t="${esc(tips[i])}" data-v="${v == null ? '' : nf(v, dec)}">`
         + `<rect class="hit" x="${x.toFixed(1)}" y="${padT}" width="${slot.toFixed(1)}" height="${plotH + padB}"/>`
         + `<line class="cross" x1="${cx.toFixed(1)}" x2="${cx.toFixed(1)}" y1="${padT}" y2="${padT + plotH}"/>`
@@ -5370,18 +5452,24 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       ['Escursione media al giorno', `${nf(sp.avgRange, d)}<small>${U}</small>`, `${nf(sp.avgPct, 2)}% del prezzo${sp.usd != null ? ` · ${nf(sp.usd, 0)} $ per lotto` : ''}`, ''],
       ['Ora più volatile', `${pad(iH)}:00–${pad((iH + 1) % 24)}:00`, `${nf(hMax, d)} ${U} per candela oraria`, 'gold'],
       ['Giorno più volatile', DAYS[iW], `${nf(wMax, d)} ${U} di media`, ''],
-      ['Oggi finora', a.today ? `${nf(a.today.range, d)}<small>${U}</small>` : '—', a.today ? `${Math.round(tod)}% della media (${fr})` : 'mercato chiuso oggi', a.today ? (tod >= 100 ? 'up' : '') : ''],
     ].map(([l, v, s, c]) => `<div class="vl-kpi ${c}"><span class="l">${l}</span><b>${v}</b><span class="d">${s}</span></div>`).join('');
+    // due righe a zone: quanto è mosso il mercato adesso rispetto al solito, e quanto si è mosso oggi finora
+    const rel = relOf(a), w1 = a.periods && a.periods['1w'], w10 = a.periods && a.periods['10w'];
+    const zrow = (name, sub, tk, val, z) => `<div class="vl-zr ${z ? z[0] : 't-off'}"><span class="sx-n"><b>${name}</b><small>${sub}</small></span>${tk}<span class="sx-v"><b>${val}</b></span>${z ? `<span class="sx-ch"><em>${z[1]}</em></span>` : '<span class="sx-ch"></span>'}</div>`;
+    const zrows = '<div class="vl-zrs">'
+      + zrow('Volatilità recente', rel == null ? 'dato non disponibile' : `1 sett. ${nf(w1.avgRange, d)} · 10 sett. ${nf(w10.avgRange, d)} ${U}`, rel == null ? '<span class="sx-tk vlk"></span>' : track(REL_Z(rel)[0], relP(rel), `${nf(rel, 2)}× la media delle 10 settimane`), rel == null ? '—' : `${nf(rel, 2)}×`, rel == null ? null : REL_Z(rel))
+      + zrow('Oggi finora', a.today ? `${nf(a.today.range, d)} ${U} · ${Math.round(tod)}% della media (${fr})` : 'mercato chiuso oggi', a.today ? track(TOD_Z(tod)[0], todP(tod), `${Math.round(tod)}% dell'escursione media giornaliera`) : '<span class="sx-tk vlk"></span>', a.today ? `${Math.round(tod)}%` : '—', a.today ? TOD_Z(tod) : null)
+      + '</div>';
     const hours = chart({vals:hrs, labels:hrs.map((_, i) => String(i)), tips:hrs.map((_, i) => `${pad(i)}:00–${pad((i + 1) % 24)}:00`), cur:now.h, h:W < 520 ? 200 : 236, peak:true, dec:d, W});
     const week = chart({vals:wk, labels:DAYS_S, tips:DAYS, cur:now.w, h:W < 520 ? 176 : 200, valLabels:true, dec:d, W});
     const px = a.price != null ? nf(a.price, a.cls === 'fx' ? (a.key.endsWith('JPY') ? 3 : 5) : 2) : '';
-    const why = typeof hWhy === 'function' ? hWhy(`<b>Come leggerla:</b> ogni barra è quanto si muove in media il prezzo (dal minimo al massimo) in quell'ora o in quel giorno. Più la barra è alta, più il mercato è mosso. In giallo l'ora o il giorno in corso. È la media del periodo scelto, non una previsione.`) : '';
+    const why = typeof hWhy === 'function' ? hWhy(`<b>Come leggerla:</b> ogni barra è quanto si muove in media il prezzo (dal minimo al massimo) in quell'ora o in quel giorno. Il colore dice quanto è vicina al picco: verde calma, azzurro normale, giallo movimentata, rosso la zona del picco. L'ora o il giorno in corso ha il bordo bianco. È la media del periodo scelto, non una previsione.`) : '';
     el.innerHTML =
-      `<div class="vl-head"><h3 class="vl-title">${esc(a.name)}</h3><span class="vl-px">${px}</span><span class="vl-badge">${U}</span><span class="vl-pbadge">media: ${fr}</span></div>`
-      + `<div class="vl-kpis">${kpis}</div>` + why
+      `<div class="vl-head"><h3 class="vl-title">${esc(a.name)}</h3><span class="vl-px">${px}</span><span class="vl-badge">${U}</span><span class="vl-pbadge">media: ${fr}</span>${sp.spark && sp.spark.length > 3 ? `<span class="vl-hsp" title="Andamento del prezzo nel periodo scelto">${spark(sp.spark)}</span>` : ''}</div>`
+      + zrows + `<div class="vl-kpis">${kpis}</div>` + why
       + `<figure class="vl-fig"><figcaption>Volatilità per ora del giorno <span>escursione media di ogni candela oraria · ora italiana · ${fr}</span></figcaption>${hours}<div class="vl-tip" hidden></div></figure>`
       + `<figure class="vl-fig"><figcaption>Volatilità per giorno della settimana <span>escursione media giornaliera (massimo − minimo) · ${fr}</span></figcaption>${week}<div class="vl-tip" hidden></div></figure>`
-      + `<div class="vl-leg"><span><i style="background:rgba(94,168,245,.55)"></i>media del periodo</span><span><i style="background:rgba(224,169,77,.7)"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
+      + `<div class="vl-leg"><span><i style="background:rgba(52,211,153,.6)"></i>calma (sotto il 25% del picco)</span><span><i style="background:rgba(56,189,248,.6)"></i>normale (25–50%)</span><span><i style="background:rgba(224,169,77,.65)"></i>movimentata (50–75%)</span><span><i style="background:rgba(240,104,94,.7)"></i>zona del picco (oltre il 75%)</span><span><i style="border:2px solid #fff"></i>ora / giorno in corso</span><span><i style="border:1px dashed rgba(240,104,94,.8)"></i>picco</span></div>`
       + `<p class="vl-foot">Fonte: Yahoo Finance, candele orarie · media: ${fr} (${sp.days} giornate di mercato) · orari in ora italiana · aggiornato alle ${typeof hTime === 'function' ? hTime(DATA.updatedAt) : ''}. `
       + `Pips, punti e % sono l'escursione media giornaliera (massimo − minimo) del periodo scelto, con la % calcolata sul prezzo attuale. Con 10 settimane è la stessa misura di Mataf: confrontandola con altri siti può differire di qualche punto percentuale perché le quotazioni di partenza non sono identiche (le ore dopo la chiusura di New York, con spread molto larghi, sono escluse).${per === '1w' ? ' Su una sola settimana i valori dipendono molto dagli eventi di quei giorni.' : ''} Il valore in $ è per 1 lotto Forex standard (100.000 unità) o 1 contratto future standard. Informazione statistica, non un consiglio.</p>`;
     $$c(el, '.vl-fig').forEach(fig => {
