@@ -4458,7 +4458,7 @@ function applyLiveMarketPricing(live){
 // ticker: tutto compariva in blocco alla fine. Ora ogni dato si applica appena arriva e le analisi AI non bloccano nulla; se un'analisi AI non risponde
 // (limite di richieste di Gemini) si ritenta da sola con pause crescenti. A scheda aperta i dati si aggiornano da soli (vedi liveAutoTick).
 const LIVE = {macro:null, market:null, cot:null, corr:null, miAt:null};   // ultimi dati veri, riusati dai ricalcoli incrociati degli aggiornamenti automatici
-const LIVE_STAMP = {prices:Date.now(), moves:Date.now(), ai:Date.now(), cal:Date.now(), fred:Date.now()};  // quando è stato fatto l'ultimo aggiornamento di ciascun gruppo
+const LIVE_STAMP = {prices:Date.now(), moves:Date.now(), ai:Date.now(), cal:Date.now(), fred:Date.now(), fw:Date.now(), sahm:Date.now(), cot:Date.now()};  // quando è stato fatto l'ultimo aggiornamento di ciascun gruppo
 const liveRun = (name, fn) => { try{ return fn(); }catch(e){ console.warn('Aggiornamento "' + name + '" non riuscito:', e.message); return false; } };
 
 // Ritenta un'analisi AI finché non risponde davvero (ai !== false): dopo 15 s, 45 s e 2 min, con un numero che cambia ogni minuto per saltare la cache
@@ -4653,9 +4653,17 @@ async function liveRefreshMacro(){
     liveRun('ticker', () => buildLiveTicker({market:LIVE.market, macro, cot:LIVE.cot}));
   });
 }
+// Probabilità sui tassi Fed (ogni 5 minuti), Sahm Rule (ogni 30) e COT (ogni ora): se al caricamento una chiamata era fallita si riprova ogni minuto, invece di restare
+// su "non disponibile" fino al prossimo ricaricamento. Un aggiornamento fallito non cancella mai il dato già mostrato.
+async function liveRefreshFw(){ const fw = await fetchFedWatch(); if(fw && Array.isArray(fw.meetings) && fw.meetings.length) liveKeepOpen(() => liveRun('FedWatch', () => applyFedWatch(fw))); }
+async function liveRefreshSahm(){ const s = await fetchSahm(); if(s && typeof s.value === 'number') liveKeepOpen(() => liveRun('Sahm', () => applySahm(s))); }
+async function liveRefreshCot(){ const cot = await fetchLiveCOT(); if(cot && cot.data){ LIVE.cot = cot; liveKeepOpen(() => liveRun('COT', () => applyLiveCOTToReport(cot))); } }
 function liveAutoTick(){
   if(document.hidden) return;
   const now = Date.now();
+  if(now - LIVE_STAMP.fw >= (HUB.fwFail || !HUB.fw ? 60000 : 300000)){ LIVE_STAMP.fw = now; liveRefreshFw().catch(e => console.warn('Aggiornamento probabilità Fed:', e.message)); }
+  if(now - LIVE_STAMP.sahm >= (HUB.sahmFail || !HUB.sahm ? 60000 : 1800000)){ LIVE_STAMP.sahm = now; liveRefreshSahm().catch(e => console.warn('Aggiornamento Sahm Rule:', e.message)); }
+  if(now - LIVE_STAMP.cot >= (HUB.cot ? 3600000 : 60000)){ LIVE_STAMP.cot = now; liveRefreshCot().catch(e => console.warn('Aggiornamento COT:', e.message)); }
   if(now - LIVE_STAMP.cal >= liveCalInterval()){ LIVE_STAMP.cal = now; liveRefreshCalendar().catch(e => console.warn('Aggiornamento calendario:', e.message)); }
   if(now - LIVE_STAMP.fred >= 600000){ LIVE_STAMP.fred = now; liveRefreshMacro().catch(e => console.warn('Aggiornamento dati FRED:', e.message)); }
   if(now - LIVE_STAMP.prices >= 120000){ LIVE_STAMP.prices = now; liveRefreshPrices().catch(e => console.warn('Aggiornamento prezzi:', e.message)); }
