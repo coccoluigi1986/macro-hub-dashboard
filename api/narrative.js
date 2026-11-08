@@ -25,7 +25,7 @@ const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured, failureInfo, modelList, probeModels } = require('../lib/llm');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchFredSnapshot } = require('../lib/fred');
-const { fetchCalendarEvents } = require('../lib/calendar');
+const { fetchCalendarEvents, isRateDecision } = require('../lib/calendar');
 const { fetchMacroCards, macroCardLines } = require('../lib/macro-cards');
 const { fetchCotSnapshot } = require('../lib/cot');
 const { releaseAwareTtl } = require('../lib/release-watch');
@@ -77,7 +77,7 @@ async function calendarLines() {
   const to = new Date(from.getTime() + 45 * 86400000);
   const events = (await fetchCalendarEvents({ from: from.toISOString(), to: to.toISOString() })).filter(e => e.importance === 'alto');
   const near = events.filter(e => new Date(e.date).getTime() <= from.getTime() + 10 * 86400000 && ['USD', 'EUR', 'GBP', 'JPY'].includes(e.currency));
-  const decisions = events.filter(e => /interest rate decision|fomc/i.test(e.title));
+  const decisions = events.filter(e => isRateDecision(e) || /interest rate decision|fomc/i.test(e.title));   // la Fed nel calendario è "Interest Rate" (vedi lib/calendar.js)
   const fmt = (e) => {
     const when = new Date(e.date).toLocaleString('it-IT', { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' });
     return `- ${when} (Roma) ${e.currency} ${e.title}${e.forecast != null ? ` — previsto ${e.forecast}${e.unit}` : ''}${e.previous != null ? `, precedente ${e.previous}${e.unit}` : ''}`;

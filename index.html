@@ -2097,6 +2097,27 @@ function keyEventPriority(e){
   return pr;
 }
 
+// Prossima decisione sui tassi della Fed. Nel calendario si chiama "Interest Rate" (altre volte "Fed Interest Rate Decision"): prima si cercava solo
+// "Interest Rate Decision" / "FOMC" e il "Prossimo FOMC" della sezione Banche centrali restava un trattino. Stessa regola di lib/calendar.js (le voci
+// collaterali "Interest Rate on Reserve Balances" e "Interest Rate Projection" non sono la decisione).
+const FOMC_RE = /(?:^|\s)(?:interest rate|(?:federal|fed) funds rate)(?: decision)?$|^fomc (?:statement|rate decision)$/i;
+// Prima negli eventi chiave già caricati (45 giorni, si aggiornano da soli); se la riunione è più lontana (nei giorni subito dopo una decisione) dalla
+// ricerca a 150 giorni del server (/api/economic-calendar?view=fomc).
+function nextFomcEvent(){
+  const now = Date.now();
+  const live = keyEvents.filter(e => e.currency === 'USD' && FOMC_RE.test(String(e.rawTitle).trim()) && e.utc > now).sort((a, b) => a.utc - b.utc)[0];
+  if(live) return live;
+  return (HUB.fomcNext || []).map(m => ({utc:new Date(m.date).getTime(), rawTitle:m.title, currency:'USD'})).filter(m => m.utc > now).sort((a, b) => a.utc - b.utc)[0] || null;
+}
+async function loadNextFomc(){
+  try{
+    const res = await fetch('/api/economic-calendar?view=fomc');
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    HUB.fomcNext = (await res.json()).meetings || []; delete HUB.fail.fomc;
+  }catch(e){ if(!HUB.fomcNext) HUB.fail.fomc = true; }
+  if(typeof renderHubBC === 'function') renderHubBC();
+}
+
 // quiet = aggiornamento automatico a scheda aperta: si ridisegna solo se è cambiato qualcosa (di solito un dato appena uscito) e se la richiesta
 // fallisce restano i dati già mostrati. "no-cache" = il browser ricontrolla sempre con il server invece di riusare una copia di 15 minuti fa.
 async function loadKeyEvents(quiet){
@@ -2193,6 +2214,8 @@ setInterval(tickCountdown, 1000); tickCountdown();
 
 // L'elenco "oggi e prossimi 7 giorni" vive nell'hub Calendario e volatilità; qui resta solo il caricamento degli eventi.
 loadKeyEvents();
+loadNextFomc();
+setInterval(() => { if(!document.hidden) loadNextFomc(); }, 30 * 60 * 1000);   // la riunione successiva compare da sola dopo ogni decisione
 
 // ---------- TICKER TAPE (100% live: costruito da buildLiveTicker() quando arrivano i dati) ----------
 // Prima conteneva prezzi scritti a mano che restavano accanto a quelli live e li contraddicevano
@@ -3578,8 +3601,9 @@ function renderHubBC(){
   const el = document.getElementById('hBcGrid'); if(!el) return;
   const FR = HUB.fred, H = HUB.narr.hawkdove, F = HUB.narr.fed, M = HUB.narr.macro;
   const us10 = hQ('us10y'), bp = us10 && us10.previousClose != null ? (us10.price - us10.previousClose) * 100 : null;
-  const fomc = keyEvents.find(e => e.currency === 'USD' && /interest rate decision|fomc/i.test(e.rawTitle) && e.utc > Date.now());
-  const fomcTxt = fomc ? new Date(fomc.utc).toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'Europe/Rome'}) : (keyEventsState === 'loading' ? '…' : '—');
+  const fomc = nextFomcEvent();
+  const fomcWait = keyEventsState === 'loading' || (!HUB.fomcNext && !HUB.fail.fomc);   // finché la ricerca a 150 giorni non ha risposto: puntini, non trattino
+  const fomcTxt = fomc ? new Date(fomc.utc).toLocaleDateString('it-IT', {day:'numeric', month:'long', timeZone:'Europe/Rome'}) : (fomcWait ? '…' : '—');
   const fomcSub = fomc ? `ore ${new Date(fomc.utc).toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', timeZone:'Europe/Rome'})} (Italia)` : 'dal calendario';
   const ff = FR ? parseFloat(FR.fedFundsRate) : NaN, cpi = FR ? parseFloat(FR.cpiYoY) : NaN, core = FR ? parseFloat(FR.coreCpiYoY) : NaN;
   const kpis = [
@@ -4775,6 +4799,7 @@ function refreshLive(){
   fetchCalEventsForRange(...getCalDateRange());
   loadVolEvents();
   loadKeyEvents();
+  loadNextFomc();
 }
 
 // ---------- MENU DELLE SEZIONI ----------

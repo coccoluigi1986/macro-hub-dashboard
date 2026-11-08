@@ -11,7 +11,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/economic-calendar?from=...&to=...
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { fetchCalendarEvents } = require('../lib/calendar');
+const { fetchCalendarEvents, isFomcDecision } = require('../lib/calendar');
 const { fetchMacroCards } = require('../lib/macro-cards');
 const { releaseAwareTtl } = require('../lib/release-watch');
 
@@ -27,6 +27,21 @@ async function handleEvent(event) {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + await releaseAwareTtl(900, 120) },   // 15 min; poco dopo un dato importante scade prima, così la card mostra il numero appena uscito
         body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar', ...cards }),
+      };
+    }
+
+    // ?view=fomc → le prossime decisioni sui tassi della Fed dal calendario live, fino a 150 giorni avanti (il "Prossimo FOMC" della sezione Banche centrali:
+    // la finestra di 45 giorni degli eventi chiave non bastava nei giorni subito dopo una riunione, quando la successiva è più lontana).
+    if (params.view === 'fomc') {
+      const now = Date.now();
+      const events = await fetchCalendarEvents({ from: new Date(now - 3 * 3600e3).toISOString(), to: new Date(now + 150 * 86400e3).toISOString(), countries: 'US' });
+      const next = events.filter(isFomcDecision).filter(e => new Date(e.date).getTime() > now - 3 * 3600e3);
+      const seen = new Set(), meetings = [];
+      for (const e of next) { const d = e.date.slice(0, 10); if (!seen.has(d)) { seen.add(d); meetings.push({ date: e.date, title: e.title, forecast: e.forecast, previous: e.previous, actual: e.actual, unit: e.unit }); } }
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + await releaseAwareTtl(1800, 300) },
+        body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar', meetings: meetings.slice(0, 4) }),
       };
     }
 
