@@ -1201,52 +1201,110 @@ html.is-scrolling header h1 span, html.is-scrolling .pulse-hd h2, html.is-scroll
 @media(max-width:640px){ .mv-row:nth-child(n+4){display:none;} }   /* sul telefono le ultime tre fasce bastano */
 
 
-/* ===== INDICATORI CHIAVE DEL MERCATO: quadro generale + tabella a sei righe ===== */
+/* ===== INDICATORI CHIAVE DEL MERCATO: ogni dato è una barra su una scala a quattro zone (favorevole · neutro · da monitorare · sotto pressione) — versione compatta ===== */
 section#hub-ind{--sec:#A3E635;}
-.t-pos{--c:var(--green);} .t-neu{--c:#8FA2CC;} .t-warn{--c:var(--gold);} .t-neg{--c:var(--red);} .t-off{--c:var(--dim2);}
-.ik{display:grid; gap:14px;}
-/* quadro generale */
-.ik-vd{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 30px; align-items:center; padding:16px 22px; border:1px solid var(--border); border-left:4px solid var(--c); border-radius:14px; background:linear-gradient(100deg,color-mix(in srgb,var(--c) 12%,transparent),transparent 55%),var(--panel);}
-.ik-vd .ik-vl span{display:block; font:500 10.5px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--dim);}
-.ik-vd .ik-vl b{display:block; margin-top:7px; font:700 clamp(24px,2.1vw,31px)/1.1 var(--fh); letter-spacing:-.015em; color:var(--c);}
-.ik-vd .ik-vt{display:grid; gap:7px;} .ik-vd p{display:flex; gap:9px; align-items:flex-start; font-size:14px; line-height:1.5; color:var(--text2);}
-.ik-vd p i{flex:none; width:8px; height:8px; margin-top:7px; border-radius:50%;} .ik-vd p b{color:var(--text); font-weight:600; margin-right:4px;}
-.ik-vd .w i{background:var(--red);} .ik-vd .a i{background:var(--green);}
-/* tabella */
-.ik-tbl{background:var(--panel); border:1px solid var(--border); border-radius:14px; overflow:hidden;}
-.ik-th, .ik-r .mn{display:grid; grid-template-columns:minmax(220px,1.05fr) 170px minmax(0,2.7fr) 78px; gap:16px; align-items:center; padding:0 18px 0 22px;}
-.ik-th{height:38px; font:500 10.5px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--dim); background:var(--panel2); border-bottom:1px solid var(--border);}
-.ik-r{position:relative; border-bottom:1px solid var(--border);} .ik-r:last-child{border-bottom:0;}
-.ik-r::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--c);}
-.ik-r .mn{min-height:70px; padding-top:12px; padding-bottom:12px;}
-.ik-r .a b{display:block; font:600 clamp(14.5px,1.05vw,16px)/1.3 var(--fh); letter-spacing:-.01em;} .ik-r .a small{display:block; margin-top:3px; font-size:12px; line-height:1.4; color:var(--dim);}
-.ik-r .bd{display:inline-flex; align-items:center; gap:8px; padding:8px 11px; border-radius:6px; border:1px solid color-mix(in srgb,var(--c) 42%,transparent); background:color-mix(in srgb,var(--c) 14%,transparent); color:var(--c); font:700 11px/1 var(--fm); letter-spacing:.07em; text-transform:uppercase; white-space:nowrap;}
-.ik-r .bd i{width:8px; height:8px; border-radius:50%; background:var(--c);}
-.ik-r .t{font-size:13.5px; line-height:1.55; color:var(--text2);}
-.ik-r .x{justify-self:end; display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border-radius:7px; border:1px solid var(--border); background:var(--panel2); color:var(--text2); font:600 11px/1 var(--fm); letter-spacing:.05em; text-transform:uppercase; cursor:pointer;}
-.ik-r .x:hover{border-color:var(--accent); color:var(--text);} .ik-r .x i{width:6px; height:6px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(45deg) translate(-1px,-1px); transition:transform .15s;}
-.ik-r.open .x i{transform:rotate(-135deg) translate(-1px,-1px);}
-.ik-r.sub{background:rgba(255,255,255,.018);} .ik-r.sub .mn{min-height:58px;} .ik-r.sub .a{padding-left:24px;} .ik-r.sub::before{width:3px; opacity:.8;}
-.ik-r.sub .a b{font-size:13.5px; font-weight:500;} .ik-r.sub .a b::before{content:"↳"; margin-right:8px; color:var(--dim2);} .ik-r.sub .t{font-size:12.5px;} .ik-r.sub .bd{font-size:10.5px; padding:7px 10px;}
-/* dettaglio: tabella dei dati */
-.ik-r .dt{display:none; padding:2px 22px 18px 22px;} .ik-r.open .dt{display:block;} .ik-r.sub .dt{padding-left:44px;}
-.dt table{width:100%; border-collapse:collapse; font-size:12.5px;}
-.dt th{text-align:left; font:500 10px/1 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--dim2); padding:9px 8px; border-bottom:1px solid var(--border);}
-.dt td{font-family:var(--fb); padding:9px 8px; border-bottom:1px solid rgba(255,255,255,.05); vertical-align:top;} .dt tr.hint td{display:none; padding:2px 8px 10px 26px; font-size:12px; line-height:1.55; color:var(--dim); border-bottom:1px solid rgba(255,255,255,.05);}
-.dt tr.o + tr.hint td{display:table-cell;} .dt tbody tr:not(.hint){cursor:pointer;} .dt tbody tr:not(.hint):hover td{background:rgba(255,255,255,.03);}
-.dt .nm{color:var(--text2); width:34%;} .dt .nm i{display:inline-block; width:8px; height:8px; margin-right:10px; border-radius:50%; background:var(--c);}
-.dt .v{font:600 12.5px/1.4 var(--fm); white-space:nowrap;} .dt .c{color:var(--text2); font:500 12px/1.4 var(--fm);} .dt .s{color:var(--c); font:600 11px/1.5 var(--fm); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap;} .dt .d{color:var(--dim2); font:400 11px/1.5 var(--fm);}
-.dt h5{margin:14px 0 8px; font:500 10.5px/1 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--dim);}
-.dt ol{list-style:none; display:grid; gap:8px;} .dt li a{color:var(--text); font-size:13px; line-height:1.4; text-decoration:none;} .dt li a:hover{color:var(--accent); text-decoration:underline;} .dt li small{display:block; margin-top:1px; font-size:11px; color:var(--dim2);}
-.ik-lg{font-size:12px; line-height:1.7; color:var(--dim); max-width:1000px;} .ik-lg b{color:var(--text2); font-weight:600;}
-.ik-lg span{display:inline-flex; align-items:center; gap:5px; margin:0 6px 0 3px; font:500 11px/1 var(--fm); color:var(--text2);} .ik-lg span i{width:8px; height:8px; border-radius:50%; background:var(--c);}
-/* telefono e schermi stretti: ogni riga diventa un blocco */
-@media(max-width:900px){
-  .ik-th{display:none;}
-  .ik-r .mn{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"a s" "t t" "x x"; gap:10px 12px; padding:14px 14px 12px 18px;}
-  .ik-r .a{grid-area:a;} .ik-r .s{grid-area:s;} .ik-r .t{grid-area:t;} .ik-r .x{grid-area:x; justify-self:start;}
-  .ik-r.sub .a{padding-left:0;} .ik-r.sub .mn{padding-left:30px;} .ik-vd{grid-template-columns:minmax(0,1fr);} .ik-r .dt{padding:2px 14px 14px 18px; overflow-x:auto;} .ik-r.sub .dt{padding-left:30px;}
-  .dt table{min-width:520px;}
+.ikx{display:grid; gap:12px; --zg:#34D399; --zn:#38BDF8; --zw:#E0A94D; --zr:#F0685E;}
+.ikx .t-pos{--c:var(--zg);} .ikx .t-neu{--c:var(--zn);} .ikx .t-warn{--c:var(--zw);} .ikx .t-neg{--c:var(--zr);} .ikx .t-off{--c:var(--dim2);}
+
+/* ---- la "tabella": una riga = etichetta · pista con le zone · valore ---- */
+.ikx-b{border-bottom:1px solid rgba(255,255,255,.05);} .ikx-b:last-child{border-bottom:0;}
+.ikx-r{display:grid; grid-template-columns:minmax(104px,30%) minmax(0,1fr) 98px; gap:0 12px; align-items:stretch; min-height:31px; cursor:pointer; outline-offset:-2px; border-radius:5px;}
+.ikx-r:hover .ikx-n{color:var(--text);} .ikx-r:focus-visible{outline:2px solid var(--accent);}
+.ikx-n{align-self:center; display:flex; align-items:center; gap:7px; font:500 12.5px/1.25 var(--fb); color:var(--text2); padding:3px 0; transition:color .15s;}
+.ikx-v{align-self:center; text-align:right; padding:3px 0;} .ikx-v b{display:block; font:600 12px/1.2 var(--fm); color:var(--text); letter-spacing:-.02em; white-space:nowrap;}
+.ikx-n .cv{display:block; flex:none; width:4px; height:4px; margin:-2px 0 0 0; border-right:1.6px solid var(--dim2); border-bottom:1.6px solid var(--dim2); transform:rotate(45deg) translateY(-2px); transition:transform .15s,border-color .15s;}
+.ikx-r:hover .cv{border-color:var(--text2);} .ikx-b.open .ikx-n .cv{transform:rotate(-135deg) translate(-1px,-1px); border-color:var(--c);}
+/* pista: colori molto tenui per zona, tre linee di soglia grigie e la linea rossa del limite a destra */
+.ikx-tk{position:relative; display:flex; align-items:center; min-width:0;
+  background:linear-gradient(90deg,rgba(52,211,153,.07) 0 25%,rgba(56,189,248,.05) 25% 50%,rgba(224,169,77,.06) 50% 75%,rgba(240,104,94,.10) 75% 100%);}
+.ikx-tk::before{content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(rgba(190,200,225,.30),rgba(190,200,225,.30)) 25% 0/1px 100% no-repeat,linear-gradient(rgba(190,200,225,.30),rgba(190,200,225,.30)) 50% 0/1px 100% no-repeat,linear-gradient(rgba(190,200,225,.30),rgba(190,200,225,.30)) 75% 0/1px 100% no-repeat;}
+.ikx-tk::after{content:""; position:absolute; top:0; bottom:0; right:0; width:2px; background:var(--zr); box-shadow:0 0 8px rgba(240,104,94,.7); border-radius:1px; pointer-events:none;}
+.ikx-bar{position:relative; display:block; height:10px; width:calc(var(--p) * 1%); min-width:8px; border-radius:5px; transform-origin:left center;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 34%,transparent),var(--c));
+  box-shadow:0 0 12px -3px color-mix(in srgb,var(--c) 70%,transparent),inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(0,0,0,.18);}
+.ikx-bar::after{content:""; position:absolute; right:2px; top:50%; width:4px; height:4px; margin-top:-2px; border-radius:50%; background:#fff; opacity:.85; box-shadow:0 0 5px #fff;}
+/* dato qualitativo (nessuna scala numerica, solo il giudizio): barra a righe, a metà della sua zona */
+.ikx-b.q .ikx-bar{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--c) 78%,transparent) 0 4px,color-mix(in srgb,var(--c) 26%,transparent) 4px 8px); box-shadow:none;}
+.ikx-b.q .ikx-bar::after{display:none;}
+@media(prefers-reduced-motion:no-preference){
+  .ikx:not(.still) .ikx-bar{animation:ikxGrow .95s cubic-bezier(.2,.75,.2,1) backwards; animation-delay:calc(var(--i,0) * 50ms);}
+}
+@keyframes ikxGrow{from{transform:scaleX(0); opacity:.35;}}
+/* riga di dettaglio: cosa significa, con le soglie */
+.ikx-d{display:none; margin:1px 0 7px; padding:9px 12px 10px; border:1px solid color-mix(in srgb,var(--c) 28%,var(--border)); border-left:3px solid var(--c); border-radius:8px; background:color-mix(in srgb,var(--c) 6%,rgba(10,14,26,.55)); font-size:12px; line-height:1.55; color:var(--dim);}
+.ikx-b.open .ikx-d{display:block;}
+.ikx-d .st{display:flex; flex-wrap:wrap; gap:3px 12px; align-items:center; margin-bottom:4px; font:600 10px/1.4 var(--fm); letter-spacing:.07em; text-transform:uppercase; color:var(--c);}
+.ikx-d .st em{font-style:normal; color:var(--dim2); font-weight:500;}
+.ikx-d p{color:var(--text2);} .ikx-d .dl{margin-top:4px; font:500 11px/1.5 var(--fm); color:var(--dim);}
+.ikx-d .sp{display:block; margin-top:6px; color:var(--c); opacity:.9;}
+
+/* ---- quadro generale: il pannello in alto con le sei aree ---- */
+.ikx-hero{position:relative; overflow:hidden; padding:13px 18px 10px; border:1px solid rgba(120,160,230,.22); border-radius:16px;
+  background:radial-gradient(120% 160% at 0% 0%,rgba(36,84,164,.55),transparent 58%),radial-gradient(110% 140% at 100% 100%,rgba(16,150,120,.20),transparent 62%),linear-gradient(135deg,#0E2547 0%,#0A1426 48%,#0C2224 100%);
+  box-shadow:0 14px 36px -22px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06);}
+.ikx-hh{display:flex; flex-wrap:wrap; gap:8px 22px; justify-content:space-between; align-items:center; margin-bottom:8px;}
+.ikx-vd{display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:22px; row-gap:1px; align-items:center; min-width:0; flex:1 1 440px;}
+.ikx-vd>span{grid-column:1; grid-row:1; font:500 9.5px/1 var(--fm); letter-spacing:.11em; text-transform:uppercase; color:var(--dim);}
+.ikx-vd>b{grid-column:1; grid-row:2; display:block; font:700 clamp(20px,1.9vw,25px)/1.1 var(--fh); letter-spacing:-.02em; color:var(--c); text-shadow:0 0 22px color-mix(in srgb,var(--c) 45%,transparent);}
+.ikx-vd p{grid-column:2; display:flex; gap:8px; align-items:flex-start; font-size:12.5px; line-height:1.4; color:var(--text2);} .ikx-vd p.w{grid-row:1;} .ikx-vd p.a{grid-row:2;}
+.ikx-vd p i{flex:none; width:7px; height:7px; margin-top:5px; border-radius:50%;} .ikx-vd p b{color:var(--text); font-weight:600; margin-right:4px;}
+.ikx-vd .w i{background:var(--zr);} .ikx-vd .a i{background:var(--zg);}
+/* le tre etichette in alto a destra: cosa significano barra, linee grigie e linea rossa */
+.ikx-lg{display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end;}
+.ikx-lg span{display:inline-flex; align-items:center; gap:7px; padding:5px 9px; border:1px solid rgba(190,205,235,.38); border-radius:7px; background:rgba(7,12,24,.45); font:500 10px/1 var(--fm); color:var(--text2); white-space:nowrap;}
+.ikx-lg i{display:block; flex:none;} .ikx-lg .gb{width:16px; height:6px; border-radius:3px; background:linear-gradient(90deg,rgba(56,189,248,.35),#38BDF8); box-shadow:0 0 6px rgba(56,189,248,.5);}
+.ikx-lg .gl{width:1px; height:11px; background:rgba(190,200,225,.65);} .ikx-lg .gr{width:2px; height:11px; background:var(--zr); box-shadow:0 0 6px var(--zr);}
+/* titoli delle quattro zone sopra la pista */
+.ikx-zt, .ikx-hero .ikx-r{grid-template-columns:minmax(170px,26%) minmax(0,1fr) 150px;}
+.ikx-zt{display:grid; gap:0 12px; margin-bottom:1px;} .ikx-zt .z{display:grid; grid-template-columns:repeat(4,1fr); text-align:center;}
+.ikx-zt .z span{padding:0 2px 4px; font:500 9px/1.2 var(--fm); letter-spacing:.09em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.ikx-zt .z span:nth-child(1){color:var(--zg);} .ikx-zt .z span:nth-child(2){color:var(--zn);} .ikx-zt .z span:nth-child(3){color:var(--zw);} .ikx-zt .z span:nth-child(4){color:var(--zr);}
+.ikx-hero .ikx-b{border-bottom-color:rgba(255,255,255,.06);}
+.ikx-hero .ikx-r{min-height:37px;} .ikx-hero .ikx-bar{height:14px; border-radius:7px;} .ikx-hero .ikx-bar::after{width:5px; height:5px; margin-top:-2.5px; right:3px;}
+.ikx-hero .ikx-n{padding:4px 0; font:600 13.5px/1.25 var(--fh); letter-spacing:-.01em; color:var(--text);}
+.ikx-hero .ikx-v{display:flex; align-items:center; justify-content:flex-end;}
+.ikx-bd{display:inline-flex; align-items:center; gap:7px; padding:5px 9px; border-radius:6px; border:1px solid color-mix(in srgb,var(--c) 45%,transparent); background:color-mix(in srgb,var(--c) 15%,rgba(8,12,24,.5)); color:var(--c); font:700 10px/1 var(--fm); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap;}
+.ikx-bd i{width:6px; height:6px; border-radius:50%; background:var(--c); box-shadow:0 0 7px var(--c);}
+.ikx-hero .ikx-b.all{margin-top:3px; border-top:1px solid rgba(255,255,255,.14); border-bottom:0;} .ikx-hero .ikx-b.all .ikx-n{font-size:14px; color:var(--c);} .ikx-hero .ikx-b.all .ikx-bar{height:16px; border-radius:8px;}
+.ikx-hero .ikx-b:not(.all) .ikx-r:hover{background:rgba(255,255,255,.035);}
+
+/* ---- pannelli di dettaglio, uno per area ---- */
+.ikx-cols{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; align-items:start;}
+.ikx-col{display:grid; gap:12px; align-content:start; min-width:0;}
+.ikx-p{position:relative; padding:11px 14px 3px; border:1px solid var(--border); border-radius:14px; scroll-margin-top:96px;
+  background:radial-gradient(130% 90% at 0% 0%,color-mix(in srgb,var(--c) 9%,transparent),transparent 55%),linear-gradient(160deg,#101933 0%,#0B1224 62%,#0B1A1F 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.ikx-p.flash{animation:ikxFlash 1.5s ease-out;} @keyframes ikxFlash{0%{box-shadow:0 0 0 2px var(--c),0 0 26px color-mix(in srgb,var(--c) 45%,transparent);} 100%{box-shadow:0 0 0 0 transparent;}}
+.ikx-ph{display:flex; gap:10px; align-items:flex-start; justify-content:space-between; margin-bottom:6px;}
+.ikx-ph .ey{display:block; margin-bottom:3px; font:500 9px/1 var(--fm); letter-spacing:.12em; text-transform:uppercase; color:var(--dim2);}
+.ikx-ph h3{font:600 14.5px/1.25 var(--fh); letter-spacing:-.01em; color:var(--text);} .ikx-ph p{margin-top:1px; font-size:11.5px; line-height:1.35; color:var(--dim);}
+.ikx-ruler{display:grid; grid-template-columns:minmax(104px,30%) minmax(0,1fr) 98px; gap:0 12px; margin-bottom:2px;}
+.ikx-ruler .z{display:grid; grid-template-columns:repeat(4,1fr); gap:2px; align-self:end;} .ikx-ruler .z i{display:block; height:3px; border-radius:2px; opacity:.85;}
+.ikx-ruler .z i:nth-child(1){background:var(--zg);} .ikx-ruler .z i:nth-child(2){background:var(--zn);} .ikx-ruler .z i:nth-child(3){background:var(--zw);} .ikx-ruler .z i:nth-child(4){background:var(--zr);}
+.ikx-ruler .h{display:none;}
+/* le storie geopolitiche: chiuse, si aprono con un tocco */
+.ikx-st{margin:3px 0 6px; padding-top:7px; border-top:1px solid rgba(255,255,255,.07);} .ikx-st summary{cursor:pointer; list-style:none; font:500 10px/1.3 var(--fm); letter-spacing:.08em; text-transform:uppercase; color:var(--dim); padding:3px 0;} .ikx-st summary::-webkit-details-marker{display:none;}
+.ikx-st summary::after{content:""; display:inline-block; width:4px; height:4px; margin-left:8px; border-right:1.6px solid var(--dim2); border-bottom:1.6px solid var(--dim2); transform:rotate(45deg) translateY(-2px); transition:transform .15s;} .ikx-st[open] summary::after{transform:rotate(-135deg) translate(-1px,-1px);}
+.ikx-st summary:hover{color:var(--text2);} .ikx-st ol{list-style:none; display:grid; gap:7px; padding:7px 0 4px;}
+.ikx-st li a{color:var(--text); font-size:12px; line-height:1.35; text-decoration:none;} .ikx-st li a:hover{color:var(--accent); text-decoration:underline;} .ikx-st li small{display:block; margin-top:1px; font-size:10.5px; color:var(--dim2);}
+.ikx-off{padding:10px 0 14px; font-size:12px; color:var(--dim);}
+.ikx-lgd{font-size:11.5px; line-height:1.7; color:var(--dim); max-width:1060px;} .ikx-lgd b{color:var(--text2); font-weight:600;}
+.ikx-lgd .k{display:inline-block; vertical-align:middle; margin:0 2px 2px 4px;} .ikx-lgd .k.gb{width:16px; height:6px; border-radius:3px; background:linear-gradient(90deg,rgba(56,189,248,.35),#38BDF8);} .ikx-lgd .k.gl{width:1px; height:11px; background:rgba(190,200,225,.7);} .ikx-lgd .k.gr{width:2px; height:11px; background:var(--zr);} .ikx-lgd .k.gq{width:16px; height:6px; border-radius:3px; background:repeating-linear-gradient(135deg,#38BDF8 0 3px,rgba(56,189,248,.25) 3px 6px);}
+
+/* ---- schermi stretti ---- */
+@media(max-width:980px){
+  .ikx-cols{display:flex; flex-direction:column; align-items:stretch;} .ikx-col{display:contents;} .ikx-p{order:var(--o,0);}
+  .ikx-hero{padding:12px 12px 8px;} .ikx-lg{justify-content:flex-start;}
+}
+@media(max-width:640px){
+  .ikx-r, .ikx-ruler{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"n v" "t t"; gap:0 10px;}
+  .ikx-r{min-height:0;} .ikx-r .ikx-n{grid-area:n; padding:6px 0 1px;} .ikx-r .ikx-v{grid-area:v; padding:6px 0 1px;} .ikx-r .ikx-tk{grid-area:t; min-height:20px; margin-bottom:6px;}
+  .ikx-ruler{grid-template-areas:"t t";} .ikx-ruler .z{grid-area:t;}
+  .ikx-vd{grid-template-columns:minmax(0,1fr); row-gap:3px;} .ikx-vd>span,.ikx-vd>b,.ikx-vd p,.ikx-vd p.w,.ikx-vd p.a{grid-column:1; grid-row:auto;}
+  .ikx-hero .ikx-r{grid-template-columns:minmax(0,1fr) auto; min-height:0;} .ikx-zt{display:none;}
+  .ikx-hero .ikx-r .ikx-v{align-self:start; padding-top:5px;} .ikx-hero .ikx-tk{min-height:22px;}
+  .ikx-p{padding:10px 12px 2px;} .ikx-ph{flex-direction:column; gap:6px;}
 }
 
 </style>
@@ -1324,7 +1382,7 @@ section#hub-ind{--sec:#A3E635;}
 
 <!-- ============ 03 INDICATORI CHIAVE DEL MERCATO ============ -->
 <section id="hub-ind">
-  <div class="sec-head"><span class="sec-num">03</span><h2>Indicatori chiave del mercato</h2><span class="sec-desc">Il quadro generale in sei righe: cosa si guarda, in che stato è e perché</span></div>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Indicatori chiave del mercato</h2><span class="sec-desc">Ogni dato è una barra su una scala a zone: più si allunga, più il segnale è sotto pressione</span></div>
   <div id="ikRoot"><p class="h-note">Calcolo degli indicatori…</p></div>
   <div class="source-tag" id="ikMeta"></div>
 </section>
@@ -1912,9 +1970,9 @@ async function loadMarketMoves(){
 renderMarketMoves();
 
 // ---------- INDICATORI CHIAVE DEL MERCATO ----------
-// Un quadro generale e una tabella a sei righe (economia e Fed · geopolitica · mercato azionario · settori azionari · tassi e Treasuries · liquidità):
-// ogni riga dice COSA si sta guardando, in che STATO è (parola chiara, con colore) e una frase con i numeri chiave. I dati che la compongono stanno in una
-// tabella a scomparsa. Dati da /api/market-data?view=indicators (FRED, Tesoro USA, Yahoo Finance, notizie): nessuna AI e nessun numero scritto a mano.
+// Un quadro generale con sei barre (una per area) e un pannello per area in cui ogni dato è una barra su una scala a quattro zone (favorevole · neutro ·
+// da monitorare · sotto pressione), con le linee dei confini e la linea rossa del limite. La posizione arriva dal server (zb / zp, lib/indicator-bars.js).
+// Dati da /api/market-data?view=indicators (FRED, Tesoro USA, Yahoo Finance, notizie): nessuna AI e nessun numero scritto a mano.
 const IK_META = {
   macro: {t:'Economia e politica monetaria', s:'Inflazione, lavoro, crescita e tassi della Fed'},
   geo: {t:'Tensioni geopolitiche e settori economici', s:'Guerre e conflitti: quanto pesano su mercati e settori'},
@@ -1927,31 +1985,65 @@ const IK_META = {
   debt: {t:'Tetto al debito e deficit', s:'Quanto è pesante il debito USA'},
 };
 const IK_LBL = {pos:'Favorevole', neu:'Neutro', warn:'Da monitorare', neg:'Sotto pressione'};
+const IK_ARROW = {up:'↑', down:'↓', flat:'→'};
 const IK_OPEN = new Set();                 // righe di dettaglio aperte dall'utente: restano aperte quando i dati si aggiornano
-function ikToggle(k, btn){ const r = btn.closest('.ik-r'); const open = r.classList.toggle('open'); if(open) IK_OPEN.add(k); else IK_OPEN.delete(k); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+let IK_DRAWN = false;                      // l'animazione di crescita delle barre parte solo la prima volta, non a ogni aggiornamento
+function ikToggle(k, row){ const b = row.closest('.ikx-b'); const open = b.classList.toggle('open'); if(open) IK_OPEN.add(k); else IK_OPEN.delete(k); row.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+function ikGo(id){ const el = document.getElementById('ikp-' + id); if(!el) return; el.scrollIntoView({behavior:'smooth', block:'start'}); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1700); }
+const ikUp = s => s.charAt(0).toUpperCase() + s.slice(1);
 const ikWhen = iso => new Date(iso).toLocaleString('it-IT', {weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/Rome'}).replace(',', '');
-function ikDetail(g){
-  const rows = g.items.map(i => `<tr class="t-${i.tone}" onclick="this.classList.toggle('o')"><td class="nm"><i></i>${escHtml(i.label)}</td><td class="v">${escHtml(i.value)}</td><td class="c">${escHtml(i.delta ? i.delta.text : '')}</td><td class="s">${IK_LBL[i.tone]}</td><td class="d">${escHtml(i.asof || '')}</td></tr><tr class="hint"><td colspan="5">${escHtml(i.sub)}. ${escHtml(i.hint)}</td></tr>`).join('');
-  const st = (g.stories || []).length ? `<h5>Le storie che muovono i mercati adesso</h5><ol>${g.stories.map(s => `<li><a href="${escHtml(s.url || '#')}" target="_blank" rel="noopener noreferrer">${escHtml(s.titleIt || s.title)}</a><small>${escHtml(s.source)} · ${escHtml(ikWhen(s.published))}</small></li>`).join('')}</ol>` : '';
-  return `<div class="dt"><table><thead><tr><th>Dato</th><th>Valore</th><th>Variazione</th><th>Stato</th><th>Dato del</th></tr></thead><tbody>${rows}</tbody></table>${st}</div>`;
+const ikKey = (e, k, row) => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); ikToggle(k, row); } };
+// andamento recente (se il dato lo ha): una piccola linea nel colore del semaforo
+function ikSpark(a){
+  if(!a || a.length < 4) return '';
+  const w = 150, h = 28, mn = Math.min(...a), mx = Math.max(...a);
+  const pts = a.map((x, n) => (n / (a.length - 1) * w).toFixed(1) + ',' + (h - 3 - ((x - mn) / ((mx - mn) || 1)) * (h - 6)).toFixed(1)).join(' ');
+  return `<svg class="sp" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
 }
-function ikRow(g, sub){
-  const m = IK_META[g.id] || {t:g.title, s:''}, k = (sub ? 'sub:' : '') + g.id, open = IK_OPEN.has(k);
-  return `<div class="ik-r t-${g.tone}${sub ? ' sub' : ''}${open ? ' open' : ''}" id="ik-${g.id}"><div class="mn"><div class="a"><b>${escHtml(m.t)}</b><small>${escHtml(m.s)}</small></div>`
-    + `<div class="s"><span class="bd"><i></i>${escHtml(g.label)}</span></div><div class="t">${escHtml(g.brief || '')}</div>`
-    + `<button type="button" class="x" aria-expanded="${open}" onclick="ikToggle('${k}', this)" title="Mostra i dati che compongono questa riga"><span>Dati</span><i></i></button></div>${ikDetail(g)}</div>`;
+// una riga: etichetta · barra sulla scala a zone · valore. Toccandola si apre cosa significa, con le soglie.
+function ikBar(i, idx, scope){
+  const zb = i.zb || {p:({pos:12.5, neu:37.5, warn:62.5, neg:87.5})[i.tone] || 37.5, q:true}, k = scope + ':' + i.id, open = IK_OPEN.has(k);
+  const dl = i.delta ? `<p class="dl">${IK_ARROW[i.delta.dir] || ''} ${escHtml(i.delta.text)}</p>` : '';
+  return `<div class="ikx-b t-${i.tone}${zb.q ? ' q' : ''}${open ? ' open' : ''}" style="--p:${zb.p}; --i:${idx}">`
+    + `<div class="ikx-r" role="button" tabindex="0" aria-expanded="${open}" onclick="ikToggle('${k}', this)" onkeydown="ikKey(event, '${k}', this)" title="Tocca per capire cosa significa">`
+    + `<span class="ikx-n"><span>${escHtml(i.label)}</span><i class="cv"></i></span><span class="ikx-tk"><i class="ikx-bar"></i></span><span class="ikx-v"><b>${escHtml(i.value)}</b></span></div>`
+    + `<div class="ikx-d"><div class="st"><span>${IK_LBL[i.tone] || ''}</span>${i.asof ? `<em>${escHtml(i.asof)}</em>` : ''}${zb.q ? '<em>valutazione qualitativa</em>' : ''}</div>`
+    + `<p>${escHtml(ikUp(i.sub || ''))}${i.sub ? '. ' : ''}${escHtml(i.hint || '')}</p>${dl}${ikSpark(i.spark)}</div></div>`;
+}
+function ikPanel(g, eyebrow, order){
+  const m = IK_META[g.id] || {t:g.title, s:''}, off = g.tone === 'off' || !(g.items || []).length;
+  const head = `<div class="ikx-ph"><div>${eyebrow ? `<span class="ey">${escHtml(eyebrow)}</span>` : ''}<h3>${escHtml(m.t)}</h3><p>${escHtml(m.s)}</p></div><span class="ikx-bd t-${off ? 'off' : g.tone}"><i></i>${escHtml(g.label || 'Non disponibile')}</span></div>`;
+  if(off) return `<div class="ikx-p t-off" id="ikp-${g.id}" style="--o:${order}">${head}<p class="ikx-off">${escHtml(g.brief || 'Dati non raggiungibili in questo momento: nuovo tentativo automatico a breve.')}</p></div>`;
+  const ruler = '<div class="ikx-ruler"><span class="h">Dato</span><span class="z"><i></i><i></i><i></i><i></i></span><span class="h">Valore</span></div>';
+  const stories = (g.stories || []).length ? `<details class="ikx-st"><summary>Le storie che muovono i mercati adesso (${g.stories.length})</summary><ol>${g.stories.map(s => `<li><a href="${escHtml(s.url || '#')}" target="_blank" rel="noopener noreferrer">${escHtml(s.titleIt || s.title)}</a><small>${escHtml(s.source)} · ${escHtml(ikWhen(s.published))}</small></li>`).join('')}</ol></details>` : '';
+  return `<div class="ikx-p t-${g.tone}" id="ikp-${g.id}" style="--o:${order}">${head}${ruler}${g.items.map((i, n) => ikBar(i, n, g.id)).join('')}${stories}</div>`;
+}
+// riga del quadro generale: area · barra (quanta pressione) · stato
+function ikHeroRow(g, idx){
+  const m = IK_META[g.id] || {t:g.title, s:''}, off = g.tone === 'off' || g.zp == null, tone = off ? 'off' : g.tone, target = g.id === 'rates' ? 'curve' : g.id;
+  return `<div class="ikx-b t-${tone}" style="--p:${off ? 0 : g.zp}; --i:${idx}"><div class="ikx-r" role="button" tabindex="0" onclick="ikGo('${target}')" onkeydown="if(event.key==='Enter'){ikGo('${target}')}" title="${escHtml((g.brief ? g.brief + ' — ' : '') + 'tocca per il dettaglio')}">`
+    + `<span class="ikx-n">${escHtml(m.t)}</span><span class="ikx-tk"><i class="ikx-bar"></i></span><span class="ikx-v"><span class="ikx-bd"><i></i>${escHtml(g.label || 'Non disponibile')}</span></span></div></div>`;
 }
 function ikRender(){
   const el = document.getElementById('ikRoot'); if(!el) return;
   const d = HUB.ind;
   if(!d){ el.innerHTML = `<p class="h-note">${HUB.indFail ? 'Indicatori non disponibili in questo momento: nuovo tentativo automatico tra poco.' : 'Calcolo degli indicatori…'}</p>`; return; }
-  const o = d.overall, G = d.groups;
-  const verdict = o ? `<div class="ik-vd t-${o.tone}"><div class="ik-vl"><span>Quadro generale oggi</span><b>${escHtml(o.label)}</b></div><div class="ik-vt">`
-    + (o.weigh.length ? `<p class="w"><i></i><span><b>Pesano</b> ${escHtml(o.weigh.join(' · '))}</span></p>` : '') + (o.hold.length ? `<p class="a"><i></i><span><b>Reggono</b> ${escHtml(o.hold.join(' · '))}</span></p>` : '') + '</div></div>' : '';
-  const rows = G.map(g => ikRow(g, false) + (g.sub ? g.sub.map(s => ikRow(s, true)).join('') : '')).join('');
-  el.innerHTML = `<div class="ik">${verdict}<div class="ik-tbl"><div class="ik-th"><span>Area</span><span>Stato</span><span>In sintesi</span><span></span></div>${rows}</div>`
-    + '<p class="ik-lg">Lo <b>stato</b> è la lettura per chi investe in azioni, dalla più favorevole alla più negativa: <span class="t-pos"><i></i>Favorevole</span><span class="t-neu"><i></i>Neutro</span><span class="t-warn"><i></i>Da monitorare</span><span class="t-neg"><i></i>Sotto pressione</span> (ogni area usa parole sue, per esempio «Tensione alta»). '
-    + 'Ogni riga sintetizza più dati veri: «Dati» mostra quali e, toccando un dato, come si legge. Lettura educativa, non un consiglio d\'investimento.</p></div>';
+  const o = d.overall, G = d.groups, by = {}; G.forEach(g => { by[g.id] = g; });
+  const rates = by.rates, subs = {}; ((rates && rates.sub) || []).forEach(s => { subs[s.id] = s; });
+  const hero = `<div class="ikx-hero${o ? ' t-' + o.tone : ''}"><div class="ikx-hh"><div class="ikx-vd">${o ? `<span>Quadro generale oggi</span><b>${escHtml(o.label)}</b>`
+      + (o.weigh.length ? `<p class="w"><i></i><span><b>Pesano</b> ${escHtml(o.weigh.join(' · '))}</span></p>` : '') + (o.hold.length ? `<p class="a"><i></i><span><b>Reggono</b> ${escHtml(o.hold.join(' · '))}</span></p>` : '') : '<span>Quadro generale oggi</span><b>Non disponibile</b>'}</div>`
+    + `<div class="ikx-lg"><span><i class="gb"></i>Livello di pressione</span><span><i class="gl"></i>Confini delle zone</span><span><i class="gr"></i>Limite</span></div></div>`
+    + `<div class="ikx-zt"><span></span><span class="z"><span>Favorevole</span><span>Neutro</span><span>Da monitorare</span><span>Sotto pressione</span></span><span></span></div>`
+    + G.map((g, n) => ikHeroRow(g, n)).join('')
+    + (o && o.zp != null ? `<div class="ikx-b all t-${o.tone}" style="--p:${o.zp}; --i:${G.length}"><div class="ikx-r"><span class="ikx-n">Insieme delle sei aree</span><span class="ikx-tk"><i class="ikx-bar"></i></span><span class="ikx-v"><span class="ikx-bd"><i></i>${escHtml(o.label)}</span></span></div></div>` : '') + '</div>';
+  const P = [['macro', by.macro, null, 1], ['geo', by.geo, null, 2], ['equity', by.equity, null, 3], ['sectors', by.sectors, null, 4], ['curve', subs.curve, 'Tassi e Treasuries', 5], ['fed', subs.fed, 'Tassi e Treasuries', 6], ['debt', subs.debt, 'Tassi e Treasuries', 7], ['liquidity', by.liquidity, null, 8]];
+  const pn = Object.fromEntries(P.filter(p => p[1]).map(p => [p[0], ikPanel(p[1], p[2], p[3])]));
+  const col = ids => ids.map(id => pn[id] || '').join('');
+  const cols = `<div class="ikx-cols"><div class="ikx-col">${col(['macro', 'equity', 'curve', 'fed'])}</div><div class="ikx-col">${col(['geo', 'sectors', 'debt', 'liquidity'])}</div></div>`;
+  el.innerHTML = `<div class="ikx${IK_DRAWN ? ' still' : ''}">${hero}${cols}`
+    + '<p class="ikx-lgd"><b>Come si legge.</b> Ogni dato è una barra: più è lunga, più il dato si avvicina alla zona di <b>pressione</b> per chi investe in azioni. Le linee grigie <i class="k gl"></i> separano le quattro zone (favorevole, neutro, da monitorare, sotto pressione) e la linea rossa <i class="k gr"></i> è il limite. '
+    + 'Una barra <i class="k gq"></i> a righe è un giudizio qualitativo, senza scala numerica. Tocca una riga per capire cosa significa e con quali soglie. Lettura educativa, non un consiglio d\'investimento.</p></div>';
+  IK_DRAWN = true;
   const m = document.getElementById('ikMeta');
   if(m) m.textContent = `Fonti: FRED (Federal Reserve), Tesoro USA (FiscalData), Yahoo Finance e notizie da 16 fonti; ogni dato ha la sua data (alcuni sono settimanali o mensili). Aggiornato alle ${hTime(d.generatedAt)}.`;
 }
