@@ -8,319 +8,342 @@
 <meta property="og:title" content="Macro Hub Trading — Il quadro macro completo, in un solo sguardo">
 <meta property="og:description" content="Tutto ciò che muove i mercati, ordinato e spiegato in italiano. Presto con registrazione.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://macro-hub-dashboard.vercel.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://macro-hub-dashboard.vercel.app/og.png">
 <!-- ANTEPRIMA: la pagina non è ancora pubblica. Al lancio pubblico rimuovere il tag "robots" qui sotto. -->
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0A0E1A">
+<!-- presentazione-editoriale -->
+<script>if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js');</script>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Macro Hub">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=3">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
 :root{
-  --bg:#0A0E1A; --panel:#111729; --panel2:#161D33; --border:#232B45;
+  --bg:#080C18; --panel:#0F1526; --border:#1E2640; --hair:rgba(190,205,235,.12);
   --text:#EDF0F7; --text2:#B4BBD0; --dim:#8B93AC; --dim2:#5C6483;
-  --gold:#E0A94D; --green:#34D399; --red:#F0685E; --accent:#5EA8F5;
+  --gold:#E0A94D; --green:#34D399; --red:#F0685E; --accent:#5EA8F5; --teal:#2DD4BF;
   --accent-soft:rgba(94,168,245,.14); --gold-soft:rgba(224,169,77,.14);
-  --radius:14px;
+  --zg:#34D399; --zn:#38BDF8; --zw:#E0A94D; --zr:#F0685E;
+  --fh:'Fraunces',Georgia,serif; --fb:'Inter',system-ui,sans-serif; --fm:'IBM Plex Mono',monospace;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
-html{scroll-behavior:smooth; scroll-padding-top:76px;}
-body{background:var(--bg); color:var(--text); font-family:'Inter',system-ui,sans-serif; font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
-h1,h2,h3{font-family:'Space Grotesk',sans-serif; letter-spacing:-.02em; line-height:1.1;}
+html{scroll-behavior:smooth; scroll-padding-top:84px;}
+body{position:relative; background:var(--bg); color:var(--text); font-family:var(--fb); font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
+body::before{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(70% 50% at 8% -4%,rgba(36,84,164,.34),transparent 70%),radial-gradient(40% 36% at 96% 30%,rgba(100,70,170,.12),transparent 70%),radial-gradient(50% 38% at 14% 104%,rgba(16,150,120,.11),transparent 70%);}
+h1,h2,h3{font-family:var(--fh); font-weight:500; letter-spacing:-.022em; line-height:1.08;}
+h1 em,h2 em{font-style:italic; font-weight:400; background:linear-gradient(100deg,#9CCBFB 0%,#5EA8F5 48%,#E0A94D 100%); -webkit-background-clip:text; background-clip:text; color:transparent; padding-right:.06em;}
 a{color:inherit;}
 ::selection{background:var(--accent-soft); color:var(--accent);}
-.wrap{max-width:1160px; margin:0 auto; padding:0 20px;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
 :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:6px;}
-.mono{font-family:'IBM Plex Mono',monospace;}
-.grad{background:linear-gradient(100deg,#8EC5FA 0%,#5EA8F5 45%,#E0A94D 100%); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+/* comparsa morbida allo scorrimento: senza JavaScript tutto è visibile */
+.js .rv{opacity:0; transform:translateY(20px); transition:opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1);}
+.js .rv.in{opacity:1; transform:none;}
+.js .rv.d1{transition-delay:.08s;} .js .rv.d2{transition-delay:.16s;} .js .rv.d3{transition-delay:.24s;}
 
 /* ===== NAV ===== */
-.nav{position:sticky; top:0; z-index:50; background:rgba(10,14,26,.8); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid rgba(35,43,69,.7);}
-.nav .wrap{display:flex; align-items:center; gap:24px; height:64px;}
-.brand{display:inline-flex; align-items:center; gap:11px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:17px; letter-spacing:.03em; text-decoration:none; white-space:nowrap;}
-.brand img{display:block; width:36px; height:36px; border-radius:9px; flex:none;}
+.nav{position:sticky; top:0; z-index:50; background:rgba(8,12,24,.78); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid var(--hair);}
+.nav .wrap{display:flex; align-items:center; gap:28px; height:68px;}
+.brand{display:inline-flex; align-items:center; gap:12px; font:600 18px/1 var(--fh); letter-spacing:.02em; text-decoration:none; white-space:nowrap;}
+.brand img{display:block; width:34px; height:34px; border-radius:9px; flex:none;}
 .brand .bt > span{color:var(--accent);}
-.nav-links{display:flex; gap:24px; margin-left:auto;}
-.nav-links a{font-size:14px; color:var(--dim); text-decoration:none; transition:color .15s;}
-.nav-links a:hover{color:var(--text);}
-.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap; font:600 15px/1 'Inter',sans-serif; padding:15px 24px; border-radius:11px; text-decoration:none; border:1px solid transparent; cursor:pointer; transition:transform .15s, background .15s, border-color .15s, box-shadow .15s;}
-.btn-primary{background:var(--accent); color:#06101F; box-shadow:0 8px 28px -8px rgba(94,168,245,.55);}
-.btn-primary:hover{background:#7DBBFA; transform:translateY(-2px);}
-.btn-ghost{border-color:var(--border); color:var(--text); background:rgba(17,23,41,.5);}
+.nav-links{display:flex; flex-wrap:nowrap; gap:30px; margin-left:auto;}
+/* MENU-SFUMATO: stesso carattere e stessi colori di "In un solo sguardo" (corsivo, sfumatura blu → oro) */
+.nav-links a{font:italic 400 17px/1.45 var(--fh); letter-spacing:-.005em; padding:0 .07em .08em 0; white-space:nowrap; text-decoration:none; background:linear-gradient(100deg,#9CCBFB 0%,#5EA8F5 48%,#E0A94D 100%); -webkit-background-clip:text; background-clip:text; color:transparent; opacity:.88; transition:opacity .15s, filter .15s;}
+.nav-links a:hover{opacity:1; filter:brightness(1.18);}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap; font:600 15px/1 var(--fb); padding:16px 26px; border-radius:12px; text-decoration:none; border:1px solid transparent; cursor:pointer; transition:transform .15s, background .15s, border-color .15s, box-shadow .15s;}
+.btn-primary{background:linear-gradient(135deg,#F7D184,#E0A94D); color:#1B1204; box-shadow:0 10px 30px -10px rgba(224,169,77,.7);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 36px -10px rgba(224,169,77,.9);}
+.btn-ghost{border-color:rgba(190,205,235,.28); color:var(--text);}
 .btn-ghost:hover{border-color:var(--accent); color:var(--accent);}
 .btn-soon{border:1px dashed rgba(224,169,77,.55); color:var(--gold); background:var(--gold-soft);}
 .btn-soon:hover{background:rgba(224,169,77,.2);}
-.nav .btn{padding:10px 16px; font-size:13px;}
-@media(max-width:860px){ .nav-links{display:none;} .nav .btn{margin-left:auto;} }
-@media(max-width:480px){ .brand{font-size:15px; gap:9px;} .brand img{width:30px; height:30px;} .nav .wrap{gap:12px;} .nav .btn{display:none;} }   /* il pulsante resta nel titolo e in chiusura: nel menu non c'è posto accanto al logo */
+.nav .btn{padding:10px 16px; font-size:13px; border-radius:10px;}
+@media(max-width:1020px){ .nav-links{display:none;} .nav .btn{margin-left:auto;} }
+@media(max-width:480px){ .brand{font-size:16px; gap:10px;} .brand img{width:30px; height:30px;} .nav .btn{display:none;} }
 
 /* ===== HERO ===== */
-.hero{position:relative; padding:76px 0 40px; overflow:hidden;}
-.hero::before{content:""; position:absolute; inset:0; pointer-events:none;
-  background:radial-gradient(55% 60% at 82% 8%, rgba(94,168,245,.24), transparent 70%), radial-gradient(40% 45% at 8% 78%, rgba(224,169,77,.11), transparent 70%);}
-.hero::after{content:""; position:absolute; inset:0; pointer-events:none; opacity:.18;
-  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px); background-size:64px 64px;
-  -webkit-mask-image:linear-gradient(to bottom,#000,transparent 80%); mask-image:linear-gradient(to bottom,#000,transparent 80%);}
-.hero .wrap{position:relative; z-index:1; display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center;}
-.pill{display:inline-flex; align-items:center; gap:10px; font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); padding:8px 13px; border:1px dashed rgba(224,169,77,.5); border-radius:99px; background:var(--gold-soft);}
-.pill i{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:blink 1.6s infinite;}
+.hero{position:relative; padding:92px 0 0; overflow:hidden;}
+.hero::after{content:""; position:absolute; inset:0; pointer-events:none; opacity:.14;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px); background-size:72px 72px;
+  -webkit-mask-image:radial-gradient(70% 70% at 70% 30%,#000,transparent 75%); mask-image:radial-gradient(70% 70% at 70% 30%,#000,transparent 75%);}
+.hero-grid{position:relative; z-index:1; display:grid; grid-template-columns:1.08fr .92fr; gap:48px; align-items:center;}
+.pill{display:inline-flex; align-items:center; gap:10px; font:500 11.5px/1 var(--fm); letter-spacing:.16em; text-transform:uppercase; color:var(--gold); padding:9px 14px; border:1px dashed rgba(224,169,77,.5); border-radius:99px; background:var(--gold-soft);}
+.pill i{width:6px; height:6px; border-radius:50%; background:var(--gold); animation:blink 1.8s infinite;}
 @keyframes blink{50%{opacity:.25;}}
-/* logo in evidenza (sopra il titolo) */
-.lockup{display:flex; align-items:center; gap:22px; margin-bottom:30px;}
-.lockup .logo{position:relative; flex:none; width:112px; height:112px;}
-.lockup .logo::before{content:""; position:absolute; inset:-30px; z-index:0; background:radial-gradient(closest-side, rgba(94,168,245,.5), rgba(224,169,77,.14) 62%, transparent 78%); filter:blur(10px);}
-.lockup .logo img{position:relative; z-index:1; display:block; width:100%; height:100%; border-radius:25px; box-shadow:0 22px 50px -16px rgba(94,168,245,.6), 0 0 0 1px rgba(94,168,245,.28);}
-.lockup .wm{display:grid; gap:10px;}
-.lockup .wm b{font:700 clamp(24px,3.2vw,34px)/1 'Space Grotesk',sans-serif; letter-spacing:.04em;}
-.lockup .wm b span{color:var(--accent);}
-.lockup .wm i{font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); font-style:normal;}
-@media(max-width:560px){ .lockup{gap:16px;} .lockup .logo{width:80px; height:80px;} .lockup .logo img{border-radius:18px;} .lockup .wm i{font-size:10.5px; letter-spacing:.08em;} }
-h1{font-size:clamp(40px,6.2vw,76px); font-weight:700; margin:24px 0 22px;}
-.lede{font-size:clamp(18px,1.9vw,21px); color:var(--text2); max-width:34em; line-height:1.55;}
-.cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:34px;}
-.fine{margin-top:18px; font-size:13.5px; color:var(--dim);}
-@media(max-width:940px){ .hero .wrap{grid-template-columns:1fr;} .hero{padding-top:52px;} }
+h1{font-size:clamp(38px,4.7vw,64px); margin:28px 0 24px; letter-spacing:-.022em; word-spacing:.07em; line-height:1.04;}
+.lede{font-size:clamp(16.5px,1.4vw,18.5px); color:var(--text2); max-width:32em; line-height:1.62;}
+.cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:38px;}
+.fine{margin-top:20px; font-size:13.5px; color:var(--dim);}
+@media(max-width:960px){ .hero-grid{grid-template-columns:1fr; gap:36px;} .hero{padding-top:56px;} }
 
-/* ===== STAGE (illustrazione prodotto, senza dati reali) ===== */
-.stage{position:relative; height:470px; perspective:1200px;}
-.sc{position:absolute; background:linear-gradient(160deg,rgba(22,29,51,.96),rgba(17,23,41,.96)); border:1px solid var(--border); border-radius:16px; padding:16px 18px; box-shadow:0 30px 60px -24px rgba(0,0,0,.65), 0 0 0 1px rgba(94,168,245,.04) inset; animation:float 7s ease-in-out infinite;}
-.sc h4{font:500 11px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim);}
-.sc .ln{height:7px; border-radius:4px; background:var(--border); margin-top:9px;}
-@keyframes float{50%{transform:translateY(-9px);}}
-.sc1{left:2%; top:2%; width:60%; rotate:-2.5deg;}
-.sc2{right:0; top:30%; width:52%; animation-delay:-2.4s; rotate:2deg;}
-.sc3{left:6%; bottom:0; width:56%; animation-delay:-4.6s; rotate:-1deg;}
-.sc4{right:5%; top:0; width:30%; animation-delay:-1.2s; padding:12px 14px;}
-.gauge{display:block; width:100%; margin-top:10px;}
-.needle{transform-origin:100px 100px; animation:sway 7s ease-in-out infinite alternate;}
-@keyframes sway{from{transform:rotate(-46deg);} to{transform:rotate(38deg);}}
-.cal{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-top:12px;}
-.cal i{display:block; aspect-ratio:1; border-radius:4px; background:var(--panel2); border:1px solid var(--border);}
-.cal i.hot{background:var(--accent); border-color:var(--accent); animation:blink 2.4s infinite;}
-.cal i.mid{background:var(--accent-soft); border-color:rgba(94,168,245,.45);}
-.cd{display:flex; gap:6px; align-items:center; margin-top:14px;}
-.cd b{flex:1; height:30px; border-radius:7px; background:var(--panel2); border:1px solid var(--border);}
-.cd em{width:3px; height:3px; border-radius:50%; background:var(--dim2); box-shadow:0 7px 0 var(--dim2);}
-.bar{height:8px; border-radius:0 4px 4px 0; background:var(--accent); margin-top:11px; width:var(--w); transform-origin:left; animation:grow 2.8s ease-out both;}
-.bar:nth-of-type(2){background:#8EC5FA; animation-delay:.15s;} .bar:nth-of-type(3){background:var(--gold); animation-delay:.3s;} .bar:nth-of-type(4){background:var(--dim2); animation-delay:.45s;}
-@keyframes grow{from{transform:scaleX(0);}}
-.spark{display:block; width:100%; margin-top:8px;}
-.spark path{stroke-dasharray:260; stroke-dashoffset:0; animation:draw 3.2s ease-out .4s both;}
-@keyframes draw{from{stroke-dashoffset:260;}}
-@media(max-width:940px){ .stage{height:430px; max-width:520px; margin:6px auto 0; width:100%;} }
-@media(max-width:480px){ .stage{height:380px;} .sc{padding:12px 14px;} .sc4{display:none;} .sc1{width:66%;} .sc2{width:56%; top:34%;} .sc3{width:62%;} }
+/* lo strumento: quattro zone, un indicatore (illustrazione astratta, senza dati) */
+.dial{position:relative; width:100%; max-width:580px; justify-self:end; aspect-ratio:520/370;}
+.dial::before{content:""; position:absolute; inset:-14% -10% -22%; background:radial-gradient(closest-side,rgba(94,168,245,.30),rgba(16,150,120,.10) 58%,transparent 76%); filter:blur(10px); pointer-events:none;}
+.dial svg{position:relative; display:block; width:100%; height:100%; overflow:visible;}
+.dial .needle{transform-origin:260px 290px; animation:sway 11s ease-in-out infinite alternate;}
+@keyframes sway{from{transform:rotate(-52deg);} to{transform:rotate(30deg);}}
+.dial .arcs path{filter:drop-shadow(0 0 10px currentColor);}
+.chipf{position:absolute; display:inline-flex; align-items:center; gap:8px; font:500 10.5px/1 var(--fm); letter-spacing:.12em; text-transform:uppercase; padding:9px 13px; border-radius:99px; border:1px solid rgba(190,205,235,.26); background:rgba(9,14,28,.72); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:var(--text2); animation:float 8s ease-in-out infinite; white-space:nowrap;}
+.chipf::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--c); box-shadow:0 0 8px var(--c);}
+.chipf.a{left:-3%; top:20%; --c:#5EA8F5;} .chipf.b{right:-4%; top:14%; --c:#E0A94D; animation-delay:-2s;} .chipf.c{right:6%; top:93%; --c:#2DD4BF; animation-delay:-4s;} .chipf.d{left:6%; top:93%; --c:#E879F9; animation-delay:-6s;} .chipf.e{left:36%; top:-5%; --c:#A3E635; animation-delay:-3s;}
+@keyframes float{50%{transform:translateY(-8px);}}
+@media(max-width:960px){ .dial{justify-self:center; max-width:520px;} }
+@media(max-width:520px){ .chipf.c,.chipf.d,.chipf.e{display:none;} .chipf{font-size:9.5px; padding:7px 10px;} }
 
-/* ===== MARQUEE ===== */
-.marquee{margin-top:56px; border-block:1px solid var(--border); overflow:hidden; background:rgba(17,23,41,.55);}
-.marquee .track{display:flex; width:max-content; animation:slide 46s linear infinite;}
-.marquee:hover .track{animation-play-state:paused;}
-.marquee span{padding:16px 26px; font:500 13px/1 'IBM Plex Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); white-space:nowrap;}
-.marquee span::after{content:"◆"; margin-left:52px; color:var(--accent); font-size:9px; vertical-align:2px;}
-@keyframes slide{to{transform:translateX(-50%);}}
-@media(prefers-reduced-motion:reduce){ .marquee .track, .sc, .needle, .bar, .pill i, .cal i.hot{animation:none;} .spark path{animation:none;} html{scroll-behavior:auto;} }
+/* fascia dei numeri */
+.stats{position:relative; z-index:1; display:grid; grid-template-columns:repeat(4,1fr); margin-top:84px; border-top:1px solid var(--hair);}
+.stat{padding:30px 28px 34px 0; border-right:1px solid var(--hair);} .stat + .stat{padding-left:28px;} .stat:last-child{border-right:0;}
+.stat b{display:block; font:500 clamp(32px,3.4vw,44px)/1 var(--fh); letter-spacing:-.03em; background:linear-gradient(120deg,#E8F1FD,#7DB9F7 70%,#5EA8F5); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.stat span{display:block; margin-top:10px; font:500 10.5px/1.5 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--dim);}
+@media(max-width:860px){ .stats{grid-template-columns:1fr 1fr;} .stat{padding:26px 18px 26px 0; border-bottom:1px solid var(--hair);} .stat:nth-child(2){border-right:0;} .stat:nth-child(3){padding-left:0;} .stat:nth-child(4){border-bottom:1px solid var(--hair);} .stat:nth-child(even){padding-left:22px;} }
 
-/* ===== SECTIONS ===== */
-section.blk{padding:108px 0 0;}
-.eyebrow{font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--accent);}
-h2{font-size:clamp(32px,4.4vw,52px); font-weight:700; margin:16px 0 18px; max-width:17em;}
-.sec-lede{font-size:19px; color:var(--text2); max-width:38em; line-height:1.6;}
-.center{text-align:center;} .center h2, .center .sec-lede{margin-left:auto; margin-right:auto;}
+/* ===== SEZIONI ===== */
+section.blk{padding:128px 0 0;}
+.eyebrow{display:inline-flex; align-items:center; gap:12px; font:500 11.5px/1 var(--fm); letter-spacing:.18em; text-transform:uppercase; color:var(--accent);}
+.eyebrow::before{content:""; width:30px; height:1px; background:currentColor; opacity:.8;}
+h2{font-size:clamp(28px,3.5vw,44px); margin:18px 0 20px; max-width:15em; letter-spacing:-.02em; word-spacing:.05em; line-height:1.06;}
+.sec-lede{font-size:17.5px; color:var(--text2); max-width:36em; line-height:1.65;}
+.center{text-align:center;} .center h2,.center .sec-lede{margin-left:auto; margin-right:auto;} .center h2{max-width:19em;} .center .eyebrow::after{content:""; width:30px; height:1px; background:currentColor; opacity:.8;}
 
-/* problema → soluzione */
-.chaos{position:relative; margin-top:44px; display:grid; grid-template-columns:1fr auto 1fr; gap:28px; align-items:center;}
-.scatter{display:flex; flex-wrap:wrap; gap:10px; justify-content:center;}
-.scatter span{font-size:14px; padding:9px 14px; border-radius:99px; border:1px solid var(--border); color:var(--dim); background:var(--panel); transform:rotate(var(--r)); }
-.arrow{font-size:34px; color:var(--accent); text-align:center;}
-.order{border:1px solid rgba(94,168,245,.4); border-radius:var(--radius); padding:26px 26px 24px; background:linear-gradient(160deg,rgba(94,168,245,.12),rgba(17,23,41,.9));}
-.order b{display:block; font:700 22px/1.2 'Space Grotesk',sans-serif; margin-bottom:8px;}
-.order p{color:var(--text2); font-size:16px;}
-@media(max-width:860px){ .chaos{grid-template-columns:1fr;} .arrow{transform:rotate(90deg);} }
+/* il problema */
+.statement{max-width:900px; margin:0 auto; text-align:center;}
+.statement h2{max-width:none; font-size:clamp(32px,4.4vw,56px); line-height:1.04;}
+.statement p{margin:0 auto; font-size:18px; color:var(--text2); max-width:33em;}
+
+/* cosa ottieni */
+.split{display:grid; grid-template-columns:5fr 7fr; gap:80px; align-items:start;}
+.split-head{position:sticky; top:120px;}
+.list{list-style:none; border-top:1px solid var(--hair);}
+.item{display:grid; grid-template-columns:64px 1fr; gap:6px 18px; padding:34px 0 36px; border-bottom:1px solid var(--hair); transition:background .3s;}
+.item .n{font:500 13px/1.9 var(--fm); letter-spacing:.08em; color:var(--sec); text-shadow:0 0 18px color-mix(in srgb,var(--sec) 60%,transparent);}
+.item h3{font-size:clamp(20px,1.9vw,25px); margin-bottom:8px; transition:color .25s;}
+.item p{font-size:15.5px; color:var(--text2); max-width:34em;}
+.item:hover h3{color:color-mix(in srgb,var(--sec) 55%,#fff);}
+@media(max-width:960px){ .split{grid-template-columns:1fr; gap:44px;} .split-head{position:static;} }
+@media(max-width:520px){ .item{grid-template-columns:44px 1fr; gap:4px 12px;} }
+
+/* come si legge */
+.spec{margin-top:60px;}
+.spec-bar{position:relative; height:46px; border-radius:12px; overflow:hidden; border:1px solid rgba(190,205,235,.18);
+  background:linear-gradient(90deg,rgba(52,211,153,.13) 0 25%,rgba(56,189,248,.10) 25% 50%,rgba(224,169,77,.11) 50% 75%,rgba(240,104,94,.17) 75% 100%);}
+.spec-bar::before{content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(rgba(190,200,225,.34),rgba(190,200,225,.34)) 25% 0/1px 100% no-repeat,linear-gradient(rgba(190,200,225,.34),rgba(190,200,225,.34)) 50% 0/1px 100% no-repeat,linear-gradient(rgba(190,200,225,.34),rgba(190,200,225,.34)) 75% 0/1px 100% no-repeat;}
+.spec-bar::after{content:""; position:absolute; top:0; bottom:0; right:0; width:3px; background:var(--zr); box-shadow:0 0 14px var(--zr);}
+.spec-fill{position:absolute; left:0; top:50%; height:14px; margin-top:-7px; width:0; border-radius:7px; background:linear-gradient(90deg,rgba(224,169,77,.3),#E0A94D); box-shadow:0 0 22px -2px rgba(224,169,77,.65); transition:width 2.4s cubic-bezier(.2,.7,.2,1) .3s;}
+.spec-fill::after{content:""; position:absolute; right:3px; top:50%; width:6px; height:6px; margin-top:-3px; border-radius:50%; background:#fff; box-shadow:0 0 8px #fff;}
+.spec.in .spec-fill, html:not(.js) .spec-fill{width:72%;}
+.spec-zones{display:grid; grid-template-columns:repeat(4,1fr); margin-top:18px;}
+.zone{padding:16px 18px 0 0; border-top:2px solid var(--c);} .zone + .zone{padding-left:18px;}
+.zone b{display:block; font:500 19px/1.2 var(--fh); letter-spacing:-.01em; color:var(--c);}
+.zone span{display:block; margin-top:6px; font-size:14.5px; color:var(--dim); line-height:1.5;}
+.zone:nth-child(1){--c:var(--zg);} .zone:nth-child(2){--c:var(--zn);} .zone:nth-child(3){--c:var(--zw);} .zone:nth-child(4){--c:var(--zr);}
+.spec-notes{display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:54px; padding-top:34px; border-top:1px solid var(--hair);}
+.spec-notes h3{display:flex; align-items:center; gap:14px; font-size:23px; margin-bottom:10px;}
+.spec-notes h3 i{display:block; flex:none; width:46px; height:12px; border-radius:6px;}
+.spec-notes .full i{background:linear-gradient(90deg,rgba(56,189,248,.3),#38BDF8); box-shadow:0 0 14px -2px #38BDF8;}
+.spec-notes .hat i{background:repeating-linear-gradient(135deg,#38BDF8 0 4px,rgba(56,189,248,.25) 4px 8px);}
+.spec-notes p{font-size:16.5px; color:var(--text2); max-width:30em;}
+@media(max-width:860px){ .spec-zones{grid-template-columns:1fr 1fr; row-gap:22px;} .zone:nth-child(3){padding-left:0;} .spec-notes{grid-template-columns:1fr; gap:30px;} }
+
+/* le dieci aree */
+.areas{list-style:none; display:grid; grid-template-columns:1fr 1fr; column-gap:72px; margin-top:56px; border-top:1px solid var(--hair);}
+.areas li{display:grid; grid-template-columns:54px 1fr; align-items:baseline; align-content:start; gap:6px 14px; padding:20px 0 21px; border-bottom:1px solid var(--hair);}
+.areas .n{font:500 12.5px/1 var(--fm); letter-spacing:.08em; color:var(--sec); text-shadow:0 0 16px color-mix(in srgb,var(--sec) 55%,transparent);}
+.areas b{font:500 clamp(17px,1.6vw,20px)/1.2 var(--fh); letter-spacing:-.012em;}
+.areas small{grid-column:2; font-size:14.5px; color:var(--dim); line-height:1.5;}
+@media(max-width:760px){ .areas{grid-template-columns:1fr;} }
 
 /* una giornata */
-.day{position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:48px;}
-.day::before{content:""; position:absolute; left:6%; right:6%; top:21px; height:2px; background:linear-gradient(90deg,var(--accent),var(--gold)); opacity:.35;}
-.step{position:relative; padding-top:0;}
-.step .dot{position:relative; z-index:1; width:44px; height:44px; border-radius:50%; background:var(--bg); border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; font:600 13px/1 'IBM Plex Mono',monospace; color:var(--accent);}
-.step:nth-child(4) .dot{border-color:var(--gold); color:var(--gold);}
-.step .when{margin-top:18px; font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim);}
-.step h3{font-size:22px; margin:8px 0 8px; font-weight:600;}
+.day{position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:34px; margin-top:64px;}
+.day::before{content:""; position:absolute; left:0; right:0; top:22px; height:1px; background:linear-gradient(90deg,var(--accent),var(--teal),#A3E635,var(--gold)); opacity:.5;}
+.step .dot{position:relative; z-index:1; width:44px; height:44px; border-radius:50%; background:var(--bg); border:1px solid var(--sec); display:flex; align-items:center; justify-content:center; font:500 13px/1 var(--fm); color:var(--sec); box-shadow:0 0 26px -6px var(--sec), inset 0 0 0 40px color-mix(in srgb,var(--sec) 10%,transparent);}
+.step:nth-child(1){--sec:#5EA8F5;} .step:nth-child(2){--sec:#2DD4BF;} .step:nth-child(3){--sec:#A3E635;} .step:nth-child(4){--sec:#F5B94D;}
+.step .when{margin-top:22px; font:500 11.5px/1 var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--dim);}
+.step h3{font-size:21px; margin:10px 0 8px;}
 .step p{font-size:15.5px; color:var(--text2);}
-@media(max-width:940px){ .day{grid-template-columns:1fr 1fr; row-gap:34px;} .day::before{display:none;} }
+@media(max-width:940px){ .day{grid-template-columns:1fr 1fr; row-gap:46px;} .day::before{display:none;} }
 @media(max-width:560px){ .day{grid-template-columns:1fr;} }
 
-/* cosa trovi */
-.bento{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:46px;}
-.tile{position:relative; border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); padding:28px 26px 26px; overflow:hidden; transition:border-color .2s, transform .2s;}
-.tile::before{content:""; position:absolute; inset:0; background:radial-gradient(80% 90% at 0% 0%, rgba(94,168,245,.12), transparent 60%); opacity:0; transition:opacity .25s; pointer-events:none;}
-.tile:hover{border-color:rgba(94,168,245,.5); transform:translateY(-3px);}
-.tile:hover::before{opacity:1;}
-.tile .num{position:absolute; top:24px; right:24px; font:500 12px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; color:var(--dim2);}
-.ico{width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:var(--accent-soft); border:1px solid rgba(94,168,245,.3); color:var(--accent);}
-.ico svg{width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
-.tile.gold .ico{background:var(--gold-soft); border-color:rgba(224,169,77,.35); color:var(--gold);}
-.tile h3{font-size:22px; margin:20px 0 9px; font-weight:600;}
-.tile p{font-size:15.5px; color:var(--text2);}
-@media(max-width:980px){ .bento{grid-template-columns:1fr 1fr;} }
-@media(max-width:620px){ .bento{grid-template-columns:1fr;} }
-
-/* per chi */
-.who{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:46px;}
-.person{border-radius:var(--radius); padding:30px 26px; border:1px solid var(--border); background:linear-gradient(170deg,var(--panel2),var(--panel));}
-.person .q{font:700 26px/1.15 'Space Grotesk',sans-serif; margin-bottom:12px;}
-.person p{color:var(--text2); font-size:16px;}
-.person .tag{display:inline-block; margin-top:18px; font:500 11.5px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--accent);}
-@media(max-width:900px){ .who{grid-template-columns:1fr;} }
+/* per chi è */
+.who{display:grid; grid-template-columns:repeat(3,1fr); margin-top:64px; border-top:1px solid var(--hair);}
+.person{padding:38px 36px 6px 0; border-right:1px solid var(--hair);} .person + .person{padding-left:36px;} .person:last-child{border-right:0; padding-right:0;}
+.person .q{font:500 clamp(23px,2.2vw,28px)/1.1 var(--fh); letter-spacing:-.02em; margin-bottom:16px;}
+.person p{color:var(--text2); font-size:15.5px;}
+.person .tag{display:inline-block; margin-top:22px; font:500 11px/1 var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--accent);}
+@media(max-width:900px){ .who{grid-template-columns:1fr;} .person{padding:30px 0 30px; border-right:0; border-bottom:1px solid var(--hair);} .person + .person{padding-left:0;} .person:last-child{border-bottom:0;} }
 
 /* perché */
-.why{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:46px; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--border); gap:1px;}
-.w{background:var(--panel); padding:34px 28px;}
-.w .n{font:500 13px/1 'IBM Plex Mono',monospace; color:var(--gold);}
-.w h3{font-size:25px; margin:16px 0 10px; font-weight:600;}
-.w p{color:var(--text2); font-size:16px;}
-@media(max-width:900px){ .why{grid-template-columns:1fr;} }
+.why{display:grid; grid-template-columns:repeat(3,1fr); gap:48px; margin-top:60px;}
+.w .n{font:500 12.5px/1 var(--fm); letter-spacing:.1em; color:var(--gold);}
+.w h3{font-size:22px; margin:16px 0 10px;}
+.w p{color:var(--text2); font-size:16.5px;}
+@media(max-width:900px){ .why{grid-template-columns:1fr; gap:34px;} }
+
+/* glossario */
+.gl{display:grid; grid-template-columns:1fr 1fr; column-gap:72px; margin-top:56px; border-top:1px solid var(--hair);}
+.gl > div{padding:26px 0 28px; border-bottom:1px solid var(--hair);}
+.gl dt{font:500 19px/1.2 var(--fh); letter-spacing:-.01em; margin-bottom:8px; color:var(--text);}
+.gl dd{font-size:15.5px; color:var(--text2); line-height:1.6; max-width:34em;}
+@media(max-width:820px){ .gl{grid-template-columns:1fr;} }
+
+/* come iniziare */
+.go{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:60px; border-top:1px solid var(--hair);}
+.go .s{padding:36px 36px 8px 0; border-right:1px solid var(--hair);} .go .s + .s{padding-left:36px;} .go .s:last-child{border-right:0;}
+.go .s b{display:block; font:400 56px/1 var(--fh); letter-spacing:-.03em; color:var(--accent); opacity:.95; margin-bottom:18px;}
+.go .s:nth-child(2) b{color:var(--teal);} .go .s:nth-child(3) b{color:#F5B94D;}
+.go .s h3{font-size:20px; margin-bottom:8px;} .go .s p{color:var(--text2); font-size:15.5px;}
+@media(max-width:900px){ .go{grid-template-columns:1fr;} .go .s{padding:30px 0; border-right:0; border-bottom:1px solid var(--hair);} .go .s + .s{padding-left:0;} .go .s:last-child{border-bottom:0;} }
 
 /* faq */
-.faq{max-width:780px; margin:42px auto 0;}
-.faq details{border-bottom:1px solid var(--border);}
-.faq summary{list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:16px; padding:22px 4px; font:600 19px/1.3 'Space Grotesk',sans-serif;}
+.faq{max-width:800px; margin:50px auto 0; border-top:1px solid var(--hair);}
+.faq details{border-bottom:1px solid var(--hair);}
+.faq summary{list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:16px; padding:22px 4px; font:500 18.5px/1.3 var(--fh); letter-spacing:-.01em;}
 .faq summary::-webkit-details-marker{display:none;}
-.faq summary::after{content:"+"; font:400 28px/1 'Inter',sans-serif; color:var(--accent); transition:transform .2s;}
+.faq summary::after{content:"+"; font:300 30px/1 var(--fb); color:var(--accent); transition:transform .2s;}
 .faq details[open] summary::after{transform:rotate(45deg);}
-.faq p{padding:0 4px 24px; color:var(--text2); font-size:16.5px; max-width:42em;}
-/* come installare l'app */
+.faq p{padding:0 4px 26px; color:var(--text2); font-size:16.5px; max-width:42em;}
 .faq .how-lede{padding-bottom:18px;}
-.how{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:0 4px 18px;}
-.how-card{border:1px solid var(--border); border-radius:var(--radius); background:var(--panel); padding:18px 18px 16px;}
+.how{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; padding:0 4px 20px;}
+.how-card{border:1px solid var(--hair); border-radius:14px; background:rgba(15,21,38,.7); padding:20px 20px 18px;}
 .how-hd{display:grid; gap:6px; margin-bottom:14px;}
-.how-tag{font:600 17px/1.2 'Space Grotesk',sans-serif; color:var(--text);}
-.how-br{font:500 11px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--accent);}
+.how-tag{font:500 19px/1.2 var(--fh); color:var(--text);}
+.how-br{font:500 11px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--accent);}
 .how-card ol{list-style:none; counter-reset:s; display:grid; gap:11px;}
 .how-card li{counter-increment:s; position:relative; padding-left:32px; font-size:14.5px; color:var(--text2); line-height:1.5;}
-.how-card li::before{content:counter(s); position:absolute; left:0; top:0; width:22px; height:22px; border-radius:50%; background:var(--accent-soft); border:1px solid rgba(94,168,245,.35); color:var(--accent); font:600 11.5px/20px 'IBM Plex Mono',monospace; text-align:center;}
+.how-card li::before{content:counter(s); position:absolute; left:0; top:0; width:22px; height:22px; border-radius:7px; background:var(--accent-soft); border:1px solid rgba(94,168,245,.35); color:var(--accent); font:600 11.5px/20px var(--fm); text-align:center;}
 .how-card li b{color:var(--text); font-weight:600;}
-.faq .how-note{padding:0 4px 24px; font-size:14.5px; color:var(--dim);}
+.faq .how-note{padding:0 4px 26px; font-size:14.5px; color:var(--dim);}
 @media(max-width:860px){ .how{grid-template-columns:1fr;} }
 
-/* ===== SHOWCASE "Dentro la dashboard" ===== */
-.show{margin-top:40px;}
-.show-tabs{display:none; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
-.js .show-tabs{display:flex;}
-.tabbtn{font:500 14px/1 'Inter',sans-serif; padding:12px 16px; border-radius:99px; border:1px solid var(--border); background:transparent; color:var(--text2); cursor:pointer; transition:all .15s;}
-.tabbtn:hover{border-color:var(--accent); color:var(--text);}
-.tabbtn[aria-selected="true"]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent);}
-.panel{display:grid; grid-template-columns:1.05fr 1fr; gap:34px; align-items:center; margin-top:16px; padding:30px; border:1px solid var(--border); border-radius:20px; background:linear-gradient(165deg,var(--panel2),var(--panel));}
-.js .panel{display:none;}
-.js .panel.on{display:grid; animation:fadein .4s ease;}
-@keyframes fadein{from{opacity:0; transform:translateY(8px);}}
-.ptxt .kick{font:500 11.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--gold);}
-.ptxt h3{font-size:clamp(26px,3vw,34px); margin:12px 0 12px; font-weight:700;}
-.ptxt p{color:var(--text2); font-size:17px;}
-.ptxt ul{list-style:none; display:grid; gap:10px; margin-top:20px;}
-.ptxt li{position:relative; padding-left:26px; font-size:15.5px; color:var(--text2);}
-.ptxt li::before{content:""; position:absolute; left:2px; top:.5em; width:10px; height:6px; border-left:2px solid var(--accent); border-bottom:2px solid var(--accent); transform:rotate(-45deg);}
-.art{position:relative; min-height:300px; border-radius:16px; padding:24px; background:radial-gradient(90% 90% at 50% 0%, rgba(94,168,245,.12), transparent 70%), var(--bg); border:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; gap:14px; overflow:hidden;}
-.art::before{content:""; position:absolute; inset:0; opacity:.12; pointer-events:none; background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px); background-size:32px 32px;}
-.art > *{position:relative;}
-.chipx{display:inline-flex; align-items:center; gap:6px; font:600 11px/1 'IBM Plex Mono',monospace; letter-spacing:.07em; text-transform:uppercase; padding:6px 9px; border:1px solid var(--border); border-radius:6px; color:var(--text2); background:var(--panel); white-space:nowrap;}
-.chipx.g{color:var(--green); border-color:rgba(52,211,153,.4);} .chipx.r{color:var(--red); border-color:rgba(240,104,94,.4);} .chipx.y{color:var(--gold); border-color:rgba(224,169,77,.4);}
-.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.mini{border:1px solid var(--border); border-radius:10px; background:rgba(17,23,41,.9); padding:12px 13px;}
-.mini h5{font:500 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--dim); margin-bottom:8px;}
-.mini .ln{height:6px; border-radius:3px; background:var(--border); margin-top:7px;}
-.lbl{font:500 10.5px/1 'IBM Plex Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--dim);}
-.cdl{display:flex; gap:6px; align-items:flex-start;}
-.cdl > div{flex:1; text-align:center;} .cdl b{display:block; height:40px; border-radius:8px; background:var(--panel2); border:1px solid var(--border); margin-bottom:6px;}
-.cdl em{width:3px; height:3px; border-radius:50%; background:var(--dim2); box-shadow:0 8px 0 var(--dim2); margin-top:16px;}
-.mrow2{display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:rgba(17,23,41,.9);}
-.cmp{display:grid; gap:5px; margin-top:9px;}
-.cmp .t{height:6px; border-radius:0 3px 3px 0; background:var(--dim2); width:var(--a);}
-.cmp .a{height:8px; border-radius:0 4px 4px 0; background:var(--accent); width:var(--b);}
-.key{display:flex; gap:16px; font-size:12px; color:var(--dim);} .key u{display:inline-block; width:10px; height:6px; border-radius:2px; margin-right:6px; text-decoration:none; vertical-align:1px;}
-.pb{display:grid; grid-template-columns:76px 1fr; gap:10px; align-items:center;}
-.pb .tr{position:relative; height:8px; border-radius:4px; background:var(--panel2);}
-.pb .tr i{position:absolute; left:0; top:0; height:100%; width:var(--w); border-radius:0 4px 4px 0; background:var(--accent);}
-.pb .tr::after{content:""; position:absolute; left:50%; top:-3px; width:1px; height:14px; background:var(--dim2);}
-.axisx{display:grid; grid-template-columns:76px 1fr; gap:10px; font-size:11px; color:var(--dim2);} .axisx div{display:flex; justify-content:space-between;}
-.meterx{display:flex; gap:3px; height:10px; position:relative; margin-top:8px;}
-.meterx i{flex:1; border-radius:5px; background:var(--panel2); border:1px solid var(--border);}
-.meterx i.on{background:var(--accent); border-color:var(--accent);}
-.meterx .pin{position:absolute; top:-7px; left:var(--p); width:3px; height:24px; margin-left:-1.5px; border-radius:2px; background:var(--text); box-shadow:0 0 0 2px var(--bg);}
-.mlab{display:flex; justify-content:space-between; font-size:11px; color:var(--dim2); margin-top:6px;}
-.stk{display:flex; gap:2px; height:12px; margin-top:8px;} .stk i{display:block; height:100%; border-radius:3px;}
-.globe{width:100%; max-width:230px; margin:0 auto; display:block;}
-.globe .d1,.globe .d2,.globe .d3{animation:blink 2s infinite;} .globe .d2{animation-delay:.6s;} .globe .d3{animation-delay:1.2s;}
-.trow{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:rgba(17,23,41,.9);}
-.trow .ln{height:6px; border-radius:3px; background:var(--border); flex:1; max-width:55%;}
-@media(max-width:900px){ .panel{grid-template-columns:1fr; padding:22px; gap:24px;} .art{min-height:260px;} }
+/* ===== MARKETING: vantaggi, da 20 a 1, slogan, confronto, manifesto, barra di invito ===== */
+.ticks{list-style:none; display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:28px;}
+.ticks li{position:relative; padding-left:26px; font-size:14.5px; color:var(--text2); white-space:nowrap;}
+.ticks li::before{content:"✓"; position:absolute; left:0; top:-1px; width:19px; height:19px; border-radius:6px; display:grid; place-items:center; font:700 11px/1 var(--fb); color:var(--green); background:rgba(52,211,153,.13); border:1px solid rgba(52,211,153,.4);}
+.ticks.mid{justify-content:center; margin-top:34px;}
+.swap{display:grid; grid-template-columns:1fr auto 1fr; gap:34px; align-items:center; max-width:960px; margin:64px auto 0; padding:44px 0 0; border-top:1px solid var(--hair);}
+.sw b{display:block; font:400 clamp(66px,8.5vw,112px)/.9 var(--fh); letter-spacing:-.04em;}
+.sw span{display:block; margin-top:14px; font-size:15px; color:var(--dim); max-width:17em; line-height:1.5;}
+.sw.old{text-align:right;} .sw.old span{margin-left:auto;}
+.sw.old b{color:rgba(139,147,172,.5); position:relative; width:max-content; margin-left:auto;}
+.sw.old b::after{content:""; position:absolute; left:-4%; right:-4%; top:52%; height:3px; background:var(--zr); transform:rotate(-8deg); box-shadow:0 0 14px rgba(240,104,94,.6);}
+.sw.new b{background:linear-gradient(120deg,#CFE6FD,#5EA8F5 55%,#2DD4BF); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.sw.new span{color:var(--text2);}
+.sw-ar{font:300 60px/1 var(--fb); color:var(--accent); text-shadow:0 0 26px rgba(94,168,245,.6);}
+@media(max-width:760px){ .swap{grid-template-columns:1fr; gap:14px; text-align:center;} .sw.old{text-align:center;} .sw.old span,.sw.old b{margin-left:auto; margin-right:auto;} .sw span{margin-left:auto; margin-right:auto;} .sw-ar{transform:rotate(90deg); justify-self:center; height:50px; display:grid; place-items:center;} }
+.cmp{max-width:980px; margin:56px auto 0; border-top:1px solid var(--hair);}
+.cr{display:grid; grid-template-columns:200px 1fr 1fr; gap:0 28px; padding:22px 0; border-bottom:1px solid var(--hair); align-items:baseline;}
+.cr b{font:500 18px/1.2 var(--fh); letter-spacing:-.01em;}
+.cr .lo{font-size:16px; color:var(--dim); position:relative; padding-left:26px;}
+.cr .lo::before{content:"✕"; position:absolute; left:0; top:0; color:var(--red); font-size:13px; opacity:.85;}
+.cr .hi{font-size:16.5px; color:var(--text); position:relative; padding-left:28px;}
+.cr .hi::before{content:"✓"; position:absolute; left:0; top:0; color:var(--green); font-weight:700; font-size:14px;}
+.cr.ch{padding:14px 0; border-bottom:1px solid rgba(190,205,235,.22);}
+.cr.ch span{font:500 11.5px/1 var(--fm); letter-spacing:.16em; text-transform:uppercase; padding-left:0;} .cr.ch .lo{color:var(--dim2);} .cr.ch .hi{color:var(--accent);} .cr.ch span::before{display:none;}
+@media(max-width:760px){ .cr{grid-template-columns:1fr; gap:6px; padding:20px 0;} .cr.ch{display:none;} .cr b{color:var(--accent); font:500 11.5px/1 var(--fm); letter-spacing:.14em; text-transform:uppercase;} }
+.manifesto{text-align:center; padding:6px 0 0;}
+.manifesto p{font:italic 400 clamp(17px,1.9vw,22px)/1.3 var(--fh); color:var(--dim);}
+.manifesto h2{max-width:none; margin:12px auto 0; font-size:clamp(32px,4.8vw,64px); line-height:1.04;}
+.sticky{position:fixed; left:50%; bottom:18px; z-index:45; display:flex; align-items:center; gap:18px; padding:9px 9px 9px 24px; border-radius:99px; background:rgba(10,16,32,.9); border:1px solid rgba(120,160,230,.32); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:0 20px 50px -14px rgba(0,0,0,.85); transform:translate(-50%,160%); transition:transform .5s cubic-bezier(.2,.7,.2,1);}
+.sticky.on{transform:translate(-50%,0);}
+.sticky span{font:500 16px/1.2 var(--fh); white-space:nowrap;}
+.sticky .btn{padding:12px 20px; font-size:13.5px; border-radius:99px;}
+@media(max-width:560px){ .sticky{padding:7px; gap:0;} .sticky span{display:none;} .sticky .btn{padding:13px 22px;} }
+@media(prefers-reduced-motion:reduce){ .sticky{transition:none;} }
 
-/* ===== PRIMA / CON MACRO HUB ===== */
-.ba{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:44px;}
-.ba .col{border-radius:var(--radius); padding:32px 30px; border:1px solid var(--border); background:var(--panel);}
-.ba .col.now{border-color:rgba(94,168,245,.45); background:linear-gradient(165deg,rgba(94,168,245,.13),var(--panel));}
-.ba h3{font-size:23px; margin-bottom:20px; font-weight:600;}
-.ba .old h3{color:var(--dim);}
-.ba ul{list-style:none; display:grid; gap:16px;}
-.ba li{position:relative; padding-left:34px; font-size:16.5px; color:var(--text2); line-height:1.5;}
-.ba .old li{color:var(--dim);}
-.ba li::before{position:absolute; left:0; top:1px; width:22px; height:22px; border-radius:50%; text-align:center; font:700 12px/22px 'Inter',sans-serif;}
-.ba .old li::before{content:"✕"; background:rgba(240,104,94,.14); color:var(--red);}
-.ba .now li::before{content:"✓"; background:rgba(52,211,153,.14); color:var(--green);}
-@media(max-width:800px){ .ba{grid-template-columns:1fr;} }
-
-/* ===== DOMANDE CHE TI INCURIOSISCONO ===== */
-.qs{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:44px;}
-.q{display:flex; flex-direction:column; justify-content:space-between; gap:22px; border:1px solid var(--border); border-radius:var(--radius); padding:26px 24px; background:var(--panel); text-decoration:none; transition:border-color .2s, transform .2s;}
-.q:hover{border-color:rgba(94,168,245,.55); transform:translateY(-3px);}
-.q b{font:600 21px/1.3 'Space Grotesk',sans-serif; letter-spacing:-.01em;}
-.q span{font-size:14px; color:var(--accent); font-weight:500;}
-@media(max-width:940px){ .qs{grid-template-columns:1fr 1fr;} } @media(max-width:580px){ .qs{grid-template-columns:1fr;} }
-
-/* ===== GLOSSARIO ===== */
-.gl{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:44px; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; background:var(--border);}
-.gl > div{background:var(--panel); padding:24px 24px 26px;}
-.gl dt{font:600 19px/1.2 'Space Grotesk',sans-serif; margin-bottom:9px; color:var(--text);}
-.gl dd{font-size:15px; color:var(--text2); line-height:1.55;}
-@media(max-width:940px){ .gl{grid-template-columns:1fr 1fr;} } @media(max-width:580px){ .gl{grid-template-columns:1fr;} }
-
-/* ===== COME INIZIARE ===== */
-.go{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px;}
-.go .s{border:1px solid var(--border); border-radius:var(--radius); padding:30px 28px; background:var(--panel);}
-.go .s b{display:block; font:700 52px/1 'Space Grotesk',sans-serif; color:var(--accent); opacity:.9; margin-bottom:16px;}
-.go .s h3{font-size:22px; margin-bottom:9px; font-weight:600;} .go .s p{color:var(--text2); font-size:16px;}
-@media(max-width:900px){ .go{grid-template-columns:1fr;} }
-
-/* ===== FOOTER ESTESO ===== */
-.fgrid{display:grid; grid-template-columns:1.7fr 1fr 1fr; gap:40px; width:100%;}
-.fgrid h4{font:500 11.5px/1 'IBM Plex Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); margin-bottom:16px;}
-.fgrid a{display:block; color:var(--text2); text-decoration:none; font-size:14.5px; padding:5px 0;} .fgrid a:hover{color:var(--accent);}
-.fgrid .about b{display:flex; align-items:center; gap:11px; font:700 18px/1 'Space Grotesk',sans-serif; color:var(--text); margin-bottom:14px; letter-spacing:.03em;}
-.fgrid .about b img{display:block; width:34px; height:34px; border-radius:9px;}
-.legal{width:100%; margin-top:10px; padding-top:20px; border-top:1px solid var(--border); font-size:12.5px; color:var(--dim2); max-width:none!important;}
-@media(max-width:760px){ .fgrid{grid-template-columns:1fr 1fr;} .fgrid .about{grid-column:1/-1;} }
+.btn-primary .ar{display:inline-block; font-weight:700; transition:transform .2s;} .btn-primary:hover .ar{transform:translateX(3px);}
 
 /* chiusura */
-.closing{position:relative; margin-top:112px; border:1px solid rgba(94,168,245,.35); border-radius:22px; padding:72px 26px; text-align:center; overflow:hidden; background:radial-gradient(65% 130% at 50% 0%, rgba(94,168,245,.22), transparent 70%), radial-gradient(40% 80% at 100% 100%, rgba(224,169,77,.12), transparent 70%), var(--panel);}
-.closing h2{margin:18px auto 14px; max-width:14em;}
-.closing p{color:var(--text2); max-width:34em; margin:0 auto; font-size:18px;}
-.closing .cta-row{justify-content:center; margin-top:34px;}
-footer{padding:48px 0 60px; margin-top:24px; color:var(--dim2); font-size:13px; line-height:1.65;}
-footer .wrap{border-top:1px solid var(--border); padding-top:26px; display:flex; flex-wrap:wrap; gap:12px 32px; justify-content:space-between;}
-footer p{max-width:68ch;}
+.closing{position:relative; margin-top:140px; border:1px solid rgba(120,160,230,.26); border-radius:26px; padding:88px 28px; text-align:center; overflow:hidden;
+  background:radial-gradient(120% 160% at 0% 0%,rgba(36,84,164,.5),transparent 58%),radial-gradient(110% 140% at 100% 100%,rgba(16,150,120,.2),transparent 62%),linear-gradient(135deg,#0E2547 0%,#0A1426 48%,#0C2224 100%);}
+.closing h2{margin:22px auto 16px; max-width:12em;}
+.closing p{color:var(--text2); max-width:32em; margin:0 auto; font-size:17px;}
+.closing .cta-row{justify-content:center; margin-top:38px;}
+footer{padding:56px 0 64px; margin-top:32px; color:var(--dim2); font-size:13px; line-height:1.65;}
+.fgrid{display:grid; grid-template-columns:1.7fr 1fr 1fr; gap:40px; width:100%; padding-top:34px; border-top:1px solid var(--hair);}
+.fgrid h4{font:500 11.5px/1 var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:16px;}
+.fgrid a{display:block; color:var(--text2); text-decoration:none; font-size:14.5px; padding:5px 0;} .fgrid a:hover{color:var(--accent);}
+.fgrid .about b{display:flex; align-items:center; gap:11px; font:600 18px/1 var(--fh); color:var(--text); margin-bottom:14px; letter-spacing:.02em;}
+.fgrid .about b img{display:block; width:34px; height:34px; border-radius:9px;}
+.fgrid .about p{max-width:34ch; color:var(--dim);}
+.legal{width:100%; margin-top:30px; padding-top:22px; border-top:1px solid var(--hair); font-size:12.5px; color:var(--dim2); max-width:68ch;}
+@media(max-width:760px){ .fgrid{grid-template-columns:1fr 1fr;} .fgrid .about{grid-column:1/-1;} }
+@media(prefers-reduced-motion:reduce){ .dial .needle,.chipf,.pill i{animation:none;} .js .rv{opacity:1; transform:none; transition:none;} .spec-fill{transition:none;} html{scroll-behavior:auto;} }
+
+/* ===== VERSIONE COMPATTA: testi e spazi più piccoli, la pagina si legge e si scorre in metà tempo ===== */
+body{font-size:15.5px; line-height:1.6;}
+.wrap{max-width:1120px; padding:0 22px;}
+.nav .wrap{height:58px; gap:24px;} .brand{font-size:16px; gap:10px;} .brand img{width:30px; height:30px; border-radius:8px;}
+.nav-links{gap:26px;} .nav-links a{font-size:16px;}
+.btn{font-size:14px; padding:13px 21px; border-radius:11px;} .nav .btn{padding:8px 14px; font-size:12.5px; border-radius:9px;}
+.hero{padding:50px 0 0;} .hero-grid{gap:34px;}
+.pill{font-size:10.5px; padding:7px 12px;}
+h1{font-size:clamp(30px,3.6vw,48px); margin:20px 0 16px; line-height:1.06;}
+.lede{font-size:clamp(15px,1.15vw,16.5px); max-width:33em; line-height:1.58;}
+.ticks{margin-top:18px; gap:8px 18px;} .ticks li{font-size:13px; padding-left:24px;} .ticks li::before{width:17px; height:17px; font-size:10px;}
+.cta-row{margin-top:24px; gap:10px;} .fine{margin-top:14px; font-size:12px;}
+.dial{max-width:470px;}
+.stats{margin-top:38px;} .stat{padding:20px 22px 22px 0;} .stat + .stat{padding-left:22px;}
+.stat b{font-size:clamp(26px,2.6vw,34px);} .stat span{font-size:9.5px; margin-top:7px; letter-spacing:.09em;}
+section.blk{padding:66px 0 0;}
+.eyebrow{font-size:10.5px; gap:10px;} .eyebrow::before,.center .eyebrow::after{width:24px;}
+h2{font-size:clamp(24px,2.5vw,32px); margin:12px 0 12px;}
+.sec-lede{font-size:15px; line-height:1.6;}
+.statement h2{font-size:clamp(26px,3vw,38px);} .statement p{font-size:15.5px;}
+.swap{margin-top:30px; padding-top:26px; gap:24px;} .sw b{font-size:clamp(52px,6vw,78px);} .sw span{font-size:13.5px; margin-top:10px;} .sw-ar{font-size:44px;}
+.split{gap:56px;} .split-head{top:84px;}
+.item{padding:19px 0 20px; grid-template-columns:48px 1fr; gap:4px 14px;} .item .n{font-size:12px;} .item h3{font-size:clamp(17px,1.5vw,20px); margin-bottom:5px;} .item p{font-size:14px; line-height:1.55;}
+.spec{margin-top:30px;} .spec-bar{height:34px;} .spec-zones{margin-top:12px;} .zone{padding-top:11px;} .zone b{font-size:16px;} .zone span{font-size:13px; margin-top:4px;}
+.spec-notes{margin-top:28px; padding-top:20px; gap:34px;} .spec-notes h3{font-size:18px; margin-bottom:6px;} .spec-notes h3 i{width:38px; height:10px;} .spec-notes p{font-size:14px;}
+.areas{margin-top:26px; column-gap:56px;} .areas li{padding:12px 0 13px; grid-template-columns:42px 1fr; gap:2px 10px;} .areas .n{font-size:11.5px;} .areas b{font-size:clamp(15px,1.3vw,17px);} .areas small{font-size:13px; line-height:1.45;}
+.day{margin-top:32px; gap:24px;} .day::before{top:18px;} .step .dot{width:36px; height:36px; font-size:12px;} .step .when{margin-top:14px; font-size:10.5px;} .step h3{font-size:17px; margin:7px 0 5px;} .step p{font-size:13.5px; line-height:1.55;}
+.who{margin-top:28px;} .person{padding:22px 26px 4px 0;} .person + .person{padding-left:26px;} .person:last-child{padding-right:0;} .person .q{font-size:clamp(19px,1.7vw,22px); margin-bottom:9px;} .person p{font-size:14px;} .person .tag{margin-top:13px; font-size:10px;}
+.cmp{margin-top:28px;} .cr{grid-template-columns:170px 1fr 1fr; gap:0 22px; padding:13px 0;} .cr b{font-size:15.5px;} .cr .lo{font-size:14px; padding-left:22px;} .cr .hi{font-size:14.5px; padding-left:24px;} .cr.ch{padding:9px 0;} .cr.ch span{font-size:10px;}
+.manifesto h2{font-size:clamp(26px,3.4vw,44px); margin-top:10px;} .manifesto p{font-size:clamp(15px,1.5vw,18px);}
+.gl{grid-template-columns:repeat(3,1fr); column-gap:40px; margin-top:26px;} .gl > div{padding:15px 0 17px;} .gl dt{font-size:16.5px; margin-bottom:5px;} .gl dd{font-size:13.5px; line-height:1.5;}
+.go{margin-top:26px;} .go .s{padding:20px 26px 4px 0;} .go .s + .s{padding-left:26px;} .go .s:last-child{padding-right:0;} .go .s b{font-size:38px; margin-bottom:9px;} .go .s h3{font-size:17px; margin-bottom:5px;} .go .s p{font-size:14px;}
+.faq{margin-top:26px;} .faq summary{padding:15px 4px; font-size:16px;} .faq summary::after{font-size:24px;} .faq p{font-size:14.5px; padding-bottom:16px;} .how-card{padding:15px;} .how-tag{font-size:16px;} .how-card li{font-size:13px;} .faq .how-note{font-size:13px; padding-bottom:16px;}
+.closing{margin-top:60px; padding:46px 24px; border-radius:22px;} .closing h2{margin:12px auto 10px;} .closing p{font-size:15px;} .closing .cta-row{margin-top:22px;} .ticks.mid{margin-top:20px;}
+footer{padding:30px 0 36px; margin-top:14px;} .fgrid{padding-top:22px; gap:30px;} .fgrid h4{margin-bottom:9px;} .fgrid a{font-size:13px; padding:3px 0;} .fgrid .about b{font-size:16px; margin-bottom:9px;} .legal{margin-top:18px; padding-top:14px; font-size:11.5px;}
+.sticky{padding:6px 6px 6px 20px; bottom:14px;} .sticky span{font-size:14px;} .sticky .btn{padding:10px 17px; font-size:12.5px;}
+/* schermi stretti: dopo le regole sopra, che altrimenti annullerebbero le disposizioni a colonna unica */
+@media(max-width:960px){ .hero{padding-top:34px;} .hero-grid{gap:26px;} .split{gap:22px;} }
+@media(max-width:900px){
+  .who{grid-template-columns:1fr;} .person,.person + .person{padding:18px 0; border-right:0; border-bottom:1px solid var(--hair);} .person:last-child{border-bottom:0;}
+  .go{grid-template-columns:1fr;} .go .s,.go .s + .s{padding:18px 0; border-right:0; border-bottom:1px solid var(--hair);} .go .s:last-child{border-bottom:0;}
+  .gl{grid-template-columns:1fr 1fr; column-gap:26px;}
+}
+@media(max-width:860px){ .stat{padding:16px 14px 16px 0;} .stat:nth-child(even){padding-left:18px;} .stat:nth-child(3){padding-left:0;} }
+@media(max-width:760px){
+  .cr{grid-template-columns:1fr; gap:3px; padding:13px 0;} .cr b{font-size:10.5px;}
+  .swap{grid-template-columns:1fr; gap:8px;} .sw-ar{font-size:36px; height:40px;}
+}
+@media(max-width:560px){
+  .gl{grid-template-columns:1fr;} .day{gap:20px;} .item{grid-template-columns:40px 1fr; gap:3px 10px;}
+  .sticky{padding:6px; gap:0;} .sticky .btn{padding:12px 20px;}
+  section.blk{padding-top:52px;} .closing{padding:38px 18px; margin-top:48px;}
+}
 </style>
 </head>
 <body>
 
 <nav class="nav" aria-label="Navigazione principale">
   <div class="wrap">
-    <a class="brand" href="#top"><img src="/icons/icon-192.png?v=3" width="36" height="36" alt=""><span class="bt">MACRO HUB <span>TRADING</span></span></a>
+    <a class="brand" href="#top"><img src="/icons/icon-192.png?v=3" width="34" height="34" alt=""><span class="bt">MACRO HUB <span>TRADING</span></span></a>
     <div class="nav-links">
+      <a href="#cosa-ottieni">Cosa ottieni</a>
+      <a href="#barre">Come si legge</a>
       <a href="#giornata">Una giornata</a>
-      <a href="#dentro">Dentro</a>
       <a href="#per-chi">Per chi è</a>
-      <a href="#glossario">Glossario</a>
       <a href="#faq">Domande</a>
     </div>
     <a class="btn btn-soon js-signup" href="#registrazione">Registrazione in arrivo</a>
@@ -329,56 +352,42 @@ footer p{max-width:68ch;}
 
 <header class="hero" id="top">
   <div class="wrap">
-    <div>
-      <div class="lockup">
-        <div class="logo"><img src="/icons/icon-512.png?v=3" width="112" height="112" alt="Logo di Macro Hub Trading: un globo con una linea di crescita"></div>
-        <div class="wm"><b>MACRO HUB <span>TRADING</span></b><i>Macro · Geopolitica · Mercati</i></div>
-      </div>
-      <span class="pill"><i></i>Presto con registrazione</span>
-      <h1>Il quadro macro completo. <span class="grad">In un solo sguardo.</span></h1>
-      <p class="lede">Inflazione, banche centrali, petrolio, geopolitica, sentiment. Tutto ciò che muove i mercati, ordinato e spiegato in italiano — così capisci cosa sta succedendo, e perché, in pochi minuti.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="#cosa-trovi">Scopri cosa c’è dentro →</a>
-        <a class="btn btn-ghost js-dash" href="/">Dai un’occhiata alla dashboard</a>
-      </div>
-      <p class="fine">Strumento informativo · nessun segnale, nessuna promessa di rendimento.</p>
-    </div>
-
-    <div class="stage" aria-hidden="true">
-      <div class="sc sc1">
-        <h4>Bias del giorno</h4>
-        <svg class="gauge" viewBox="0 0 200 112">
-          <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F0685E"/><stop offset=".5" stop-color="#E0A94D"/><stop offset="1" stop-color="#34D399"/></linearGradient></defs>
-          <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gg)" stroke-width="14" stroke-linecap="round"/>
-          <g class="needle"><line x1="100" y1="100" x2="100" y2="34" stroke="#EDF0F7" stroke-width="3" stroke-linecap="round"/></g>
-          <circle cx="100" cy="100" r="6" fill="#EDF0F7"/>
-        </svg>
-        <div class="ln" style="width:78%"></div><div class="ln" style="width:52%"></div>
-      </div>
-      <div class="sc sc4">
-        <h4>Trend</h4>
-        <svg class="spark" viewBox="0 0 120 50"><path d="M2 40 L20 30 L36 36 L54 18 L70 24 L88 10 L118 6" fill="none" stroke="#34D399" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="sc sc2">
-        <h4>Prossimo evento</h4>
-        <div class="cd"><b></b><em></em><b></b><em></em><b></b></div>
-        <div class="cal">
-          <i></i><i></i><i class="mid"></i><i></i><i></i><i></i><i></i>
-          <i></i><i class="mid"></i><i class="hot"></i><i></i><i></i><i></i><i></i>
-          <i></i><i></i><i></i><i class="mid"></i><i></i><i></i><i></i>
+    <div class="hero-grid">
+      <div>
+        <span class="pill"><i></i>Presto con registrazione</span>
+        <h1>Il quadro macro completo. <em>In un solo sguardo.</em></h1>
+        <p class="lede">Inflazione, banche centrali, petrolio, geopolitica, sentiment e il ciclo di ogni asset: tutto ciò che muove i mercati, ordinato e spiegato in italiano. Capisci cosa sta succedendo, e perché, in pochi minuti.</p>
+        <ul class="ticks"><li>In italiano, senza gergo</li><li>Dati e fonti ufficiali</li><li>Sempre aggiornata</li></ul>
+        <div class="cta-row">
+          <a class="btn btn-primary js-dash" href="/">Apri il quadro di oggi <span class="ar">→</span></a>
+          <a class="btn btn-ghost" href="#cosa-ottieni">Scopri come funziona</a>
         </div>
+        <p class="fine">Strumento informativo · nessun segnale, nessuna promessa di rendimento.</p>
       </div>
-      <div class="sc sc3">
-        <h4>Posizionamento</h4>
-        <div class="bar" style="--w:92%"></div><div class="bar" style="--w:68%"></div><div class="bar" style="--w:41%"></div><div class="bar" style="--w:18%"></div>
+      <div class="dial" aria-hidden="true">
+        <svg viewBox="0 0 520 370" role="presentation">
+          <defs>
+            <radialGradient id="hub" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#EAF3FF"/><stop offset="1" stop-color="#5EA8F5"/></radialGradient>
+            <linearGradient id="needleg" gradientUnits="userSpaceOnUse" x1="260" y1="290" x2="260" y2="76"><stop offset="0" stop-color="#5EA8F5" stop-opacity="0"/><stop offset=".35" stop-color="#9CCBFB"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+          </defs>
+          <circle cx="260" cy="290" r="250" fill="none" stroke="rgba(190,205,235,0.1)" stroke-width="1" stroke-dasharray="2 6"/><circle cx="260" cy="290" r="282" fill="none" stroke="rgba(190,205,235,0.07)" stroke-width="1" stroke-dasharray="1 8"/><circle cx="260" cy="290" r="318" fill="none" stroke="rgba(190,205,235,0.045)" stroke-width="1" stroke-dasharray="1 10"/>
+          <path d="M 86.0 290.0 A 174 174 0 0 1 434.0 290.0" fill="none" stroke="rgba(190,205,235,.12)" stroke-width="1"/>
+          <g class="arcs" fill="none" stroke-width="20" stroke-linecap="butt"><path d="M 46.3 278.8 A 214 214 0 0 1 103.5 144.1" stroke="#34D399" style="color:#34D399" opacity=".92"/><path d="M 114.1 133.5 A 214 214 0 0 1 248.8 76.3" stroke="#38BDF8" style="color:#38BDF8" opacity=".92"/><path d="M 263.7 76.0 A 214 214 0 0 1 400.4 128.5" stroke="#E0A94D" style="color:#E0A94D" opacity=".92"/><path d="M 411.3 138.7 A 214 214 0 0 1 473.7 278.8" stroke="#F0685E" style="color:#F0685E" opacity=".92"/></g>
+          <g><line x1="28.0" y1="290.0" x2="12.0" y2="290.0" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="28.3" y1="277.9" x2="20.3" y2="277.4" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="29.3" y1="265.7" x2="21.3" y2="264.9" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="30.9" y1="253.7" x2="23.0" y2="252.5" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="33.1" y1="241.8" x2="25.2" y2="240.1" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="35.9" y1="230.0" x2="20.5" y2="225.8" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="39.4" y1="218.3" x2="31.7" y2="215.8" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="43.4" y1="206.9" x2="35.9" y2="204.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="48.1" y1="195.6" x2="40.7" y2="192.4" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="53.3" y1="184.7" x2="46.2" y2="181.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="59.1" y1="174.0" x2="45.2" y2="166.0" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="65.4" y1="163.6" x2="58.7" y2="159.3" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="72.3" y1="153.6" x2="65.8" y2="148.9" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="79.7" y1="144.0" x2="73.5" y2="139.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="87.6" y1="134.8" x2="81.6" y2="129.4" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="96.0" y1="126.0" x2="84.6" y2="114.6" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="104.8" y1="117.6" x2="99.4" y2="111.6" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="114.0" y1="109.7" x2="109.0" y2="103.5" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="123.6" y1="102.3" x2="118.9" y2="95.8" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="133.6" y1="95.4" x2="129.3" y2="88.7" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="144.0" y1="89.1" x2="136.0" y2="75.2" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="154.7" y1="83.3" x2="151.0" y2="76.2" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="165.6" y1="78.1" x2="162.4" y2="70.7" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="176.9" y1="73.4" x2="174.0" y2="65.9" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="188.3" y1="69.4" x2="185.8" y2="61.7" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="200.0" y1="65.9" x2="195.8" y2="50.5" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="211.8" y1="63.1" x2="210.1" y2="55.2" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="223.7" y1="60.9" x2="222.5" y2="53.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="235.7" y1="59.3" x2="234.9" y2="51.3" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="247.9" y1="58.3" x2="247.4" y2="50.3" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="260.0" y1="58.0" x2="260.0" y2="42.0" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="272.1" y1="58.3" x2="272.6" y2="50.3" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="284.3" y1="59.3" x2="285.1" y2="51.3" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="296.3" y1="60.9" x2="297.5" y2="53.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="308.2" y1="63.1" x2="309.9" y2="55.2" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="320.0" y1="65.9" x2="324.2" y2="50.5" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="331.7" y1="69.4" x2="334.2" y2="61.7" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="343.1" y1="73.4" x2="346.0" y2="65.9" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="354.4" y1="78.1" x2="357.6" y2="70.7" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="365.3" y1="83.3" x2="369.0" y2="76.2" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="376.0" y1="89.1" x2="384.0" y2="75.2" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="386.4" y1="95.4" x2="390.7" y2="88.7" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="396.4" y1="102.3" x2="401.1" y2="95.8" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="406.0" y1="109.7" x2="411.0" y2="103.5" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="415.2" y1="117.6" x2="420.6" y2="111.6" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="424.0" y1="126.0" x2="435.4" y2="114.6" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="432.4" y1="134.8" x2="438.4" y2="129.4" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="440.3" y1="144.0" x2="446.5" y2="139.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="447.7" y1="153.6" x2="454.2" y2="148.9" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="454.6" y1="163.6" x2="461.3" y2="159.3" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="460.9" y1="174.0" x2="474.8" y2="166.0" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="466.7" y1="184.7" x2="473.8" y2="181.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="471.9" y1="195.6" x2="479.3" y2="192.4" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="476.6" y1="206.9" x2="484.1" y2="204.0" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="480.6" y1="218.3" x2="488.3" y2="215.8" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="484.1" y1="230.0" x2="499.5" y2="225.8" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/><line x1="486.9" y1="241.8" x2="494.8" y2="240.1" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="489.1" y1="253.7" x2="497.0" y2="252.5" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="490.7" y1="265.7" x2="498.7" y2="264.9" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="491.7" y1="277.9" x2="499.7" y2="277.4" stroke="rgba(190,205,235,0.22)" stroke-width="1"/><line x1="492.0" y1="290.0" x2="508.0" y2="290.0" stroke="rgba(190,205,235,0.5)" stroke-width="1.4"/></g>
+          <g class="needle"><line x1="260" y1="290" x2="260" y2="102" stroke="url(#needleg)" stroke-width="3.2" stroke-linecap="round"/><circle cx="260" cy="102" r="4.5" fill="#fff"/></g>
+          <circle cx="260" cy="290" r="15" fill="#0A1426" stroke="rgba(94,168,245,.6)" stroke-width="1.5"/><circle cx="260" cy="290" r="6.5" fill="url(#hub)"/>
+          <text x="260" y="336" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="3" fill="#8B93AC">IL QUADRO, IN UN SOLO SGUARDO</text>
+          <text x="46" y="316" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#34D399">FAVOREVOLE</text>
+          <text x="474" y="316" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#F0685E">SOTTO PRESSIONE</text>
+        </svg>
+        <span class="chipf a">Inflazione</span><span class="chipf b">Banche centrali</span><span class="chipf c">Petrolio</span><span class="chipf d">Geopolitica</span><span class="chipf e">Dollaro</span>
       </div>
     </div>
-  </div>
-
-  <div class="marquee" aria-hidden="true">
-    <div class="track">
-      <span>Inflazione</span><span>Tassi</span><span>Dollaro</span><span>Petrolio</span><span>Oro</span><span>Geopolitica</span><span>Lavoro</span><span>Volatilità</span><span>Sentiment</span><span>Banche centrali</span><span>Rendimenti</span><span>Posizionamento</span>
-      <span>Inflazione</span><span>Tassi</span><span>Dollaro</span><span>Petrolio</span><span>Oro</span><span>Geopolitica</span><span>Lavoro</span><span>Volatilità</span><span>Sentiment</span><span>Banche centrali</span><span>Rendimenti</span><span>Posizionamento</span>
+    <div class="stats">
+      <div class="stat rv"><b>10</b><span>Aree di lettura,<br>un unico linguaggio</span></div>
+      <div class="stat rv d1"><b>14</b><span>Asset seguiti<br>nel loro ciclo di mercato</span></div>
+      <div class="stat rv d2"><b>40+</b><span>Fonti di notizie,<br>ordinate per impatto</span></div>
+      <div class="stat rv d3"><b>Live</b><span>Prezzi e analisi<br>che si aggiornano da soli</span></div>
     </div>
   </div>
 </header>
@@ -387,357 +396,169 @@ footer p{max-width:68ch;}
 
 <section class="blk" id="problema">
   <div class="wrap">
-    <div class="eyebrow">Il problema</div>
-    <h2>Venti schede aperte. <span class="grad">Zero chiarezza.</span></h2>
-    <p class="sec-lede">I mercati sono mossi da troppe cose insieme, e ognuna sta su un sito diverso. Macro Hub le mette in fila e te le racconta.</p>
-    <div class="chaos">
-      <div class="scatter" aria-hidden="true">
-        <span style="--r:-3deg">Inflazione</span><span style="--r:2deg">Fed</span><span style="--r:-1deg">Petrolio</span><span style="--r:3deg">Calendario</span><span style="--r:-2deg">Geopolitica</span><span style="--r:1deg">Lavoro</span><span style="--r:-3deg">Dollaro</span><span style="--r:2deg">Sentiment</span><span style="--r:-1deg">Oro</span><span style="--r:3deg">Rendimenti</span>
-      </div>
-      <div class="arrow" aria-hidden="true">→</div>
-      <div class="order"><b>Un solo posto.</b><p>Il quadro del giorno, messo in ordine: cosa conta, cosa è cambiato, cosa sta per succedere.</p></div>
+    <div class="statement rv">
+      <div class="eyebrow">Il problema</div>
+      <h2>Venti schede aperte. <em>Zero chiarezza.</em></h2>
+      <p>I mercati sono mossi da troppe cose insieme, e ognuna sta su un sito diverso. Macro Hub le mette in fila e te le racconta: cosa conta oggi, cosa è cambiato, cosa sta per succedere.</p>
     </div>
+    <div class="swap rv" aria-label="Da venti schede a una sola pagina">
+      <div class="sw old"><b>20</b><span>schede aperte, siti diversi, notizie che si contraddicono</span></div>
+      <div class="sw-ar" aria-hidden="true">→</div>
+      <div class="sw new"><b>1</b><span>pagina: il quadro ordinato per ciò che conta oggi</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="blk" id="cosa-ottieni">
+  <div class="wrap split">
+    <div class="split-head rv">
+      <div class="eyebrow">Cosa ottieni</div>
+      <h2>Tutto ciò che serve per leggere il mercato</h2>
+      <p class="sec-lede">Un solo posto, sei risposte. Ognuna a una domanda che ti sei fatto almeno una volta.</p>
+    </div>
+    <ol class="list">
+      <li class="item rv" style="--sec:#5EA8F5"><span class="n">01</span><div><h3>Il clima del giorno</h3><p>Un colpo d’occhio ti dice se oggi il mercato ha voglia di rischiare o di proteggersi, e quali notizie lo spiegano.</p></div></li>
+      <li class="item rv" style="--sec:#2DD4BF"><span class="n">02</span><div><h3>Il ciclo di ogni asset</h3><p>Accumulazione, rialzo, distribuzione o ribasso: la fase in cui si trova ogni asset, con conferme oggettive e i livelli da portare sul grafico.</p></div></li>
+      <li class="item rv" style="--sec:#F5B94D"><span class="n">03</span><div><h3>Dati e attese</h3><p>Ogni dato accanto a ciò che il mercato si aspettava: la sorpresa si vede subito, e il conto alla rovescia ti prepara a ciò che sta per uscire.</p></div></li>
+      <li class="item rv" style="--sec:#F472B6"><span class="n">04</span><div><h3>Cosa muove i prezzi</h3><p>Le notizie ordinate per impatto e i movimenti fuori dall’ordinario, fascia oraria per fascia oraria, con ciò che è uscito in quelle ore.</p></div></li>
+      <li class="item rv" style="--sec:#FB923C"><span class="n">05</span><div><h3>Posizionamento e rischio</h3><p>Dove i grandi operatori sono affollati o scoperti, quanto è mosso ogni asset rispetto al solito e a che ora si muove di più.</p></div></li>
+      <li class="item rv" style="--sec:#818CF8"><span class="n">06</span><div><h3>Banche centrali e geopolitica</h3><p>La Fed senza gergo, cosa prezzano i future sui tassi e come le tensioni internazionali toccano energia, valute e rischio.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="blk" id="barre">
+  <div class="wrap">
+    <div class="center rv">
+      <div class="eyebrow">Come si legge</div>
+      <h2>Una barra. Quattro zone. <em>Nessun gergo.</em></h2>
+      <p class="sec-lede">Ogni dato è una barra su una scala a quattro zone: più si allunga, più il segnale è vicino alla pressione. Lo capisci prima ancora di leggere il numero.</p>
+    </div>
+    <div class="spec rv" id="spec">
+      <div class="spec-bar"><span class="spec-fill"></span></div>
+      <div class="spec-zones">
+        <div class="zone"><b>Favorevole</b><span>Il dato aiuta il mercato.</span></div>
+        <div class="zone"><b>Neutro</b><span>Tutto nella norma.</span></div>
+        <div class="zone"><b>Da monitorare</b><span>Da tenere d’occhio.</span></div>
+        <div class="zone"><b>Sotto pressione</b><span>Oltre la linea rossa: il segnale è sotto stress.</span></div>
+      </div>
+      <div class="spec-notes">
+        <div class="full"><h3><i></i>Barra piena</h3><p>Una misura vera: un numero calcolato su dati reali, come inflazione, rendimenti, prezzi o posizionamento dei grandi operatori.</p></div>
+        <div class="hat"><h3><i></i>Barra a righe</h3><p>Un giudizio: la lettura qualitativa dell’analisi quando non esiste un numero da misurare. Dice da che parte pende, non quanto.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="blk" id="aree">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Dentro Macro Hub</div>
+      <h2>Dieci aree, <em>un unico quadro</em></h2>
+      <p class="sec-lede">Ogni area ha il suo punto di vista sullo stesso mercato. Ti basta aprire quella che ti incuriosisce.</p>
+    </div>
+    <ol class="areas">
+      <li class="rv" style="--sec:#5EA8F5"><span class="n">01</span><b>Il quadro di oggi</b><small>Il bias del giorno, i driver e il prossimo evento chiave.</small></li>
+      <li class="rv d1" style="--sec:#2DD4BF"><span class="n">02</span><b>Mercati: prezzi, ciclo e attese</b><small>Dove si trova ogni asset e cosa sta scontando il mercato.</small></li>
+      <li class="rv" style="--sec:#A3E635"><span class="n">03</span><b>Indicatori chiave</b><small>Economia, geopolitica, azioni, settori, tassi e liquidità.</small></li>
+      <li class="rv d1" style="--sec:#F5B94D"><span class="n">04</span><b>Calendario e volatilità</b><small>Gli appuntamenti della settimana e le ore in cui si muove di più.</small></li>
+      <li class="rv" style="--sec:#A78BFA"><span class="n">05</span><b>Sintesi operativa</b><small>Un cruscotto per asset, con scenari: contesto, non segnali.</small></li>
+      <li class="rv d1" style="--sec:#F472B6"><span class="n">06</span><b>Sentiment di mercato</b><small>Paura o avidità, a confronto con ciò che dicono i fatti.</small></li>
+      <li class="rv" style="--sec:#FB923C"><span class="n">07</span><b>Posizionamento e rischio</b><small>Cosa stanno facendo davvero i grandi operatori sui futures.</small></li>
+      <li class="rv d1" style="--sec:#38BDF8"><span class="n">08</span><b>Macro: USA, Europa e lavoro</b><small>Ogni dato accanto alle attese, per capire se ha sorpreso.</small></li>
+      <li class="rv" style="--sec:#818CF8"><span class="n">09</span><b>Banche centrali e tassi</b><small>La Fed senza gergo e cosa significherebbe per dollaro, oro e rendimenti.</small></li>
+      <li class="rv d1" style="--sec:#E879F9"><span class="n">10</span><b>Geopolitica e notizie</b><small>Conflitti e tensioni che muovono energia, valute e rischio.</small></li>
+    </ol>
   </div>
 </section>
 
 <section class="blk" id="giornata">
   <div class="wrap">
-    <div class="eyebrow">Come si usa</div>
-    <h2>Una giornata con Macro Hub</h2>
-    <p class="sec-lede">Dal primo sguardo del mattino alla sera: ogni momento ha la sua risposta.</p>
+    <div class="rv">
+      <div class="eyebrow">Come si usa</div>
+      <h2>Una giornata con Macro Hub</h2>
+      <p class="sec-lede">Dal primo sguardo del mattino alla sera: ogni momento ha la sua risposta.</p>
+    </div>
     <div class="day">
-      <div class="step"><div class="dot">01</div><div class="when">Mattina</div><h3>Capisci il clima</h3><p>Un colpo d’occhio ti dice se oggi il mercato ha voglia di rischiare o di proteggersi, e quali notizie lo spiegano.</p></div>
-      <div class="step"><div class="dot">02</div><div class="when">Prima del dato</div><h3>Sai cosa aspettarti</h3><p>Conto alla rovescia verso l’evento che conta e gli scenari già pronti: cosa succede se sorprende in un senso o nell’altro.</p></div>
-      <div class="step"><div class="dot">03</div><div class="when">Alla pubblicazione</div><h3>Lo leggi al volo</h3><p>Il dato appena uscito, messo accanto alle attese: capisci subito se ha sorpreso e quanto.</p></div>
-      <div class="step"><div class="dot">04</div><div class="when">Sera</div><h3>Il quadro si completa</h3><p>Banche centrali, posizionamento dei grandi operatori, geopolitica: ciò che sta sotto la superficie dei prezzi.</p></div>
+      <div class="step rv"><div class="dot">01</div><div class="when">Mattina</div><h3>Capisci il clima</h3><p>Un colpo d’occhio ti dice se oggi il mercato ha voglia di rischiare o di proteggersi, e quali notizie lo spiegano.</p></div>
+      <div class="step rv d1"><div class="dot">02</div><div class="when">Prima del dato</div><h3>Sai cosa aspettarti</h3><p>Conto alla rovescia verso l’evento che conta e gli scenari già pronti: cosa succede se sorprende in un senso o nell’altro.</p></div>
+      <div class="step rv d2"><div class="dot">03</div><div class="when">Alla pubblicazione</div><h3>Lo leggi al volo</h3><p>Il dato appena uscito, messo accanto alle attese: capisci subito se ha sorpreso e quanto.</p></div>
+      <div class="step rv d3"><div class="dot">04</div><div class="when">Sera</div><h3>Il quadro si completa</h3><p>Banche centrali, posizionamento dei grandi operatori, geopolitica: ciò che sta sotto la superficie dei prezzi.</p></div>
     </div>
   </div>
 </section>
 
-<section class="blk" id="cosa-trovi">
+<section class="blk" id="per-chi">
   <div class="wrap">
-    <div>
-      <div class="eyebrow">Cosa trovi dentro</div>
-      <h2>Tutto ciò che serve per leggere il mercato</h2>
-      <p class="sec-lede">Nove aree, un unico linguaggio. Ognuna risponde a una domanda che ti sei fatto almeno una volta.</p>
+    <div class="center rv">
+      <div class="eyebrow">Per chi è</div>
+      <h2>Se ti sei mai chiesto “ma perché si sta muovendo?”</h2>
     </div>
-    <div class="bento">
-      <article class="tile gold">
-        <span class="num">01</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
-        <h3>Il quadro di oggi</h3>
-        <p>Il bias del giorno da risk-off a risk-on con le notizie che lo spiegano, i driver, il prossimo evento chiave con conto alla rovescia e scenari. È la prima cosa che guardi, e a volte l’unica che ti serve.</p>
-      </article>
-      <article class="tile">
-        <span class="num">02</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 4 8-9"/><path d="M15 6h5v5"/></svg></div>
-        <h3>Mercati</h3>
-        <p>Dollaro, indici, oro, argento, petrolio, rendimenti: prezzo, volatilità e correlazione con il dollaro, e cosa sta scontando il mercato.</p>
-      </article>
-      <article class="tile">
-        <span class="num">03</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
-        <h3>Calendario e volatilità</h3>
-        <p>Tutti gli appuntamenti della settimana, in italiano, e i giorni in cui aspettarsi movimenti ampi.</p>
-      </article>
-      <article class="tile">
-        <span class="num">04</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
-        <h3>Sintesi operativa</h3>
-        <p>Un cruscotto per asset — valute, oro, argento, petrolio, indici — con scenari qualitativi: contesto, non segnali.</p>
-      </article>
-      <article class="tile">
-        <span class="num">05</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 7 2 8 0M9 9h.01M15 9h.01"/></svg></div>
-        <h3>Sentiment</h3>
-        <p>Paura o avidità? L’umore di investitori e notizie, confrontato con ciò che dicono i fatti.</p>
-      </article>
-      <article class="tile">
-        <span class="num">06</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/></svg></div>
-        <h3>Posizionamento e rischio</h3>
-        <p>Cosa stanno facendo davvero i grandi operatori sui futures: dove sono affollati, dove sono scoperti.</p>
-      </article>
-      <article class="tile">
-        <span class="num">07</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
-        <h3>Macro: USA, Europa, lavoro</h3>
-        <p>Inflazione, lavoro, crescita: ogni dato accanto alle attese, per capire subito se ha sorpreso.</p>
-      </article>
-      <article class="tile">
-        <span class="num">08</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></svg></div>
-        <h3>Banche centrali e tassi</h3>
-        <p>La Fed senza gergo: cosa può fare e cosa significherebbe per dollaro, oro e rendimenti.</p>
-      </article>
-      <article class="tile">
-        <span class="num">09</span>
-        <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
-        <h3>Geopolitica e notizie</h3>
-        <p>Conflitti e tensioni che muovono energia, valute e rischio, e come le diverse fonti raccontano i fatti.</p>
-      </article>
+    <div class="who">
+      <div class="person rv"><div class="q">Il trader</div><p>Vuoi il contesto prima di operare, non l’ennesimo segnale. Capire in che regime si muove il mercato cambia il modo in cui leggi ogni grafico.</p><span class="tag">Contesto prima del grafico</span></div>
+      <div class="person rv d1"><div class="q">L’investitore</div><p>Vuoi capire dove siamo nel ciclo — inflazione, tassi, crescita — senza leggere venti report e senza il gergo da addetti ai lavori.</p><span class="tag">Il quadro d’insieme</span></div>
+      <div class="person rv d2"><div class="q">Il curioso</div><p>Vuoi imparare come l’economia muove davvero i prezzi. Ogni sezione ti spiega cosa sta succedendo e perché, con parole semplici.</p><span class="tag">Imparare guardando</span></div>
     </div>
   </div>
 </section>
 
-<section class="blk" id="dentro">
+<section class="blk" id="confronto">
   <div class="wrap">
-    <div>
-      <div class="eyebrow">Dentro la dashboard</div>
-      <h2>Sei modi di guardare lo stesso mercato</h2>
-      <p class="sec-lede">Ogni area ha il suo punto di vista. Scegli quella che ti incuriosisce di più.</p>
-    </div>
-    <div class="show" id="show">
-      <div class="show-tabs" role="tablist" aria-label="Aree della dashboard"></div>
-
-      <article class="panel on" role="tabpanel" data-tab="Il polso del giorno">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 112" style="width:100%; max-width:300px; margin:0 auto; display:block;">
-            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gg)" stroke-width="14" stroke-linecap="round"/>
-            <line x1="100" y1="100" x2="100" y2="34" stroke="#EDF0F7" stroke-width="3" stroke-linecap="round" transform="rotate(24 100 100)"/>
-            <circle cx="100" cy="100" r="6" fill="#EDF0F7"/>
-          </svg>
-          <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;"><span class="chipx r">Risk-off</span><span class="chipx y">Neutrale</span><span class="chipx g">Risk-on</span></div>
-          <div class="row2">
-            <div class="mini"><h5>Bias geopolitico</h5><div class="ln" style="width:85%"></div><div class="ln" style="width:55%"></div></div>
-            <div class="mini"><h5>Bias macro</h5><div class="ln" style="width:70%"></div><div class="ln" style="width:48%"></div></div>
-          </div>
-        </div>
-        <div class="ptxt">
-          <div class="kick">Mattina</div>
-          <h3>Il polso del giorno</h3>
-          <p>Prima di guardare un solo grafico, capisci in che clima si muove il mercato.</p>
-          <ul>
-            <li>Un punteggio da risk-off a risk-on, sempre in vista</li>
-            <li>Il bias geopolitico e quello macro, spiegati in una riga</li>
-            <li>Le notizie che contano, senza scorrere dieci siti</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="panel" role="tabpanel" data-tab="Il prossimo evento">
-        <div class="art" aria-hidden="true">
-          <div class="lbl">Conto alla rovescia</div>
-          <div class="cdl"><div><b></b><span class="lbl">ore</span></div><em></em><div><b></b><span class="lbl">min</span></div><em></em><div><b></b><span class="lbl">sec</span></div></div>
-          <div class="row2">
-            <div class="mini"><h5>Se sopra le attese</h5><span class="chipx g">▲ Scenario</span><div class="ln" style="width:90%"></div><div class="ln" style="width:60%"></div></div>
-            <div class="mini"><h5>Se sotto le attese</h5><span class="chipx r">▼ Scenario</span><div class="ln" style="width:80%"></div><div class="ln" style="width:65%"></div></div>
-          </div>
-        </div>
-        <div class="ptxt">
-          <div class="kick">Prima del dato</div>
-          <h3>Il prossimo evento</h3>
-          <p>Conto alla rovescia verso l’appuntamento che può muovere tutto.</p>
-          <ul>
-            <li>Cosa ci si aspetta e cosa era successo la volta scorsa</li>
-            <li>Due scenari già pronti: se il dato sorprende al rialzo o al ribasso</li>
-            <li>Gli asset da tenere d’occhio in quel momento</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="panel" role="tabpanel" data-tab="Macro e attese">
-        <div class="art" aria-hidden="true">
-          <div class="key"><span><u style="background:var(--dim2)"></u>Atteso</span><span><u style="background:var(--accent)"></u>Uscito</span></div>
-          <div class="mrow2"><div><div class="lbl">Inflazione</div><div class="cmp" style="--a:62%; --b:80%"><div class="t"></div><div class="a"></div></div></div><span class="chipx r">▲ Sopra</span></div>
-          <div class="mrow2"><div><div class="lbl">Occupazione</div><div class="cmp" style="--a:78%; --b:46%"><div class="t"></div><div class="a"></div></div></div><span class="chipx g">▼ Sotto</span></div>
-          <div class="mrow2"><div><div class="lbl">Attività</div><div class="cmp" style="--a:66%; --b:66%"><div class="t"></div><div class="a"></div></div></div><span class="chipx">● In linea</span></div>
-        </div>
-        <div class="ptxt">
-          <div class="kick">Alla pubblicazione</div>
-          <h3>Macro e attese</h3>
-          <p>Un dato da solo non dice nulla: conta rispetto a ciò che il mercato si aspettava.</p>
-          <ul>
-            <li>Inflazione, lavoro e crescita, Stati Uniti ed Europa</li>
-            <li>La sorpresa evidenziata a colpo d’occhio</li>
-            <li>Una lettura d’insieme di cosa significa per le banche centrali</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="panel" role="tabpanel" data-tab="Il posizionamento dei grandi">
-        <div class="art" aria-hidden="true">
-          <div class="pb"><span class="lbl">Indici</span><span class="tr"><i style="--w:94%"></i></span></div>
-          <div class="pb"><span class="lbl">Valute</span><span class="tr"><i style="--w:78%"></i></span></div>
-          <div class="pb"><span class="lbl">Oro</span><span class="tr"><i style="--w:63%"></i></span></div>
-          <div class="pb"><span class="lbl">Petrolio</span><span class="tr"><i style="--w:34%"></i></span></div>
-          <div class="pb"><span class="lbl">Cripto</span><span class="tr"><i style="--w:16%"></i></span></div>
-          <div class="axisx"><span></span><div><span>minimo</span><span>medio</span><span>massimo</span></div></div>
-        </div>
-        <div class="ptxt">
-          <div class="kick">Sera</div>
-          <h3>Il posizionamento dei grandi</h3>
-          <p>Dietro i prezzi ci sono le scelte dei grandi operatori. Qui le vedi.</p>
-          <ul>
-            <li>Dove il posizionamento è affollato e dove è scoperto</li>
-            <li>Quanto è estremo rispetto all’ultimo anno</li>
-            <li>Una lettura per ogni asset, dall’oro agli indici</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="panel" role="tabpanel" data-tab="Il sentiment">
-        <div class="art" aria-hidden="true">
-          <div class="lbl">Paura o avidità?</div>
-          <div><div class="meterx" style="--p:30%"><i></i><i class="on"></i><i></i><i></i><i></i><span class="pin"></span></div>
-          <div class="mlab"><span>Paura estrema</span><span>Avidità estrema</span></div></div>
-          <div class="lbl" style="margin-top:8px">Investitori individuali</div>
-          <div><div class="stk"><i style="flex:4; background:var(--green)"></i><i style="flex:2; background:var(--dim2)"></i><i style="flex:4; background:var(--red)"></i></div>
-          <div class="mlab"><span>Bullish</span><span>Neutrale</span><span>Bearish</span></div></div>
-        </div>
-        <div class="ptxt">
-          <div class="kick">Il clima emotivo</div>
-          <h3>Il sentiment</h3>
-          <p>L’umore degli investitori è un indizio: qui lo leggi e lo confronti con i fatti.</p>
-          <ul>
-            <li>Paura e avidità in un unico indicatore</li>
-            <li>Il sondaggio sugli investitori individuali</li>
-            <li>Notizie e dati messi a confronto: si confermano o si contraddicono?</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="panel" role="tabpanel" data-tab="Geopolitica">
-        <div class="art" aria-hidden="true">
-          <svg class="globe" viewBox="0 0 200 200">
-            <circle cx="100" cy="100" r="78" fill="none" stroke="#232B45" stroke-width="2"/>
-            <ellipse cx="100" cy="100" rx="78" ry="30" fill="none" stroke="#232B45" stroke-width="1.5"/>
-            <ellipse cx="100" cy="100" rx="30" ry="78" fill="none" stroke="#232B45" stroke-width="1.5"/>
-            <line x1="22" y1="100" x2="178" y2="100" stroke="#232B45" stroke-width="1.5"/><line x1="100" y1="22" x2="100" y2="178" stroke="#232B45" stroke-width="1.5"/>
-            <circle class="d1" cx="130" cy="72" r="6" fill="#F0685E"/><circle class="d2" cx="72" cy="118" r="6" fill="#E0A94D"/><circle class="d3" cx="112" cy="140" r="6" fill="#34D399"/>
-          </svg>
-          <div class="trow"><span class="chipx r">↗ Rischio in aumento</span><span class="ln"></span></div>
-          <div class="trow"><span class="chipx y">→ Stabile</span><span class="ln"></span></div>
-          <div class="trow"><span class="chipx g">↘ In calo</span><span class="ln"></span></div>
-        </div>
-        <div class="ptxt">
-          <div class="kick">Il quadro globale</div>
-          <h3>Geopolitica</h3>
-          <p>Le tensioni internazionali non restano mai fuori dai prezzi.</p>
-          <ul>
-            <li>I temi caldi e il canale con cui toccano i mercati</li>
-            <li>Se il rischio è in aumento, stabile o in calo</li>
-            <li>Cosa osservare per capire se la situazione cambia</li>
-          </ul>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="blk" id="prima-dopo">
-  <div class="wrap">
-    <div class="center">
+    <div class="center rv">
       <div class="eyebrow">La differenza</div>
-      <h2>Cambia il modo in cui inizi la giornata</h2>
+      <h2>Farlo da soli, o <em>con Macro Hub</em></h2>
+      <p class="sec-lede">Stesse informazioni, un altro modo di arrivarci: meno ricerca, più capacità di capire.</p>
     </div>
-    <div class="ba">
-      <div class="col old">
-        <h3>Prima</h3>
-        <ul>
-          <li>Dieci schede aperte, nessuna che dialoga con le altre</li>
-          <li>Notizie che si contraddicono e nessuno che le ordina per importanza</li>
-          <li>Un dato appena uscito e il dubbio: ha sorpreso o no?</li>
-          <li>La sensazione di arrivare sempre un po’ in ritardo sul quadro</li>
-        </ul>
-      </div>
-      <div class="col now">
-        <h3>Con Macro Hub</h3>
-        <ul>
-          <li>Un unico quadro, ordinato per ciò che conta oggi</li>
-          <li>Ogni notizia collegata al suo impatto sui mercati</li>
-          <li>Ogni dato accanto alle attese: la sorpresa si vede subito</li>
-          <li>Sai cosa aspettarti prima che succeda</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="blk" id="domande-chiave">
-  <div class="wrap">
-    <div>
-      <div class="eyebrow">Curiosità</div>
-      <h2>Le domande che ti aiuta a sciogliere</h2>
-      <p class="sec-lede">Se almeno una di queste ti ha mai fatto restare a pensare, sei nel posto giusto.</p>
-    </div>
-    <div class="qs">
-      <a class="q js-dash" href="/"><b>Perché il dollaro tende a salire quando i mercati hanno paura?</b><span>Scopri come ragiona il mercato →</span></a>
-      <a class="q js-dash" href="/"><b>Cosa significa che la Fed è “hawkish”?</b><span>Dal gergo ai suoi effetti →</span></a>
-      <a class="q js-dash" href="/"><b>Perché l’oro a volte scende quando i tassi salgono?</b><span>Il legame con rendimenti e dollaro →</span></a>
-      <a class="q js-dash" href="/"><b>Cosa stanno facendo davvero i grandi fondi sui futures?</b><span>Guarda il posizionamento →</span></a>
-      <a class="q js-dash" href="/"><b>Un dato “in linea” può comunque muovere i mercati?</b><span>La sorpresa conta più del numero →</span></a>
-      <a class="q js-dash" href="/"><b>Come fa una tensione geopolitica a muovere il petrolio?</b><span>Dalle notizie ai prezzi →</span></a>
+    <div class="cmp rv" role="table" aria-label="Confronto">
+      <div class="cr ch" role="row"><span></span><span class="lo">Da soli</span><span class="hi">Con Macro Hub</span></div>
+      <div class="cr" role="row"><b>Tempo</b><span class="lo">Ore tra siti, newsletter e grafici</span><span class="hi">Pochi minuti, tutto in un posto</span></div>
+      <div class="cr" role="row"><b>Notizie</b><span class="lo">Tante, in ordine di data</span><span class="hi">Ordinate per impatto sui mercati</span></div>
+      <div class="cr" role="row"><b>Dati</b><span class="lo">Un numero senza contesto</span><span class="hi">Accanto alle attese, con la sorpresa evidenziata</span></div>
+      <div class="cr" role="row"><b>Ciclo degli asset</b><span class="lo">Un grafico alla volta, a occhio</span><span class="hi">La fase di ogni asset, con cinque conferme</span></div>
+      <div class="cr" role="row"><b>Linguaggio</b><span class="lo">Inglese e gergo da addetti ai lavori</span><span class="hi">Italiano, con parole semplici</span></div>
+      <div class="cr" role="row"><b>Aggiornamento</b><span class="lo">Da cercare e da ricaricare</span><span class="hi">Si aggiorna da sola, anche mentre è aperta</span></div>
     </div>
   </div>
 </section>
 
 <section class="blk" id="glossario">
   <div class="wrap">
-    <div>
+    <div class="rv">
       <div class="eyebrow">Impari mentre usi</div>
-      <h2>Il linguaggio dei mercati, senza gergo</h2>
+      <h2>Il linguaggio dei mercati, <em>senza gergo</em></h2>
       <p class="sec-lede">Le parole che sentirai ovunque, spiegate in una riga. Nella dashboard le ritrovi nel loro contesto.</p>
     </div>
     <dl class="gl">
-      <div><dt>Hawkish</dt><dd>Una banca centrale “falco”: incline ad alzare o mantenere alti i tassi per frenare l’inflazione.</dd></div>
-      <div><dt>Dovish</dt><dd>Una banca centrale “colomba”: incline a tassi più bassi per sostenere crescita e occupazione.</dd></div>
-      <div><dt>Risk-on / Risk-off</dt><dd>Risk-on: si cerca rendimento e si comprano asset rischiosi. Risk-off: si cerca protezione, ad esempio in dollaro, oro e titoli di stato.</dd></div>
-      <div><dt>Sorpresa</dt><dd>Quanto un dato si discosta dal valore atteso dal consensus. Spesso muove i prezzi più del dato in sé.</dd></div>
-      <div><dt>COT</dt><dd>Il rapporto settimanale della CFTC che mostra come sono posizionati i grandi operatori sui futures.</dd></div>
-      <div><dt>Curva dei rendimenti</dt><dd>Il confronto tra i rendimenti dei titoli di stato a scadenze diverse: quando si inverte, spesso racconta timori di rallentamento.</dd></div>
-      <div><dt>Breakeven d’inflazione</dt><dd>L’inflazione media che il mercato sta scontando nei prezzi dei titoli di stato.</dd></div>
-      <div><dt>VIX</dt><dd>L’“indice della paura”: misura la volatilità attesa sull’S&amp;P 500.</dd></div>
-      <div><dt>DXY</dt><dd>L’indice del dollaro: misura la forza del dollaro contro un paniere di valute.</dd></div>
+      <div class="rv"><dt>Hawkish</dt><dd>Una banca centrale “falco”: incline ad alzare o mantenere alti i tassi per frenare l’inflazione.</dd></div>
+      <div class="rv d1"><dt>Dovish</dt><dd>Una banca centrale “colomba”: incline a tassi più bassi per sostenere crescita e occupazione.</dd></div>
+      <div class="rv"><dt>Risk-on / Risk-off</dt><dd>Risk-on: si cerca rendimento e si comprano asset rischiosi. Risk-off: si cerca protezione, ad esempio in dollaro, oro e titoli di stato.</dd></div>
+      <div class="rv d1"><dt>Sorpresa</dt><dd>Quanto un dato si discosta dal valore atteso dal consensus. Spesso muove i prezzi più del dato in sé.</dd></div>
+      <div class="rv"><dt>Ciclo di mercato</dt><dd>Le quattro fasi per cui passa un prezzo: accumulazione, rialzo, distribuzione, ribasso. Descrive dove siamo, non prevede dove andremo.</dd></div>
+      <div class="rv d1"><dt>COT</dt><dd>Il rapporto settimanale della CFTC che mostra come sono posizionati i grandi operatori sui futures.</dd></div>
+      <div class="rv"><dt>Curva dei rendimenti</dt><dd>Il confronto tra i rendimenti dei titoli di stato a scadenze diverse: quando si inverte, spesso racconta timori di rallentamento.</dd></div>
+      <div class="rv d1"><dt>VIX</dt><dd>L’“indice della paura”: misura la volatilità attesa sull’S&amp;P 500.</dd></div>
+      <div class="rv d1"><dt>Sahm Rule</dt><dd>Un segnale di possibile recessione: scatta quando la disoccupazione sale in fretta rispetto al minimo dell’ultimo anno.</dd></div>
     </dl>
-  </div>
-</section>
-
-<section class="blk" id="per-chi">
-  <div class="wrap">
-    <div class="center">
-      <div class="eyebrow">Per chi è</div>
-      <h2>Se ti sei mai chiesto “ma perché si sta muovendo?”</h2>
-    </div>
-    <div class="who">
-      <div class="person"><div class="q">Il trader</div><p>Vuoi il contesto prima di operare, non l’ennesimo segnale. Capire in che regime si muove il mercato cambia il modo in cui leggi ogni grafico.</p><span class="tag">Contesto prima del grafico</span></div>
-      <div class="person"><div class="q">L’investitore</div><p>Vuoi capire dove siamo nel ciclo — inflazione, tassi, crescita — senza leggere venti report e senza il gergo da addetti ai lavori.</p><span class="tag">Il quadro d’insieme</span></div>
-      <div class="person"><div class="q">Il curioso</div><p>Vuoi imparare come l’economia muove davvero i prezzi. Ogni sezione ti spiega cosa sta succedendo e perché, con parole semplici.</p><span class="tag">Imparare guardando</span></div>
-    </div>
-  </div>
-</section>
-
-<section class="blk" id="perche">
-  <div class="wrap">
-    <div>
-      <div class="eyebrow">Perché Macro Hub</div>
-      <h2>Meno rumore. <span class="grad">Più capacità di capire.</span></h2>
-    </div>
-    <div class="why">
-      <div class="w"><div class="n">01</div><h3>Il quadro, non il rumore</h3><p>Sceglie cosa conta oggi e lo mette in ordine, invece di sommergerti di notizie e di numeri.</p></div>
-      <div class="w"><div class="n">02</div><h3>Spiegato in italiano</h3><p>Ogni sezione non si limita a mostrarti qualcosa: ti dice cosa significa, con parole chiare.</p></div>
-      <div class="w"><div class="n">03</div><h3>Sempre al passo</h3><p>Si aggiorna da sola ogni volta che la apri. Niente da cercare, niente da aggiornare.</p></div>
-    </div>
   </div>
 </section>
 
 <section class="blk" id="inizia">
   <div class="wrap">
-    <div class="center">
+    <div class="center rv">
       <div class="eyebrow">Come iniziare</div>
       <h2>Tre passi, nessuna configurazione</h2>
     </div>
     <div class="go">
-      <div class="s"><b>1</b><h3>Apri la dashboard</h3><p>Si apre dal browser e si aggiorna da sola. Non c’è niente da installare né da collegare.</p></div>
-      <div class="s"><b>2</b><h3>Guarda il polso del giorno</h3><p>In pochi secondi hai il clima del mercato e le notizie che lo spiegano.</p></div>
-      <div class="s"><b>3</b><h3>Approfondisci ciò che ti interessa</h3><p>Dal calendario al posizionamento, dalla Fed alla geopolitica: scendi nel dettaglio solo dove serve.</p></div>
+      <div class="s rv"><b>1</b><h3>Apri la dashboard</h3><p>Si apre dal browser e si aggiorna da sola. Non c’è niente da installare né da collegare.</p></div>
+      <div class="s rv d1"><b>2</b><h3>Guarda il quadro di oggi</h3><p>In pochi secondi hai il clima del mercato e le notizie che lo spiegano.</p></div>
+      <div class="s rv d2"><b>3</b><h3>Approfondisci ciò che ti interessa</h3><p>Dal calendario al posizionamento, dalla Fed alla geopolitica: scendi nel dettaglio solo dove serve.</p></div>
     </div>
   </div>
 </section>
 
 <section class="blk" id="faq">
   <div class="wrap">
-    <div class="center">
+    <div class="center rv">
       <div class="eyebrow">Domande</div>
       <h2>Prima che tu lo chieda</h2>
     </div>
@@ -782,8 +603,17 @@ footer p{max-width:68ch;}
   </div>
 </section>
 
+<section class="blk" id="manifesto">
+  <div class="wrap">
+    <div class="manifesto rv">
+      <p>Il mercato non si muove a caso.</p>
+      <h2>Ti serve solo <em>il quadro giusto.</em></h2>
+    </div>
+  </div>
+</section>
+
 <div class="wrap" id="registrazione">
-  <div class="closing">
+  <div class="closing rv">
     <span class="pill"><i></i>Stiamo preparando l’accesso</span>
     <h2>Il tuo posto in prima fila sul mercato.</h2>
     <p>Presto potrai creare il tuo accesso a Macro Hub Trading. Intanto, dai un’occhiata a com’è fatta: poi capirai perché vorrai esserci.</p>
@@ -791,6 +621,7 @@ footer p{max-width:68ch;}
       <a class="btn btn-soon js-signup" href="#registrazione">Registrazione in arrivo</a>
       <a class="btn btn-ghost js-dash" href="/">Dai un’occhiata alla dashboard</a>
     </div>
+    <ul class="ticks mid"><li>Strumento informativo</li><li>Nessun segnale operativo</li><li>Fonti ufficiali</li></ul>
   </div>
 </div>
 
@@ -805,8 +636,8 @@ footer p{max-width:68ch;}
       </div>
       <div>
         <h4>Esplora</h4>
-        <a href="#giornata">Una giornata con Macro Hub</a>
-        <a href="#dentro">Dentro la dashboard</a>
+        <a href="#cosa-ottieni">Cosa ottieni</a>
+        <a href="#barre">Come si legge</a>
         <a href="#glossario">Il glossario</a>
         <a href="#faq">Domande</a>
       </div>
@@ -822,6 +653,8 @@ footer p{max-width:68ch;}
   </div>
 </footer>
 
+<div class="sticky" id="sticky" role="complementary" aria-label="Invito"><span>Il quadro di oggi ti aspetta</span><a class="btn btn-primary js-dash" href="/">Apri il quadro di oggi <span class="ar">→</span></a></div>
+
 <script>
 /* ---------- Indirizzi dei pulsanti ----------
    Quando la registrazione sarà pronta, basta inserire qui l'indirizzo: tutti i pulsanti "Registrazione in arrivo"
@@ -834,29 +667,21 @@ if(SIGNUP_URL){
   document.querySelectorAll('.js-signup').forEach(a=>{ a.href = SIGNUP_URL; a.textContent = 'Registrati ora'; a.classList.remove('btn-soon'); a.classList.add('btn-primary'); });
 }
 
-/* ---------- Schede "Dentro la dashboard" ----------
-   Senza JavaScript le sei schede sono tutte visibili una sotto l'altra; con JavaScript diventano a linguette,
-   con rotazione lenta finché non scegli tu. Il contenuto non dipende mai da un effetto di comparsa. */
+/* ---------- Comparsa allo scorrimento ----------
+   Senza JavaScript (o con "riduci movimento") tutto è già visibile: l'effetto non nasconde mai il contenuto. */
 (function(){
-  const panels = [...document.querySelectorAll('#show .panel')], bar = document.querySelector('.show-tabs');
-  if(!panels.length || !bar) return;
-  let cur = 0, touched = false;
-  panels.forEach((p, i)=>{
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'tabbtn'; b.setAttribute('role', 'tab'); b.textContent = p.dataset.tab;
-    b.addEventListener('click', ()=>{ touched = true; select(i); });
-    bar.appendChild(b);
-  });
-  function select(i){
-    cur = i;
-    panels.forEach((p, k)=>p.classList.toggle('on', k === i));
-    [...bar.children].forEach((b, k)=>b.setAttribute('aria-selected', k === i ? 'true' : 'false'));
-  }
-  select(0);
+  const els = [...document.querySelectorAll('.rv')];
+  if(!els.length || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches){ document.querySelectorAll('.spec').forEach(e=>e.classList.add('in')); return; }
   document.documentElement.classList.add('js');
-  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-    setInterval(()=>{ if(!touched && !document.hidden) select((cur + 1) % panels.length); }, 7000);
-  }
+  const io = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, {rootMargin:'0px 0px -8% 0px', threshold:.12});
+  els.forEach(e=>io.observe(e));
+})();
+
+/* ---------- Barra di invito: compare dopo la prima schermata e sparisce arrivando alla chiusura ---------- */
+(function(){
+  const bar = document.getElementById('sticky'); if(!bar) return;
+  const upd = ()=>{ const c = document.querySelector('.closing'), top = c ? c.getBoundingClientRect().top : 1e9; bar.classList.toggle('on', scrollY > 800 && top > innerHeight * .85); };
+  addEventListener('scroll', upd, {passive:true}); upd();
 })();
 
 // Il collegamento #installa (anche dal piè di pagina o da un indirizzo diretto) apre la domanda con le istruzioni
