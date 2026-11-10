@@ -2559,7 +2559,7 @@ function ikBar(i, idx, scope){
     + `<div class="ikx-r" role="button" tabindex="0" aria-expanded="${open}" onclick="ikToggle('${k}', this)" onkeydown="ikKey(event, '${k}', this)" title="Tocca per capire cosa significa">`
     + `<span class="ikx-n"><span>${escHtml(i.label)}</span><i class="cv"></i></span><span class="ikx-tk"><i class="ikx-bar"></i></span><span class="ikx-v"><b>${escHtml(i.value)}</b></span></div>`
     + `<div class="ikx-d"><div class="st"><span>${IK_LBL[i.tone] || ''}</span>${i.asof ? `<em>${escHtml(i.asof)}</em>` : ''}${zb.q ? '<em>valutazione qualitativa</em>' : ''}</div>`
-    + `<p>${escHtml(ikUp(i.sub || ''))}${i.sub ? '. ' : ''}${escHtml(i.hint || '')}</p>${dl}${ikSpark(i.spark)}</div></div>`;
+    + `<p>${escHtml(ikUp(i.sub || ''))}${i.sub ? (/[.!?…]$/.test(String(i.sub).trim()) ? ' ' : '. ') : ''}${escHtml(i.hint || '')}</p>${dl}${ikSpark(i.spark)}</div></div>`;   // niente doppio punto quando la frase finisce già con "sett."
 }
 function ikPanel(g, eyebrow, order){
   const m = IK_META[g.id] || {t:g.title, s:''}, off = g.tone === 'off' || !(g.items || []).length;
@@ -4086,10 +4086,13 @@ function sxCot(S){
   const ext = rows.filter(r => r.p >= 85 || r.p <= 15), hi = rows.filter(r => r.p >= 85).length, lo = rows.filter(r => r.p <= 15).length;
   const html = rows.map(r => {
     const x = r.p >= 85, y = r.p <= 15, t = x ? 't-neg' : y ? 't-warn' : 't-neu', d = r.d;
-    const net = d.nonCommercialNet != null ? (d.nonCommercialNet >= 0 ? '+' : '−') + hNf(Math.abs(d.nonCommercialNet), 0) : '—';
+    // petrolio (WTI, Brent): il CFTC pubblica i fondi gestiti ("managed money"), non i Non-Commercial: prima il netto risultava "—" anche se il dato c'era
+    const mm = d.nonCommercialNet == null && d.managedMoneyNet != null, nv = mm ? d.managedMoneyNet : d.nonCommercialNet;
+    const net = nv != null ? (nv >= 0 ? '+' : '−') + hNf(Math.abs(nv), 0) : '—';
     const cells = sxName(r.nm) + `<span class="sx-tk cot" style="--p:${Math.max(r.p, 2)}"><i class="sx-bar"></i></span><span class="sx-v pc"><b>${r.p}°</b></span>${sxChip(x ? 'Long molto alto' : y ? 'Short molto alto' : 'Nella norma')}<span class="sx-v dim net">${net}</span>`;
-    const chg = d.nonCommercialChangeLong != null && d.nonCommercialChangeShort != null ? d.nonCommercialChangeLong - d.nonCommercialChangeShort : null;
-    const det = `<p>Posizione netta dei grandi speculatori (Non-Commercial): <b>${net}</b> contratti${chg != null ? `, <b>${chg >= 0 ? '+' : '−'}${hNf(Math.abs(chg), 0)}</b> nell'ultima settimana` : ''}. Percentile a 52 settimane: <b>${r.p}°</b>${d.netPercentile26w != null ? `, a 26 settimane: <b>${d.netPercentile26w}°</b>` : ''}.</p><p class="why">${x ? 'Molto sopra il livello abituale: i grandi operatori sono già molto lunghi, il movimento può essere affollato (rischio di inversione).' : y ? 'Molto sotto il livello abituale: i grandi operatori sono già molto corti, il ribasso può essere affollato (rischio di rimbalzo).' : 'Dentro il livello abituale dell\'ultimo anno: nessun affollamento particolare.'}</p>`;
+    const cL = mm ? d.managedMoneyChangeLong : d.nonCommercialChangeLong, cS = mm ? d.managedMoneyChangeShort : d.nonCommercialChangeShort;
+    const chg = cL != null && cS != null ? cL - cS : null;
+    const det = `<p>Posizione netta dei grandi speculatori (${mm ? 'Managed Money' : 'Non-Commercial'}): <b>${net}</b> contratti${chg != null ? `, <b>${chg >= 0 ? '+' : '−'}${hNf(Math.abs(chg), 0)}</b> nell'ultima settimana` : ''}. Percentile a 52 settimane: <b>${r.p}°</b>${d.netPercentile26w != null ? `, a 26 settimane: <b>${d.netPercentile26w}°</b>` : ''}.</p><p class="why">${x ? 'Molto sopra il livello abituale: i grandi operatori sono già molto lunghi, il movimento può essere affollato (rischio di inversione).' : y ? 'Molto sotto il livello abituale: i grandi operatori sono già molto corti, il ribasso può essere affollato (rischio di rimbalzo).' : 'Dentro il livello abituale dell\'ultimo anno: nessun affollamento particolare.'}</p>`;
     return sxRow('cot:' + r.k, t + ' sx-cot', cells, det);
   }).join('');
   const strip = sxStrip([['t-neg', hi], ['t-neu', rows.length - ext.length], ['t-warn', lo]], `<b>${ext.length} contratti su ${rows.length}</b> sono agli estremi (${hi} molto long, ${lo} molto short).`);
