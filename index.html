@@ -1734,6 +1734,40 @@ section{margin-bottom:30px;}
 .rk-l{position:absolute; transform:translate(-50%,-50%); white-space:nowrap; font:500 9.5px/1 var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--c);}
 .rk-l.s-l{transform:translate(0,-50%);} .rk-l.s-r{transform:translate(-100%,-50%);}
 @media(max-width:380px){ .rk-l{font-size:8.5px; letter-spacing:.1em;} }
+
+/* ---- Interruttore Principiante / Esperto: oro quando attivo, scuro con bordo quando non lo è (come i pulsanti della presentazione) ---- */
+.hd-mode{display:inline-flex; gap:8px; padding:0; border:0; background:none; border-radius:0;}
+.hd-mode button{font:600 12.5px/1 var(--fb); letter-spacing:.005em; color:var(--text); background:rgba(17,23,41,.55); border:1px solid rgba(190,205,235,.28); border-radius:11px; padding:10px 16px; cursor:pointer; transition:border-color .15s, color .15s, transform .15s, box-shadow .15s;}
+.hd-mode button:hover{border-color:var(--accent); color:var(--accent);}
+.hd-mode button[aria-pressed="true"]{background:linear-gradient(135deg,#F7D184,#E0A94D); color:#1B1204; border-color:transparent; box-shadow:0 8px 24px -10px rgba(224,169,77,.75);}
+.hd-mode button[aria-pressed="true"]:hover{color:#1B1204; transform:translateY(-1px); box-shadow:0 12px 28px -10px rgba(224,169,77,.9);}
+.hd-mode button:focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
+
+/* ---- Modalità Principiante: "Come leggere questa card" ---- */
+.bg{display:none; margin:2px 0 6px; padding:10px 14px 10px; border:1px solid rgba(94,168,245,.22); border-left:3px solid var(--accent); border-radius:10px; background:rgba(94,168,245,.06); font-size:12.5px; line-height:1.55; color:var(--text2); text-align:left;}
+body.mode-beginner .bg{display:block;}
+.bg-h{display:flex; align-items:center; gap:7px; margin-bottom:7px; font:600 10px/1 var(--fm); letter-spacing:.1em; text-transform:uppercase; color:var(--accent);}
+.bg-h svg{flex:none; width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round;}
+.bg-b{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px 22px;}
+.bg-b p{margin:0; min-width:0;}
+.bg-b p b:first-child{display:block; margin-bottom:2px; font:600 9.5px/1.2 var(--fm); letter-spacing:.09em; text-transform:uppercase; color:var(--text);}
+.bg-b p b{font-weight:600; color:var(--text);}
+.h-card > .bg, .ikx-p > .bg{margin-top:0;}
+.h-card.h-center .bg{align-self:stretch;}
+/* spiegazione "cosa misura" sotto ogni indicatore */
+.bg-cap{display:none; margin:-3px 0 7px; padding-right:4px; font-size:11.8px; line-height:1.45; color:var(--dim); text-align:left;}
+body.mode-beginner .bg-cap{display:block;}
+.bg-cap b{font-weight:600; color:var(--text2);}
+@media(max-width:700px){ .bg{padding:9px 11px;} .bg-b{grid-template-columns:minmax(0,1fr);} .hd-mode button{padding:9px 13px; font-size:12px;} }
+
+/* guida in alto (sei passi) e glossario */
+.pulse-guide{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(max-width:1000px){ .pulse-guide{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media(max-width:700px){ .pulse-guide{grid-template-columns:1fr;} }
+.pulse-guide .pg i.dt{display:inline-block; width:9px; height:9px; margin:0 5px 0 0; border-radius:50%; vertical-align:0; box-shadow:0 0 6px currentColor;}
+.pulse-guide .pg em.k{font-style:normal; font-weight:600; color:var(--text);}
+.pulse-gloss .gl-grid{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
+.pulse-gloss .gl-grid > div{font-size:13px; line-height:1.5;}
 </style>
 </head>
 <body>
@@ -2552,12 +2586,18 @@ function ikSpark(a){
   return `<svg class="sp" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
 }
 // una riga: etichetta · barra sulla scala a zone · valore. Toccandola si apre cosa significa, con le soglie.
+// spiegazione per il principiante sotto la riga: la parte "cosa misura" del testo del dato (senza le soglie, che stanno nel dettaglio che si apre toccando la riga)
+function ikCap(i){
+  const w = String(i.hint || '').split(/\s*Lettura:/)[0].trim();
+  return w ? '<div class="bg-cap"><b>Cosa misura:</b> ' + escHtml(w) + '</div>' : '';
+}
 function ikBar(i, idx, scope){
   const zb = i.zb || {p:({pos:12.5, neu:37.5, warn:62.5, neg:87.5})[i.tone] || 37.5, q:true}, k = scope + ':' + i.id, open = IK_OPEN.has(k);
   const dl = i.delta ? `<p class="dl">${IK_ARROW[i.delta.dir] || ''} ${escHtml(i.delta.text)}</p>` : '';
   return `<div class="ikx-b t-${i.tone}${zb.q ? ' q' : ''}${open ? ' open' : ''}" style="--p:${zb.p}; --i:${idx}">`
     + `<div class="ikx-r" role="button" tabindex="0" aria-expanded="${open}" onclick="ikToggle('${k}', this)" onkeydown="ikKey(event, '${k}', this)" title="Tocca per capire cosa significa">`
     + `<span class="ikx-n"><span>${escHtml(i.label)}</span><i class="cv"></i></span><span class="ikx-tk"><i class="ikx-bar"></i></span><span class="ikx-v"><b>${escHtml(i.value)}</b></span></div>`
+    + ikCap(i)
     + `<div class="ikx-d"><div class="st"><span>${IK_LBL[i.tone] || ''}</span>${i.asof ? `<em>${escHtml(i.asof)}</em>` : ''}${zb.q ? '<em>valutazione qualitativa</em>' : ''}</div>`
     + `<p>${escHtml(ikUp(i.sub || ''))}${i.sub ? (/[.!?…]$/.test(String(i.sub).trim()) ? ' ' : '. ') : ''}${escHtml(i.hint || '')}</p>${dl}${ikSpark(i.spark)}</div></div>`;   // niente doppio punto quando la frase finisce già con "sett."
 }
@@ -3917,6 +3957,36 @@ function macScale(c){
   const L = lo - span * 0.55, H = hi + span * 0.55, pos = v => Math.round(Math.min(96, Math.max(4, (v - L) / (H - L) * 100)) * 10) / 10;
   return {xa:pos(a), xf:f != null && isFinite(f) ? pos(f) : null, xp:p != null && isFinite(p) ? pos(p) : null};
 }
+// cosa significa ogni dato macro, in parole semplici (per la modalità Principiante)
+function macCap(c){
+  const W = {
+    us_cpi_yoy:'l\'inflazione dei prezzi al consumo rispetto a un anno fa: se sale, la Fed tende a tenere i tassi alti.',
+    us_core_yoy:'come il CPI ma senza cibo ed energia, che oscillano molto: è l\'inflazione di fondo, quella che la Fed guarda di più.',
+    us_cpi_mom:'la variazione dei prezzi al consumo rispetto al mese scorso: è il dato che muove di più i mercati il giorno dell\'uscita.',
+    us_ppi_yoy:'l\'inflazione «all\'ingrosso»: i prezzi pagati dai produttori rispetto a un anno fa. Spesso anticipa il CPI.',
+    us_ppi_mom:'come il PPI, ma rispetto al mese scorso.',
+    us_ism_mfg:'un indice sullo stato dell\'industria: sopra 50 l\'attività cresce, sotto 50 si contrae.',
+    us_ism_svc:'come l\'ISM manifatturiero ma per i servizi, la parte più grande dell\'economia USA: sopra 50 cresce, sotto 50 si contrae.',
+    us_gdp:'la crescita dell\'economia USA nel trimestre, espressa su base annua: due trimestri sotto zero sono una recessione tecnica.',
+    eu_cpi_yoy:'l\'inflazione nell\'Eurozona rispetto a un anno fa: guida le decisioni della BCE (obiettivo 2%).',
+    eu_core_yoy:'l\'inflazione dell\'Eurozona senza energia e alimentari: la misura di fondo.',
+    eu_gdp:'la crescita dell\'economia dell\'Eurozona rispetto al trimestre precedente.',
+    eu_unemp:'la percentuale di persone senza lavoro nell\'Eurozona.',
+    eu_depo:'il tasso ufficiale della BCE sui depositi delle banche: lo «strumento» con cui la BCE alza o abbassa i tassi.',
+    eu_retail:'quanto spendono le famiglie nei negozi rispetto al mese scorso: misura i consumi.',
+    eu_indprod:'quanto producono le fabbriche rispetto al mese scorso.',
+    eu_zew:'un sondaggio tra analisti tedeschi sulle prospettive dell\'economia: sopra zero ottimismo, sotto zero pessimismo.',
+    us_nfp:'quanti posti di lavoro non agricoli sono stati creati nel mese: è il dato sul lavoro più seguito.',
+    us_unemp:'la percentuale di persone senza lavoro che lo cercano.',
+    us_ahe:'quanto crescono i salari orari rispetto a un anno fa: salari che salgono in fretta alimentano l\'inflazione.',
+    us_jolts:'quante offerte di lavoro sono aperte: tante offerte = mercato del lavoro «caldo».',
+    us_u6:'una disoccupazione più ampia: include chi ha un part-time ma vorrebbe lavorare di più e chi ha smesso di cercare.',
+    us_part:'la quota di persone in età da lavoro che ha un lavoro o lo cerca.',
+    us_claims:'quante persone hanno chiesto il sussidio di disoccupazione nella settimana: esce ogni giovedì, è un segnale rapido sul lavoro.',
+    us_cclaims:'quante persone continuano a ricevere il sussidio: dice quanto è difficile trovare un nuovo lavoro.',
+  };
+  return W[c.id] ? '<div class="bg-cap"><b>Cosa misura:</b> ' + escHtml(W[c.id]) + '</div>' : '';
+}
 function macRow(c){
   const s = macScale(c), col = MAC_COL[c.color] || 'gold', sp = surpriseInfo(c.lbl, c.cur, c.fore), note = String(c.note || '').trim();
   const bar = s.xf != null ? `<i class="bar" style="left:${Math.min(s.xa, s.xf)}%; width:${Math.max(Math.abs(s.xa - s.xf), 1.2)}%"></i><i class="f" style="left:${s.xf}%"></i>` : '';
@@ -3927,6 +3997,7 @@ function macRow(c){
     + `<span class="mac-n"><b>${escHtml(c.baseLbl || c.lbl)}<i class="cv"></i></b><small>${escHtml(per)}</small></span>`
     + `<span class="mac-tk">${bar}${prev}<i class="a" style="left:${s.xa}%"></i></span>`
     + `<span class="mac-v a">${escHtml(c.cur)}</span><span class="mac-v">${escHtml(c.fore)}</span><span class="mac-v">${escHtml(c.prev)}</span><span class="mac-es"><em>${escHtml(es)}</em></span></div>`
+    + macCap(c)
     + `<div class="mac-d">${note ? `<p>${escHtml(note.charAt(0).toUpperCase() + note.slice(1))}</p>` : ''}${sp ? `<p class="x">${escHtml(sp.text)}</p>` : ''}</div></div>`;
 }
 function macTable(list){
@@ -4997,20 +5068,50 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     + '<div class="pulse-leg" aria-label="Come leggere i colori"><span><i style="background:var(--green)"></i>Favorevole / calma</span><span><i style="background:var(--gold)"></i>Attenzione / neutro</span><span><i style="background:var(--red)"></i>Rischio / tensione</span><span><i style="background:var(--accent)"></i>Informazione</span></div></div>'
     + '<div class="pulse-grid" id="pulseGrid"></div>'
     + '<div class="pn" id="pulseNews" hidden><span class="pn-tag"><i></i>Ultime notizie</span><a class="pn-a" id="pnA" target="_blank" rel="noopener noreferrer"></a><span class="pn-dots" id="pnDots" aria-hidden="true"></span></div>'
-    + '<div class="pulse-guide"><div class="pg"><span class="n">1</span><div><b>Guarda il quadro</b><span>Il bias dice se i mercati sono prudenti (<i>Risk-off</i>) o fiduciosi (<i>Risk-on</i>).</span></div></div>'
-    + '<div class="pg"><span class="n">2</span><div><b>Controlla cosa sta per uscire</b><span>I dati ad alto impatto muovono i prezzi in pochi minuti: sapere quando escono evita sorprese.</span></div></div>'
-    + '<div class="pg"><span class="n">3</span><div><b>Scendi nei dettagli</b><span>Usa il menu "Sezioni" a sinistra: ogni titolo ha una spiegazione in parole semplici.</span></div></div></div>'
-    + '<details class="pulse-gloss"><summary>Parole da sapere</summary><div class="gl-grid">'
+    + '<div class="pulse-guide">'
+    + '<div class="pg"><span class="n">1</span><div><b>Parti dai colori</b><span><i class="dt" style="background:#34D399"></i>Verde = favorevole · <i class="dt" style="background:#38BDF8"></i>azzurro = neutro · <i class="dt" style="background:#E0A94D"></i>giallo = da monitorare · <i class="dt" style="background:#F0685E"></i>rosso = sotto pressione. Vale per quasi tutte le barre.</span></div></div>'
+    + '<div class="pg"><span class="n">2</span><div><b>Leggi le barre</b><span>Più la barra è lunga, più il dato è vicino alla zona di pressione (linea rossa a destra). Barra piena = misura reale; barra a righe = giudizio dell\'analisi AI.</span></div></div>'
+    + '<div class="pg"><span class="n">3</span><div><b>Tocca le righe</b><span>Ogni riga si apre: spiega cosa significa quel numero, dove stanno le soglie e come si è mosso. Sotto ogni indicatore trovi già «cosa misura».</span></div></div>'
+    + '<div class="pg"><span class="n">4</span><div><b>Capisci le etichette</b><span><em class="k">AI</em> = testo scritto dall\'intelligenza artificiale su dati reali (contesto, non consiglio) · <em class="k">LIVE</em> = si aggiorna da solo · <em class="k">UFFICIALE</em> = fonte ufficiale (FRED, CFTC, Tesoro USA).</span></div></div>'
+    + '<div class="pg"><span class="n">5</span><div><b>Guarda il quadro e cosa sta per uscire</b><span>Il bias dice se i mercati sono prudenti (<i>Risk-off</i>) o fiduciosi (<i>Risk-on</i>). I dati ad alto impatto muovono i prezzi in pochi minuti: sapere quando escono evita sorprese.</span></div></div>'
+    + '<div class="pg"><span class="n">6</span><div><b>Scendi nei dettagli</b><span>Usa il menu «Sezioni»: ogni sezione ha una spiegazione in parole semplici e ogni card ha il suo riquadro «Come leggere questa card».</span></div></div>'
+    + '</div>'
+    + '<details class="pulse-gloss"><summary>Parole da sapere (glossario)</summary><div class="gl-grid">'
     + '<div><b>Bullish / Bearish</b> — tendenza al rialzo / al ribasso del prezzo.</div>'
     + '<div><b>Risk-on / Risk-off</b> — i mercati sono fiduciosi e cercano rendimento / sono prudenti e cercano rifugi.</div>'
     + '<div><b>Hawkish / Dovish</b> — la banca centrale tende a tassi più alti / più bassi.</div>'
-    + '<div><b>VIX</b> — l\'"indice della paura": più è alto, più i mercati sono nervosi.</div>'
-    + '<div><b>Long / Short</b> — chi compra (scommette sul rialzo) / chi vende (scommette sul ribasso).</div>'
-    + '<div><b>Contrarian</b> — leggere la folla al contrario: se quasi tutti comprano, il prezzo spesso scende.</div>'
-    + '<div><b>Attese (consensus)</b> — il numero che gli analisti si aspettano: conta la differenza con il dato reale.</div>'
-    + '<div><b>COT</b> — report settimanale che mostra come sono posizionati i grandi operatori.</div>'
+    + '<div><b>Tassi d\'interesse</b> — il costo del denaro: quando salgono, finanziarsi costa di più e azioni e oro tendono a soffrire.</div>'
+    + '<div><b>Fed e FOMC</b> — la banca centrale USA e il comitato che si riunisce otto volte l\'anno per decidere i tassi.</div>'
     + '<div><b>Punti base (pb)</b> — centesimi di punto percentuale: 25 pb = 0,25%.</div>'
-    + '<div><b>Alto impatto</b> — evento che può far muovere molto i prezzi in pochi minuti.</div></div></details>';
+    + '<div><b>Attese (consensus)</b> — il numero che gli analisti si aspettano: conta la differenza con il dato reale.</div>'
+    + '<div><b>Sorpresa</b> — quanto un dato esce diverso dall\'atteso: muove i prezzi più del numero in sé.</div>'
+    + '<div><b>Alto impatto</b> — evento che può far muovere molto i prezzi in pochi minuti.</div>'
+    + '<div><b>CPI / Core CPI / PPI / PCE</b> — misure dell\'inflazione: prezzi al consumo (CPI), senza cibo ed energia (Core), alla produzione (PPI), spesa per consumi (PCE).</div>'
+    + '<div><b>NFP</b> — Non-Farm Payrolls: i nuovi posti di lavoro USA, in uscita il primo venerdì del mese.</div>'
+    + '<div><b>PMI / ISM</b> — indici sul clima economico di industria e servizi: sopra 50 l\'attività cresce, sotto 50 si contrae.</div>'
+    + '<div><b>PIL</b> — la crescita dell\'economia in un trimestre.</div>'
+    + '<div><b>Sahm Rule</b> — segnale di recessione: scatta quando la disoccupazione sale di 0,5 punti sopra il minimo di un anno.</div>'
+    + '<div><b>VIX</b> — l\'«indice della paura»: più è alto, più i mercati sono nervosi.</div>'
+    + '<div><b>Volatilità</b> — quanto i prezzi si muovono in fretta: alta = movimenti ampi.</div>'
+    + '<div><b>Pips</b> — l\'unità di misura del movimento dei cambi (di solito la quarta cifra decimale).</div>'
+    + '<div><b>DXY (Dollar Index)</b> — la forza del dollaro contro un paniere di valute.</div>'
+    + '<div><b>Rendimento (yield)</b> — il tasso che rende un titolo di Stato: quando sale, il prezzo del titolo scende.</div>'
+    + '<div><b>Curva dei rendimenti</b> — rendimenti a scadenze diverse; se quelli a breve superano quelli a lungo (curva invertita) spesso segnala timori di rallentamento.</div>'
+    + '<div><b>Rendimento reale</b> — il rendimento al netto dell\'inflazione attesa: è il vero costo del denaro.</div>'
+    + '<div><b>Breakeven d\'inflazione</b> — l\'inflazione che il mercato sta già prezzando nei titoli di Stato.</div>'
+    + '<div><b>Spread di credito</b> — quanto in più rende un\'obbligazione rischiosa rispetto a un titolo di Stato: se sale, il mercato teme per le aziende.</div>'
+    + '<div><b>Liquidità</b> — quanto denaro circola nel sistema (bilancio Fed, conto del Tesoro, riserve delle banche): più ce n\'è, più i prezzi sono sostenuti.</div>'
+    + '<div><b>Long / Short</b> — chi compra (scommette sul rialzo) / chi vende (scommette sul ribasso).</div>'
+    + '<div><b>COT</b> — report settimanale della CFTC su come sono posizionati i grandi operatori sui futures.</div>'
+    + '<div><b>Percentile</b> — dove si colloca un valore rispetto all\'ultimo anno: 50° = nella media, 100° = il più alto, 0° = il più basso.</div>'
+    + '<div><b>Contrarian</b> — leggere la folla al contrario: se quasi tutti comprano, il prezzo spesso scende.</div>'
+    + '<div><b>Media mobile (SMA)</b> — la media dei prezzi degli ultimi N giorni (50 o 200): se il prezzo è sopra, il trend è rialzista.</div>'
+    + '<div><b>RSI</b> — indice tra 0 e 100: sopra 70 il prezzo è «ipercomprato» (corsa forte), sotto 30 «ipervenduto».</div>'
+    + '<div><b>ATR</b> — l\'escursione media giornaliera: serve per decidere quanto largo mettere lo stop.</div>'
+    + '<div><b>Ciclo di mercato</b> — le quattro fasi di un prezzo: accumulazione, rialzo, distribuzione, ribasso.</div>'
+    + '<div><b>Bene rifugio</b> — asset che si cercano nei momenti di paura: dollaro, oro, franco svizzero, titoli di Stato.</div>'
+    + '<div><b>Futures</b> — contratti su un prezzo futuro: sono il mercato in cui operano i grandi fondi.</div>'
+    + '</div></details>';
   main.insertBefore(pulse, main.firstChild);
 
   const esc = s => (typeof escHtml === 'function' ? escHtml(s) : String(s));
@@ -5616,6 +5717,282 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   // Lo strumento "Volatilità per asset" partiva solo quando ci si avvicinava: fino ad allora la sezione mostrava "Caricamento delle candele orarie…" per sempre
   // e, aprendola, c'erano 2 secondi di attesa. Si carica in background poco dopo l'apertura, quando i dati principali sono già arrivati.
   setTimeout(() => { if(window.__volLoad) window.__volLoad(); }, 4000);
+})();
+</script>
+<script>
+// ---------- MODALITÀ PRINCIPIANTE: "Come leggere questa card" in ogni card ----------
+// Ogni card e ogni pannello riceve, solo in modalità Principiante, un riquadro con tre righe in parole semplici: cosa mostra, come si legge, perché conta.
+// I testi sono qui sotto, per titolo della card; per le card scritte dall'AI con titolo che cambia c'è un testo per sezione, e per tutto il resto un testo generico
+// in base alle etichette (AI / Live / Ufficiale). Le card si ridisegnano da sole quando arrivano dati nuovi: un osservatore rimette la guida subito, prima che il
+// browser disegni (nessun lampeggio). In modalità Esperto la guida resta nella pagina ma è nascosta dal CSS.
+(function(){
+  'use strict';
+  const main = document.querySelector('main'); if(!main) return;
+
+  // lettura comune a tutti i pannelli degli Indicatori chiave
+  const IK_READ = `Ogni riga è un dato reale su una scala a quattro zone: <b>verde</b> favorevole, <b>azzurro</b> neutro, <b>giallo</b> da monitorare, <b>rosso</b> sotto pressione. Le linee verticali sono i confini tra le zone, quella rossa a destra è il limite. Sotto ogni riga c'è cosa misura; toccala per soglie, data e andamento.`;
+  const AI_READ = `Il testo è scritto dall'intelligenza artificiale su dati e notizie reali, non è un consiglio. Leggi la prima riga per il messaggio principale; «Leggi tutto» apre i dettagli.`;
+
+  // [cosa mostra, come si legge, perché conta]
+  const G = {
+    // ---- Macro Focus (in alto) e 01 Il quadro di oggi ----
+    'Bias giornaliero · geopolitico-macro': [
+      `Se oggi i mercati sono prudenti (Risk-off) o fiduciosi (Risk-on), visto da due lati: la geopolitica e la macroeconomia con le banche centrali.`,
+      `Ogni riga è una barra da sinistra (rosso: prudenza) a destra (verde: fiducia). La barra a righe è un giudizio dell'analisi AI, non un numero misurato. Il chip a destra riassume il giudizio in una parola.`,
+      `È il clima in cui si muovono tutti gli asset: con la prudenza di solito salgono dollaro e oro, con la fiducia salgono le azioni.`],
+    'Cosa muove i mercati oggi': [
+      `Per quattro temi chiave (geopolitica, Fed e tassi, macro, dollaro) se le notizie di oggi spingono i prezzi in su (Bullish) o in giù (Bearish).`,
+      `La barra va dal rosso (ribassista) al verde (rialzista); a destra il chip riassume il giudizio. Tocca una riga per il testo e le fonti.`,
+      `Quando più temi indicano la stessa direzione il segnale è più solido; se si contraddicono, meglio la prudenza.`],
+    'Stance per asset': [
+      `La direzione che l'analisi AI indica per gli asset più osservati: oro, argento, dollaro, cambi, petrolio, indici e VIX, in base a notizie e dati.`,
+      `La barra a righe è un giudizio qualitativo, non una previsione: a sinistra ribassista, a destra rialzista. Accanto trovi il prezzo e la variazione di oggi.`,
+      `Serve come contesto prima di aprire il grafico: non è un segnale operativo.`],
+    'Driver del giorno': [
+      `I fatti che oggi stanno muovendo i prezzi, per esempio un evento geopolitico o l'attesa di un dato.`,
+      `Ogni riga ha un chip rialzista, ribassista o neutro per il suo effetto sui mercati. Tocca la riga per capire il perché in parole semplici.`,
+      `Capire il motivo di un movimento evita di inseguire i prezzi senza sapere cosa li sta guidando.`],
+    'Cosa può ribaltare il quadro': [
+      `I rischi che potrebbero cambiare lo scenario di oggi.`,
+      `È un elenco: ogni punto è un «se succede questo, la lettura cambia».`,
+      `Ti dice cosa tenere d'occhio durante la giornata e quando il quadro di partenza non regge più.`],
+    'Prossimo evento chiave': [
+      `Il prossimo dato o decisione ad alto impatto, con il conto alla rovescia, il valore atteso dagli analisti e quello precedente.`,
+      `«Attese» è la previsione degli analisti, «Precedente» l'ultimo dato; quando esce compare «Actual». Conta lo scostamento tra uscito e atteso (la sorpresa). Il dossier AI spiega cosa succede se il dato sorprende al rialzo o al ribasso.`,
+      `Nei minuti dopo un dato i prezzi si muovono molto e in fretta: sapere quando esce evita ingressi alla cieca.`],
+
+    // ---- 02 Mercati ----
+    'Cosa ha mosso i mercati': [
+      `Gli asset che si sono mossi più del solito, fascia oraria per fascia (Asia, Europa, USA), con le notizie uscite in quelle ore.`,
+      `La barra dice quanto il movimento è anomalo: i confini sono a 2, 4 e 6 volte il movimento tipico di quell'asset; la freccia indica la direzione. Le notizie sono concomitanti, non una causa certa.`,
+      `Una notizia forte muove più mercati insieme: qui vedi chi ha reagito e quanto.`],
+    'Monitor degli asset e ciclo di mercato': [
+      `In che fase del ciclo è ogni asset: <b>Accumulazione</b> (dopo un calo il prezzo prova a ripartire), <b>Rialzo</b>, <b>Distribuzione</b> (i massimi si indeboliscono) o <b>Ribasso</b>.`,
+      `La barra va dal verde (accumulazione) all'azzurro, al giallo e al rosso. I cinque quadratini sono controlli oggettivi sui prezzi: verde rialzista, rosso ribassista. Tocca una riga per i livelli da riportare sul grafico (medie, massimi, stop).`,
+      `Prima di aprire un'operazione ti dice se vai nel verso del ciclo o contro: più conferme concordano, più il segnale è solido.`],
+    'Cosa prezza il mercato': [
+      `Le aspettative nascoste nei prezzi: tassi Fed attesi, rendimenti reali, inflazione attesa, paura (VIX), oro e dollaro.`,
+      `Ogni riga è una barra su quattro zone, dal verde (favorevole) al rosso (sotto pressione); le soglie sono scritte nel dettaglio. Più la barra è lunga, più il dato pesa sulle azioni.`,
+      `I prezzi anticipano il futuro: se il mercato si aspetta già un rialzo dei tassi, la notizia «rialzo» muove poco; muove se sorprende.`],
+
+    // ---- 03 Indicatori chiave ----
+    'Quadro generale': [
+      `Il riassunto delle sei aree qui sotto: una barra e uno stato per ciascuna, e l'insieme in fondo.`,
+      `Barra corta e verde = area in buona salute; più si allunga verso il rosso, più l'area è sotto pressione. Tocca un'area per saltare al suo dettaglio.`,
+      `In pochi secondi vedi se la pressione è concentrata in una sola area (per esempio i tassi) o diffusa su tutto.`],
+    'Economia e politica monetaria': [`Lo stato dell'economia USA (inflazione, lavoro, crescita) e i tassi della Fed.`, IK_READ, `Inflazione alta e lavoro forte spingono la Fed a tenere i tassi alti, e tassi alti pesano su azioni e oro.`],
+    'Mercato azionario': [`Come stanno gli indici USA, quanto è alta la paura (VIX), se il rialzo è ampio e quanto costa il credito alle aziende.`, IK_READ, `Un mercato sano sale in modo ampio e con paura bassa; se pochi titoli trainano e la paura sale, diventa più fragile.`],
+    'Curva dei tassi': [`I rendimenti dei titoli di stato USA a scadenze diverse (3 mesi, 2, 10 e 30 anni) e le loro differenze.`, IK_READ, `Quando i tassi a breve superano quelli a lungo (curva invertita) storicamente il mercato teme un rallentamento economico.`],
+    'Politica monetaria della Fed': [`Il tasso ufficiale della Fed, quanto è alto al netto dell'inflazione (tasso reale), cosa si aspetta il mercato e il bilancio della banca centrale.`, IK_READ, `Più il tasso reale è alto, più la politica monetaria frena economia e prezzi degli asset rischiosi.`],
+    'Tensioni geopolitiche e settori economici': [`Quante notizie geopolitiche ad alto impatto ci sono e come reagiscono petrolio, oro, dollaro e i settori energia, difesa e compagnie aeree.`, IK_READ, `Guerre e conflitti spostano i capitali verso i beni rifugio e fanno salire petrolio ed energia.`],
+    'Impatto sui settori azionari': [`Quali settori stanno guadagnando o perdendo e se il denaro va verso i ciclici (che vanno bene con la crescita) o verso i difensivi (che reggono nelle crisi).`, IK_READ, `Se i difensivi battono i ciclici gli investitori sono prudenti; se vincono i ciclici c'è fiducia nella crescita.`],
+    'Tetto al debito e deficit': [`Quanto debito ha lo Stato USA, quanto è vicino al limite di legge e quanto spende in interessi.`, IK_READ, `Debito e interessi alti, o un tetto vicino, possono far salire i rendimenti e creare tensioni sui mercati.`],
+    'Liquidità a mercato': [`Quanto denaro c'è nel sistema finanziario: bilancio della Fed, conto del Tesoro, riserve delle banche, massa monetaria M2, condizioni finanziarie.`, IK_READ, `Più liquidità sostiene i prezzi di azioni e oro; meno liquidità li rende più fragili.`],
+
+    // ---- 04 Calendario e volatilità ----
+    'Prossimi eventi ad alto impatto': [
+      `I prossimi appuntamenti economici più importanti, con la valuta interessata (USD, EUR, GBP…), il valore atteso e il precedente.`,
+      `«att.» è la previsione degli analisti, «prec.» il dato precedente; controlla sempre l'orario indicato. Il badge colorato è la valuta che di solito si muove.`,
+      `Un dato molto diverso dall'atteso fa muovere i prezzi in pochi minuti: meglio non aprire a mercato poco prima.`],
+    'Quando aspettarsi movimenti ampi': [
+      `Una mappa della settimana: per ogni asset e giorno, quanto è probabile una giornata movimentata.`,
+      `Numeri da 1 a 5 calcolati dagli eventi in calendario: 1 = giornata tranquilla, 5 = molti eventi importanti per quell'asset. Il colore passa dal verde (calmo) al rosso (agitato).`,
+      `Ti aiuta a scegliere i giorni in cui ridurre la leva e allargare gli stop. Non è una previsione di volatilità.`],
+    'CAL_TABLE': [
+      `Tutti gli eventi economici dei prossimi giorni, filtrabili per giorno, impatto (High, Medium, Low) e valuta.`,
+      `«Previsto» è l'attesa degli analisti, «Attuale» il dato uscito. La barra «Sorpresa» mostra di quanto si discosta dal previsto: verde in linea, azzurro poco, giallo molto, rosso forte. Clicca una riga per la descrizione.`,
+      `Contano soprattutto gli eventi ad alto impatto e la sorpresa, non il numero in sé.`],
+    'VOL_TOOL': [
+      `Quanto si muove in media ogni asset, a che ora e in che giorno della settimana.`,
+      `A sinistra scegli l'asset: la barra «Adesso» confronta la volatilità dell'ultima settimana con quella delle ultime 10 (verde compressa, azzurro normale, giallo elevata, rosso estrema). A destra i grafici per ora e per giorno: più la barra è alta e rossa, più il mercato si muove. I pips sono l'unità di misura dei cambi.`,
+      `Ti dice quando conviene operare (più movimento) e quanto stop serve (più volatilità, stop più largo).`],
+
+    // ---- 05 Sintesi operativa ----
+    'Cruscotto asset': [
+      `La direzione e gli scenari indicati dall'analisi AI, asset per asset.`,
+      `Il chip dice Bullish (rialzo) o Bearish (ribasso) e la barra a righe quanto l'analisi è convinta. Tocca la riga per scenario e livelli: sono scenari qualitativi, non probabilità statistiche.`,
+      `È un riepilogo di contesto: l'ingresso lo decidi tu, guardando il grafico.`],
+    'Indici azionari': [
+      `Come si muovono S&P 500, Nasdaq 100, Dow Jones e Russell 2000 e cosa dice l'analisi per ciascuno.`,
+      `La barra a righe è un giudizio, non una misura: a sinistra ribassista, a destra rialzista. Il chip dice Bullish o Bearish; tocca la riga per la lettura completa.`,
+      `Se tutti gli indici vanno nella stessa direzione il movimento è ampio; se divergono (per esempio Nasdaq su e Russell giù) il mercato è meno sano.`],
+
+    // ---- 06 Sentiment ----
+    'Sentiment delle notizie per categoria': [
+      `Cosa raccontano le notizie, tema per tema (Fed, geopolitica, macro, dollaro, oro, indici).`,
+      `La barra va da ribassista (rosso, a sinistra) a rialzista (verde, a destra); il chip dice se prevale Bullish, Bearish o Neutro; sotto il nome trovi quante fonti lo confermano.`,
+      `Più fonti diverse dicono la stessa cosa, più il segnale è affidabile.`],
+    'Retail vs prezzo — correlazioni e sentiment': [
+      `Come sono posizionati i trader retail (quanti long e quanti short) e come si muove il prezzo rispetto al dollaro.`,
+      `La barra mostra la quota di long (verde) e short (rosso); oltre il 65% da una parte la folla è sbilanciata (zona gialla). «Corr. DXY» vicino a +1 = si muove con il dollaro, vicino a −1 = al contrario.`,
+      `I trader retail sbagliano spesso agli estremi: una maggioranza enorme da una parte può essere un segnale di prudenza.`],
+    'Validazione incrociata — notizie contro dati reali': [
+      `Controlla se la storia raccontata dalle notizie è confermata dai dati (COT, open interest, macro).`,
+      `Allineato (verde) = notizie e dati dicono la stessa cosa; In conflitto (rosso) = si contraddicono. L'ultima riga è il bias che ne risulta.`,
+      `Quando notizie e dati sono in conflitto il segnale è più debole: serve prudenza.`],
+
+    // ---- 07 Posizionamento e rischio ----
+    'Risk-On / Risk-Off': [
+      `Un barometro da 0 a 100 della propensione al rischio dei mercati.`,
+      `La lancetta a sinistra (rosso) = prudenza (Risk-off), a destra (verde) = fiducia (Risk-on); le quattro zone sono i quarti del punteggio. Sotto: il regime in una parola, il punteggio e tre prezzi guida, VIX (paura), S&P 500 (azioni) e oro (rifugio).`,
+      `Risk-on di solito favorisce azioni e asset rischiosi; Risk-off premia dollaro, oro e titoli di stato.`],
+    'COT — dove sono gli estremi': [
+      `Quanto sono lunghi (compratori) o corti (venditori) i grandi speculatori sui futures, rispetto all'ultimo anno.`,
+      `La barra è il percentile sulle ultime 52 settimane: 0° = mai stati così corti, 100° = mai così lunghi. Oltre l'85° (rosso) o sotto il 15° (giallo) la posizione è affollata. Il numero a destra è la posizione netta in contratti.`,
+      `Quando quasi tutti sono già dalla stessa parte il movimento ha meno «benzina» e il rischio di inversione cresce. Il report esce ogni venerdì con dati del martedì.`],
+    'Umore degli investitori': [
+      `Paura e avidità del mercato (Fear & Greed) e il sondaggio AAII sugli investitori individuali.`,
+      `La scala va da paura estrema (sinistra) ad avidità estrema (destra); il punto indica il valore di oggi. AAII dice quanti investitori sono rialzisti, neutrali o ribassisti.`,
+      `Gli estremi spesso precedono un'inversione: troppa avidità = rischio di calo, troppa paura = possibile rimbalzo.`],
+    'Quadro decisionale': [
+      `Un segnale unico che unisce posizionamento COT (peso 55%), momentum di prezzo (25%) e macro/dollaro (20%).`,
+      `Ogni fattore ha un punteggio da −100 a +100 e un peso; il segnale finale dice se il quadro è rialzista, ribassista o neutro. Scegli l'asset dal menu.`,
+      `Unisce tre letture indipendenti: se concordano il segnale è più solido, se divergono meglio aspettare.`],
+    'COT Report — tutti i contratti': [
+      `Il rapporto completo della CFTC: per ogni contratto, quanti long e short hanno i grandi operatori e la posizione netta.`,
+      `Netto = long meno short. Una variazione settimanale positiva significa che i grandi hanno comprato. Tocca una riga per i dettagli; il percentile dice quanto la posizione è estrema.`,
+      `Aiuta a capire se un movimento è ancora sostenuto dai grandi operatori o già affollato.`],
+
+    // ---- 08 Macro ----
+    'KPI_MACRO': [
+      `I cinque dati chiave di oggi: CPI, Core CPI, PPI, NFP e disoccupazione USA.`,
+      `Sotto ogni numero: «att.» = atteso dagli analisti, «prec.» = precedente. Il colore dice l'effetto sui mercati: verde favorevole, rosso sfavorevole, giallo neutro.`,
+      `I mercati reagiscono alla sorpresa rispetto all'atteso, non al numero in sé.`],
+    'USA — inflazione, PMI e PIL': [
+      `I dati economici USA più recenti: prezzi (CPI, PPI), attività di industria e servizi (ISM PMI) e crescita (PIL).`,
+      `Ogni riga mette il dato uscito accanto all'atteso e al precedente: la linea bianca è l'atteso, il tratto colorato la sorpresa, il cerchio il precedente. Verde = favorevole ai mercati, rosso = sfavorevole (per l'inflazione sopra le attese è rosso, per la crescita è verde).`,
+      `Inflazione alta fa pensare a tassi alti (dollaro su, oro e azioni giù); crescita forte sostiene azioni e dollaro.`],
+    'Europa — Eurozona e BCE': [
+      `I dati economici dell'Eurozona: inflazione, crescita, disoccupazione, consumi e il tasso della BCE.`,
+      `Come per gli USA: dato uscito, atteso e precedente. La linea bianca è l'atteso, il tratto colorato la sorpresa; verde favorevole, rosso sfavorevole.`,
+      `Dati europei deboli spingono la BCE verso tassi più bassi e indeboliscono l'euro; dati forti lo sostengono.`],
+    'Lavoro e disoccupazione': [
+      `Il mercato del lavoro USA: nuovi posti (NFP), disoccupazione, salari, offerte di lavoro e richieste di sussidio.`,
+      `Come le altre tabelle: uscito, atteso, precedente e sorpresa. Un lavoro molto forte e salari in crescita alimentano l'inflazione e spingono la Fed verso tassi alti.`,
+      `L'NFP, il primo venerdì del mese, è uno dei dati che muove di più dollaro, oro e indici.`],
+    'MACRO_AI': [
+      `Il riassunto in parole semplici dei dati della tabella qui sopra.`,
+      AI_READ,
+      `Ti aiuta a capire cosa significano i numeri per le banche centrali e per i mercati.`],
+    'Sahm Rule — segnale di recessione USA': [
+      `Un indicatore che segnala l'inizio di una recessione quando la disoccupazione sale in fretta.`,
+      `Si calcola con la media a 3 mesi della disoccupazione meno il suo minimo degli ultimi 12 mesi: se la differenza raggiunge 0,50 punti il segnale è «scattato». La barra a zone mostra quanto siamo vicini alla soglia.`,
+      `Storicamente scatta all'inizio delle recessioni USA: se scatta, i mercati diventano più prudenti.`],
+
+    // ---- 09 Banche centrali e tassi ----
+    'KPI_BC': [
+      `I sette numeri di riferimento sui tassi.`,
+      `Target range Fed = intervallo del tasso ufficiale · Prossimo FOMC = data della prossima decisione · CPI USA = inflazione · US 10Y = rendimento dei titoli di stato a 10 anni · Dollar Index = forza del dollaro · VIX = paura · Curva 10Y–2Y = differenza tra i rendimenti a 10 e a 2 anni (sotto zero = curva invertita).`,
+      `I tassi d'interesse muovono dollaro, oro, rendimenti e azioni.`],
+    'Regime attuale': [
+      `Cosa prezzano i future sui tassi per la prossima riunione della Fed: probabilità di taglio, di tassi invariati o di rialzo.`,
+      `Ogni riga è uno scenario: la barra è la sua probabilità e accanto c'è il nuovo intervallo di tassi che ne risulterebbe. L'ultima riga è la data della riunione.`,
+      `Se il mercato è già molto sicuro di una decisione, a muovere i prezzi è la sorpresa, non la decisione.`],
+    'Cosa può fare la Fed': [
+      `Cosa può decidere la Fed e perché, in parole semplici, a partire dai dati ufficiali.`,
+      `La prima riga riassume la posizione; «Perché potrebbe restare dura» e «Perché potrebbe fermarsi» elencano i motivi opposti. Hawkish = favorevole a tassi alti, dovish = a tassi bassi.`,
+      `Le decisioni della Fed muovono dollaro, oro, rendimenti e azioni.`],
+    'FOMC e aspettative': [
+      `Lo stato della prossima riunione della Fed e cosa si aspetta il mercato.`,
+      `Le righe mostrano aspettative e scenari con un colore: rosso = hawkish (più tassi alti), verde = dovish (tassi più bassi), azzurro = neutro. La nota in fondo ricorda i limiti dei dati.`,
+      `Capire cosa è già «prezzato» ti dice quanto può muovere la decisione.`],
+    'Dati usciti: che spinta danno alla Fed?': [
+      `Quanto i dati usciti spingono la Fed verso tassi più alti (hawkish) o più bassi (dovish), area per area.`,
+      `Barra a sinistra (rossa) = dati sopra le attese, spinta verso tassi alti; a destra (verde) = dati sotto le attese, spinta verso tassi bassi. A destra il conteggio: quanti dati hawkish, dovish o in linea.`,
+      `Sono i dati, più delle parole, a far cambiare idea alla Fed.`],
+    'Rendimenti, VIX e dollaro': [
+      `Una lettura in parole semplici di come si muovono rendimenti dei titoli di Stato, paura (VIX) e dollaro.`,
+      AI_READ,
+      `Sono le tre variabili che più spesso muovono tutti gli altri mercati.`],
+    'Sintesi operativa — come adeguarsi': [
+      `Una sintesi pratica: come cambia il quadro e a cosa fare attenzione.`,
+      AI_READ,
+      `Riassume tutta la sezione in poche righe: è contesto, non un consiglio operativo.`],
+
+    // ---- 10 Geopolitica ----
+    'Rischi per categoria': [
+      `In che direzione si muove il rischio in ogni area (per esempio geopolitica, petrolio, OPEC).`,
+      `Il chip dice se il rischio è in aumento (rosso), stabile (giallo) o in calo (verde). Tocca la riga per il testo.`,
+      `Aiuta a capire dove sta crescendo la tensione e dove si sta calmando.`],
+    'Cosa monitorare': [
+      `Gli eventi e i segnali da tenere d'occhio nelle prossime ore e giorni.`,
+      AI_READ,
+      `Ti dice cosa potrebbe cambiare lo scenario geopolitico e quindi i prezzi di petrolio, valute e rischio.`],
+    'Bias di conflitto': [
+      `La direzione che i mercati stanno dando al conflitto: de-escalation o escalation.`,
+      AI_READ,
+      `Il conflitto sposta capitali verso i beni rifugio o verso il rischio: capire la direzione aiuta a leggere petrolio, oro e dollaro.`],
+    'Notizie a confronto': [
+      `Come fonti diverse raccontano gli stessi fatti.`,
+      `Ogni riga è una fonte con una sintesi (non una citazione). Confronta i toni: se divergono, la situazione è incerta.`,
+      `Una notizia confermata da più fonti indipendenti è più affidabile.`],
+  };
+
+  // testi per le card scritte dall'AI il cui titolo cambia da un'analisi all'altra, e testi generici
+  const GEO_AI = [`Una lettura scritta dall'AI sulle notizie geopolitiche delle ultime ore.`, AI_READ, `Spiega il canale con cui un fatto geopolitico arriva ai prezzi (petrolio, valute, rischio).`];
+  const MACRO_AI = G.MACRO_AI;
+  const GENERIC = {
+    ai: [`Un'analisi scritta dall'intelligenza artificiale su dati e notizie reali.`, AI_READ, `È contesto per capire cosa sta succedendo, non un segnale operativo.`],
+    live: [`Dati reali che si aggiornano da soli.`, `Ogni riga è un dato; il colore dice se è favorevole (verde), neutro (azzurro), da monitorare (giallo) o sotto pressione (rosso). Tocca le righe per i dettagli.`, `Ti dà il quadro numerico su cui poi si appoggiano le analisi.`],
+  };
+
+  const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+  const SEC = el => { const s = el.closest('section[id]'); return s ? s.id : ''; };
+  const badges = c => [...c.querySelectorAll(':scope > .h-hd .h-bd, :scope > .ikx-ph .h-bd, :scope > .pm-hh .h-bd, :scope > .cyc-hh .h-bd')].map(b => norm(b.textContent).replace(/^[•●]\s*/, ''));
+
+  const KINDS = '.h-card, .ikx-p, .ikx-hero, .pm-card, .cyc-card, .h-kpis.wide, .ic-table-wrap, .vl';
+  const NEST = '.h-card, .ikx-p, .ikx-hero, .pm-card, .cyc-card, .vl';
+
+  function keyFor(c){
+    if(c.matches('.ikx-hero')) return 'Quadro generale';
+    if(c.matches('.pm-card')) return 'Cosa prezza il mercato';
+    if(c.matches('.cyc-card')) return 'Monitor degli asset e ciclo di mercato';
+    if(c.matches('.ic-table-wrap')) return 'CAL_TABLE';
+    if(c.matches('.vl')) return 'VOL_TOOL';
+    if(c.matches('.h-kpis.wide')) return SEC(c) === 'macro' ? 'KPI_MACRO' : 'KPI_BC';
+    const t = norm((c.querySelector(':scope > .h-hd h4, :scope > .ikx-ph h3') || {}).textContent);
+    return t;
+  }
+  function guideFor(c){
+    const t = keyFor(c), sec = SEC(c);
+    if(G[t]) return G[t];
+    const hit = Object.keys(G).find(k => k.length > 8 && t.startsWith(k)); if(hit) return G[hit];
+    if(/^(Lettura d'insieme|Perché conta)$/.test(t)) return MACRO_AI;
+    const ai = badges(c).some(b => /^AI$/i.test(b));
+    if(sec === 'hub-geo' && ai) return GEO_AI;
+    return ai ? GENERIC.ai : GENERIC.live;
+  }
+  const ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.6 1 2.5h6c0-.9.2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>';
+  function guideEl(g){
+    const el = document.createElement('div'); el.className = 'bg'; el.setAttribute('role', 'note');
+    el.innerHTML = `<div class="bg-h">${ICON}Come leggere questa card</div><div class="bg-b"><p><b>Cosa mostra</b>${g[0]}</p><p><b>Come si legge</b>${g[1]}</p>${g[2] ? `<p><b>Perché conta</b>${g[2]}</p>` : ''}</div>`;
+    return el;
+  }
+  function place(c, el){
+    if(c.matches('.h-kpis.wide')){ c.after(el); return; }
+    if(c.matches('.ic-table-wrap, .vl')){ c.before(el); return; }
+    const h = c.querySelector(':scope > .h-hd, :scope > .ikx-ph, :scope > .pm-hh, :scope > .cyc-hh, :scope > .ikx-hh');
+    if(h) h.after(el); else c.prepend(el);
+  }
+  const has = c => (c.matches('.h-kpis.wide') && c.nextElementSibling && c.nextElementSibling.classList.contains('bg'))
+    || (c.matches('.ic-table-wrap, .vl') && c.previousElementSibling && c.previousElementSibling.classList.contains('bg'))
+    || [...c.children].some(x => x.classList && x.classList.contains('bg'));
+  function decorate(){
+    main.querySelectorAll(KINDS).forEach(c => {
+      if(c.parentElement && c.parentElement.closest(NEST)) return;     // solo i riquadri di primo livello
+      if(c.closest('#pulse')) return;
+      if(has(c)) return;
+      if(c.matches('.h-card') && !c.querySelector(':scope > .h-hd')) return;
+      place(c, guideEl(guideFor(c)));
+    });
+  }
+  let busy = false;
+  new MutationObserver(ms => {
+    if(busy) return;
+    if(ms.every(m => { const x = m.target.nodeType === 1 ? m.target : m.target.parentElement; return !x || (x.closest && (x.closest('#pulse, .bg, .h-cd, .pl') || false)); })) return;
+    busy = true; try{ decorate(); }finally{ busy = false; }
+  }).observe(main, {childList:true, subtree:true});
+  decorate();
 })();
 </script>
 </body>
