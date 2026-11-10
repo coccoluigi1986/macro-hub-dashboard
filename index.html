@@ -1720,6 +1720,13 @@ section{margin-bottom:30px;}
 @media(max-width:560px){ .vl-cols, .vl-row{grid-template-columns:minmax(66px,1.2fr) minmax(52px,1fr) 56px 44px; gap:6px; padding:0 10px;} }   /* dopo la regola generale: sul telefono la colonna "$" è nascosta */
 @media(max-width:700px){ .vl-kpis{grid-template-columns:1fr; gap:5px;} .vl-kpi{flex-direction:row; align-items:baseline; justify-content:space-between; gap:8px;} .vl-kpi .d{display:none;} .vl-right{padding:11px 12px 9px;} }
 
+/* ---- Bordo che si evidenzia al passaggio del mouse: su TUTTE le card (prima solo le .h-card) ----
+   Stesso colore per tutte: quello della sezione (--sec) al 55%, come già facevano le .h-card. Solo dove esiste il mouse (sul telefono resterebbe acceso dopo un tocco). */
+@media(hover:hover){
+  :is(.h-card, .ikx-p, .ikx-hero, .pm-card, .cyc-card, .h-kpis.wide, #pulse .pulse-grid, #pulse .pn, .vl-left, .vl-right, .ic-table-wrap):hover{border-color:color-mix(in srgb,var(--sec,#5EA8F5) 55%,transparent);}
+}
+:is(.ikx-p, .ikx-hero, .pm-card, .cyc-card, .h-kpis.wide, #pulse .pulse-grid, #pulse .pn, .vl-left, .vl-right, .ic-table-wrap){transition:border-color .2s;}
+
 </style>
 </head>
 <body>
