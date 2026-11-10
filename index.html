@@ -4988,12 +4988,12 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
     $$('.rv').forEach(el => io.observe(el));
   } else $$('.rv').forEach(el => el.classList.add('in'));
 
-  // ---- IL POLSO DEL MERCATO: sei tessere con lo stato di oggi, ognuna porta alla sua sezione ----
+  // ---- MACRO OGGI (in alto): sei righe con lo stato di oggi, ognuna porta alla sua sezione ----
   const main = $('main');
   const pulse = document.createElement('div');
   pulse.className = 'pulse'; pulse.id = 'pulse';
   pulse.innerHTML =
-    '<div class="pulse-hd"><div><h2>Il polso del mercato</h2><p>Lo stato di oggi in 10 secondi · tocca una tessera per andare ai dettagli</p></div>'
+    '<div class="pulse-hd"><div><h2>Macro oggi</h2><p>Bias, prossimo dato, Fed e rischio recessione in 10 secondi · tocca una riga per andare ai dettagli</p></div>'
     + '<div class="pulse-leg" aria-label="Come leggere i colori"><span><i style="background:var(--green)"></i>Favorevole / calma</span><span><i style="background:var(--gold)"></i>Attenzione / neutro</span><span><i style="background:var(--red)"></i>Rischio / tensione</span><span><i style="background:var(--accent)"></i>Informazione</span></div></div>'
     + '<div class="pulse-grid" id="pulseGrid"></div>'
     + '<div class="pn" id="pulseNews" hidden><span class="pn-tag"><i></i>Ultime notizie</span><a class="pn-a" id="pnA" target="_blank" rel="noopener noreferrer"></a><span class="pn-dots" id="pnDots" aria-hidden="true"></span></div>'
