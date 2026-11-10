@@ -878,12 +878,8 @@ section#sentiment{--sec:#F472B6;} section#hub-pos{--sec:#FB923C;} section#macro{
 section .h-ico{background:color-mix(in srgb,var(--sec,#5EA8F5) 15%,transparent); color:var(--sec,#5EA8F5); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--sec,#5EA8F5) 28%,transparent);}
 section .h-card:hover{border-color:color-mix(in srgb,var(--sec,#5EA8F5) 55%,transparent);}
 
-/* ---------- riflesso che segue il mouse sulle card ---------- */
+/* (tolto il riflesso luminoso che seguiva il mouse sulle card: dava fastidio; le card restano position:relative) */
 .h-card, .pt{position:relative;}
-.h-card::after, .pt::after{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; transition:opacity .3s;
-  background:radial-gradient(360px circle at var(--mx,50%) var(--my,0%), color-mix(in srgb,var(--sec,var(--accent)) 17%,transparent), transparent 65%);}
-.h-card:hover::after, .pt:hover::after{opacity:1;}
-@media(hover:none){ .h-card::after,.pt::after{display:none;} }
 
 /* ---------- vita nei dettagli ---------- */
 .h-bd.live::before{content:""; display:inline-block; width:6px; height:6px; margin-right:5px; vertical-align:1px; border-radius:50%; background:currentColor; animation:ping 1.9s ease-out infinite;}
@@ -5119,7 +5115,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   addEventListener('scroll', () => { if(!sT){ sT = true; requestAnimationFrame(onScroll); } }, {passive:true}); onScroll();
 })();
 
-// ---------- MOVIMENTO (v3.1): sfondo, riflesso sulle card, comparsa a cascata, ultime notizie ----------
+// ---------- MOVIMENTO (v3.1): sfondo, comparsa a cascata, ultime notizie ----------
 (function(){
   'use strict';
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -5128,17 +5124,6 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
   // sfondo "aurora" (dietro a tutto)
   const aur = document.createElement('div'); aur.id = 'aurora'; aur.setAttribute('aria-hidden', 'true'); aur.innerHTML = '<i></i><i></i><i></i>';
   document.body.insertBefore(aur, document.body.firstChild);
-
-  // il riflesso sulle card segue il mouse
-  let pmE = null, pmT = 0;
-  document.addEventListener('pointermove', e => {
-    pmE = e; if(pmT) return;
-    pmT = requestAnimationFrame(() => {
-      pmT = 0; const ev = pmE; if(!ev) return;
-      const c = ev.target.closest && ev.target.closest('.h-card, .pt'); if(!c) return;
-      const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (ev.clientX - r.left) + 'px'); c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
-    });
-  }, {passive:true});
 
   // le card di ogni sezione entrano a cascata la prima volta che la sezione compare
   if(!reduce && 'IntersectionObserver' in window && Element.prototype.animate){
