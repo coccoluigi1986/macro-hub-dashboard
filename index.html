@@ -1727,6 +1727,13 @@ section{margin-bottom:30px;}
 }
 :is(.ikx-p, .ikx-hero, .pm-card, .cyc-card, .h-kpis.wide, #pulse .pulse-grid, #pulse .pn, .vl-left, .vl-right, .ic-table-wrap){transition:border-color .2s;}
 
+
+/* ---- Barometro Risk-On / Risk-Off a quattro zone (sezione Posizionamento e rischio) ---- */
+.rk-dial{position:relative; width:100%; max-width:330px; aspect-ratio:520/330; margin:0 auto;}
+.rk-dial svg{display:block; width:100%; height:100%; overflow:visible;}
+.rk-l{position:absolute; transform:translate(-50%,-50%); white-space:nowrap; font:500 9.5px/1 var(--fm); letter-spacing:.14em; text-transform:uppercase; color:var(--c);}
+.rk-l.s-l{transform:translate(0,-50%);} .rk-l.s-r{transform:translate(-100%,-50%);}
+@media(max-width:380px){ .rk-l{font-size:8.5px; letter-spacing:.1em;} }
 </style>
 </head>
 <body>
@@ -3673,6 +3680,29 @@ function renderHubCal(){
 
 // ---- 09 Posizionamento e rischio
 const H_COT_NAMES = {gold:'Oro', silver:'Argento', wti:'Petrolio WTI', brent:'Brent', eur:'Euro', gbp:'Sterlina', jpy:'Yen', dxy:'Dollar Index', sp500:'S&P 500', nasdaq:'Nasdaq 100', dow:'Dow Jones', russell:'Russell 2000', vix:'VIX futures', bitcoin:'Bitcoin', ether:'Ether'};
+// Barometro Risk-On / Risk-Off: semicerchio a quattro zone (rosso · arancione · azzurro · verde, da sinistra a destra) con tacche e lancetta.
+// La lancetta va da -90° (tutto a sinistra, risk-off) a +90° (tutto a destra, risk-on) in base al punteggio 0-100. Le etichette sono HTML sopra l'SVG
+// (così restano della stessa grandezza qualunque sia la larghezza della card).
+function hRiskDial(score){
+  const cx = 260, cy = 290, R = 214, VB = {x:0, y:10, w:520, h:330};
+  const pt = (a, r) => [cx + r * Math.cos(a * Math.PI / 180), cy - r * Math.sin(a * Math.PI / 180)];
+  const f = n => n.toFixed(1);
+  const arc = (a1, a2, r) => { const [x1, y1] = pt(a1, r), [x2, y2] = pt(a2, r); return `M ${f(x1)} ${f(y1)} A ${r} ${r} 0 0 1 ${f(x2)} ${f(y2)}`; };
+  const SEG = [[177, 137, '#F0685E'], [133, 93, '#E0A94D'], [89, 49, '#38BDF8'], [45, 3, '#34D399']];   // angoli matematici: 180° = sinistra, 0° = destra
+  const sc = Math.max(0, Math.min(100, Number(score) || 0)), ang = -90 + sc * 1.8;
+  let ticks = ''; for(let a = 180; a >= 0; a -= 3){ const m = a % 15 === 0, [x1, y1] = pt(a, R + 18), [x2, y2] = pt(a, R + (m ? 34 : 26)); ticks += `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="rgba(190,205,235,${m ? .5 : .22})" stroke-width="${m ? 1.4 : 1}"/>`; }
+  const pos = (x, y) => `left:${(x - VB.x) / VB.w * 100}%; top:${(y - VB.y) / VB.h * 100}%`;
+  const lab = (cls, c, txt, style) => `<span class="rk-l ${cls}" style="--c:${c}; ${style}">${txt}</span>`;
+  const top = (a, c, txt) => { const [x, y] = pt(a, R + 62); return lab('', c, txt, pos(x, y)); };
+  const svg = `<svg viewBox="${VB.x} ${VB.y} ${VB.w} ${VB.h}" aria-hidden="true"><defs><linearGradient id="rkNd" gradientUnits="userSpaceOnUse" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - R}"><stop offset="0" stop-color="#5EA8F5" stop-opacity="0"/><stop offset=".35" stop-color="#9CCBFB"/><stop offset="1" stop-color="#fff"/></linearGradient><radialGradient id="rkHub" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#EAF3FF"/><stop offset="1" stop-color="#5EA8F5"/></radialGradient></defs>`
+    + `<path d="${arc(180, 0, 250)}" fill="none" stroke="rgba(190,205,235,.1)" stroke-dasharray="2 6"/><path d="${arc(180, 0, R - 40)}" fill="none" stroke="rgba(190,205,235,.14)"/>`
+    + `<g fill="none" stroke-width="22" style="filter:drop-shadow(0 0 7px rgba(150,190,255,.28))">${SEG.map(([a1, a2, c]) => `<path d="${arc(a1, a2, R)}" stroke="${c}"/>`).join('')}</g><g>${ticks}</g>`
+    + `<g transform="rotate(${ang.toFixed(1)} ${cx} ${cy})"><line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - R + 26}" stroke="url(#rkNd)" stroke-width="3.6" stroke-linecap="round"/><circle cx="${cx}" cy="${cy - R + 26}" r="5" fill="#fff"/></g>`
+    + `<circle cx="${cx}" cy="${cy}" r="16" fill="#0A1426" stroke="rgba(94,168,245,.65)" stroke-width="1.6"/><circle cx="${cx}" cy="${cy}" r="7" fill="url(#rkHub)"/></svg>`;
+  return `<div class="rk-dial" role="img" aria-label="Bias ${sc} su 100">${svg}`
+    + lab('s-l', '#F0685E', 'Sotto pressione', pos(14, cy + 26)) + lab('s-r', '#34D399', 'Favorevole', pos(506, cy + 26))
+    + top(113, '#E0A94D', 'Da monitorare') + top(69, '#38BDF8', 'Neutrale') + '</div>';
+}
 function renderHubPos(){
   const el = document.getElementById('hPosGrid'); if(!el) return;
   const b = HUB.bias, S = HUB.narr.sentiment, P = HUB.pos;
@@ -3680,10 +3710,10 @@ function renderHubPos(){
   // Risk-On / Risk-Off
   if(b && typeof b.score === 'number'){
     const ang = -90 + (b.score / 100) * 180;
-    const gauge = `<svg class="h-gauge" viewBox="0 0 200 112" role="img" aria-label="Bias ${b.score} su 100"><defs><linearGradient id="hGG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F0685E"/><stop offset=".5" stop-color="#E0A94D"/><stop offset="1" stop-color="#34D399"/></linearGradient></defs><path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#hGG)" stroke-width="14" stroke-linecap="round"/><line x1="100" y1="100" x2="100" y2="34" stroke="#EDF0F7" stroke-width="3" stroke-linecap="round" transform="rotate(${ang} 100 100)"/><circle cx="100" cy="100" r="6" fill="#EDF0F7"/></svg>`;
+    const gauge = hRiskDial(b.score);
     const rg = S && S.risk && S.risk.regime ? S.risk.regime : null;
     const kp = (l, k, d) => `<div class="h-kpi"><span class="l">${l}</span><b>${hVal(k, d)}</b><span class="d ${hChg(k).c}">${hChg(k).t}</span></div>`;
-    html += hCard({span:4, icon:'pulse', title:'Risk-On / Risk-Off', bd:['ai','live'], cls:'h-center', body:`${gauge}<p class="h-big h-center">${escHtml((rg && rg.label) || b.label || '—')} <small>${b.score}/100</small></p>${rg && rg.sub ? `<p class="h-note h-center">${escHtml(rg.sub)}</p>` : ''}<div class="h-kpis">${kp('VIX', 'vix', 1)}${kp('S&amp;P 500', 'sp500', 0)}${kp('Oro', 'gold', 0)}</div>${S && S.risk && S.risk.note ? hExp(S.risk.note, 3) : ''}`, foot:b.ai === false ? 'Bias di riserva (analisi AI non disponibile)' : ''});
+    html += hCard({span:4, icon:'pulse', title:'Risk-On / Risk-Off', bd:['ai','live'], cls:'h-center', body:`${gauge}<p class="h-big h-center">${escHtml((rg && rg.label) || b.label || '—')} <small>${b.score}/100</small></p>${rg && rg.sub ? `<p class="h-note h-center">${safeHtml(rg.sub)}</p>` : ''}<div class="h-kpis">${kp('VIX', 'vix', 1)}${kp('S&amp;P 500', 'sp500', 0)}${kp('Oro', 'gold', 0)}</div>${S && S.risk && S.risk.note ? hExp(S.risk.note, 3) : ''}`, foot:b.ai === false ? 'Bias di riserva (analisi AI non disponibile)' : ''});
   } else html += hCard({span:4, icon:'pulse', title:'Risk-On / Risk-Off', bd:['ai','live'], body:'<p class="h-note">Bias in caricamento…</p>'});
   // COT (barre sulla scala dei percentili) e umore degli investitori (Fear & Greed + AAII) nel linguaggio a barre; il barometro Risk-On/Risk-Off sopra resta com'è
   html += sxCot(S) + sxMood(P, S);
