@@ -194,6 +194,7 @@ h2{font-size:clamp(28px,3.5vw,44px); margin:18px 0 20px; max-width:15em; letter-
 .gl > div{padding:26px 0 28px; border-bottom:1px solid var(--hair);}
 .gl dt{font:500 19px/1.2 var(--fh); letter-spacing:-.01em; margin-bottom:8px; color:var(--text);}
 .gl dd{font-size:15.5px; color:var(--text2); line-height:1.6; max-width:34em;}
+.gl dd p{margin:0;} .gl dd p + p{margin-top:.7em;} .gl dd b{font-weight:600; color:var(--text);}
 @media(max-width:820px){ .gl{grid-template-columns:1fr;} }
 
 /* come iniziare */
@@ -524,20 +525,20 @@ footer{padding:30px 0 36px; margin-top:14px;} .fgrid{padding-top:22px; gap:30px;
 <section class="blk" id="glossario">
   <div class="wrap">
     <div class="rv">
-      <div class="eyebrow">Impari mentre usi</div>
-      <h2>Le parole dei mercati, <em>spiegate bene</em></h2>
-      <p class="sec-lede">I termini che sentirai ovunque, ognuno in una riga e con parole semplici. Nella dashboard li ritrovi nel loro contesto.</p>
+      <div class="eyebrow">Impara mentre utilizzi</div>
+      <h2>Il linguaggio dei mercati, <em>spiegato in modo semplice</em></h2>
+      <p class="sec-lede">Comprendi i principali termini della macroeconomia e dei mercati finanziari attraverso definizioni chiare, sintetiche e pratiche. Ritroverai questi concetti applicati direttamente nelle analisi della dashboard.</p>
     </div>
     <dl class="gl">
-      <div class="rv"><dt>Hawkish</dt><dd>Una banca centrale “falco”: preferisce tassi alti, anche a costo di rallentare l’economia, per tenere sotto controllo l’inflazione.</dd></div>
-      <div class="rv d1"><dt>Dovish</dt><dd>Una banca centrale “colomba”: preferisce tassi bassi per aiutare crescita e lavoro, anche se l’inflazione resta più alta.</dd></div>
-      <div class="rv"><dt>Risk-on / Risk-off</dt><dd>Risk-on: gli investitori cercano guadagno e comprano asset rischiosi, come le azioni. Risk-off: cercano protezione, ad esempio in dollaro, oro e titoli di Stato.</dd></div>
-      <div class="rv d1"><dt>Sorpresa</dt><dd>La differenza tra un dato e ciò che gli analisti si aspettavano (il “consensus”). Spesso muove i prezzi più del dato stesso.</dd></div>
-      <div class="rv"><dt>Ciclo di mercato</dt><dd>Le quattro fasi per cui passa un prezzo: accumulazione, rialzo, distribuzione, ribasso. Dice dove siamo, non prevede dove andremo.</dd></div>
-      <div class="rv d1"><dt>COT</dt><dd>Il rapporto settimanale della CFTC (l’autorità USA sui futures) che mostra quanto stanno comprando o vendendo i grandi operatori.</dd></div>
-      <div class="rv"><dt>Curva dei rendimenti</dt><dd>Confronta gli interessi dei titoli di Stato a breve e a lungo termine: quando quelli a breve superano quelli a lungo (curva “invertita”), spesso segnala timori di rallentamento.</dd></div>
-      <div class="rv d1"><dt>VIX</dt><dd>L’“indice della paura”: misura quanto il mercato si aspetta che oscilli l’S&amp;P 500, cioè le 500 maggiori aziende USA. Più è alto, più c’è tensione.</dd></div>
-      <div class="rv d1"><dt>Sahm Rule</dt><dd>Un segnale di possibile recessione: scatta quando la disoccupazione sale in fretta rispetto al minimo dell’ultimo anno.</dd></div>
+      <div class="rv"><dt>Hawkish</dt><dd>Orientamento restrittivo di una banca centrale, favorevole a tassi d’interesse elevati o a una politica monetaria più rigorosa per contrastare l’inflazione, anche a costo di rallentare la crescita economica.</dd></div>
+      <div class="rv d1"><dt>Dovish</dt><dd>Orientamento accomodante di una banca centrale, favorevole a tassi d’interesse più bassi o a una politica monetaria meno restrittiva per sostenere la crescita economica e l’occupazione, compatibilmente con la stabilità dei prezzi.</dd></div>
+      <div class="rv"><dt>Risk-on / Risk-off</dt><dd><p><b>Risk-on:</b> fase in cui gli investitori mostrano maggiore propensione al rischio, privilegiando generalmente azioni e altri strumenti finanziari rischiosi.</p><p><b>Risk-off:</b> fase in cui prevale l’avversione al rischio e gli investitori cercano maggiore protezione, orientandosi spesso verso beni rifugio come oro, Treasury statunitensi e alcune valute considerate difensive.</p></dd></div>
+      <div class="rv d1"><dt>Sorpresa macroeconomica</dt><dd>Differenza tra il valore effettivo di un indicatore economico e le aspettative degli analisti (consensus). Una sorpresa significativa può provocare forti movimenti sui mercati, soprattutto quando modifica le aspettative sui tassi d’interesse.</dd></div>
+      <div class="rv"><dt>Ciclo di mercato</dt><dd>Successione di quattro fasi comunemente utilizzate nell’analisi tecnica: accumulazione, rialzo, distribuzione e ribasso. Questo modello aiuta a interpretare la struttura del mercato, ma non permette di prevederne con certezza l’evoluzione.</dd></div>
+      <div class="rv d1"><dt>COT – Commitments of Traders</dt><dd>Rapporto pubblicato settimanalmente dalla CFTC che mostra il posizionamento degli operatori sui mercati futures e opzioni su futures statunitensi. Permette di analizzare le posizioni long e short delle diverse categorie di partecipanti e individuare possibili squilibri nel sentiment.</dd></div>
+      <div class="rv"><dt>Curva dei rendimenti</dt><dd>Rappresenta i rendimenti dei titoli obbligazionari con scadenze differenti. Quando i rendimenti a breve termine superano quelli a lungo termine, si verifica un’inversione della curva, spesso considerata un possibile segnale anticipatore di rallentamento economico.</dd></div>
+      <div class="rv d1"><dt>VIX – Indice di volatilità</dt><dd>Indicatore che misura la volatilità attesa dell’indice S&amp;P 500 nei successivi 30 giorni, ricavata dai prezzi delle opzioni. Valori elevati indicano maggiore incertezza e aspettative di oscillazioni più ampie, non necessariamente un ribasso del mercato.</dd></div>
+      <div class="rv d1"><dt>Sahm Rule</dt><dd>Indicatore utilizzato per individuare possibili fasi iniziali di recessione negli Stati Uniti. Il segnale si attiva quando la media trimestrale del tasso di disoccupazione supera di almeno 0,50 punti percentuali il valore minimo registrato dalle medie trimestrali nei 12 mesi precedenti.</dd></div>
     </dl>
   </div>
 </section>
