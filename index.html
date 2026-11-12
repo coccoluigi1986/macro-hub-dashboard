@@ -2830,25 +2830,41 @@ let calLoading = true;
 let calLoadError = false;
 let calFetchToken = 0;  // evita che una risposta lenta sovrascriva un fetch più recente
 
+// Orari del calendario SEMPRE in ora italiana (Europe/Rome), qualunque fuso abbia il browser. Prima la tabella mostrava l'ora di Londra (un'ora indietro) e i giorni
+// iniziavano a mezzanotte UTC: gli eventi tra le 00:00 e le 00:59 italiane finivano nel giorno sbagliato.
+// getCalDateRange restituisce i GIORNI del periodo come "mezzanotte UTC" di quella data (servono solo per contare i giorni e scriverli); gli istanti veri
+// da chiedere al server si ricavano con romeMidnightMs, che tiene conto dell'ora legale.
+function romeTodayUTC(){
+  const [y, m, d] = new Intl.DateTimeFormat('en-CA', {timeZone:'Europe/Rome', year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date()).split('-').map(Number);
+  return Date.UTC(y, m - 1, d);
+}
+// Istante UTC in cui a Roma è mezzanotte del giorno indicato (valore "mezzanotte UTC" di quella data).
+function romeMidnightMs(dayUtcMs){
+  const dt = new Date(dayUtcMs);
+  const off = t => { const p = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/Rome', hourCycle:'h23', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'}).formatToParts(t).reduce((a, x) => (a[x.type] = x.value, a), {}); return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - Math.floor(t / 1000) * 1000; };
+  const guess = Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate());
+  let t = guess - off(guess);
+  t = guess - off(t);   // seconda stima: corregge il cambio tra ora solare e legale
+  return t;
+}
 function getCalDateRange(){
-  const now = new Date();
-  const todayUTC = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const todayUTC = romeTodayUTC();
+  const t = new Date(todayUTC);
   const oneDay = 86400000;
   if(calViewMode === 'giorno'){
     const d = todayUTC + calNavOffset*oneDay;
     return [d, d];
   }
   if(calViewMode === 'mese'){
-    const base = new Date(now.getFullYear(), now.getMonth() + calNavOffset, 1);
-    const start = Date.UTC(base.getFullYear(), base.getMonth(), 1);
-    const end = Date.UTC(base.getFullYear(), base.getMonth()+1, 0);
+    const start = Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + calNavOffset, 1);
+    const end = Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + calNavOffset + 1, 0);
     return [start, end];
   }
   if(calViewMode === 'tutti'){
     return [todayUTC, todayUTC + 30*oneDay];
   }
   // settimana (default)
-  const dow = now.getDay()===0?7:now.getDay(); // lunedì=1..domenica=7
+  const dow = t.getUTCDay()===0?7:t.getUTCDay(); // lunedì=1..domenica=7
   const monday = todayUTC - (dow-1)*oneDay + calNavOffset*7*oneDay;
   return [monday, monday + 6*oneDay];
 }
@@ -2919,8 +2935,8 @@ async function fetchCalEventsForRange(startMs, endMs, quiet){
   let draw = true;
   if(!quiet){ calLoading = true; renderCalTable(); }
   try{
-    const from = new Date(startMs).toISOString();
-    const to = new Date(endMs + 86400000 - 1).toISOString(); // includi tutto l'ultimo giorno del range
+    const from = new Date(romeMidnightMs(startMs)).toISOString();
+    const to = new Date(romeMidnightMs(endMs + 86400000) - 1).toISOString(); // fino a un istante prima della mezzanotte italiana che chiude l'ultimo giorno
     const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, {cache:'no-cache'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
@@ -2958,7 +2974,7 @@ function renderCalTable(){
   calLastRenderedEvents = evts; // permette a toggleIcRow(idx) di risalire al testo originale da tradurre
 
   const head = `<div class="ic-row ic-head ic-grid-cols">
-    <div>Data / ora (Londra)</div><div>Valuta</div><div>Impatto</div><div>Evento</div>
+    <div>Data / ora (Italia)</div><div>Valuta</div><div>Impatto</div><div>Evento</div>
     <div style="text-align:right;">Precedente</div><div style="text-align:right;">Previsto</div><div style="text-align:right;">Attuale</div><div title="Quanto il dato uscito si discosta dal previsto (in % del previsto). Le linee sono al 3% (in linea), al 10% e al 25%; la barra piena è oltre il 50%. Senza previsione di consenso non si può misurare.">Sorpresa</div>
   </div>`;
 
@@ -2969,8 +2985,8 @@ function renderCalTable(){
 
   const rows = evts.map((e, idx) => {
     const d = new Date(e.date);
-    const dateLbl = d.toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', month:'short', timeZone:'Europe/London'}).replace('.', '');
-    const timeLbl = d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/London'});
+    const dateLbl = d.toLocaleDateString('it-IT', {weekday:'short', day:'2-digit', month:'short', timeZone:'Europe/Rome'}).replace('.', '');
+    const timeLbl = d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Europe/Rome'});
     const prevStr = fmtCalVal(e.previous, e.unit, e.scale);
     const foreStr = fmtCalVal(e.forecast, e.unit, e.scale);
     const actStr = fmtCalVal(e.actual, e.unit, e.scale);
