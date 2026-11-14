@@ -19,10 +19,10 @@
 <!-- presentazione-editoriale -->
 <script>if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js');</script>
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=4">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Macro Hub">
-<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=4">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=8">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -333,13 +333,66 @@ footer{padding:30px 0 36px; margin-top:14px;} .fgrid{padding-top:22px; gap:30px;
   .sticky{padding:6px; gap:0;} .sticky .btn{padding:12px 20px;}
   section.blk{padding-top:52px;} .closing{padding:38px 18px; margin-top:48px;}
 }
+
+/* ===== NUOVA PALETTE DAL LOGO (argento/platino + azzurro ghiaccio): tasti e testi colorati. Il resto della pagina resta invariato. =====
+   Restano com'erano di proposito: i colori con un significato (le quattro zone verde/blu/ambra/rosso, il quadrante, le barre, i ✓ verdi) e lo sfondo. */
+:root{
+  --accent:#A8C6F0; --accent-soft:rgba(168,198,240,.14);        /* azzurro ghiaccio: etichette, frecce, link al passaggio, selezione */
+  --gold:#DDE5F2; --gold-soft:rgba(214,223,236,.10);             /* "oro" → argento (pillola "Presto", numeri, tasto "in arrivo") */
+  --pl-line:rgba(214,223,236,.34); --pl-edge:#E6ECF6;
+  --pl-fill:linear-gradient(145deg,#F7FAFD 0%,#CDD7E4 46%,#9FADC1 100%);
+  --pl-text:linear-gradient(100deg,#FFFFFF 0%,#D5DFEE 46%,#9DB5DA 100%);
+}
+/* titoli in corsivo e link del menu: sfumatura argento metallico (prima azzurro → oro) */
+h1 em,h2 em{background:var(--pl-text); -webkit-background-clip:text; background-clip:text; color:transparent}
+.nav-links a{background:var(--pl-text); -webkit-background-clip:text; background-clip:text; color:transparent}
+.stat b{background:linear-gradient(120deg,#FFFFFF,#CBD7EA 70%,#A8C6F0); -webkit-background-clip:text; background-clip:text; color:transparent}
+.sw.new b{background:linear-gradient(120deg,#FFFFFF,#C5D3E8 55%,#A8C6F0); -webkit-background-clip:text; background-clip:text; color:transparent}
+/* tasti */
+.btn-primary{background:var(--pl-fill); color:#0A1420; border-color:rgba(255,255,255,.5); box-shadow:inset 0 1px 0 rgba(255,255,255,.75), 0 10px 28px -12px rgba(190,205,225,.55)}
+.btn-primary:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 14px 34px -12px rgba(205,218,238,.75)}
+.btn-ghost{border-color:var(--pl-line); color:var(--text)}
+.btn-ghost:hover{border-color:var(--pl-edge); color:#fff; background:rgba(214,223,236,.08)}
+.btn-soon{border-color:rgba(214,223,236,.5); color:#E6ECF6; background:rgba(214,223,236,.08)}
+.btn-soon:hover{background:rgba(214,223,236,.16)}
+.sticky{border-color:rgba(214,223,236,.30)}
+/* pillola "Presto con registrazione" */
+.pill{border-color:rgba(214,223,236,.45); color:#DDE5F2}
+.pill i{background:#DDE5F2}
+/* numeri e rotelle delle sezioni (prima ognuno di un colore): un solo azzurro ghiaccio, come il sito */
+.item,.areas li,.step,.areas > *{--sec:#A8C6F0!important}
+.day::before{background:linear-gradient(90deg,#A8C6F0,#DDE5F2,#A8C6F0); opacity:.5}
+.go .s b,.go .s:nth-child(2) b,.go .s:nth-child(3) b{color:#C9D6EA}
+.how-card li::before{border-color:rgba(168,198,240,.38)}
+.sw-ar{text-shadow:0 0 24px rgba(168,198,240,.5)}
+.chipf{--c:#A8C6F0!important}
+.chipf::before{background:#A8C6F0!important; box-shadow:0 0 8px rgba(168,198,240,.7)!important}
+:focus-visible{outline-color:#C9D6EA}
+
+/* ===== sfondo: il logo in trasparenza, fisso al centro dietro tutta la pagina ===== */
+body::after{content:""; position:fixed; left:50%; top:50%; width:min(92vmin,880px); height:min(92vmin,880px); transform:translate(-50%,-50%); z-index:-1; pointer-events:none;
+  background:url(/icons/logo-sfondo.png?v=2) center/contain no-repeat; opacity:.11}
+@media(max-width:700px){ body::after{width:112vw; height:112vw; opacity:.10} }
+
+/* ===== riquadro finale ("Il tuo posto in prima fila") e spunte: stessa palette del logo ===== */
+.closing{border-color:rgba(214,223,236,.26);
+  background:radial-gradient(120% 160% at 0% 0%,rgba(56,96,172,.46),transparent 58%),radial-gradient(110% 140% at 100% 100%,rgba(168,198,240,.10),transparent 62%),linear-gradient(135deg,#0E2247 0%,#0A1328 50%,#0B1631 100%)}
+/* nel riquadro il tasto che porta alla dashboard è il tasto principale argento; "Registrazione in arrivo" resta tratteggiato argento */
+.closing .btn-ghost{background:var(--pl-fill); color:#0A1420; border-color:rgba(255,255,255,.5); box-shadow:inset 0 1px 0 rgba(255,255,255,.75), 0 10px 28px -12px rgba(190,205,225,.55)}
+.closing .btn-ghost:hover{color:#0A1420; border-color:rgba(255,255,255,.7); box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 14px 34px -12px rgba(205,218,238,.75); transform:translateY(-2px)}
+.closing .btn-soon{background:rgba(214,223,236,.09)}
+/* spunte "✓ In italiano, senza gergo…" (hero e riquadro): argento/ghiaccio invece del verde */
+.ticks li::before{color:#DDE5F2; background:rgba(168,198,240,.14); border-color:rgba(168,198,240,.42)}
+/* bagliori decorativi dello sfondo e del quadrante: via il verde e il viola, restano blu notte e ghiaccio */
+body::before{background:radial-gradient(70% 50% at 8% -4%,rgba(36,84,164,.34),transparent 70%),radial-gradient(40% 36% at 96% 30%,rgba(70,100,180,.12),transparent 70%),radial-gradient(50% 38% at 14% 104%,rgba(60,96,170,.11),transparent 70%)}
+.dial::before{background:radial-gradient(closest-side,rgba(130,170,240,.30),rgba(70,110,190,.10) 58%,transparent 76%)}
 </style>
 </head>
 <body>
 
 <nav class="nav" aria-label="Navigazione principale">
   <div class="wrap">
-    <a class="brand" href="#top"><img src="/icons/icon-192.png?v=4" width="34" height="34" alt=""><span class="bt">MACRO HUB <span>TRADING</span></span></a>
+    <a class="brand" href="#top"><img src="/icons/icon-192.png?v=8" width="34" height="34" alt=""><span class="bt">MACRO HUB <span>TRADING</span></span></a>
     <div class="nav-links">
       <a href="#cosa-ottieni">Cosa ottieni</a>
       <a href="#barre">Come si legge</a>
@@ -632,7 +685,7 @@ footer{padding:30px 0 36px; margin-top:14px;} .fgrid{padding-top:22px; gap:30px;
   <div class="wrap">
     <div class="fgrid">
       <div class="about">
-        <b><img src="/icons/icon-192.png?v=4" width="34" height="34" alt="">MACRO HUB TRADING</b>
+        <b><img src="/icons/icon-192.png?v=8" width="34" height="34" alt="">MACRO HUB TRADING</b>
         <p>Il quadro macro completo, ordinato e spiegato in italiano. Presto con registrazione.</p>
       </div>
       <div>

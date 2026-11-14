@@ -66,6 +66,25 @@ async function handleEvent(event) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }
   }
+  // ?view=heatmap&index=sp500|nasdaq100 → pagina "Heatmap azioni": le azioni dell'indice con prezzo, variazione del giorno, capitalizzazione e settore (lib/heatmap.js)
+  if (params.view === 'heatmap') {
+    try {
+      const data = await require('../lib/heatmap').getHeatmap(params.index);
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.withData < data.count * 0.9 ? 30 : 120) }, body: JSON.stringify(data) };
+    } catch (err) {
+      return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
+    }
+  }
+  // ?view=stock&symbol=AAPL → scheda di una azione (dati reali, grafico a un anno, indicatori); ?view=stocknews&symbol=AAPL → ultime notizie sul titolo
+  if (params.view === 'stock' || params.view === 'stocknews') {
+    try {
+      const H = require('../lib/heatmap');
+      const data = params.view === 'stock' ? await H.getStock(params.symbol) : await H.getStockNews(params.symbol);
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (params.view === 'stock' ? 90 : 300) }, body: JSON.stringify(data) };
+    } catch (err) {
+      return { statusCode: err.message === 'simbolo non valido' ? 400 : 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
+    }
+  }
   if (params.view === 'volatility') {
     try {
       const vol = await getVolatility();

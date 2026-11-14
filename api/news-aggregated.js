@@ -15,6 +15,7 @@ const { aggregateNews, fetchRssWithDiag, RSS_FEEDS } = require('../lib/news');
 const { getMarketContext, uiSummary } = require('../lib/market-context');
 const { translateTitles } = require('../lib/translate-headlines');
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { buildFeed } = require('../lib/news-feed');
 
 const GEO_KEYWORDS = [
   'war', 'iran', 'israel', 'houthi', 'russia', 'ukraine', 'china', 'taiwan', 'sanction',
@@ -33,6 +34,17 @@ async function handleEvent(event) {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
         body: JSON.stringify({ checkedAt: new Date().toISOString(), workingFeeds: okCount, totalFeeds: feeds.length, feeds }),
+      };
+    }
+
+    // ?view=feed → pagina "Notizie": notizie varie (economia, aziende, tecnologia, energia, materie prime, crypto, Asia, Europa, Italia, geopolitica) con
+    // titoli in italiano e, per ognuna, cosa può muovere (lib/news-feed.js). Nessuna AI obbligatoria.
+    if (params.view === 'feed') {
+      const feed = await buildFeed();
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${feed.complete ? 300 : 60}` },
+        body: JSON.stringify(feed),
       };
     }
 
