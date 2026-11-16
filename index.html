@@ -1918,7 +1918,7 @@ body[data-page="notizie"] main > [data-nlp~="notizie"]{display:block}
 .nl-fit button[disabled]{opacity:.35; cursor:default}
 /* logo più grande nella barra di sinistra: si vedono i dettagli (continenti, candele) */
 .nl-brand{flex-direction:column!important; align-items:center!important; gap:9px!important; padding:22px 14px 18px!important; text-align:center}
-.nl-brand img{width:88px!important; height:88px!important; border-radius:0!important}
+.nl-brand img{width:112px!important; height:112px!important; border-radius:0!important}
 .nl-brand div{text-align:center}
 @media(max-width:860px){ .nl-brand{flex-direction:row!important; padding:6px 10px!important; flex:none} .nl-brand img{width:40px!important; height:40px!important} .nl-nav{padding:6px 8px!important} .nl-nav a{padding:9px 12px!important} }
 body[data-page="heatmap"] main > [data-nlp~="heatmap"]{display:block}
@@ -7071,7 +7071,7 @@ function panoramica() {
   // 2) guscio: menu laterale + barra in alto + area pagine
   const app = el('div', 'nl-app'), side = el('aside', 'nl-side'), col = el('div', 'nl-main'), top = el('div', 'nl-top'), wrap = el('div', 'nl-wrap');
   const logo = $('.hd-logo', header);
-  side.appendChild(el('div', 'nl-brand', '<img src="/icons/icon-512.png?v=9" alt=""><div><b>MACRO HUB</b><span>TRADING</span></div>'));
+  side.appendChild(el('div', 'nl-brand', '<img src="/icons/logo-sidebar.webp?v=10" alt=""><div><b>MACRO HUB</b><span>TRADING</span></div>'));
   const nav = el('nav', 'nl-nav'); side.appendChild(nav);
   const crumb = el('div', 'crumb', 'Dashboard<i>/</i><b id="nlCrumb">Panoramica</b>');
   top.appendChild(crumb);
