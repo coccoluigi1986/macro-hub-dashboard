@@ -19,6 +19,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/market-data
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { cc } = require('../lib/cache-control');
 const { fetchYahooQuote } = require('../lib/yahoo');
 const { fetchPositioning } = require('../lib/positioning');
 const { getVolatility } = require('../lib/volatility');
@@ -51,7 +52,7 @@ async function handleEvent(event) {
     try {
       const data = await getIndicators({ ctxFn: () => getMarketContext(), translate: translateTitles });
       // 20 minuti (le traduzioni dei titoli usano l'AI: meno richieste); se qualche fonte non ha risposto solo 1, così il prossimo giro la recupera
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 1200) }, body: JSON.stringify(data) };
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': data.errors.length ? 'public, max-age=60' : cc(1200, 1800) }, body: JSON.stringify(data) };
     } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }
@@ -61,7 +62,7 @@ async function handleEvent(event) {
     try {
       const data = await getCycle();
       // 10 minuti (barre giornaliere, ma l'ultima è quella di oggi e cambia col prezzo); se qualche asset non ha risposto solo 1 minuto, così il prossimo giro lo recupera
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.errors.length ? 60 : 600) }, body: JSON.stringify(data) };
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': data.errors.length ? 'public, max-age=60' : cc(600, 1200) }, body: JSON.stringify(data) };
     } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }
@@ -70,7 +71,7 @@ async function handleEvent(event) {
   if (params.view === 'heatmap') {
     try {
       const data = await require('../lib/heatmap').getHeatmap(params.index);
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (data.withData < data.count * 0.9 ? 30 : 120) }, body: JSON.stringify(data) };
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': data.withData < data.count * 0.9 ? 'public, max-age=30' : cc(120, 600) }, body: JSON.stringify(data) };
     } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }
@@ -90,7 +91,7 @@ async function handleEvent(event) {
       const vol = await getVolatility();
       // 1 ora: il profilo di volatilità cambia lentamente; se qualche asset non ha risposto, cache breve per riprovare presto
       const maxAge = vol.assets.some((x) => x.error) ? 120 : 3600;
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + maxAge }, body: JSON.stringify(vol) };
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': maxAge === 3600 ? cc(3600, 7200) : 'public, max-age=' + maxAge }, body: JSON.stringify(vol) };
     } catch (err) {
       // errore: cache brevissima, così un problema transitorio non resta "congelato"
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }, body: JSON.stringify({ error: err.message }) };

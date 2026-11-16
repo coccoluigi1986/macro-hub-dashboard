@@ -15,6 +15,7 @@ const { aggregateNews, fetchRssWithDiag, RSS_FEEDS } = require('../lib/news');
 const { getMarketContext, uiSummary } = require('../lib/market-context');
 const { translateTitles } = require('../lib/translate-headlines');
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { cc } = require('../lib/cache-control');
 const { buildFeed } = require('../lib/news-feed');
 
 const GEO_KEYWORDS = [
@@ -43,7 +44,7 @@ async function handleEvent(event) {
       const feed = await buildFeed();
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${feed.complete ? 300 : 60}` },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': feed.complete ? cc(300, 900) : 'public, max-age=60' },
         body: JSON.stringify(feed),
       };
     }
@@ -59,7 +60,7 @@ async function handleEvent(event) {
       const complete = shown.every(n => n.titleIt);
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 600 : 60}` },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': complete ? cc(600, 1200) : 'public, max-age=60' },
         body: JSON.stringify(summary),
       };
     }

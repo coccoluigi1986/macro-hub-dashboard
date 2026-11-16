@@ -16,6 +16,7 @@
 //   /api/cot-data?date=2026-07-15 → dato più recente fino al 15 luglio 2026
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { cc } = require('../lib/cache-control');
 const { fetchCotSnapshot } = require('../lib/cot');
 
 async function handleEvent(event) {
@@ -34,7 +35,7 @@ async function handleEvent(event) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': dateParam ? 'public, max-age=86400' : 'public, max-age=3600',
+        'Cache-Control': dateParam ? 'public, max-age=86400' : cc(3600, 21600),   // il rapporto COT è settimanale: la copia vecchia si serve subito per ore mentre si rinnova (il ricalcolo da CFTC dura ~9 s)
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),

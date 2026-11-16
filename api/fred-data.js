@@ -15,6 +15,7 @@
 // Stanno qui perché il piano gratuito di Vercel consente al massimo 12 funzioni e sono tutte usate.
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { cc, ccRelease } = require('../lib/cache-control');
 const { fetchFredSnapshot } = require('../lib/fred');
 const { getFedWatch } = require('../lib/fedwatch');
 const { getSahm } = require('../lib/sahm');
@@ -34,7 +35,7 @@ async function handleEvent(event) {
     try {
       const fw = await getFedWatch(apiKey);
       // 5 minuti: i future si muovono durante la giornata, ma non servono aggiornamenti al secondo
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' }, body: JSON.stringify(fw) };
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': cc(300, 900) }, body: JSON.stringify(fw) };
     } catch (err) {
       // errore: cache brevissima, così un problema transitorio non resta "congelato"
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }, body: JSON.stringify({ error: err.message }) };
@@ -45,7 +46,7 @@ async function handleEvent(event) {
     try {
       const sahm = await getSahm(apiKey);
       // 1 ora: la disoccupazione esce una volta al mese
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' }, body: JSON.stringify(sahm) };
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': cc(3600, 7200) }, body: JSON.stringify(sahm) };
     } catch (err) {
       return { statusCode: 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' }, body: JSON.stringify({ error: err.message }) };
     }
@@ -57,7 +58,7 @@ async function handleEvent(event) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=' + await releaseAwareTtl(3600, 300), // 1 ora; scade prima subito dopo un dato importante, così FRED viene riletto appena lo aggiorna
+        'Cache-Control': ccRelease(await releaseAwareTtl(3600, 300), 3600, 1800), // 1 ora; scade prima subito dopo un dato importante, così FRED viene riletto appena lo aggiorna
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),

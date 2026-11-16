@@ -24,6 +24,47 @@
   };
 })();
 
+/* --- APERTURA PIÙ LEGGERA (strato sopra a quello delle notizie) ---
+   1) RICHIESTE CONDIVISE: la Panoramica e le altre pagine chiedono spesso la stessa cosa nello stesso momento (13 chiamate /api su 46 erano doppie):
+      una richiesta identica in corso (o conclusa da pochi secondi, se riuscita) si fa una volta sola e ognuno riceve la sua copia della risposta.
+   2) CARICO DIFFERITO: le chiamate pesanti che servono solo a pagine NASCOSTE (heatmap, volatilità, calendario completo, dossier dell'evento,
+      analisi AI delle altre sezioni) partono dopo che la Panoramica è comparsa (o subito, se si clicca/si cambia pagina, o dopo 6 secondi al massimo).
+      Sul PC lento la Panoramica non compete più con lavoro che l'utente non sta guardando. I dati arrivano comunque, solo un po' dopo.
+   La Panoramica usa window.__fetchHi: non viene mai differita. */
+(function(){
+  const inner = window.fetch;
+  const GATED = /\/api\/(?:market-data\?(?:[^#]*&)?view=(?:heatmap|volatility)|event-dossier\?|narrative\?section=(?:fed|hawkdove|assets|indices|macro|sentiment|newscmp)|economic-calendar\?from=)/;
+  const memo = new Map(), queue = []; let released = false;
+  const urlOf = (i) => typeof i === 'string' ? i : (i && i.url) || '';
+  // automatico = a scaglioni (le risposte non arrivano tutte nello stesso istante); se è l'utente a chiedere (clic, tasto, cambio pagina) = tutto subito
+  function release(subito){
+    if(released) return; released = true;
+    queue.splice(0).forEach((go, i) => subito === true ? go() : setTimeout(go, i * 110));
+  }
+  window.__nlRelease = () => release(false);
+  setTimeout(() => release(false), 6000);
+  if(location.hash && !/^#\/panoramica/.test(location.hash)) release(true);   // si apre direttamente un'altra pagina (es. #/heatmap): i suoi dati servono subito
+  ['hashchange', 'pointerdown', 'keydown'].forEach((ev) => window.addEventListener(ev, () => release(true), { once: true, passive: true, capture: true }));
+  function layered(input, init, hi){
+    const u = urlOf(input), method = String((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+    if(method !== 'GET' || !/\/api\//.test(u) || (init && (init.signal || init.body))) return inner.call(window, input, init);
+    let e = memo.get(u);
+    if(!e){
+      const start = () => inner.call(window, input, init);
+      e = {};
+      if(!hi && !released && GATED.test(u)){
+        e.p = new Promise((res) => { e.go = () => { if(e.go.done) return; e.go.done = true; res(start()); }; queue.push(e.go); });
+      } else e.p = start();
+      memo.set(u, e);
+      const forget = () => { if(memo.get(u) === e) memo.delete(u); };
+      e.p.then((r) => { if(r && r.ok) setTimeout(forget, 5000); else forget(); }, forget);
+    } else if(hi && e.go) e.go();   // la Panoramica chiede ciò che era in attesa: parte subito
+    return e.p.then((r) => r.clone());
+  }
+  window.fetch = function(input, init){ return layered(input, init, false); };
+  window.__fetchHi = function(input, init){ return layered(input, init, true); };
+})();
+
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -5165,7 +5206,8 @@ async function initLiveData(manual = false){
   const aCorr = pCorr.then(corr => { LIVE.corr = corr; r.corr = liveRun('correlazioni', () => applyLiveCorrToMonitor(corr)); return corr; });
   const aFw = pFw.then(fw => { r.fw = liveRun('FedWatch', () => applyFedWatch(fw)); });
   const aSahm = pSahm.then(s => { r.sahm = liveRun('Sahm', () => applySahm(s)); });
-  const aTicker = Promise.all([aMarket, aMacro, aCot]).then(([market, macro, cot]) => liveRun('ticker', () => buildLiveTicker({market, macro, cot})));
+  const _tkCap = (p) => Promise.race([p, new Promise(r => setTimeout(() => r(null), 2500))]);
+  const aTicker = Promise.all([aMarket, _tkCap(aMacro), _tkCap(aCot)]).then(([market, macro, cot]) => { liveRun('ticker', () => buildLiveTicker({market, macro: macro || LIVE.macro, cot: cot || LIVE.cot})); if(!macro || !cot) Promise.allSettled([aMacro, aCot]).then(() => liveRun('ticker', () => buildLiveTicker({market: LIVE.market, macro: LIVE.macro, cot: LIVE.cot}))); });
   const aAssets = Promise.all([aMarket, aCorr]).then(([market, corr]) => { r.assets = liveRun('sentiment asset', () => applySentimentAssetsLive(market, corr)); });
   const aPricing = Promise.all([aMarket, aMacro]).then(([, macro]) => { r.pricing = liveRun('cosa prezza il mercato', () => applyLiveMarketPricing(macro)); });   // legge VIX/Oro/DXY già aggiornati
   loadMarketMoves();   // movimenti reali per fascia oraria + notizie concomitanti (senza AI)
@@ -6412,11 +6454,11 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=>{ navigato
       place(c, guideEl(guideFor(c)));
     });
   }
-  let busy = false;
+  let busy = false, decTm = 0;
   new MutationObserver(ms => {
     if(busy) return;
     if(ms.every(m => { const x = m.target.nodeType === 1 ? m.target : m.target.parentElement; return !x || (x.closest && (x.closest('#pulse, .bg, .h-cd, .pl') || false)); })) return;
-    busy = true; try{ decorate(); }finally{ busy = false; }
+    if(decTm) return; decTm = setTimeout(() => { decTm = 0; busy = true; try{ decorate(); }finally{ busy = false; } }, 220);
   }).observe(main, {childList:true, subtree:true});
   decorate();
 })();
@@ -6811,7 +6853,7 @@ const num = (v, d = 2) => v == null || isNaN(v) ? '—' : Number(v).toLocaleStri
 const pct = v => v == null || isNaN(v) ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%';
 const cls = v => v > 0 ? 'up' : v < 0 ? 'dn' : 'fl';
 const rd = (ms, o) => new Date(ms).toLocaleString('it-IT', Object.assign({timeZone: ROME}, o));
-const J = async u => { try { const r = await fetch(u); if (!r.ok) throw 0; return await r.json(); } catch (e) { return null; } };
+const J = async u => { try { const r = await (window.__fetchHi || fetch)(u); if (!r.ok) throw 0; return await r.json(); } catch (e) { return null; } };
 function romeMidnight(y, m, d){ const off = t => { const p = new Intl.DateTimeFormat('en-GB', {timeZone: ROME, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).formatToParts(t).reduce((a, x) => (a[x.type] = x.value, a), {}); return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - Math.floor(t / 1000) * 1000; }; const g = Date.UTC(y, m - 1, d); let t = g - off(g); t = g - off(t); return t; }
 const ico = {
   grid:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
@@ -6840,17 +6882,17 @@ async function carica() {
   const now = Date.now(), t0 = romeMidnight(...new Intl.DateTimeFormat('en-CA', {timeZone: ROME}).format(new Date()).split('-').map(Number));
   // Caricamento PROGRESSIVO: la pagina compare appena arrivano i dati principali; le analisi AI, gli indicatori e i cicli (lenti subito dopo una pubblicazione: 7-13 secondi)
   // al massimo si aspettano 3 secondi, poi si aggiungono da soli appena pronti. Prima la Panoramica restava su "Carico i dati veri…" fino al più lento.
-  const lento = u => { const p = J(u); return {p, v: Promise.race([p, new Promise(r => setTimeout(() => r(null), 3000))])}; };
-  const L = {cy: lento('/api/market-data?view=cycle'), ik: lento('/api/market-data?view=indicators'), geo: lento('/api/narrative?section=geo'), mi: lento('/api/market-intelligence'), sent: lento('/api/sentiment-categories')};
-  const [md, bias, fw, mc, cot, moves, cal, sahm, feed] = await Promise.all([
-    J('/api/market-data'), J('/api/bias-daily'), J('/api/fred-data?view=fedwatch'), J('/api/economic-calendar?view=macro'), J('/api/cot-data'), J('/api/news-aggregated?view=moves'),
-    J('/api/economic-calendar?from=' + encodeURIComponent(new Date(t0).toISOString()) + '&to=' + encodeURIComponent(new Date(t0 + 15 * 86400e3).toISOString())), J('/api/fred-data?view=sahm'), J('/api/news-aggregated?view=feed')
-  ]);
-  const [cy, ik, geo, mi, sent] = await Promise.all(Object.values(L).map(x => x.v));
-  Object.assign(D, {md, cy, bias, fw, mc, ik, cot, geo, mi, sent, moves, cal, sahm, feed, t0});
-  // le parti ancora in attesa si aggiungono quando arrivano: si ridisegna mantenendo aperte le schede dei driver
-  const attesa = Object.entries(L).filter(([k]) => D[k] == null);
-  if (attesa.length) Promise.all(attesa.map(([k, x]) => x.p.then(v => { if (v != null) D[k] = v; }))).then(() => { if (typeof ridisegna === 'function') ridisegna(); else disegna(true); });   // ridisegna(): nella Panoramica del sito; disegna(): nella prova a pagina intera
+  // TUTTE le fonti hanno lo stesso limite di attesa (3,5 s): una fonte lenta (es. COT dopo la scadenza della cache: ~9 s) non tiene più la pagina su "Carico i dati veri…".
+  const lento = u => { const p = J(u); return {p, v: Promise.race([p, new Promise(r => setTimeout(() => r(null), 3500))])}; };
+  const calUrl = '/api/economic-calendar?from=' + encodeURIComponent(new Date(t0).toISOString()) + '&to=' + encodeURIComponent(new Date(t0 + 15 * 86400e3).toISOString());
+  const L = {md: lento('/api/market-data'), bias: lento('/api/bias-daily'), fw: lento('/api/fred-data?view=fedwatch'), mc: lento('/api/economic-calendar?view=macro'), cot: lento('/api/cot-data'),
+    moves: lento('/api/news-aggregated?view=moves'), cal: lento(calUrl), sahm: lento('/api/fred-data?view=sahm'), feed: lento('/api/news-aggregated?view=feed'),
+    cy: lento('/api/market-data?view=cycle'), ik: lento('/api/market-data?view=indicators'), geo: lento('/api/narrative?section=geo'), mi: lento('/api/market-intelligence'), sent: lento('/api/sentiment-categories')};
+  const keys = Object.keys(L), vals = await Promise.all(keys.map(k => L[k].v));
+  keys.forEach((k, i) => { D[k] = vals[i]; }); D.t0 = t0;
+  // le parti ancora in attesa si aggiungono quando arrivano: si ridisegna (raggruppando gli arrivi ravvicinati) mantenendo aperte le schede dei driver
+  let tm = 0; const redraw = () => { clearTimeout(tm); tm = setTimeout(() => { if (typeof ridisegna === 'function') ridisegna(); else disegna(true); }, 350); };   // ridisegna(): nella Panoramica del sito; disegna(): nella prova a pagina intera
+  keys.filter(k => D[k] == null).forEach(k => L[k].p.then(v => { if (v != null) { D[k] = v; redraw(); } }));
 }
 const cyc = k => ((D.cy && D.cy.assets) || []).find(a => a.key === k);
 const q = k => (D.md && D.md.data && D.md.data[k]) || null;
@@ -6958,7 +7000,7 @@ function panoramica() {
     R.querySelectorAll(".cal .evt").forEach(r => { r.onclick = () => r.parentElement.classList.toggle("open"); r.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); r.click(); } }; });
   }
   function ridisegna(){ const ap = [...R.querySelectorAll("#acc .it")].map(i => i.classList.contains("open")); const nl = R.querySelector(".nl"); if(!nl) return; nl.innerHTML = panoramica(); bind(); R.querySelectorAll("#acc .it").forEach((it, i) => { if(ap[i] != null){ it.classList.toggle("open", ap[i]); const pm = it.querySelector(".pm"); if(pm) pm.textContent = ap[i] ? "−" : "+"; } }); }
-  (async () => { try { await carica(); R.querySelector(".nl").innerHTML = panoramica(); bind(); } catch (e) { R.querySelector(".nl").innerHTML = "<div class=\"sk\">Panoramica non disponibile: " + e.message + "</div>"; console.error("nlHome", e); } })();
+  (async () => { try { await carica(); R.querySelector(".nl").innerHTML = panoramica(); bind(); setTimeout(() => { if (window.__nlRelease) window.__nlRelease(); }, 900); } catch (e) { R.querySelector(".nl").innerHTML = "<div class=\"sk\">Panoramica non disponibile: " + e.message + "</div>"; console.error("nlHome", e); } })();
 }
 
 /* BOZZA — guscio del nuovo layout: menu laterale, pagine, barra in alto. Gira DOPO tutti gli script del sito. */

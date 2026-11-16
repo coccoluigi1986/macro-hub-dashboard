@@ -11,6 +11,7 @@
 // Raggiungibile su: https://tuosito.vercel.app/api/economic-calendar?from=...&to=...
 
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { cc, ccRelease } = require('../lib/cache-control');
 const { fetchCalendarEvents, isFomcDecision } = require('../lib/calendar');
 const { fetchMacroCards } = require('../lib/macro-cards');
 const { releaseAwareTtl } = require('../lib/release-watch');
@@ -25,7 +26,7 @@ async function handleEvent(event) {
       const cards = await fetchMacroCards();
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + await releaseAwareTtl(900, 120) },   // 15 min; poco dopo un dato importante scade prima, così la card mostra il numero appena uscito
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': ccRelease(await releaseAwareTtl(900, 120), 900, 600) },   // 15 min; poco dopo un dato importante scade prima, così la card mostra il numero appena uscito
         body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar', ...cards }),
       };
     }
@@ -40,7 +41,7 @@ async function handleEvent(event) {
       for (const e of next) { const d = e.date.slice(0, 10); if (!seen.has(d)) { seen.add(d); meetings.push({ date: e.date, title: e.title, forecast: e.forecast, previous: e.previous, actual: e.actual, unit: e.unit }); } }
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + await releaseAwareTtl(1800, 300) },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': ccRelease(await releaseAwareTtl(1800, 300), 1800, 900) },
         body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar', meetings: meetings.slice(0, 4) }),
       };
     }
@@ -57,7 +58,7 @@ async function handleEvent(event) {
       statusCode: 200,
       // 15 min: le stime di consenso cambiano raramente infragiornata; abbastanza breve da
       // riflettere gli "actual" appena pubblicati senza restare congelati per ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + await releaseAwareTtl(900, 120) },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': ccRelease(await releaseAwareTtl(900, 120), 900, 600) },
       body: JSON.stringify({ generatedAt: new Date().toISOString(), from, to, count: events.length, events }),
     };
   } catch (err) {

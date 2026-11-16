@@ -20,6 +20,7 @@ const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { aiCc } = require('../lib/cache-control');
 
 const BIAS_SYS = 'Sei un analista macro-geopolitico senior. Rispondi SEMPRE in italiano. '
   + 'Sintetizzi il quadro giornaliero in una lettura di bias operativo. '
@@ -101,7 +102,7 @@ async function handleEvent(event) {
       statusCode: 200,
       // 3h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
       // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per 3 ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${payload.ai ? await releaseAwareTtl(10800) : fail.ttl}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': await aiCc(payload.ai, fail.ttl) },
       body: JSON.stringify(payload),
     };
   } catch (err) {

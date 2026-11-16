@@ -31,6 +31,7 @@ const { fetchCotSnapshot } = require('../lib/cot');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { fetchPositioning } = require('../lib/positioning');
 const { toVercelHandler } = require('../lib/vercel-adapter');
+const { aiCc } = require('../lib/cache-control');
 
 const QUOTES = {
   'S&P 500': '^GSPC', 'Nasdaq 100': '^NDX', 'Dow Jones': '^DJI', 'Russell 2000': '^RUT', 'VIX': '^VIX',
@@ -372,7 +373,7 @@ async function handleEvent(event) {
     const ai = Boolean(data);
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ai ? await releaseAwareTtl(10800) : fail.ttl}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': await aiCc(ai, fail.ttl) },
       body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data, ...(ai ? {} : { reason, retryIn: fail.retryIn }) }),
     };
   } catch (err) {
