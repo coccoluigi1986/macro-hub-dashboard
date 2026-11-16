@@ -6931,8 +6931,11 @@ function panoramica() {
   //    così il testo ha sempre una dimensione comoda; i pulsanti A− / A+ la correggono a gusto di ciascuno e la scelta resta salvata.
   //    Tabella: larghezza della finestra (px CSS) → scala. Sotto 860 px (telefono) non si tocca nulla.
   const FIT = [[860, 1], [1100, 1.1], [1280, 1.13], [1366, 1.15], [1440, 1.18], [1600, 1.23], [1920, 1.34], [2560, 1.55], [3840, 1.75]];
-  const STEP = .1, OFF_MIN = -2, OFF_MAX = 6, FIT_KEY = 'mhub_testo';
-  let fitOff = 0; try{ fitOff = Math.max(OFF_MIN, Math.min(OFF_MAX, parseInt(localStorage.getItem(FIT_KEY), 10) || 0)); }catch(e){}
+  //    Il testo non scende mai sotto il 100% (MIN_K): con A− si arriva al massimo a 100% e il pulsante si ferma lì, qualunque sia lo schermo.
+  const STEP = .1, MIN_K = 1, OFF_MAX = 6, FIT_KEY = 'mhub_testo';
+  const minOff = (a) => -Math.max(0, Math.ceil((a - MIN_K) / STEP - 1e-9));   // quanti passi A− servono per arrivare a 100% (dipende dalla scala automatica dello schermo)
+  let fitOff = 0; try{ fitOff = Math.max(-40, Math.min(OFF_MAX, parseInt(localStorage.getItem(FIT_KEY), 10) || 0)); }catch(e){}
+  let curOff = 0;   // scelta effettiva con questo schermo (la scelta salvata può essere più bassa del minimo consentito qui)
   function autoScale(){
     const w = innerWidth; if(w <= 860) return 1;
     for(let i = FIT.length - 1; i > 0; i--){ if(w >= FIT[i][0]) { const a = FIT[i], b = FIT[i + 1]; return b ? a[1] + (b[1] - a[1]) * (w - a[0]) / (b[0] - a[0]) : a[1]; } }
@@ -6940,10 +6943,11 @@ function panoramica() {
   }
   let fitBtns = null;
   function applyFit(){
-    const mobile = innerWidth <= 860, a = autoScale(), k = mobile ? 1 : Math.max(.9, Math.min(2.2, a + fitOff * STEP));
+    const mobile = innerWidth <= 860, a = autoScale(), lo = minOff(a), off = Math.max(lo, Math.min(OFF_MAX, fitOff)); curOff = off;
+    const k = mobile ? 1 : Math.max(MIN_K, Math.min(2.2, a + off * STEP));
     document.body.style.zoom = k === 1 ? '' : String(+k.toFixed(3));
     document.documentElement.style.setProperty('--nlk', String(+k.toFixed(3))); window.__nlk = k;
-    if(fitBtns){ fitBtns.parentElement.style.display = mobile ? 'none' : ''; const l = fitBtns.querySelector('.lbl'); if(l) l.textContent = 'Testo ' + Math.round(k * 100) + '%' + (fitOff === 0 ? ' · auto' : ''); fitBtns.querySelector('[data-d="-1"]').disabled = fitOff <= OFF_MIN; fitBtns.querySelector('[data-d="1"]').disabled = fitOff >= OFF_MAX; }
+    if(fitBtns){ fitBtns.parentElement.style.display = mobile ? 'none' : ''; const l = fitBtns.querySelector('.lbl'); if(l) l.textContent = 'Testo ' + Math.round(k * 100) + '%' + (off === 0 ? ' · auto' : (k <= MIN_K ? ' · min' : '')); fitBtns.querySelector('[data-d="-1"]').disabled = off <= lo; fitBtns.querySelector('[data-d="1"]').disabled = off >= OFF_MAX; }
   }
   applyFit();
   let fitT = 0; addEventListener('resize', () => { clearTimeout(fitT); fitT = setTimeout(applyFit, 120); });
@@ -6970,7 +6974,7 @@ function panoramica() {
   top.appendChild(fitBox); fitBtns = $('.nl-fit', fitBox);
   fitBtns.addEventListener('click', ev => {
     const b = ev.target.closest('button'); if(!b) return; const d = +b.dataset.d;
-    fitOff = d === 0 ? 0 : Math.max(OFF_MIN, Math.min(OFF_MAX, fitOff + d)); try{ localStorage.setItem(FIT_KEY, String(fitOff)); }catch(e){}
+    fitOff = d === 0 ? 0 : Math.max(minOff(autoScale()), Math.min(OFF_MAX, curOff + d)); try{ localStorage.setItem(FIT_KEY, String(fitOff)); }catch(e){}
     applyFit(); setTimeout(() => window.dispatchEvent(new Event('resize')), 60);
   });
   applyFit();
