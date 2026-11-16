@@ -2143,6 +2143,19 @@ th.on,th.r.on,th.capc.on,.hm-tab th.on{color:var(--pt-hi)!important}
 #toTop{border-color:rgba(214,223,236,.40)!important; color:var(--pt-text)!important; background:rgba(9,21,45,.97)!important}
 #toTop:hover{background:var(--pt-fill)!important; color:#0A1420!important; border-color:rgba(255,255,255,.55)!important}
 
+/* ---- tendine (es. la scelta dell'asset nel "Quadro decisionale"): lista scura con testo chiaro come il resto del sito ----
+   Prima la tendina aveva lo sfondo trasparente: la lista si apriva bianca con le scritte chiare e non si leggevano. */
+select{color-scheme:dark; background-color:#09152D!important; color:var(--pt-text)!important}
+select option,select optgroup{background-color:#09152D; color:#E6ECF6}
+@supports (appearance: base-select){
+  select,::picker(select){appearance:base-select}
+  select::picker-icon{color:#A8C6F0}
+  ::picker(select){background:#09152D; border:1px solid #34507F; border-radius:12px; padding:6px; box-shadow:0 18px 40px -12px rgba(0,0,0,.75); max-height:min(60vh,440px)}
+  select option{padding:9px 12px; border-radius:8px; font:500 12.5px/1.25 var(--fb); color:#D4DCE7; background:transparent}
+  select option:hover,select option:focus-visible{background:rgba(168,198,240,.16); color:#fff}
+  select option:checked{background:var(--pt-fill); color:#0A1420; font-weight:700}   /* voce scelta: argento come i tasti attivi */
+}
+
 /* BOZZA — da "Macro Focus" in giù (blocchi #pulse e #priority della Panoramica) card, testi e spazi erano più grandi di quelli delle card sopra:
    sopra il testo mediano è 11 px e il titolo di sezione 15,5 px, sotto erano 12,5 px e 26 px. Qui si riporta tutto alla stessa scala (zoom .88 = 12,5 → 11 px)
    e si ridimensionano i titoli e i numeri grandi. Il resto del sito (altre pagine) non cambia. */
