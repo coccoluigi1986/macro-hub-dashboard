@@ -52,7 +52,13 @@ async function handleEvent(event) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Parametri richiesti mancanti: from, to (ISO 8601)' }) };
     }
 
-    const events = await fetchCalendarEvents({ from, to, countries: params.countries });
+    let events = await fetchCalendarEvents({ from, to, countries: params.countries });
+
+    // Versione ALLEGGERITA (opzionale): ?imp=alto,medio tiene solo quelle importanze e ?slim=1 toglie il testo lungo "comment" (in inglese, metà del peso della risposta).
+    // Serve ai riquadri che non lo mostrano (Panoramica, eventi chiave, mappa della volatilità); la tabella del Calendario continua a chiedere la risposta completa.
+    const imp = params.imp ? String(params.imp).split(',').map((s) => s.trim()).filter(Boolean) : null;
+    if (imp && imp.length) events = events.filter((e) => imp.includes(e.importance));
+    if (params.slim === '1') events = events.map((e) => { const { comment, ...resto } = e; return resto; });
 
     return {
       statusCode: 200,

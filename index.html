@@ -1,6 +1,40 @@
 <!DOCTYPE html>
 <html lang="it" data-font="4">
 <head><script id="nl-fetch">
+/* cache dei formattatori Intl. Number.prototype.toLocaleString e Date.prototype.toLocale{,Date,Time}String creano un nuovo Intl.*Format a ogni chiamata
+   (40-50 us per un numero, 100-160 us per una data con fuso orario); con un formattatore per (lingua, opzioni) si scende a 1-9 us. Il risultato e' IDENTICO (stessa specifica: toLocaleString
+   = new Intl.NumberFormat(l, o).format(x); per le date si replicano i valori predefiniti di ToDateTimeOptions). Se qualcosa non e' previsto (dateStyle, timeStyle, argomenti strani)
+   si usa il metodo originale. */
+(function(){
+  if (window.__intlShim) return; window.__intlShim = true;
+  const nOrig = Number.prototype.toLocaleString, dS = Date.prototype.toLocaleString, dD = Date.prototype.toLocaleDateString, dT = Date.prototype.toLocaleTimeString;
+  const nvo = Number.prototype.valueOf, gt = Date.prototype.getTime, NF = Intl.NumberFormat, DF = Intl.DateTimeFormat;
+  const cache = new Map();
+  const loc = (l) => l === undefined ? '' : typeof l === 'string' ? l : null;
+  function key(k, l, o){ const L = loc(l); if (L === null) return null; if (o === undefined) return k + '|' + L + '|'; if (o === null || typeof o !== 'object') return null; try { return k + '|' + L + '|' + JSON.stringify(o); } catch(e) { return null; } }
+  function get(k, make){ let f = cache.get(k); if (!f) { if (cache.size > 300) cache.clear(); f = make(); cache.set(k, f); } return f; }
+  Number.prototype.toLocaleString = function(l, o){
+    const k = key('n', l, o); if (k === null || (l === undefined && o === undefined)) return nOrig.call(this, l, o);
+    return get(k, () => new NF(l, o)).format(nvo.call(this));
+  };
+  const DATE = ['weekday', 'year', 'month', 'day'], TIME = ['dayPeriod', 'hour', 'minute', 'second', 'fractionalSecondDigits'];
+  function mk(orig, kind){   // kind: 's' = toLocaleString, 'd' = toLocaleDateString, 't' = toLocaleTimeString
+    return function(l, o){
+      const k = key(kind, l, o); if (k === null || (o && (o.dateStyle !== undefined || o.timeStyle !== undefined))) return orig.call(this, l, o);
+      const t = gt.call(this); if (t !== t) return 'Invalid Date';
+      const f = get(k, () => {
+        const op = Object.assign({}, o); const has = (a) => a.some((p) => op[p] !== undefined);
+        const need = kind === 'd' ? !has(DATE) : kind === 't' ? !has(TIME) : !(has(DATE) || has(TIME));
+        if (need) { if (kind !== 't') { op.year = 'numeric'; op.month = 'numeric'; op.day = 'numeric'; } if (kind !== 'd') { op.hour = 'numeric'; op.minute = 'numeric'; op.second = 'numeric'; } }
+        return new DF(l, op);
+      });
+      return f.format(t);
+    };
+  }
+  Date.prototype.toLocaleString = mk(dS, 's'); Date.prototype.toLocaleDateString = mk(dD, 'd'); Date.prototype.toLocaleTimeString = mk(dT, 't');
+  window.__intlOrig = { n: nOrig, s: dS, d: dD, t: dT };
+})();
+
 /* BOZZA — la fascia "Ultime notizie" del Macro Focus chiedeva sempre lo stesso elenco di notizie macro e geopolitica. Qui la si alimenta con le notizie
    VARIE (una per tema, le più recenti), prese da /api/news-aggregated?view=feed. Se la chiamata fallisce resta l'elenco di prima. */
 (function(){
@@ -9,7 +43,7 @@
     try{
       const u = typeof input === 'string' ? input : (input && input.url) || '';
       if(/\/api\/news-aggregated\?lang=it\s*$/.test(u)){
-        const r = await orig('/api/news-aggregated?view=feed');
+        const r = await (window.__fetchHi || orig)('/api/news-aggregated?view=feed');
         if(r.ok){
           const j = await r.json(), seen = new Set(), out = [];
           // una notizia per categoria (la più recente), poi si completa con le altre: i temi si alternano
@@ -2628,7 +2662,7 @@ async function loadKeyEvents(quiet){
   try{
     const from = new Date(); from.setUTCHours(0,0,0,0);
     const to = new Date(from.getTime() + 45*86400000);
-    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`, {cache:'no-cache'});
+    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}&slim=1&imp=alto`, {cache:'no-cache'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     keyEvents = (data.events||[]).filter(e=>e.importance==='alto').map(e=>{
@@ -3771,7 +3805,7 @@ async function loadVolEvents(){
     const [monday, friday] = currentWorkWeekRange();
     const from = new Date(monday).toISOString();
     const to = new Date(friday + 86400000 - 1).toISOString();
-    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
+    const res = await fetch(`/api/economic-calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&slim=1&imp=alto,medio`);
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data = await res.json();
     const events = (data.events||[]).filter(e=>e.importance==='alto' || e.importance==='medio');
@@ -6897,12 +6931,17 @@ async function carica() {
   // al massimo si aspettano 3 secondi, poi si aggiungono da soli appena pronti. Prima la Panoramica restava su "Carico i dati veri…" fino al più lento.
   // TUTTE le fonti hanno lo stesso limite di attesa (3,5 s): una fonte lenta (es. COT dopo la scadenza della cache: ~9 s) non tiene più la pagina su "Carico i dati veri…".
   const lento = u => { const p = J(u); return {p, v: Promise.race([p, new Promise(r => setTimeout(() => r(null), 3500))])}; };
-  const calUrl = '/api/economic-calendar?from=' + encodeURIComponent(new Date(t0).toISOString()) + '&to=' + encodeURIComponent(new Date(t0 + 15 * 86400e3).toISOString());
-  const L = {md: lento('/api/market-data'), bias: lento('/api/bias-daily'), fw: lento('/api/fred-data?view=fedwatch'), mc: lento('/api/economic-calendar?view=macro'), cot: lento('/api/cot-data'),
+  const calUrl = '/api/economic-calendar?from=' + encodeURIComponent(new Date(t0).toISOString()) + '&to=' + encodeURIComponent(new Date(t0 + 15 * 86400e3).toISOString()) + '&slim=1';
+  const L = {md: lento('/api/market-data'), bias: lento('/api/bias-daily?v=2'), fw: lento('/api/fred-data?view=fedwatch'), mc: lento('/api/economic-calendar?view=macro'), cot: lento('/api/cot-data'),
     moves: lento('/api/news-aggregated?view=moves'), cal: lento(calUrl), sahm: lento('/api/fred-data?view=sahm'), feed: lento('/api/news-aggregated?view=feed'),
     cy: lento('/api/market-data?view=cycle'), ik: lento('/api/market-data?view=indicators'), geo: lento('/api/narrative?section=geo'), mi: lento('/api/market-intelligence'), sent: lento('/api/sentiment-categories')};
-  const keys = Object.keys(L), vals = await Promise.all(keys.map(k => L[k].v));
-  keys.forEach((k, i) => { D[k] = vals[i]; }); D.t0 = t0;
+  const keys = Object.keys(L); const got = {}; keys.forEach(k => { L[k].p.then(v => { got[k] = v; }); });
+  // APERTURA PIÙ VELOCE: si aspettano le fonti VELOCI (prezzi, calendari, FedWatch, Sahm, cicli: pronte in 0,2-1,4 s anche a cache fredda); le LENTE (COT, indicatori, notizie, analisi AI: 2-14 s a cache fredda)
+  // solo per altri 0,35 s al massimo. Se la cache è calda arrivano tutte subito e il disegno è uno solo, come prima; se no si disegna senza e le lente si aggiungono da sole (ridisegno qui sotto).
+  const FAST = ['md', 'mc', 'fw', 'cal', 'sahm', 'cy'], SLOW = keys.filter(k => !FAST.includes(k));
+  await Promise.all(FAST.map(k => L[k].v));
+  await Promise.race([Promise.all(SLOW.map(k => L[k].v)), new Promise(r => setTimeout(r, 350))]);
+  keys.forEach(k => { D[k] = got[k] != null ? got[k] : null; }); D.t0 = t0;
   // le parti ancora in attesa si aggiungono quando arrivano: si ridisegna (raggruppando gli arrivi ravvicinati) mantenendo aperte le schede dei driver
   let tm = 0; const redraw = () => { clearTimeout(tm); tm = setTimeout(() => { if (typeof ridisegna === 'function') ridisegna(); else disegna(true); }, 350); };   // ridisegna(): nella Panoramica del sito; disegna(): nella prova a pagina intera
   keys.filter(k => D[k] == null).forEach(k => L[k].p.then(v => { if (v != null) { D[k] = v; redraw(); } }));
@@ -7108,7 +7147,7 @@ function panoramica() {
 
   function show(id){
     if(!PAGES.some(p => p[0] === id)) id = 'panoramica';
-    document.body.setAttribute('data-page', id);
+    document.body.setAttribute('data-page', id); flushGate(id);
     $$('a', nav).forEach(a => a.classList.toggle('on', a.dataset.p === id));
     // sul telefono la barra delle pagine scorre in orizzontale: la pagina scelta si porta al centro, così si vede sempre dove si è
     const act = $('a.on', nav), sd = nav.closest('.nl-side'); if(act && sd && innerWidth <= 860) sd.scrollTo({left: act.offsetLeft - sd.clientWidth / 2 + act.offsetWidth / 2, behavior: 'smooth'});
@@ -7119,6 +7158,14 @@ function panoramica() {
     [150, 700].forEach(ms => setTimeout(() => window.dispatchEvent(new Event('resize')), ms));
     if(id === 'heatmap' && window.nlHeatmapShow) [80, 400].forEach(ms => setTimeout(window.nlHeatmapShow, ms));   // la mappa si disegna con la larghezza vera, non con quella della pagina nascosta
   }
+  // APERTURA PIÙ LEGGERA — le funzioni che disegnano le pagine NASCOSTE (Calendario, Macro, Posizionamento, Mercati, Geopolitica, Scenari) venivano rieseguite 4-9 volte a ogni dato in arrivo
+  // mentre l'utente guarda la Panoramica (e ogni volta scattavano i controlli su tutto il documento). Ora, se la loro pagina non è quella visibile, si ricorda solo l'ultima richiesta
+  // e il disegno si fa UNA volta, con i dati più recenti, nel momento in cui la pagina compare (show → flushGate). Le funzioni sono quelle di prima, con gli stessi argomenti.
+  const GATE = {renderHubBC:'macro', renderHubMacro:'macro', renderHubCal:'calendario', renderCalTable:'calendario', renderHubPos:'posizionamento', renderHubSent:'posizionamento', renderCotCards:'posizionamento', renderDecisionPanel:'posizionamento', renderHubSint:'scenari', renderHubGeo:'geo', renderMarketMonitor:'mercati', renderMarketMoves:'mercati', renderMarketPricing:'mercati'};
+  const gDirty = new Map();
+  Object.keys(GATE).forEach(fn => { const orig = window[fn]; if(typeof orig !== 'function') return;
+    window[fn] = function(...a){ if(document.body.getAttribute('data-page') === GATE[fn]){ gDirty.delete(fn); return orig.apply(this, a); } gDirty.set(fn, a); }; });
+  function flushGate(id){ [...gDirty.entries()].forEach(([fn, a]) => { if(GATE[fn] !== id) return; gDirty.delete(fn); try{ window[fn](...a); }catch(e){ console.warn('disegno pagina', fn, e.message); } }); }
   nav.innerHTML = '<div class="sep">Dashboard</div>';
   PAGES.forEach(([id, nm, ic]) => { const a = el('a', '', IC[ic] + nm); a.dataset.p = id; a.href = '#/' + id; a.addEventListener('click', ev => { ev.preventDefault(); history.replaceState(null, '', '#/' + id); show(id); }); nav.appendChild(a); });
   window.addEventListener('hashchange', () => { const m = /^#\/(\w+)/.exec(location.hash); if(m) show(m[1]); });

@@ -19,6 +19,17 @@ const { toVercelHandler } = require('../lib/vercel-adapter');
 const { cc } = require('../lib/cache-control');
 const { fetchCotSnapshot } = require('../lib/cot');
 
+// Per quanti secondi la copia scaduta può ancora essere servita subito (mentre si prepara la nuova): fino a un'ora prima del prossimo venerdì 19:30 UTC
+// (il CFTC pubblica il venerdì alle 15:30 ora di New York = 19:30-20:30 UTC), al massimo 6 giorni. Così dopo una pausa di ore o giorni (notte, weekend, subito dopo
+// una pubblicazione del sito) nessuno aspetta il ricalcolo, e la copia vecchia non sopravvive mai all'uscita del nuovo rapporto.
+function cotSwr(now = Date.now()) {
+  const d = new Date(now);
+  if (d.getUTCDay() === 5 && d.getUTCHours() * 60 + d.getUTCMinutes() >= 19 * 60 + 30 && d.getUTCHours() < 22) return 0;   // finestra di uscita del rapporto (venerdì 19:30-22:00 UTC): niente copie "stale", si vuole il dato nuovo appena c'è
+  let release = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + ((5 - d.getUTCDay() + 7) % 7), 19, 30);
+  if (release <= now) release += 7 * 86400e3;
+  return Math.max(0, Math.min(6 * 86400, Math.floor((release - now) / 1000) - 3600));
+}
+
 async function handleEvent(event) {
   try {
     const dateParam = event.queryStringParameters && event.queryStringParameters.date
@@ -35,7 +46,9 @@ async function handleEvent(event) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': dateParam ? 'public, max-age=86400' : cc(3600, 21600),   // il rapporto COT è settimanale: la copia vecchia si serve subito per ore mentre si rinnova (il ricalcolo da CFTC dura ~9 s)
+        // il rapporto COT è settimanale: la copia vecchia si serve subito mentre si rinnova (senza attese per chi apre il sito), ma mai oltre l'uscita del rapporto successivo (venerdì).
+        // Una risposta INCOMPLETA (qualche contratto non letto) resta in cache pochissimo e senza "stale": un errore passeggero non deve restare per ore.
+        'Cache-Control': dateParam ? 'public, max-age=86400' : (errors.length ? 'public, max-age=120' : cc(3600, cotSwr())),
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),
