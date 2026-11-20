@@ -81,7 +81,7 @@ async function handleEvent(event) {
     try {
       const H = require('../lib/heatmap');
       const data = params.view === 'stock' ? await H.getStock(params.symbol) : await H.getStockNews(params.symbol);
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=' + (params.view === 'stock' ? 90 : 300) }, body: JSON.stringify(data) };
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': cc(params.view === 'stock' ? 90 : 300, 0) }, body: JSON.stringify(data) };
     } catch (err) {
       return { statusCode: err.message === 'simbolo non valido' ? 400 : 502, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=30' }, body: JSON.stringify({ error: err.message }) };
     }
@@ -120,7 +120,7 @@ async function handleEvent(event) {
       headers: {
         'Content-Type': 'application/json',
         // 2 minuti; se qualche simbolo non ha risposto solo 20 secondi, così l'aggiornamento successivo lo recupera presto
-        'Cache-Control': `public, max-age=${errors.length ? 20 : 120}`,
+        'Cache-Control': errors.length ? 'public, max-age=20' : cc(120, 0),
       },
       body: JSON.stringify({
         updatedAt: new Date().toISOString(),

@@ -16,7 +16,7 @@ const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { aiCc } = require('../lib/cache-control');
+const { aiCc, ccFail } = require('../lib/cache-control');
 
 const CATEGORIES = [
   { key: 'fed_rates', label: 'FED / TASSI' },
@@ -57,7 +57,7 @@ async function handleEvent(event) {
     if (!items.length) {
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300' },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': ccFail(120) },
         body: JSON.stringify(fallback([])),
       };
     }

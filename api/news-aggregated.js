@@ -86,7 +86,7 @@ async function handleEvent(event) {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${complete ? 600 : 120}` },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': complete ? cc(600, 0) : 'public, max-age=120' },
       body: JSON.stringify({
         count: items.length,
         topic,

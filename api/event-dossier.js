@@ -17,7 +17,7 @@
 const { aggregateNews } = require('../lib/news');
 const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { cc } = require('../lib/cache-control');
+const { cc, ccFail } = require('../lib/cache-control');
 
 const EVENT_SYS = 'Sei un analista macro senior che prepara il dossier pre-evento per un desk di trading. '
   + 'Rispondi SEMPRE in italiano, tecnico e operativo. Restituisci ESCLUSIVAMENTE JSON valido.';
@@ -94,7 +94,7 @@ async function handleEvent(event) {
       statusCode: 200,
       // 6h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
       // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per ore.
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': dossier.ai ? cc(21600, 7200) : 'public, max-age=120' },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': dossier.ai ? cc(21600, 7200) : ccFail(120) },
       body: JSON.stringify({ generatedAt: new Date().toISOString(), event: { title, date: dateIso, impact }, dossier }),
     };
   } catch (err) {

@@ -2984,7 +2984,7 @@ function renderMarketMonitor(){
 let CYC_TRY = 0;
 async function cycLoad(){
   try{
-    const res = await fetch('/api/market-data?view=cycle' + (CYC_TRY ? '&retry=' + Math.floor(Date.now() / 60000) : ''));
+    const res = await fetch('/api/market-data?view=cycle', CYC_TRY ? {cache:'no-cache'} : undefined);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const j = await res.json();
     if(!j.assets || !j.assets.length) throw new Error('nessun asset');
@@ -3135,7 +3135,7 @@ function ikRender(){
 let IK_TRY = 0;
 async function ikLoad(){
   try{
-    const res = await fetch('/api/market-data?view=indicators' + (IK_TRY ? '&retry=' + Math.floor(Date.now() / 60000) : ''));
+    const res = await fetch('/api/market-data?view=indicators', IK_TRY ? {cache:'no-cache'} : undefined);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const j = await res.json();
     if(!j.groups || !j.groups.length) throw new Error('nessun gruppo');
@@ -3940,9 +3940,9 @@ function bulletList(items){ return (items||[]).map(x=>`• ${safeHtml(x)}`).join
 
 // ---- ultima analisi AI riuscita, salvata nel browser ----
 // Se l'AI non risponde (quota di Gemini esaurita, errore passeggero) la pagina mostra l'ULTIMA analisi riuscita (fino a 24 ore, con il suo orario di
-// generazione) invece di una card vuota, e continua a riprovare. `stale:true` segna una risposta vecchia; `retryIn` = fra quanti secondi conviene riprovare.
+// generazione) invece di una card vuota, e continua a riprovare. La copia vale 6 ore (le analisi si rigenerano ogni 3): più vecchia, non si mostra come "attuale". `stale:true` segna una risposta vecchia; `retryIn` = fra quanti secondi conviene riprovare.
 function aiSave(k, j){ try{ localStorage.setItem('mhub_ai:' + k, JSON.stringify({t:Date.now(), j})); }catch(e){} }
-function aiLoad(k){ try{ const o = JSON.parse(localStorage.getItem('mhub_ai:' + k)); if(o && Date.now() - o.t < 24 * 3600e3) return o.j; }catch(e){} return null; }
+function aiLoad(k){ try{ const o = JSON.parse(localStorage.getItem('mhub_ai:' + k)); if(o && Date.now() - o.t < 6 * 3600e3) return o.j; }catch(e){} return null; }
 async function aiGet(key, url, opts, good){
   let j = null;
   try{ const res = await fetch(url, opts); if(res.ok) j = await res.json(); }catch(e){}
@@ -3951,7 +3951,8 @@ async function aiGet(key, url, opts, good){
   return old ? {...old, stale:true, retryIn:(j && j.retryIn) || 0} : j;
 }
 async function fetchNarrative(section, bust, revalidate){
-  return aiGet('n:' + section, `/api/narrative?section=${section}${bust ? `&retry=${bust}` : ''}`, revalidate ? {cache:'no-cache'} : undefined, j => j.ai && j.data);
+  // stesso indirizzo per tutti (anche nei nuovi tentativi): la risposta di ripiego dura poco sul server e, scaduta, la prima richiesta ne prepara UNA per tutti
+  return aiGet('n:' + section, `/api/narrative?section=${section}`, revalidate ? {cache:'no-cache'} : undefined, j => j.ai && j.data);
 }
 
 function setNarrativeMeta(id, res){
@@ -4792,12 +4793,12 @@ function assetDirClass(dir){
 // versione più recente invece di riusare la copia che il browser tiene per 3 ore (aggiornamento automatico).
 async function fetchBiasDaily(bust, revalidate){
   // "v=2": le risposte sono tenute in cache dal browser per 3 ore; cambiando il numero si forza una volta sola il nuovo formato (8 asset)
-  return aiGet('bias', '/api/bias-daily?v=2' + (bust ? '&retry=' + bust : ''), revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.label);
+  return aiGet('bias', '/api/bias-daily?v=2', revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.label);
 }
 
 async function fetchSentimentLive(force, bust, revalidate){
-  const url = force ? '/api/sentiment-categories?force=1' : bust ? '/api/sentiment-categories?retry=' + bust : '/api/sentiment-categories';
-  return aiGet('sent', url, force ? {cache:'no-store'} : revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.categories && j.categories.length);
+  // sempre l'indirizzo normale (prima "?force=1" e "?retry=" creavano copie diverse da quella di tutti gli altri); "force" ora = ricontrolla col CDN
+  return aiGet('sent', '/api/sentiment-categories', (force || revalidate) ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.categories && j.categories.length);
 }
 
 async function fetchEventDossier(ev){
@@ -4984,7 +4985,7 @@ const TONE_COLOR = {red:'var(--red)', gold:'var(--gold)', green:'var(--green)'};
 async function fetchMarketIntelligence(revalidate, bust){
   // Nessun prezzo nell'indirizzo: li legge il server. Con i prezzi del visitatore ogni apertura era un indirizzo nuovo, la cache non serviva
   // mai e ogni visita faceva generare di nuovo i driver (4 chiamate a Gemini). Ora la risposta è la stessa per tutti e resta in cache 3 ore.
-  return aiGet('mi', '/api/market-intelligence' + (bust ? '?retry=' + bust : ''), revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.assets && Object.keys(j.assets).length >= marketData.length);
+  return aiGet('mi', '/api/market-intelligence', revalidate ? {cache:'no-cache'} : undefined, j => j.ai !== false && j.assets && Object.keys(j.assets).length >= marketData.length);
 }
 
 // Sovrascrive driver/bars di marketData (finora scritti a mano e statici per sempre) con
@@ -5263,7 +5264,8 @@ async function initLiveData(manual = false){
 
   // --- analisi AI: si applicano appena arrivano; se falliscono si ritenta, e intanto la card dice "non disponibile" (non resta vuota) ---
   const aBias = pBias.then(bias => {
-    r.bias = liveRun('bias', () => applyBiasDaily(bias));
+    // una risposta di RIPIEGO (ai:false, "NEUTRALE 50/100") non è una lettura del mercato: non va mostrata come verdetto (poi sarebbe "cambiata" in RISK-OFF/ON). Si mostra "non disponibile" e si riprova.
+    r.bias = liveRun('bias', () => applyBiasDaily(bias && bias.ai === false && !bias.stale ? null : bias));
     if(!biasOk(bias)) liveRetryAi(b => fetchBiasDaily(b), biasOk, d => liveRun('bias', () => applyBiasDaily(d)), bias && bias.retryIn);
     return bias;
   });
@@ -5330,7 +5332,7 @@ async function initLiveData(manual = false){
 
 // ---------- AGGIORNAMENTO AUTOMATICO a scheda visibile ----------
 // Prima i dati si aggiornavano solo all'apertura o col pulsante: una scheda lasciata aperta restava ferma sui prezzi del mattino e sulle analisi di ore prima.
-// Ora: prezzi e card che ne dipendono ogni 2 minuti; movimenti per fascia e correlazioni ogni 5; analisi AI ricontrollate ogni 20 minuti (si ridisegnano
+// Ora: prezzi e card che ne dipendono ogni 2 minuti; movimenti per fascia e correlazioni ogni 5; analisi AI ricontrollate ogni 5 minuti (si ridisegnano
 // solo se sono state rigenerate). Se la scheda era nascosta, al ritorno si aggiorna subito ciò che è scaduto. Niente chiamate AI in più: si rileggono
 // le stesse risposte in cache, e l'AI si rigenera solo quando scade la sua cache di 3 ore.
 async function liveRefreshPrices(){
@@ -5408,7 +5410,8 @@ function liveAutoTick(){
   if(now - LIVE_STAMP.fred >= 600000){ LIVE_STAMP.fred = now; liveRefreshMacro().catch(e => console.warn('Aggiornamento dati FRED:', e.message)); }
   if(now - LIVE_STAMP.prices >= 120000){ LIVE_STAMP.prices = now; liveRefreshPrices().catch(e => console.warn('Aggiornamento prezzi:', e.message)); }
   if(now - LIVE_STAMP.moves >= 300000){ LIVE_STAMP.moves = now; liveRefreshSlow().catch(e => console.warn('Aggiornamento movimenti:', e.message)); }
-  if(now - LIVE_STAMP.ai >= 1200000){ LIVE_STAMP.ai = now; liveRefreshAi().catch(e => console.warn('Aggiornamento analisi:', e.message)); }
+  // ogni 5 minuti come la Panoramica (prima 20): la richiesta è condizionale col CDN (304 se non è cambiato nulla), quindi costa pochissimo; così barra in alto e Panoramica mostrano sempre la stessa analisi
+  if(now - LIVE_STAMP.ai >= 300000){ LIVE_STAMP.ai = now; liveRefreshAi().catch(e => console.warn('Aggiornamento analisi:', e.message)); }
 }
 setInterval(liveAutoTick, 30000);
 document.addEventListener('visibilitychange', () => { if(!document.hidden) liveAutoTick(); });
@@ -6932,19 +6935,44 @@ async function carica() {
   // TUTTE le fonti hanno lo stesso limite di attesa (3,5 s): una fonte lenta (es. COT dopo la scadenza della cache: ~9 s) non tiene più la pagina su "Carico i dati veri…".
   const lento = u => { const p = J(u); return {p, v: Promise.race([p, new Promise(r => setTimeout(() => r(null), 3500))])}; };
   const calUrl = '/api/economic-calendar?from=' + encodeURIComponent(new Date(t0).toISOString()) + '&to=' + encodeURIComponent(new Date(t0 + 15 * 86400e3).toISOString()) + '&slim=1';
-  const L = {md: lento('/api/market-data'), bias: lento('/api/bias-daily?v=2'), fw: lento('/api/fred-data?view=fedwatch'), mc: lento('/api/economic-calendar?view=macro'), cot: lento('/api/cot-data'),
-    moves: lento('/api/news-aggregated?view=moves'), cal: lento(calUrl), sahm: lento('/api/fred-data?view=sahm'), feed: lento('/api/news-aggregated?view=feed'),
-    cy: lento('/api/market-data?view=cycle'), ik: lento('/api/market-data?view=indicators'), geo: lento('/api/narrative?section=geo'), mi: lento('/api/market-intelligence'), sent: lento('/api/sentiment-categories')};
+  const SRC = {md: '/api/market-data', bias: '/api/bias-daily?v=2', fw: '/api/fred-data?view=fedwatch', mc: '/api/economic-calendar?view=macro', cot: '/api/cot-data',
+    moves: '/api/news-aggregated?view=moves', cal: calUrl, sahm: '/api/fred-data?view=sahm', feed: '/api/news-aggregated?view=feed',
+    cy: '/api/market-data?view=cycle', ik: '/api/market-data?view=indicators', geo: '/api/narrative?section=geo', mi: '/api/market-intelligence', sent: '/api/sentiment-categories'};
+  // una risposta AI di RIPIEGO (ai:false: "NEUTRALE 50/100", testi "non disponibile") non è una lettura del mercato: si ignora, così non compare come verdetto e poi "cambia"
+  const AIK = ['bias', 'geo', 'mi', 'sent'];
+  const buono = (k, v) => v != null && !(AIK.includes(k) && v.ai === false);
+  const L = {}; Object.keys(SRC).forEach(k => { L[k] = lento(SRC[k]); });
   const keys = Object.keys(L); const got = {}; keys.forEach(k => { L[k].p.then(v => { got[k] = v; }); });
   // APERTURA PIÙ VELOCE: si aspettano le fonti VELOCI (prezzi, calendari, FedWatch, Sahm, cicli: pronte in 0,2-1,4 s anche a cache fredda); le LENTE (COT, indicatori, notizie, analisi AI: 2-14 s a cache fredda)
   // solo per altri 0,35 s al massimo. Se la cache è calda arrivano tutte subito e il disegno è uno solo, come prima; se no si disegna senza e le lente si aggiungono da sole (ridisegno qui sotto).
   const FAST = ['md', 'mc', 'fw', 'cal', 'sahm', 'cy'], SLOW = keys.filter(k => !FAST.includes(k));
   await Promise.all(FAST.map(k => L[k].v));
   await Promise.race([Promise.all(SLOW.map(k => L[k].v)), new Promise(r => setTimeout(r, 350))]);
-  keys.forEach(k => { D[k] = got[k] != null ? got[k] : null; }); D.t0 = t0;
+  keys.forEach(k => { D[k] = buono(k, got[k]) ? got[k] : null; }); D.t0 = t0;
   // le parti ancora in attesa si aggiungono quando arrivano: si ridisegna (raggruppando gli arrivi ravvicinati) mantenendo aperte le schede dei driver
   let tm = 0; const redraw = () => { clearTimeout(tm); tm = setTimeout(() => { if (typeof ridisegna === 'function') ridisegna(); else disegna(true); }, 350); };   // ridisegna(): nella Panoramica del sito; disegna(): nella prova a pagina intera
-  keys.filter(k => D[k] == null).forEach(k => L[k].p.then(v => { if (v != null) { D[k] = v; redraw(); } }));
+  keys.filter(k => D[k] == null).forEach(k => L[k].p.then(v => { if (buono(k, v)) { D[k] = v; redraw(); } }));
+
+  // ---- AGGIORNAMENTO AUTOMATICO (stessa cadenza del resto del sito) ----
+  // Ogni dato si ricontrolla col CDN (richiesta condizionale: se non è cambiato non scarica nulla). Prezzi: ogni 2 minuti, sul posto (solo i riquadri); calendario, FedWatch, notizie, analisi AI: 5 minuti;
+  // cicli e indicatori: 10; Sahm: 30; COT: 1 ora. Un dato mancante (o un ripiego AI) si riprova ogni 30 secondi. Si ridisegna solo se qualcosa è davvero cambiato.
+  const OGNI = {md: 120, fw: 300, mc: 600, cot: 3600, moves: 300, cal: 300, sahm: 1800, feed: 300, cy: 600, ik: 600, geo: 300, mi: 300, bias: 300, sent: 300};
+  const firma = (k, v) => v == null ? '' : (v.generatedAt || v.updatedAt || '') + '|' + JSON.stringify(v).length;
+  const SIG = {}, ULT = {}; keys.forEach(k => { SIG[k] = firma(k, D[k]); ULT[k] = Date.now(); });
+  let aggiornando = false;
+  async function aggiorna() {
+    if (document.hidden || aggiornando) return; aggiornando = true;
+    try {
+      const adesso = Date.now(), cambiate = [];
+      await Promise.all(keys.filter(k => D[k] == null || adesso - ULT[k] >= OGNI[k] * 1000 - 1000).map(async k => {
+        ULT[k] = adesso; const v = await J(SRC[k]); if (!buono(k, v)) return;
+        const s = firma(k, v); if (s !== SIG[k]) { SIG[k] = s; D[k] = v; cambiate.push(k); }
+      }));
+      if (!cambiate.length) return;
+      if (cambiate.every(k => k === 'md') && typeof ridisegnaPrezzi === 'function') ridisegnaPrezzi(); else redraw();
+    } finally { aggiornando = false; }
+  }
+  setInterval(aggiorna, 30000); document.addEventListener('visibilitychange', () => { if (!document.hidden) aggiorna(); });
 }
 const cyc = k => ((D.cy && D.cy.assets) || []).find(a => a.key === k);
 const q = k => (D.md && D.md.data && D.md.data[k]) || null;
@@ -7052,6 +7080,7 @@ function panoramica() {
     R.querySelectorAll(".cal .evt").forEach(r => { r.onclick = () => r.parentElement.classList.toggle("open"); r.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); r.click(); } }; });
   }
   function ridisegna(){ const ap = [...R.querySelectorAll("#acc .it")].map(i => i.classList.contains("open")); const nl = R.querySelector(".nl"); if(!nl) return; nl.innerHTML = panoramica(); bind(); R.querySelectorAll("#acc .it").forEach((it, i) => { if(ap[i] != null){ it.classList.toggle("open", ap[i]); const pm = it.querySelector(".pm"); if(pm) pm.textContent = ap[i] ? "−" : "+"; } }); }
+  function ridisegnaPrezzi(){ const t = R.querySelector(".tiles"); if(!t) return; const w = document.createElement("div"); w.innerHTML = tiles(); if(w.firstElementChild) t.replaceWith(w.firstElementChild); }
   (async () => { try { await carica(); R.querySelector(".nl").innerHTML = panoramica(); bind(); setTimeout(() => { if (window.__nlRelease) window.__nlRelease(); }, 900); } catch (e) { R.querySelector(".nl").innerHTML = "<div class=\"sk\">Panoramica non disponibile: " + e.message + "</div>"; console.error("nlHome", e); } })();
 }
 
