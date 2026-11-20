@@ -16,7 +16,7 @@ const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { aiCc, ccFail } = require('../lib/cache-control');
+const { aiCc, ccFail } = require('../lib/cache-control'); const { withShared } = require('../lib/shared-cache');
 
 const CATEGORIES = [
   { key: 'fed_rates', label: 'FED / TASSI' },
@@ -119,11 +119,11 @@ async function handleEvent(event) {
       // 3h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
       // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per ore.
       headers: { 'Content-Type': 'application/json', 'Cache-Control': await aiCc(payload.ai, fail.ttl) },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload), shareOk: payload.ai === true,
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
 
-module.exports = toVercelHandler(handleEvent);
+module.exports = toVercelHandler(withShared('sentiment-categories', handleEvent, { keyOf: () => '' }));

@@ -31,7 +31,7 @@ const { fetchCotSnapshot } = require('../lib/cot');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { fetchPositioning } = require('../lib/positioning');
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { aiCc } = require('../lib/cache-control');
+const { aiCc } = require('../lib/cache-control'); const { withShared } = require('../lib/shared-cache');
 
 const QUOTES = {
   'S&P 500': '^GSPC', 'Nasdaq 100': '^NDX', 'Dow Jones': '^DJI', 'Russell 2000': '^RUT', 'VIX': '^VIX',
@@ -374,11 +374,14 @@ async function handleEvent(event) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Cache-Control': await aiCc(ai, fail.ttl) },
-      body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data, ...(ai ? {} : { reason, retryIn: fail.retryIn }) }),
+      body: JSON.stringify({ generatedAt: new Date().toISOString(), section, ai, data, ...(ai ? {} : { reason, retryIn: fail.retryIn }) }), shareOk: ai,
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
 
-module.exports = toVercelHandler(handleEvent);
+module.exports = toVercelHandler(withShared('narrative', handleEvent, {
+  // una analisi condivisa per ogni sezione valida; ?section=modelli (diagnostica) e sezioni sbagliate non si condividono
+  keyOf: (e) => { const s = String(((e.queryStringParameters || {}).section) || '').trim(); return Object.prototype.hasOwnProperty.call(SECTIONS, s) ? s : null; },
+}));

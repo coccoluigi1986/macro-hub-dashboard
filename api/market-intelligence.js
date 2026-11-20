@@ -25,7 +25,7 @@ const { fetchYahooQuote } = require('../lib/yahoo');
 const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { aiCc } = require('../lib/cache-control');
+const { aiCc } = require('../lib/cache-control'); const { withShared } = require('../lib/shared-cache');
 
 const BATCHES = [
   ['DXY', 'EUR/USD', 'GBP/USD'],
@@ -149,11 +149,11 @@ async function handleEvent(event) {
       // (rate limit, timeout), cache breve (2 min) così il prossimo giro può completare i mancanti
       // invece di restare "congelato" incompleto in CDN per ore.
       headers: { 'Content-Type': 'application/json', 'Cache-Control': await aiCc(complete, failInfo ? Math.max(120, failInfo.ttl) : 120) },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload), shareOk: complete && anyAi,
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
 
-module.exports = toVercelHandler(handleEvent);
+module.exports = toVercelHandler(withShared('market-intelligence', handleEvent, { keyOf: () => '' }));   // il parametro ?snapshot (pagine vecchie) non cambia la chiave: tutti ricevono la stessa analisi

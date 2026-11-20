@@ -20,7 +20,7 @@ const { getMarketContext } = require('../lib/market-context');
 const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { aiCc } = require('../lib/cache-control');
+const { aiCc } = require('../lib/cache-control'); const { withShared } = require('../lib/shared-cache');
 const { getRisk } = require('../lib/risk-engine');
 
 const BIAS_SYS = 'Sei un analista macro-geopolitico senior. Rispondi SEMPRE in italiano. '
@@ -107,11 +107,11 @@ async function handleEvent(event) {
       // 3h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
       // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per 3 ore.
       headers: { 'Content-Type': 'application/json', 'Cache-Control': await aiCc(payload.ai, fail.ttl) },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload), shareOk: payload.ai === true,
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
 
-module.exports = toVercelHandler(handleEvent);
+module.exports = toVercelHandler(withShared('bias-daily', handleEvent, { keyOf: () => '' }));

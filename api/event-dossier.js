@@ -17,7 +17,7 @@
 const { aggregateNews } = require('../lib/news');
 const { llmJSON, llmConfigured } = require('../lib/llm');
 const { toVercelHandler } = require('../lib/vercel-adapter');
-const { cc, ccFail } = require('../lib/cache-control');
+const { cc, ccFail } = require('../lib/cache-control'); const { withShared, digest } = require('../lib/shared-cache');
 
 const EVENT_SYS = 'Sei un analista macro senior che prepara il dossier pre-evento per un desk di trading. '
   + 'Rispondi SEMPRE in italiano, tecnico e operativo. Restituisci ESCLUSIVAMENTE JSON valido.';
@@ -95,11 +95,14 @@ async function handleEvent(event) {
       // 6h quando l'AI ha risposto davvero; se è il fallback, cache breve (2 min) — altrimenti un
       // singolo errore transitorio (rate limit, timeout) resterebbe "congelato" in CDN per ore.
       headers: { 'Content-Type': 'application/json', 'Cache-Control': dossier.ai ? cc(21600, 7200) : ccFail(120) },
-      body: JSON.stringify({ generatedAt: new Date().toISOString(), event: { title, date: dateIso, impact }, dossier }),
+      body: JSON.stringify({ generatedAt: new Date().toISOString(), event: { title, date: dateIso, impact }, dossier }), shareOk: dossier.ai === true,
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
 
-module.exports = toVercelHandler(handleEvent);
+module.exports = toVercelHandler(withShared('event-dossier', handleEvent, {
+  // un dossier condiviso per ogni evento (titolo, data, impatto, previsione e precedente identici); senza titolo e data la richiesta non si condivide
+  keyOf: (e) => { const p = e.queryStringParameters || {}; return (p.title || '').trim() && p.date ? digest(p.title, p.date, p.impact, p.forecast, p.previous) : null; },
+}));
