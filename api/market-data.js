@@ -27,6 +27,7 @@ const { getIndicators } = require('../lib/indicators');
 const { getMarketContext } = require('../lib/market-context');
 const { translateTitles } = require('../lib/translate-headlines');
 const { getCycle } = require('../lib/cycle');
+const { getRisk, riskFromQuotes } = require('../lib/risk-engine');
 
 const SYMBOLS = {
   sp500:  '^GSPC',   // S&P 500
@@ -101,6 +102,8 @@ async function handleEvent(event) {
     // Fear & Greed (CNN) e AAII, insieme ai prezzi: fetchPositioning non lancia mai, ogni indicatore
     // non raggiungibile torna semplicemente null.
     const positioningPromise = fetchPositioning();
+    // verdetto RISK-ON/RISK-OFF calcolato dai prezzi (lib/risk-engine.js): uguale per tutti e sempre allineato ai prezzi mostrati; non blocca la risposta se Yahoo non risponde
+    const riskPromise = getRisk().catch((e) => { console.warn('risk engine:', e.message); return null; });
     const entries = await Promise.all(
       Object.entries(SYMBOLS).map(async ([key, sym]) => {
         try {
@@ -114,6 +117,8 @@ async function handleEvent(event) {
     );
     const data = Object.fromEntries(entries);
     const errors = entries.filter(([, v]) => v.error).map(([k, v]) => `${k} (${SYMBOLS[k]}): ${v.error}`);
+    // se le candele a 5 minuti non bastano si ricade sul calcolo istantaneo dai prezzi appena letti (stessa formula, senza media e isteresi)
+    const risk = (await riskPromise) || riskFromQuotes(data);
 
     return {
       statusCode: 200,
@@ -127,6 +132,7 @@ async function handleEvent(event) {
         source: 'Yahoo Finance (endpoint pubblico "chart")',
         parseWarning: errors.length ? `Simboli non disponibili: ${errors.join(' | ')}` : null,
         data,
+        risk,
         positioning: await positioningPromise,
       }),
     };

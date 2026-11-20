@@ -21,6 +21,7 @@ const { llmJSON, llmConfigured, failureInfo } = require('../lib/llm');
 const { releaseAwareTtl } = require('../lib/release-watch');
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { aiCc } = require('../lib/cache-control');
+const { getRisk } = require('../lib/risk-engine');
 
 const BIAS_SYS = 'Sei un analista macro-geopolitico senior. Rispondi SEMPRE in italiano. '
   + 'Sintetizzi il quadro giornaliero in una lettura di bias operativo. '
@@ -77,11 +78,14 @@ async function handleEvent(event) {
           + `Includi 4 driver e tutti e ${BIAS_ASSETS.length} gli asset. Solo JSON.`;
 
         const data = await llmJSON({ system: BIAS_SYS, prompt, maxTokens: 2500 });
+        // ETICHETTA E PUNTEGGIO NON SONO UN'OPINIONE DELL'AI: sono calcolati dai prezzi (lib/risk-engine.js), uguali per tutti. L'AI scrive il commento; la sua etichetta si conserva solo come controllo.
+        const risk = (ctx && ctx.risk) || await getRisk().catch(() => null);
         payload = {
           generatedAt: new Date().toISOString(),
           ai: true,
-          label: (data.label || 'NEUTRALE').toUpperCase(),
-          score: Math.round(Number(data.score) || 50),
+          label: risk ? risk.label : (data.label || 'NEUTRALE').toUpperCase(),
+          score: risk ? risk.score : Math.round(Number(data.score) || 50),
+          ...(risk ? { risk: true, aiLabel: String(data.label || '').toUpperCase(), aiScore: Math.round(Number(data.score) || 50) } : {}),
           headline: data.headline || '—',
           geo: data.geo || {},
           macro: data.macro || {},
