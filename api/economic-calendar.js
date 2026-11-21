@@ -13,7 +13,7 @@
 const { toVercelHandler } = require('../lib/vercel-adapter');
 const { cc, ccRelease } = require('../lib/cache-control');
 const { fetchCalendarEvents, isFomcDecision } = require('../lib/calendar');
-const { fetchMacroCards } = require('../lib/macro-cards');
+const { fetchMacroCards, fetchMacroHistory } = require('../lib/macro-cards');
 const { releaseAwareTtl } = require('../lib/release-watch');
 
 async function handleEvent(event) {
@@ -29,6 +29,13 @@ async function handleEvent(event) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': ccRelease(await releaseAwareTtl(900, 120), 900, 600) },   // 15 min; poco dopo un dato importante scade prima, così la card mostra il numero appena uscito
         body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar', ...cards }),
       };
+    }
+
+    // ?view=macrohist → storico di 12 mesi di ogni dato delle card Macro, per le mini-linee (la pagina aggiunge da sola l'ultimo valore uscito). Cambia poco: cache di 1 ora.
+    if (params.view === 'macrohist') {
+      const hist = await fetchMacroHistory();
+      const n = Object.keys(hist).length;
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': n >= 10 ? cc(3600, 3600) : cc(120, 0) }, body: JSON.stringify({ generatedAt: new Date().toISOString(), source: 'TradingView Economic Calendar + FRED', hist }) };
     }
 
     // ?view=fomc → le prossime decisioni sui tassi della Fed dal calendario live, fino a 150 giorni avanti (il "Prossimo FOMC" della sezione Banche centrali:

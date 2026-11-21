@@ -2263,6 +2263,13 @@ select option,select optgroup{background-color:#09152D; color:#E6ECF6}
 #priority .h-cd{font-size:22px!important; line-height:1.2!important}
 #priority .h-kpi b{font-size:14.5px!important; line-height:1.2!important}
 
+/* ===== Numeri grandi in alto nella sezione Macro: mini-linea (ultimi 12 mesi) e variazione rispetto al precedente ===== */
+.h-kpi-sp{display:flex; align-items:center; gap:8px; margin-top:6px; color:var(--dim);}
+.h-kpi-sp.good{color:#34D399;} .h-kpi-sp.bad{color:#F0685E;}
+.h-kpi-sp .ln{display:block; width:96px; height:22px; overflow:visible;}
+.mac-ch{font:600 10px/1 var(--fm); font-style:normal; letter-spacing:.01em; white-space:nowrap; color:currentColor;}
+.mac-ch.flat{font-weight:500; color:var(--dim2);}
+
 </style></head>
 <body>
 
@@ -2601,7 +2608,7 @@ const hList = (items, n = 3) => `<label class="h-list"><input type="checkbox"><u
 const hCard = ({span = 6, icon, title, bd = [], body, foot = '', cls = ''}) =>
   `<article class="h-card ${span ? 'h-c' + span : ''} ${cls}"><div class="h-hd">${icon ? hIco(icon) : ''}<h4>${escHtml(title)}</h4><span class="h-bds">${bd.map(b => `<span class="h-bd ${H_BD[b][0]}">${H_BD[b][1]}</span>`).join('')}</span></div>${body}${foot ? `<div class="h-ft">${foot}</div>` : ''}</article>`;
 const hLoading = (title, icon, span, state, cls = '') => hCard({span, icon, title, cls, bd:['ai'], body:`<p class="h-note">${HUB.fail[state] ? NARRATIVE_UNAVAILABLE : 'Analisi in caricamento…'}</p>`});
-const hKpi = (l, v, d, dc = '') => `<div class="h-kpi"><span class="l">${escHtml(l)}</span><b>${v}</b>${d ? `<span class="d ${dc}">${d}</span>` : ''}</div>`;
+const hKpi = (l, v, d, dc = '', x = '') => `<div class="h-kpi"><span class="l">${escHtml(l)}</span><b>${v}</b>${d ? `<span class="d ${dc}">${d}</span>` : ''}${x}</div>`;
 const hQ = k => { const x = HUB.mq && HUB.mq[k]; return x && !x.error && x.price != null ? x : null; };
 const hVal = (k, d, pre = '') => { const x = hQ(k); return x ? pre + hNf(x.price, d) : '—'; };
 const hChg = k => { const x = hQ(k); return x && x.changePercent != null ? {t:`${x.changePercent >= 0 ? '▲' : '▼'} ${hSg(x.changePercent)}%`, c:hDir(x.changePercent)} : {t:'', c:''}; };
@@ -3186,6 +3193,7 @@ async function loadMacroCards(quiet){
     const res = await fetch('/api/economic-calendar?view=macro', {cache:'no-cache'});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const j = await res.json();
+    loadMacroHist();   // mini-linee sui numeri grandi: lo storico arriva dopo le card (se già presente e recente non si richiede)
     const sig = JSON.stringify([j.us, j.eu, j.jobs]);
     if(quiet && HUB.cardsSig === sig && !HUB.fail.cards) return j;   // aggiornamento automatico: nessun dato nuovo, le card restano come sono
     HUB.cardsSig = sig;
@@ -3200,6 +3208,47 @@ async function loadMacroCards(quiet){
     renderHubMacro();
     return null;
   }
+}
+
+// ---------- MINI-LINEE sui numeri grandi in alto (CPI, Core CPI, PPI, NFP, Disoccupazione): andamento degli ultimi 12 mesi + variazione rispetto al precedente ----------
+// Lo storico arriva da /api/economic-calendar?view=macrohist (calendario reale) DOPO le card: la striscia si disegna subito, poi si ridisegna con le linee.
+// Il colore della freccia dice l'effetto della variazione sui mercati: verde favorevole, rosso sfavorevole, grigio neutro o invariato (inflazione e disoccupazione in salita pesano, la crescita in salita aiuta).
+let MAC_HIST_AT = 0, MAC_HIST_BUSY = false;
+async function loadMacroHist(){
+  if(MAC_HIST_BUSY || (HUB.hist && Date.now() - MAC_HIST_AT < 30 * 60e3)) return;
+  MAC_HIST_BUSY = true;
+  try{
+    const res = await fetch('/api/economic-calendar?view=macrohist');
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    if(!j || !j.hist || !Object.keys(j.hist).length) return;
+    HUB.hist = j.hist; MAC_HIST_AT = Date.now();
+    if(typeof liveKeepOpen === 'function') liveKeepOpen(() => renderHubMacro()); else renderHubMacro();
+  }catch(e){ console.warn('Storico dei dati macro non disponibile:', e.message); }
+  finally{ MAC_HIST_BUSY = false; }
+}
+function macSeries(c){
+  const h = HUB.hist && HUB.hist[c.id]; if(!h || !h.v || h.v.length < 3) return null;
+  const v = h.v.slice(), d = h.d.slice(), n = v.length, cd = String(c.date || '').slice(0, 10), a = Number(c.actual);
+  if(cd && isFinite(a) && cd > d[n - 1]){ v.push(a); d.push(cd); }        // l'ultimo dato uscito può essere più recente dello storico (cache di 1 ora)
+  else if(isFinite(a) && cd === d[n - 1]) v[n - 1] = a;                    // lo stesso dato: vale quello della card
+  return {v, d};
+}
+function sparkLine(v, w, h, cls){
+  const mn = Math.min(...v), mx = Math.max(...v), span = (mx - mn) || 1, pad = 3;
+  const pts = v.map((x, i) => [pad + i / (v.length - 1) * (w - 2 * pad), h - pad - (x - mn) / span * (h - 2 * pad)]), last = pts[pts.length - 1];
+  return `<svg class="${cls}" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline points="${pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.4" fill="currentColor"/></svg>`;
+}
+function macNum(x){ return String(Math.round(x * 100) / 100).replace('.', ','); }
+function macMese(iso){ try{ return new Date(iso + 'T12:00:00Z').toLocaleDateString('it-IT', {month:'short', year:'numeric', timeZone:'UTC'}).replace('.', ''); }catch(e){ return iso; } }
+function macChip(c){
+  if(!c.dir) return '';
+  return `<em class="mac-ch ${c.dir} ${c.dtone || 'mid'}" title="Variazione rispetto al dato precedente">${c.dir === 'flat' ? '= invariato' : (c.dir === 'up' ? '▲' : '▼') + ' ' + escHtml(c.dtxt)}</em>`;
+}
+function macKpiSpark(c){
+  const s = macSeries(c); if(!s) return '';
+  const tip = 'Ultimi ' + s.v.length + ' dati: da ' + macNum(s.v[0]) + ' (' + macMese(s.d[0]) + ') a ' + macNum(s.v[s.v.length - 1]) + ' (' + macMese(s.d[s.d.length - 1]) + ')';
+  return `<span class="h-kpi-sp ${c.dtone || 'mid'}" title="${escHtml(tip)}">${sparkLine(s.v, 96, 22, 'ln')}${macChip(c)}</span>`;
 }
 
 // ---------- BAROMETRO DETTAGLIATO — dati usciti, costruito dalle stesse card live ----------
@@ -4539,7 +4588,7 @@ function renderHubMacro(){
   const byId = {};
   [...(C.us || []), ...(C.jobs || [])].filter(ok).forEach(c => { byId[c.id] = c; });
   const GC = {green:'h-grn', red:'h-red', gold:'h-gold'};
-  const strip = MAC_STATS.map(([id, l]) => { const c = byId[id]; return c ? hKpi(l, `<span class="${GC[c.color] || ''}">${escHtml(c.cur)}</span>`, `att. ${escHtml(c.fore)} · prec. ${escHtml(c.prev)}`) : hKpi(l, '—', 'dal calendario'); }).join('');
+  const strip = MAC_STATS.map(([id, l]) => { const c = byId[id]; return c ? hKpi(l, `<span class="${GC[c.color] || ''}">${escHtml(c.cur)}</span>`, `att. ${escHtml(c.fore)} · prec. ${escHtml(c.prev)}`, '', macKpiSpark(c)) : hKpi(l, '—', 'dal calendario'); }).join('');
   let html = `<div class="h-c12 g-us g-jobs"><div class="h-kpis wide">${strip}</div></div>`;
   MAC_GROUPS.forEach(G => {
     const list = (C[G.g] || []).filter(ok);
@@ -7001,6 +7050,7 @@ const MESE_IT = {Jan: 'gen', Feb: 'feb', Mar: 'mar', Apr: 'apr', May: 'mag', Jun
 // periodo a cui si riferisce un dato del calendario ("Sep. 2026" → "set 2026", "Q3 2026" → "T3 2026"): serve a non far credere che dati di mesi diversi siano dello stesso mese
 const per = c => { const p = String((c && c.period) || ''); let m = p.match(/^([A-Z][a-z]{2})[a-z]*\.?\s+(\d{4})$/); if (m) return (MESE_IT[m[1]] || m[1].toLowerCase()) + ' ' + m[2]; m = p.match(/^Q(\d)\s+(\d{4})$/); return m ? 'T' + m[1] + ' ' + m[2] : p; };
 const vsAtt = c => c ? c.cur + ' (attese ' + c.fore + ')' : '—';
+const vsPrec = c => c ? c.cur + ' (precedente ' + c.prev + ')' : '—';   // Super Core e Shelter: nessun atteso degli analisti, si confronta con il mese prima
 const n0 = v => Math.abs(v).toLocaleString('it-IT', {maximumFractionDigits: 0, useGrouping: 'always'});   // 6.903 e non 6903: nei contratti COT le migliaia si separano sempre
 const segno = n => (n > 0 ? '+' : n < 0 ? '−' : '') + n0(n);
 // Posizionamento dei grandi operatori (rapporto COT della CFTC) per un asset: netto = long − short; per i future sul petrolio la CFTC pubblica i "managed money" (fondi), per gli altri i "non-commercial" (grandi speculatori)
@@ -7020,10 +7070,10 @@ function drivers() {
     k: [['Prossima riunione Fed', fw ? dFw : '—'], ['Tasso Fed (fascia obiettivo)', D.fw ? num(D.fw.lower, 2) + '–' + num(D.fw.upper, 2) + '%' : '—'],
       [fw ? 'Probabilità di rialzo il ' + dFw : 'Probabilità di rialzo', fw ? Math.round(fw.pHike * 100) + '%' + (fw.cumBp ? ' (≈ +' + num(fw.cumBp, 0) + ' pb prezzati)' : '') : '—'], ['Rendimento Treasury 10 anni', us10 ? num(us10.price, 3) + '%' : '—']],
     how: '<b>Cosa significa:</b> la probabilità è ricavata dai future sui Fed Funds (CME) e dice quanto il mercato scommette su un rialzo dei tassi alla prossima riunione («pb» = punti base, 100 pb = 1%). Se il rendimento a 10 anni e il dollaro salgono insieme, il mercato sta rivedendo al rialzo i tassi e le azioni di solito ne soffrono.'});
-  const cpi = byId(mc.us, 'us_cpi_yoy'), core = byId(mc.us, 'us_core_yoy'), mom = byId(mc.us, 'us_cpi_mom'), ppi = byId(mc.us, 'us_ppi_yoy');
-  items.push({c: 'var(--violet)', ic: ico.flame, t: 'Inflazione USA', s: 'CPI, core e prezzi alla produzione', open: true,
-    k: [['CPI a/a (' + (cpi ? per(cpi) : '—') + ')', vsAtt(cpi)], ['Core a/a (' + (core ? per(core) : '—') + ')', vsAtt(core)], ['CPI m/m (' + (mom ? per(mom) : '—') + ')', vsAtt(mom)], ['PPI a/a (' + (ppi ? per(ppi) : '—') + ')', vsAtt(ppi)]],
-    how: '<b>Cosa significa:</b> il CPI misura i prezzi al consumo, il PPI quelli alla produzione; «core» esclude energia e alimentari; a/a = rispetto a un anno fa, m/m = rispetto al mese prima. Tra parentesi l\'attesa degli analisti: un dato sopra le attese sostiene dollaro e rendimenti e mette pressione su oro e azioni.'
+  const cpi = byId(mc.us, 'us_cpi_yoy'), core = byId(mc.us, 'us_core_yoy'), mom = byId(mc.us, 'us_cpi_mom'), ppi = byId(mc.us, 'us_ppi_yoy'), sup = byId(mc.us, 'us_supercore'), shel = byId(mc.us, 'us_shelter');
+  items.push({c: 'var(--violet)', ic: ico.flame, t: 'Inflazione USA', s: 'CPI, core, super core, casa e prezzi alla produzione', open: true,
+    k: [['CPI a/a (' + (cpi ? per(cpi) : '—') + ')', vsAtt(cpi)], ['Core a/a (' + (core ? per(core) : '—') + ')', vsAtt(core)], ['Super Core a/a (' + (sup ? per(sup) : '—') + ')', vsPrec(sup)], ['Shelter a/a (' + (shel ? per(shel) : '—') + ')', vsPrec(shel)], ['CPI m/m (' + (mom ? per(mom) : '—') + ')', vsAtt(mom)], ['PPI a/a (' + (ppi ? per(ppi) : '—') + ')', vsAtt(ppi)]],
+    how: '<b>Cosa significa:</b> il CPI misura i prezzi al consumo, il PPI quelli alla produzione; «core» esclude energia e alimentari; a/a = rispetto a un anno fa, m/m = rispetto al mese prima. Tra parentesi l\'attesa degli analisti: un dato sopra le attese sostiene dollaro e rendimenti e mette pressione su oro e azioni. <b>Super Core</b> = i servizi senza affitti e casa (sanità, trasporti, ricreazione…): dipende dagli stipendi ed è l\'inflazione che la Fed guarda con più attenzione. <b>Shelter</b> = la voce «casa» (affitti e affitto equivalente dei proprietari), circa un terzo del CPI, cambia lentamente. Per questi due non c\'è un\'attesa degli analisti: tra parentesi c\'è il mese prima (dati BLS da FRED).'
       + (cpi && mom && per(cpi) !== per(mom) ? ' <b>Attenzione ai mesi:</b> l\'ultimo CPI a/a disponibile è di ' + per(cpi) + ', mentre il m/m è già di ' + per(mom) + '.' : '')});
   const j = D.mc && D.mc.jobs, nfp = byId(j, 'us_nfp'), un = byId(j, 'us_unemp'), ahe = byId(j, 'us_ahe');
   items.push({c: 'var(--orange)', ic: ico.user, t: 'Lavoro USA', s: 'NFP, disoccupazione e salari',
