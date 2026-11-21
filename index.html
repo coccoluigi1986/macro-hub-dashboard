@@ -4477,6 +4477,8 @@ function macCap(c){
   const W = {
     us_cpi_yoy:'l\'inflazione dei prezzi al consumo rispetto a un anno fa: se sale, la Fed tende a tenere i tassi alti.',
     us_core_yoy:'come il CPI ma senza cibo ed energia, che oscillano molto: è l\'inflazione di fondo, quella che la Fed guarda di più.',
+    us_supercore:'l\'inflazione dei SERVIZI senza affitti e casa, rispetto a un anno fa: dipende soprattutto dagli stipendi, per questo la Fed la guarda con molta attenzione. Per questo dato gli analisti non pubblicano un atteso.',
+    us_shelter:'la voce «casa» del CPI (affitti e affitto equivalente dei proprietari) rispetto a un anno fa: pesa circa un terzo del CPI e cambia lentamente. Per questo dato gli analisti non pubblicano un atteso.',
     us_cpi_mom:'la variazione dei prezzi al consumo rispetto al mese scorso: è il dato che muove di più i mercati il giorno dell\'uscita.',
     us_ppi_yoy:'l\'inflazione «all\'ingrosso»: i prezzi pagati dai produttori rispetto a un anno fa. Spesso anticipa il CPI.',
     us_ppi_mom:'come il PPI, ma rispetto al mese scorso.',
@@ -4541,7 +4543,7 @@ function renderHubMacro(){
   let html = `<div class="h-c12 g-us g-jobs"><div class="h-kpis wide">${strip}</div></div>`;
   MAC_GROUPS.forEach(G => {
     const list = (C[G.g] || []).filter(ok);
-    html += hCard({span:8, icon:G.icon, title:G.title, bd:['off', 'live'], cls:`g-${G.g}`, body:list.length ? macTable(list) : '<p class="h-note">Nessun dato disponibile.</p>', foot:'Ultimo valore uscito per indicatore · calendario economico (TradingView) · tocca una riga per la lettura'});
+    html += hCard({span:8, icon:G.icon, title:G.title, bd:['off', 'live'], cls:`g-${G.g}`, body:list.length ? macTable(list) : '<p class="h-note">Nessun dato disponibile.</p>', foot:'Ultimo valore uscito per indicatore · calendario economico (TradingView)' + (G.g === 'us' ? ' · Super Core e Shelter: dati BLS da FRED, senza atteso' : '') + ' · tocca una riga per la lettura'});
     html += !N ? hLoading(G.noteTitle, 'target', 4, 'macro', `g-${G.g}`)
       : N[G.note] ? hCard({span:4, icon:'target', title:G.noteTitle, bd:['ai'], cls:`g-${G.g}`, body:hExp(N[G.note], 8)})
       : hCard({span:4, icon:'target', title:G.noteTitle, bd:['ai'], cls:`g-${G.g}`, body:`<p class="h-note">${NARRATIVE_UNAVAILABLE}</p>`});
